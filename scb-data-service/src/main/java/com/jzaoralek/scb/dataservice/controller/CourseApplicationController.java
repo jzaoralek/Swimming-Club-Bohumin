@@ -22,13 +22,12 @@ public class CourseApplicationController {
 	 * @return
 	 */
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
-    public String read(@PathVariable("uuid") String uuid) {
-
+    public String read(@PathVariable("uuid") String uuid) {	
     	if (LOG.isDebugEnabled()) {
     		LOG.debug("read claim: {}", uuid);
         }
 
     	// just for test purposes
-        return "uuid" + uuid;
+        return "uuid: " + uuid;
     }
 }
