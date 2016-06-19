@@ -7,6 +7,7 @@ Used technologies:
 - AngularJS or ReactJS
 - NODE.js
 - restful communication
+- AspectJ
 - slf4j
 - OAuth
 - Maven
