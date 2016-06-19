@@ -21,13 +21,13 @@
     </appender>
     
 	<logger name="com.jzaoralek.scb.dataservice" additivity="false">
-        <level value="DEBUG" />
+        <level value="TRACE" />
         <appender-ref ref="consoleAppender" />
         <appender-ref ref="dailyRollingFileAppender" />
     </logger>
 
     <root>
-        <level value="DEBUG" />
+        <level value="TRACE" />
         <appender-ref ref="consoleAppender" />
         <appender-ref ref="dailyRollingFileAppender" />
     </root>

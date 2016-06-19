@@ -16,4 +16,25 @@
 	<context:annotation-config />
 	<context:component-scan base-package="com.jzaoralek.scb.dataservice" />
 	
+	
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<!--
+	<aop:config>
+      <aop:aspect id="log" ref="loggingAspect">
+         <aop:pointcut id="selectAll" expression="execution(* com.jzaoralek.scb.dataservice.controller.*.*(..))"/>
+         <aop:before pointcut-ref="selectAll" method="beforeAdvice"/>
+         <aop:after pointcut-ref="selectAll" method="afterAdvice"/>
+         <aop:after-returning pointcut-ref="selectAll" 
+                              returning="retVal"
+                              method="afterReturningAdvice"/>
+         <aop:after-throwing pointcut-ref="selectAll" 
+                             throwing="ex"
+                             method="AfterThrowingAdvice"/>
+      </aop:aspect>
+   </aop:config>
+   -->
+   
+   <!-- Definition for logging aspect -->
+   <bean id="loggingAspect" class="com.jzaoralek.scb.dataservice.aspect.LoggingAspect"/> 
+	
 </beans>
