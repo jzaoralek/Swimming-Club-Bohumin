@@ -12,12 +12,10 @@ import org.slf4j.LoggerFactory;
 @Aspect
 public class LoggingAspect {
 
-	@Pointcut("execution(* com.jzaoralek.scb.dataservice.controller.*.*(..))")
-	public void controllerClassPointcut() {
-		
-	}
+	@Pointcut("execution(* com.jzaoralek.scb.dataservice.controller.*.*(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping)")
+	public void controllerClassPointcut() {}
 
-	@Around("controllerClassPointcut() && @annotation(org.springframework.web.bind.annotation.RequestMapping)")
+	@Around("controllerClassPointcut()")
 	public Object logControllerMethod(final ProceedingJoinPoint pjp) throws Throwable {
 		return this.logMethod(pjp);
 	}
@@ -86,35 +84,4 @@ public class LoggingAspect {
 
         return arguments.toString();
     }
-    
-//	/**
-//	 * This is the method which I would like to execute before a selected method
-//	 * execution.
-//	 */
-//	public void beforeAdvice() {
-//		LOG.trace("Enter: ");
-//	}
-//
-//	/**
-//	 * This is the method which I would like to execute after a selected method
-//	 * execution.
-//	 */
-//	public void afterAdvice() {
-//		LOG.trace("Exit: ");
-//	}
-//
-//	/**
-//	 * This is the method which I would like to execute when any method returns.
-//	 */
-//	public void afterReturningAdvice(Object retVal) {
-//		LOG.trace("Exit: returning: " + retVal.toString());
-//	}
-//
-//	/**
-//	 * This is the method which I would like to execute if there is an exception
-//	 * raised.
-//	 */
-//	public void AfterThrowingAdvice(IllegalArgumentException ex) {
-//		LOG.error("Exception caught: " + ex.toString());
-//	}
 }
