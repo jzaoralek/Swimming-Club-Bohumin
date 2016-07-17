@@ -16,7 +16,11 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 @Repository
 public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseApplicationDao {
 
-	private static final String INSERT = "INSERT INTO course_application (uuid, year_from, year_to) values (:UUID,:YEAR_FROM,:YEAR_TO)";
+	private static final String UUID_PARAM = "UUID";
+	private static final String YEAR_FROM_PARAM = "YEAR_FROM";
+	private static final String YEAR_TO_PARAM = "YEAR_TO";
+
+	private static final String INSERT = "INSERT INTO course_application (uuid, year_from, year_to) values (:"+UUID_PARAM+",:"+YEAR_FROM_PARAM+",:"+YEAR_TO_PARAM+")";
 
 	@Autowired
 	public CourseApplicationDaoImpl(DataSource ds) {
@@ -26,9 +30,9 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	@Override
 	public void insert(CourseApplication courseApplication) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("UUID", courseApplication.getUuid().toString());
-		paramMap.addValue("YEAR_FROM", courseApplication.getYearFrom());
-		paramMap.addValue("YEAR_TO", courseApplication.getYearTo());
+		paramMap.addValue(UUID_PARAM, courseApplication.getUuid().toString());
+		paramMap.addValue(YEAR_FROM_PARAM, courseApplication.getYearFrom());
+		paramMap.addValue(YEAR_TO_PARAM, courseApplication.getYearTo());
 
 		namedJdbcTemplate.update(INSERT, paramMap);
 	}
