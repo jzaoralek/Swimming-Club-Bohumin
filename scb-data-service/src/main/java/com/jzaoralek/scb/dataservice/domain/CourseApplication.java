@@ -1,0 +1,52 @@
+package com.jzaoralek.scb.dataservice.domain;
+
+import java.util.UUID;
+
+public class CourseApplication implements IdentEntity {
+
+	private UUID uuid;
+	private int yearFrom;
+	private int yearTo;
+	private CourseParticipant courseParticipant;
+	private ScbUser courseParticRepresentative;
+
+	@Override
+	public UUID getUuid() {
+		return uuid;
+	}
+	@Override
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
+	public int getYearFrom() {
+		return yearFrom;
+	}
+	public void setYearFrom(int yearFrom) {
+		this.yearFrom = yearFrom;
+	}
+	public int getYearTo() {
+		return yearTo;
+	}
+	public void setYearTo(int yearTo) {
+		this.yearTo = yearTo;
+	}
+	public CourseParticipant getCourseParticipant() {
+		return courseParticipant;
+	}
+	public void setCourseParticipant(CourseParticipant courseParticipant) {
+		this.courseParticipant = courseParticipant;
+	}
+	public ScbUser getCourseParticRepresentative() {
+		return courseParticRepresentative;
+	}
+	public void setCourseParticRepresentative(ScbUser courseParticRepresentative) {
+		this.courseParticRepresentative = courseParticRepresentative;
+	}
+
+	@Override
+	public String toString() {
+		return "CourseApplication [uuid=" + uuid + ", yearFrom=" + yearFrom + ", yearTo=" + yearTo
+				+ ", courseParticipant=" + courseParticipant + ", courseParticRepresentative="
+				+ courseParticRepresentative + "]";
+	}
+}

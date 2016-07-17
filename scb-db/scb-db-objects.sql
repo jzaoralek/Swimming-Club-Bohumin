@@ -8,13 +8,14 @@ DROP TABLE course_course_participant;
 DROP TABLE lesson;
 
 CREATE TABLE contact(
-	uuid char(16),
+	uuid varchar(36),
 	firstname VARCHAR(100) NOT NULL,
 	surname VARCHAR(100) NOT NULL,
 	street VARCHAR(240),
-	land_registry_number SMALLINT,
+	land_registry_number INT,
+  house_number SMALLINT,
 	city VARCHAR(240),
-	zip_code SMALLINT,
+	zip_code VARCHAR(32),
 	email1 VARCHAR(100),
 	email2 VARCHAR(100),
 	phone1 VARCHAR(14),
@@ -23,13 +24,15 @@ CREATE TABLE contact(
 );
 
 CREATE TABLE course_participant(
-	uuid char(16),
+	uuid varchar(36),
+  birthdate DATE,
+  personal_number varchar(10),
 	contact_uuid char(16) REFERENCES contact(uuid),
 	PRIMARY KEY (uuid)
 );
 
 CREATE TABLE user(
-	uuid char(16),
+	uuid varchar(36),
 	firstname VARCHAR(100) NOT NULL,
 	password VARCHAR(100) NOT NULL,
 	password_generated ENUM('0','1') NOT NULL,
@@ -39,7 +42,7 @@ CREATE TABLE user(
 );
 
 CREATE TABLE course_application(
-	uuid char(16),
+	uuid varchar(36),
 	year_from YEAR NOT NULL,
 	year_to YEAR NOT NULL,
 	course_participant_uuid char(16) REFERENCES course_participant(uuid),
@@ -48,7 +51,7 @@ CREATE TABLE course_application(
 );
 
 CREATE TABLE result(
-	uuid char(16),
+	uuid varchar(36),
 	result_time time NOT NULL,
 	result_date date NOT NULL,
 	style ENUM('VOLNY_STYL','PRSA','ZNAK','MOTYL') NOT NULL,
@@ -58,7 +61,7 @@ CREATE TABLE result(
 );
 
 CREATE TABLE course(
-	uuid char(16),
+	uuid varchar(36),
 	name VARCHAR(100) NOT NULL,
 	description VARCHAR(240),
 	year_from YEAR,
@@ -67,14 +70,14 @@ CREATE TABLE course(
 );
 
 CREATE TABLE course_course_participant(
-	uuid char(16),
+	uuid varchar(36),
 	course_participant_uuid char(16) REFERENCES course_participant(uuid),
 	course_uuid char(16) REFERENCES course(uuid),
 	PRIMARY KEY (uuid)
 );
 
 CREATE TABLE lesson(
-	uuid char(16),
+	uuid varchar(36),
 	time_from time NOT NULL,
 	time_to time NOT NULL,
 	day_of_week ENUM('SUNDAY','MONDAY','TUESDAY','WENDSDAY','THURSDAY','FRIDAY','SATURDAY'),
