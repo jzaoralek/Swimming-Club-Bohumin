@@ -19,8 +19,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	private static final String UUID_PARAM = "UUID";
 	private static final String YEAR_FROM_PARAM = "YEAR_FROM";
 	private static final String YEAR_TO_PARAM = "YEAR_TO";
+	private static final String MODIF_AT = "MODIF_AT";
+	private static final String MODIF_BY = "MODIF_BY";
 
-	private static final String INSERT = "INSERT INTO course_application (uuid, year_from, year_to) values (:"+UUID_PARAM+",:"+YEAR_FROM_PARAM+",:"+YEAR_TO_PARAM+")";
+	private static final String INSERT = "INSERT INTO course_application (uuid, year_from, year_to, modif_at, modif_by) values (:"+UUID_PARAM+",:"+YEAR_FROM_PARAM+",:"+YEAR_TO_PARAM+",:"+MODIF_AT+",:"+MODIF_BY+")";
 
 	@Autowired
 	public CourseApplicationDaoImpl(DataSource ds) {
@@ -33,6 +35,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		paramMap.addValue(UUID_PARAM, courseApplication.getUuid().toString());
 		paramMap.addValue(YEAR_FROM_PARAM, courseApplication.getYearFrom());
 		paramMap.addValue(YEAR_TO_PARAM, courseApplication.getYearTo());
+		paramMap.addValue(MODIF_AT, courseApplication.getModifAt());
+		paramMap.addValue(MODIF_BY, courseApplication.getModifBy());
 
 		namedJdbcTemplate.update(INSERT, paramMap);
 	}

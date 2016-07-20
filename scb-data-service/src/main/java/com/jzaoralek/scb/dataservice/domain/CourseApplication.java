@@ -1,10 +1,13 @@
 package com.jzaoralek.scb.dataservice.domain;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class CourseApplication implements IdentEntity {
 
 	private UUID uuid;
+	private String modifBy;
+	private Date modifAt;
 	private int yearFrom;
 	private int yearTo;
 	private CourseParticipant courseParticipant;
@@ -17,6 +20,22 @@ public class CourseApplication implements IdentEntity {
 	@Override
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
+	}
+	@Override
+	public String getModifBy() {
+		return modifBy;
+	}
+	@Override
+	public void setModifBy(String modifBy) {
+		this.modifBy = modifBy;
+	}
+	@Override
+	public Date getModifAt() {
+		return modifAt;
+	}
+	@Override
+	public void setModifAt(Date modifAt) {
+		this.modifAt = modifAt;
 	}
 	public int getYearFrom() {
 		return yearFrom;
@@ -45,8 +64,8 @@ public class CourseApplication implements IdentEntity {
 
 	@Override
 	public String toString() {
-		return "CourseApplication [uuid=" + uuid + ", yearFrom=" + yearFrom + ", yearTo=" + yearTo
-				+ ", courseParticipant=" + courseParticipant + ", courseParticRepresentative="
-				+ courseParticRepresentative + "]";
+		return "CourseApplication [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", yearFrom="
+				+ yearFrom + ", yearTo=" + yearTo + ", courseParticipant=" + courseParticipant
+				+ ", courseParticRepresentative=" + courseParticRepresentative + "]";
 	}
 }

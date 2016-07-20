@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
 import com.jzaoralek.scb.dataservice.domain.Contact;
@@ -12,21 +13,24 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
+import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 
 @Service
-public class CourseApplicationServiceImpl implements CourseApplicationService {
+public class CourseApplicationServiceImpl extends BaseAbstractService implements CourseApplicationService {
 
 	@Autowired
 	private CourseApplicationDao courseApplicationDao;
 
 	@Override
+	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public List<CourseApplication> getAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public CourseApplication getByUuid(UUID uuid) {
 		CourseApplication ret = new CourseApplication();
 
@@ -67,6 +71,7 @@ public class CourseApplicationServiceImpl implements CourseApplicationService {
 	}
 
 	@Override
+	@Transactional(rollbackFor=Throwable.class)
 	public CourseApplication store(CourseApplication courseApplication) {
 		if (courseApplication == null) {
 			throw new IllegalArgumentException("courseApplication is null");
@@ -80,7 +85,7 @@ public class CourseApplicationServiceImpl implements CourseApplicationService {
 			// kontakt zastupce
 			// zastupce
 			// prihlaska
-			courseApplication.setUuid(UUID.randomUUID());
+			fillIdentEntity(courseApplication, null);
 			courseApplication.setYearTo(courseApplication.getYearFrom() + 1);
 			courseApplicationDao.insert(courseApplication);
 		} else {
@@ -91,6 +96,7 @@ public class CourseApplicationServiceImpl implements CourseApplicationService {
 	}
 
 	@Override
+	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public void delete(UUID uuid) {
 		// TODO Auto-generated method stub
 

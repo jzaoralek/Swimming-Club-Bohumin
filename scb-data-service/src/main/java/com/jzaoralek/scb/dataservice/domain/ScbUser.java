@@ -1,19 +1,39 @@
 package com.jzaoralek.scb.dataservice.domain;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class ScbUser implements IdentEntity {
 
 	private UUID uuid;
+	private String modifBy;
+	private Date modifAt;
 	private String firstname;
 	private String lastname;
 	private String password;
 	private boolean passwordGenerated;
 	private ScbUserRole role;
 	private Contact contact;
-	
+
+	@Override
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
+	}
+	@Override
+	public String getModifBy() {
+		return modifBy;
+	}
+	@Override
+	public void setModifBy(String modifBy) {
+		this.modifBy = modifBy;
+	}
+	@Override
+	public Date getModifAt() {
+		return modifAt;
+	}
+	@Override
+	public void setModifAt(Date modifAt) {
+		this.modifAt = modifAt;
 	}
 	public String getFirstname() {
 		return firstname;
@@ -51,14 +71,15 @@ public class ScbUser implements IdentEntity {
 	public void setContact(Contact contact) {
 		this.contact = contact;
 	}
+	@Override
 	public UUID getUuid() {
 		return uuid;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "ScbUser [uuid=" + uuid + ", firstname=" + firstname + ", lastname=" + lastname + ", password="
-				+ password + ", passwordGenerated=" + passwordGenerated + ", role=" + role + ", contact=" + contact
-				+ "]";
+		return "ScbUser [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", firstname=" + firstname
+				+ ", lastname=" + lastname + ", password=" + password + ", passwordGenerated=" + passwordGenerated
+				+ ", role=" + role + ", contact=" + contact + "]";
 	}
 }

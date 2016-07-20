@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.domain;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -9,6 +10,8 @@ import java.util.UUID;
 public class Contact implements IdentEntity {
 
 	private UUID uuid;
+	private String modifBy;
+	private Date modifAt;
 	private String firstname;
 	private String surname;
 	private String street;
@@ -20,12 +23,30 @@ public class Contact implements IdentEntity {
 	private String email2;
 	private String phone1;
 	private String phone2;
-	
+
+	@Override
 	public UUID getUuid() {
 		return uuid;
 	}
+	@Override
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
+	}
+	@Override
+	public String getModifBy() {
+		return modifBy;
+	}
+	@Override
+	public void setModifBy(String modifBy) {
+		this.modifBy = modifBy;
+	}
+	@Override
+	public Date getModifAt() {
+		return modifAt;
+	}
+	@Override
+	public void setModifAt(Date modifAt) {
+		this.modifAt = modifAt;
 	}
 	public String getFirstname() {
 		return firstname;
@@ -93,12 +114,12 @@ public class Contact implements IdentEntity {
 	public void setPhone2(String phone2) {
 		this.phone2 = phone2;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Contact [uuid=" + uuid + ", firstname=" + firstname + ", surname=" + surname + ", street=" + street
-				+ ", landrRegistryNumber=" + landRegistryNumber + ", houseNumber=" + houseNumber + ", city=" + city
-				+ ", zipCode=" + zipCode + ", email1=" + email1 + ", email2=" + email2 + ", phone1=" + phone1
-				+ ", phone2=" + phone2 + "]";
+		return "Contact [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", firstname=" + firstname
+				+ ", surname=" + surname + ", street=" + street + ", landRegistryNumber=" + landRegistryNumber
+				+ ", houseNumber=" + houseNumber + ", city=" + city + ", zipCode=" + zipCode + ", email1=" + email1
+				+ ", email2=" + email2 + ", phone1=" + phone1 + ", phone2=" + phone2 + "]";
 	}
 }

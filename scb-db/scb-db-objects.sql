@@ -20,6 +20,8 @@ CREATE TABLE contact(
 	email2 VARCHAR(100),
 	phone1 VARCHAR(14),
 	phone2 VARCHAR(14),
+	modif_at DATE NOT NULL,
+	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
 
@@ -28,6 +30,8 @@ CREATE TABLE course_participant(
   birthdate DATE,
   personal_number varchar(10),
 	contact_uuid char(16) REFERENCES contact(uuid),
+	modif_at DATE NOT NULL,
+	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
 
@@ -38,6 +42,8 @@ CREATE TABLE user(
 	password_generated ENUM('0','1') NOT NULL,
 	role ENUM('USER','ADMIN') NOT NULL,
 	contact_uuid char(16) REFERENCES contact(uuid),
+	modif_at DATE NOT NULL,
+	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
 
@@ -47,6 +53,8 @@ CREATE TABLE course_application(
 	year_to YEAR NOT NULL,
 	course_participant_uuid char(16) REFERENCES course_participant(uuid),
 	user_uuid char(16) REFERENCES user(uuid),
+	modif_at DATE NOT NULL,
+	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
 
@@ -57,6 +65,8 @@ CREATE TABLE result(
 	style ENUM('VOLNY_STYL','PRSA','ZNAK','MOTYL') NOT NULL,
 	distance MEDIUMINT NOT NULL,
 	course_participant_uuid char(16) REFERENCES course_participant(uuid),
+	modif_at DATE NOT NULL,
+	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
 
@@ -66,6 +76,8 @@ CREATE TABLE course(
 	description VARCHAR(240),
 	year_from YEAR,
 	year_to YEAR,
+	modif_at DATE NOT NULL,
+	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
 
@@ -82,5 +94,7 @@ CREATE TABLE lesson(
 	time_to time NOT NULL,
 	day_of_week ENUM('SUNDAY','MONDAY','TUESDAY','WENDSDAY','THURSDAY','FRIDAY','SATURDAY'),
 	course_uuid char(16) REFERENCES course(uuid),
+	modif_at DATE NOT NULL,
+	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 )
