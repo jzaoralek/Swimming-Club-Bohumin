@@ -21,6 +21,9 @@
 	<!-- Definition for logging aspect -->
 	<bean id="loggingAspect" class="com.jzaoralek.scb.dataservice.aspect.LoggingAspect" /> 
 	
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="scb-data-service-message"/>
+    </bean>
 	
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 	  <property name="locations">

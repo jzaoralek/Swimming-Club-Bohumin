@@ -8,8 +8,7 @@ public class ScbUser implements IdentEntity {
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
-	private String firstname;
-	private String lastname;
+	private String username;
 	private String password;
 	private boolean passwordGenerated;
 	private ScbUserRole role;
@@ -35,17 +34,11 @@ public class ScbUser implements IdentEntity {
 	public void setModifAt(Date modifAt) {
 		this.modifAt = modifAt;
 	}
-	public String getFirstname() {
-		return firstname;
+	public String getUsername() {
+		return username;
 	}
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
-	public String getLastname() {
-		return lastname;
-	}
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	public String getPassword() {
 		return password;
@@ -78,8 +71,8 @@ public class ScbUser implements IdentEntity {
 
 	@Override
 	public String toString() {
-		return "ScbUser [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", firstname=" + firstname
-				+ ", lastname=" + lastname + ", password=" + password + ", passwordGenerated=" + passwordGenerated
-				+ ", role=" + role + ", contact=" + contact + "]";
+		return "ScbUser [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", username=" + username
+				+ ", password=" + password + ", passwordGenerated=" + passwordGenerated + ", role=" + role
+				+ ", contact=" + contact + "]";
 	}
 }

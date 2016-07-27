@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import com.jzaoralek.scb.dataservice.exception.ApiExceptionJson;
+import com.jzaoralek.scb.dataservice.exception.ApiExceptionJson.ApiExceptionJsonType;
+import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 
 public abstract class AbstractScbDataServiceController {
 
@@ -18,10 +20,10 @@ public abstract class AbstractScbDataServiceController {
 
 	@Autowired
     private HttpServletResponse response;
-	
+
 	/**
      * Pokud metoda kontroleru vyhodí výjimku, kontrolu převezme tato metoda
-     * 
+     *
      * Aplikuje se na všechny kontrolery dědící z této třídy
      *
      * @param exception
@@ -29,9 +31,10 @@ public abstract class AbstractScbDataServiceController {
      */
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public ApiExceptionJson handleAppValidationException(Exception exception) {
+    public ApiExceptionJson handleException(Exception exception) {
     	LOG.error("Exception caught in controller", exception);
     	ApiExceptionJson ret = new ApiExceptionJson();
+    	ret.setType(ApiExceptionJsonType.RUNTIME);
     	if (exception instanceof HttpStatusCodeException) {
     		HttpStatusCodeException ex = (HttpStatusCodeException)exception;
     		ret.setCode(ex.getStatusCode().toString());
@@ -44,6 +47,17 @@ public abstract class AbstractScbDataServiceController {
     		ret.setDescription(exception.getMessage());
     		response.setStatus(Integer.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.toString()));
     	}
+    	return ret;
+    }
+
+    @ExceptionHandler(ScbValidationException.class)
+    @ResponseBody
+    public ApiExceptionJson handleException(ScbValidationException exception) {
+    	LOG.error("Exception caught in controller", exception);
+    	ApiExceptionJson ret = new ApiExceptionJson();
+    	ret.setType(ApiExceptionJsonType.VALIDATION);
+    	ret.setDescription(exception.getMessage());
+
     	return ret;
     }
 }
