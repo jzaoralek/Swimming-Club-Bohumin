@@ -9,7 +9,7 @@
 			</vlayout>
 		</north>
 		<center border="none" autoscroll="true" hflex="1" >
-			<div self="@{insert(mainContent)}" vflex="1"></div>
+			<div self="@{insert(mainContent)}" vflex="1" hflex="1" ></div>
 		</center>
 	</borderlayout>
 </zk>

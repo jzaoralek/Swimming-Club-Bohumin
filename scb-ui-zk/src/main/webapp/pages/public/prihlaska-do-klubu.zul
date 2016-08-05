@@ -1,23 +1,21 @@
-<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.menu.dashboard')}"?>
+<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.menu.application')}"?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 
 <zk>
 	<div self="@{define(mainContent)}" hflex="1" >
-		<!--
-		<div sclass="breadcrumb">
+		<div sclass="breadcrumb" visible="false">
 			<span sclass="home-icon z-icon-home"/>
-	    	<a label="Home" href="#"/>
-			<label value="Úvodní stránka"/>
+	    	<a label="${c:l('txt.ui.menu.dashboard')}" href="/"/>
+			<label value="${c:l('txt.ui.menu.application')}"/>
 		</div>
-		-->
 		
 		<hlayout spacing="0">
-		
 			<vbox hflex="1" />
 			
 			<vbox hflex="20" pack="center">
-				<headline label="${c:l('txt.ui.menu.dashboard')}"  menuSelected="menu_dashboard" iconSclass="z-icon-tachometer" />
+				<headline label="${c:l('txt.ui.menu.application')}"
+					menuSelected="menu_applicationToClub" />
 			</vbox>
 			
 			<vbox hflex="1" />
