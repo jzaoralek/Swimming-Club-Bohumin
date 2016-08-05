@@ -1,0 +1,46 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
+
+<div sclass="navbar navbar-ext" 
+	apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">
+	
+	<a id="mobileMenu" 
+		iconSclass="z-icon-bars" 
+		popup="mobileMenuPopup, position=after_start, type=toggle" 
+		sclass="pull-left mobile-menu">
+	</a>
+		
+	<!-- Brand Logo -->
+	<a label="${c:l('txt.ui.organization.name')}" sclass="pull-left navbar-brand" href="/" />
+	
+	<!-- Navbar -->
+	<hlayout sclass="nav-user pull-right" 
+		spacing="0" 
+		apply="org.zkoss.bind.BindComposer" 
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
+		
+		<!-- User menu -->
+		<menubar sclass="user-menu light-blue" visible="@load(vm.isUserLogged())">
+			<menu tooltiptext="John's Avatar" label="@load(vm.loggedUserCompleteName)" image="${c:l('img.loggeduser')}">
+				<menupopup>
+					<menuitem label="Settings" iconSclass="z-icon-cog"/>
+					<menuitem label="Profile" iconSclass="z-icon-user"/>
+					<menuseparator/>
+					<menuitem label="${c:l('txt.Logout')}" iconSclass="z-icon-off" onClick="@command('logoutCmd')" />
+				</menupopup>
+			</menu>
+		</menubar>
+		
+		<a viewModel="@id('menuvm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')" onClick="@command('hrefCmd', href='/pages/login.zul')" 
+			visible="@load(!vm.isUserLogged())">
+			<label value="${c:l('txt.ui.login')}" />
+		</a>
+		
+	</hlayout>
+	
+	<!-- Popups of navbar -->
+	<popup id="mobileMenuPopup" sclass="menu navbarPopup2" width="240px">
+<!-- 		<include src="/pages/common/template/menuMobile.zul"/> -->
+	</popup>
+	
+</div>

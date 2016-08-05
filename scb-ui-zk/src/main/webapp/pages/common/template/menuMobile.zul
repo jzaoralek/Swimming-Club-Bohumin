@@ -1,0 +1,59 @@
+<zk>
+	<div sclass="mobile-menu-popup" apply="com.ness.sdat.web.demo.templates.template1.SidebarComposer">
+		<a label="Hlavní menu" sclass="header"/>
+		
+		<navbar id="navbar" sclass="nav-list" orient="vertical">
+			<navitem label="Dashboard" 
+				iconSclass="z-icon-dashboard" 
+				selected="true" 
+				onClick="@command('hrefCmd', href='/pages/template2/index.zul')"/>
+			
+			<!-- F0002 - Hlavní menu Knihovny -->
+			<nav label="${i18n:getMessage('txt.menu-top.HlavniMenuKnh')}" 
+				iconSclass="z-icon-desktop" >
+					<navitem label="${i18n:getMessage('txt.menu-top.DatoveTypy')}" onClick="@command('hrefCmd', href='/pages/metapopis/knihovna/F0003-datove-typy.zul')" iconSclass="z-icon-angle-double-right" />
+					<navitem label="${i18n:getMessage('txt.menu-top.DomenyDatovychTypu')}" onClick="@command('hrefCmd', href='/pages/metapopis/knihovna/F0004-domeny-datovych-typu.zul')" iconSclass="z-icon-angle-double-right" />
+					<navitem label="${i18n:getMessage('txt.menu-top.Ciselniky')}" onClick="@command('hrefCmd', href='/pages/metapopis/knihovna/F0005-ciselniky.zul')" iconSclass="z-icon-angle-double-right" />
+					<navitem label="${i18n:getMessage('txt.menu-top.HierarchieCiselniku')}" onClick="@command('hrefCmd', href='/pages/metapopis/knihovna/F0006-hierarchie-ciselniku.zul')" iconSclass="z-icon-angle-double-right" />
+					<navitem label="${i18n:getMessage('txt.menu-top.DomenyCiselniku')}" onClick="@command('hrefCmd', href='/pages/metapopis/knihovna/F0007-domenty-ciselniku.zul')" iconSclass="z-icon-angle-double-right" />
+					<navitem label="${i18n:getMessage('txt.menu-top.Prevodniky')}" onClick="@command('hrefCmd', href='/pages/metapopis/knihovna/F0008-prevodniky.zul')" iconSclass="z-icon-angle-double-right" />
+					<navitem label="${i18n:getMessage('txt.menu-top.Parametry')}" onClick="@command('hrefCmd', href='/pages/metapopis/knihovna/F0009-parametry.zul')" iconSclass="z-icon-angle-double-right" />
+					<navitem label="${i18n:getMessage('txt.menu-top.UctoveOsnovy')}" onClick="@command('hrefCmd', href='/pages/metapopis/knihovna/F0010-uctove-osnovy.zul')" iconSclass="z-icon-angle-double-right" />
+					<navitem label="${i18n:getMessage('txt.menu-top.Ukazatele')}" onClick="@command('hrefCmd', href='/pages/metapopis/knihovna/F0011-ukazatele.zul')" iconSclass="z-icon-angle-double-right" />
+			</nav>
+			
+			<nav label="UI Elements" iconSclass="z-icon-desktop">
+				<navitem label="Accordion" onClick="@command('hrefCmd', href='/pages/template2/pages/ui-elements/accordion.zul')" iconSclass="z-icon-angle-double-right" />
+				<navitem label="Alerts" onClick="@command('hrefCmd', href='/pages/template2/pages/ui-elements/alerts.zul')" iconSclass="z-icon-angle-double-right" />
+				<navitem label="Buttons" onClick="@command('hrefCmd', href='/pages/template2/pages/ui-elements/buttons.zul')" iconSclass="z-icon-angle-double-right" />
+				<navitem label="Dropdowns" onClick="@command('hrefCmd', href='/pages/template2/pages/ui-elements/dropdowns.zul')" iconSclass="z-icon-angle-double-right" />
+				<navitem label="Modals" onClick="@command('hrefCmd', href='/pages/template2/pages/ui-elements/modals.zul')" iconSclass="z-icon-angle-double-right" />
+				<navitem label="Tabs" onClick="@command('hrefCmd', href='/pages/template2/pages/ui-elements/tabs.zul')" iconSclass="z-icon-angle-double-right" />
+			</nav>
+			
+			<nav label="Menu levels" iconSclass="z-icon-list">
+				<nav label="Three Level Menu" iconSclass="z-icon-angle-double-right" sclass="grey">
+					<navitem label="Item #1" iconSclass="z-icon-leaf"/>
+					<nav label="4th level" iconSclass="z-icon-pencil">
+						<navitem label="Add Product" iconSclass="z-icon-plus"/>
+						<navitem label="View Products" iconSclass="z-icon-eye"/>
+					</nav>
+				</nav>
+			</nav>
+			
+			<navitem label="Secured pages"  
+				iconSclass="z-icon-lock" 
+				onClick="@command('hrefCmd', href='/pages/SEC/secured-page.zul')"/>
+			
+			<navitem label="Prototype" 
+				iconSclass="z-icon-spinner"
+				onClick="@command('hrefCmd', href='/pages/index.zul')"/>
+				
+			<navitem label="Left menu layout" 
+				iconSclass="z-icon-desktop"
+				onClick="@command('hrefCmd', href='/pages/template/index.zul')"/>
+				
+			
+		</navbar>
+	</div>
+</zk>

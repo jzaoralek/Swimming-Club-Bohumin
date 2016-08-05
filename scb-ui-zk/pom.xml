@@ -9,8 +9,11 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+		<spring-version>4.2.0.RELEASE</spring-version>
+		<spring-security.version>4.0.4.RELEASE</spring-security.version>
 		<application.version>0.0.1-SNAPSHOT</application.version>
 		<zk.version>8.0.1.1</zk.version>
+<!-- 		<zkmaxVersion>8.0.1.1-Eval</zkmaxVersion> -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -22,6 +25,36 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+
+		<!-- Spring security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring-security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring-security.version}</version>
+		</dependency>
+
+		<!-- ZK -->
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus</artifactId>
@@ -68,6 +101,11 @@
 			<artifactId>silvertail</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.zkoss.zk</groupId> -->
+<!-- 			<artifactId>zkmax</artifactId> -->
+<!-- 			<version>${zkmaxVersion}</version> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -117,5 +155,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>

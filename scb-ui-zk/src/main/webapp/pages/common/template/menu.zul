@@ -1,0 +1,54 @@
+<div sclass="main-menu"  
+	apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')" >
+	
+	<hlayout spacing="0">
+	
+	<!--
+	<div sclass="quick-buttons">
+		<div sclass="qb-container" tooltip="quickButtons, position=after_start, delay=100">
+			<button type="button" class="btn-success" />
+			<button type="button" class="btn-info" style="left: -1px;" />
+			<button type="button" class="btn-warning" style="top: 1px;"/>
+			<button type="button" class="btn-danger" style="left: -1px;top: 1px;"/>
+		</div>
+	</div>
+	-->
+	
+	<popup id="quickButtons" sclass="quick-buttons-popup" width="57px">
+		<vlayout spacing="0">
+			<button type="button" class="btn-success" iconSclass="z-icon-signal"/>
+			<button type="button" class="btn-info" iconSclass="z-icon-pencil"/>
+			<button type="button" class="btn-warning" iconSclass="z-icon-group"/>
+			<button type="button" class="btn-danger" iconSclass="z-icon-cogs"/>
+		</vlayout>
+	</popup>
+	
+	<menubar hflex="1" sclass="main-menu-bar" autodrop="true" apply="com.jzaoralek.scb.ui.common.template.MenuComposer" id="menubar">
+		
+		<!-- Dashboard -->
+		<menuitem label="${c:l('txt.ui.menu.dashboard')}" 
+			id="menu_dashboard"
+			iconSclass="z-icon-tachometer" 
+			onClick="@command('hrefCmd', href='/pages/public/dashboard.zul')"/>
+			
+		<!-- Prihlaska -->
+		<menu 
+			label="${c:l('txt.ui.menu.application')}" 
+			id="menu_applicationToClub"
+			iconSclass="z-icon-desktop"
+			onClick=""
+			href="@command('hrefCmd', href='/pages/metapopis/knihovna/F0003-datove-typy.zul')" >
+		</menu>
+			
+	</menubar>
+	
+	<!-- Tooptip for Calender Navitem -->
+	<popup id="calpp" zclass="tooltip" sclass="right tooltip-error cal">
+		<span zclass="tooltip-arrow"/>
+		<label zclass="tooltip-inner" value="Přechod na layout s menu vlevo"/>
+	</popup>
+	
+	</hlayout>
+	
+</div>

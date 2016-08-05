@@ -1,0 +1,12 @@
+<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.menu.dashboard')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+
+<zk>
+	<div self="@{define(mainContent)}" hflex="1" >
+		<headline label="${c:l('txt.ui.menu.dashboard')}"  menuSelected="menu_dashboard" />
+	</div>
+</zk>
+
+
+

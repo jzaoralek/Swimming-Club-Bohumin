@@ -1,0 +1,35 @@
+<!-- <?component name="headline" macroURI="/pages/template/components/page-headline.zul"?> -->
+<?page title="${c:l('txt.ui.organization.name')} - Alerts"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+
+<zk>
+	<div self="@{define(mainContent)}">
+<!-- 		<headline label="Alerts" description="Přehled běžných UI komponent" menuSelected="ui_elems" /> -->
+		
+		<window closable="true" border="normal"	sclass="alert alert-success">
+			<caption iconSclass="z-icon-check">
+				Welcome to
+				<label value="ZK" style="font-weight:bold;color:#69AA46" />
+				<label value="(v7.0)"
+					style="font-weight:bold;font-size:10px;color:#69AA46" />
+				, the lightweight, feature-rich and easy to use admin
+				template.
+			</caption>
+		</window>
+		
+		<window closable="true" border="normal"	sclass="alert alert-danger">
+			<caption iconSclass="z-icon-times">
+				Danger!
+			</caption>
+		</window>
+		
+		<window closable="true" border="normal"	sclass="alert alert-info">
+			<caption iconSclass="z-icon-info">
+				Info message
+			</caption>
+		</window>
+	</div>
+</zk>
+
+
+

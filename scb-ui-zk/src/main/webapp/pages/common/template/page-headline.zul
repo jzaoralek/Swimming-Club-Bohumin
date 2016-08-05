@@ -1,0 +1,13 @@
+<zk>
+	<div sclass="page-header" apply="com.jzaoralek.scb.ui.common.template.PageHeadlineComposer" hflex="1" >
+	
+		<custom-attributes menuId="${arg.menuSelected}"/>
+		
+		  <label value="${arg.label}"/>
+		  <a label="${arg.description}" 
+		  	if="${arg.description != null}"
+		  	iconSclass="z-icon-angle-double-right"
+		  	sclass="subtitle"/>
+	</div>
+
+</zk>

@@ -1,0 +1,60 @@
+<?component name="headline" macroURI="/pages/template/components/page-headline.zul" inline="true"?>
+<?page title="${c:l('txt.Login')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/template2/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+
+<zk>
+	<div self="@{define(mainContent)}" 
+			apply="org.zkoss.bind.BindComposer"
+			viewModel="@id('vm') @init('com.ness.sdat.web.demo.security.view.SecurityVM')"
+			form="@id('fx') @load(vm) @save(vm, before={'loginCmd'})">
+		
+			<headline label="${c:l('txt.Login')}" />
+		
+			<window closable="true" border="normal" sclass="alert alert-danger"
+				visible="@load(vm.loginFailure)">
+				<caption iconSclass="z-icon-times">
+					<label value="${c:l('msg.warn.BadCredentials')}" />
+				</caption>
+			</window>
+		
+			<vbox hflex="min" align="center" xmlns:h="xhtml">
+		
+				<grid hflex="min">
+					<columns>
+						<column hflex="min" align="right" />
+						<column hflex="min" />
+					</columns>
+					<rows>
+						<row>
+							<cell colspan="2">
+								<label
+									value="Přihlašovací údaje: sdat/password" />
+							</cell>
+						</row>
+						<row>
+							<label value="${c:l('txt.Username')}" />
+							<cell>
+								<hlayout>
+									<textbox id="txtUsername" name="username" value="@bind(fx.username)" constraint="no empty" />
+								</hlayout>
+							</cell>
+						</row>
+						<row>
+							<label value="${c:l('txt.Password')}" />
+							<cell>
+								<hlayout>
+									<textbox id="txtPassword" type="password" name="password" value="@bind(fx.password)" constraint="no empty"/>
+								</hlayout>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<button label="${c:l('txt.Login')}" onClick="@command('loginCmd')" />
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</vbox>
+	</div>
+</zk>
