@@ -2,6 +2,7 @@ package com.jzaoralek.scb.ui.common.template;
 
 import org.zkoss.bind.Validator;
 
+import com.jzaoralek.scb.ui.common.validator.BirthNumberValidator;
 import com.jzaoralek.scb.ui.common.validator.EmailValidator;
 import com.jzaoralek.scb.ui.common.validator.NotNullObjectValidator;
 import com.jzaoralek.scb.ui.common.validator.NotNullValidator;
@@ -16,6 +17,7 @@ public class Validators {
 	private static final Validator emailValidator = new EmailValidator();
 	private static final NotNullValidator notNullValidator = new NotNullValidator();
 	private static final NotNullObjectValidator notNullObjectValidator = new NotNullObjectValidator();
+	private static final BirthNumberValidator birthNumberValidator = new BirthNumberValidator();
 
 	public static Validator getEmailValidator() {
 		return emailValidator;
@@ -25,5 +27,8 @@ public class Validators {
 	}
 	public static NotNullObjectValidator getNotNullObjectValidator() {
 		return notNullObjectValidator;
+	}
+	public static BirthNumberValidator getBirthnumbervalidator() {
+		return birthNumberValidator;
 	}
 }

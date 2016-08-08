@@ -2,42 +2,37 @@ package com.jzaoralek.scb.ui.common.vm;
 
 import org.zkoss.bind.Validator;
 
+import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.template.Validators;
 
 public class BaseVM {
 
-	private static final String DATE_FORMAT = "dd.MM.yyyy";
-	private static final int FIRSTNAME_MAXLENGTH = 240;
-	private static final int SURNAME_MAXLENGTH = 240;
-	private static final int HEALTH_INSURANCE_MAXLENGTH = 240;
-	private static final int DATE_MAXLENGTH = 10;
-	private static final int BIRTH_NUMBER_MAXLENGTH = 12;
-	private static final int EMAIL_MAXLENGTH = 100;
-	private static final int PHONE_MAXLENGTH = 14;
-
 	public String getDateFormat() {
-		return DATE_FORMAT;
+		return WebConstants.DATE_FORMAT;
 	}
 	public static int getFirstnameMaxlength() {
-		return FIRSTNAME_MAXLENGTH;
+		return WebConstants.FIRSTNAME_MAXLENGTH;
 	}
 	public static int getSurnameMaxlength() {
-		return SURNAME_MAXLENGTH;
+		return WebConstants.SURNAME_MAXLENGTH;
 	}
 	public static int getHealthInsuranceMaxlength() {
-		return HEALTH_INSURANCE_MAXLENGTH;
+		return WebConstants.HEALTH_INSURANCE_MAXLENGTH;
 	}
 	public static int getDateMaxlength() {
-		return DATE_MAXLENGTH;
+		return WebConstants.DATE_MAXLENGTH;
 	}
 	public static int getBirthNumberMaxlength() {
-		return BIRTH_NUMBER_MAXLENGTH;
+		return WebConstants.BIRTH_NUMBER_MAXLENGTH;
 	}
 	public static int getEmailMaxlength() {
-		return EMAIL_MAXLENGTH;
+		return WebConstants.EMAIL_MAXLENGTH;
 	}
 	public static int getPhoneMaxlength() {
-		return PHONE_MAXLENGTH;
+		return WebConstants.PHONE_MAXLENGTH;
+	}
+	public static int getHealthInfoMaxlength() {
+		return WebConstants.HEALTH_INFO_MAXLENGTH;
 	}
 
 	public Validator getEmailValidator() {
@@ -50,5 +45,9 @@ public class BaseVM {
 
 	public Validator getNotNullObjectValidator() {
 		return Validators.getNotNullObjectValidator();
+	}
+
+	public Validator getBirthNumberValidator() {
+		return Validators.getBirthnumbervalidator();
 	}
 }

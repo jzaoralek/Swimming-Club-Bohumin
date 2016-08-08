@@ -16,6 +16,7 @@ public class CourseParticipant implements IdentEntity {
 	private Date birthdate;
 	private String  personalNo;
 	private String healthInsurance;
+	private String healthInfo;
 	private List<Result> resultList;
 
 	public CourseParticipant() {
@@ -76,11 +77,18 @@ public class CourseParticipant implements IdentEntity {
 	public void setHealthInsurance(String healthInsurance) {
 		this.healthInsurance = healthInsurance;
 	}
+	public String getHealthInfo() {
+		return healthInfo;
+	}
+
+	public void setHealthInfo(String healthInfo) {
+		this.healthInfo = healthInfo;
+	}
 
 	@Override
 	public String toString() {
 		return "CourseParticipant [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", contact="
 				+ contact + ", birthdate=" + birthdate + ", personalNo=" + personalNo + ", healthInsurance="
-				+ healthInsurance + ", resultList=" + resultList + "]";
+				+ healthInsurance + ", healthInfo=" + healthInfo + ", resultList=" + resultList + "]";
 	}
 }

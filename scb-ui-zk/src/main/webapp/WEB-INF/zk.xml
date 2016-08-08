@@ -38,4 +38,8 @@
 		<theme-uri>/resources/css/fonts.css</theme-uri>
 		<theme-uri>/resources/css/template.css.dsp</theme-uri>
 	</desktop-config>
+	
+	<language-config>
+		<addon-uri>/WEB-INF/lang-addon.xml</addon-uri>
+	</language-config>
 </zk>

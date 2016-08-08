@@ -28,7 +28,12 @@
 			<vbox hflex="1" />
 			
 			<vbox hflex="20" pack="center">
-				content
+				<hbox>
+					info o aplikaci
+				</hbox>
+				<hbox>
+					dlazdice s rychlymi odkazy
+				</hbox>
 			</vbox>
 			
 			<vbox hflex="1" />

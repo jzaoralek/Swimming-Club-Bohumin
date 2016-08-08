@@ -17,6 +17,8 @@ public class CourseApplicationVM extends BaseVM {
 	private CourseApplication application;
 	private boolean healthInfoAgreement;
 	private boolean personalInfoProcessAgreement;
+	private boolean editMode;
+	private String confirmText;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -24,6 +26,7 @@ public class CourseApplicationVM extends BaseVM {
 	@Init
 	public void init() {
 		initItem();
+		this.editMode = true;
 	}
 
 	@NotifyChange("*")
@@ -36,8 +39,10 @@ public class CourseApplicationVM extends BaseVM {
 
 		try {
 			courseApplicationService.store(application);
-			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationSend"));
+			//WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationSend"));
 			initItem();
+			this.editMode = false;
+			this.confirmText = Labels.getLabel("msg.ui.info.applicationSend");
 		} catch (ScbValidationException e) {
 			WebUtils.showNotificationError(e.getMessage());
 		}
@@ -58,15 +63,19 @@ public class CourseApplicationVM extends BaseVM {
 	public boolean isHealthInfoAgreement() {
 		return healthInfoAgreement;
 	}
-
 	public void setHealthInfoAgreement(boolean healthInfoAgreement) {
 		this.healthInfoAgreement = healthInfoAgreement;
 	}
-
 	public boolean isPersonalInfoProcessAgreement() {
 		return personalInfoProcessAgreement;
 	}
 	public void setPersonalInfoProcessAgreement(boolean personalInfoProcessAgreement) {
 		this.personalInfoProcessAgreement = personalInfoProcessAgreement;
+	}
+	public boolean isEditMode() {
+		return editMode;
+	}
+	public String getConfirmText() {
+		return confirmText;
 	}
 }
