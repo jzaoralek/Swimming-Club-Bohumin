@@ -15,6 +15,7 @@
 		<zk.version>8.0.1.1</zk.version>
 <!-- 		<zkmaxVersion>8.0.1.1-Eval</zkmaxVersion> -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<scb.version>1.0-SNAPSHOT</scb.version>
 	</properties>
 
 	<dependencies>
@@ -23,6 +24,13 @@
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<!-- SCB -->
+		<dependency>
+			<groupId>com.jzaoralek.scb</groupId>
+			<artifactId>scb-data-service</artifactId>
+			<version>${scb.version}</version>
 		</dependency>
 
 		<!-- Spring -->

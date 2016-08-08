@@ -15,7 +15,12 @@ public class CourseParticipant implements IdentEntity {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", timezone = "CET")
 	private Date birthdate;
 	private String  personalNo;
+	private String healthInsurance;
 	private List<Result> resultList;
+
+	public CourseParticipant() {
+		this.contact = new Contact();
+	}
 
 	@Override
 	public UUID getUuid() {
@@ -65,11 +70,17 @@ public class CourseParticipant implements IdentEntity {
 	public void setPersonalNo(String personalNo) {
 		this.personalNo = personalNo;
 	}
+	public String getHealthInsurance() {
+		return healthInsurance;
+	}
+	public void setHealthInsurance(String healthInsurance) {
+		this.healthInsurance = healthInsurance;
+	}
 
 	@Override
 	public String toString() {
 		return "CourseParticipant [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", contact="
-				+ contact + ", birthdate=" + birthdate + ", personalNo=" + personalNo + ", resultList=" + resultList
-				+ "]";
+				+ contact + ", birthdate=" + birthdate + ", personalNo=" + personalNo + ", healthInsurance="
+				+ healthInsurance + ", resultList=" + resultList + "]";
 	}
 }

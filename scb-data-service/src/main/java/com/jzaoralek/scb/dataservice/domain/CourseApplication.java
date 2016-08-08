@@ -13,6 +13,11 @@ public class CourseApplication implements IdentEntity {
 	private CourseParticipant courseParticipant;
 	private ScbUser courseParticRepresentative;
 
+	public CourseApplication() {
+		this.courseParticipant = new CourseParticipant();
+		this.courseParticRepresentative = new ScbUser();
+	}
+
 	@Override
 	public UUID getUuid() {
 		return uuid;

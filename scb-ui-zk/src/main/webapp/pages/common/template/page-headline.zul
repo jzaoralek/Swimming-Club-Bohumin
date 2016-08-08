@@ -1,5 +1,5 @@
 <zk>
-	<hbox sclass="page-header" apply="com.jzaoralek.scb.ui.common.template.PageHeadlineComposer" pack="center" style="margin-top: 20px;">
+	<hbox sclass="page-header" apply="com.jzaoralek.scb.ui.common.template.PageHeadlineComposer" pack="center" style="margin-top: 30px;">
 		<custom-attributes menuId="${arg.menuSelected}"/>
 		  <span sclass="${arg.sclass}"/>
 		  <label value="${arg.label}" />

@@ -20,7 +20,7 @@ import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 
-@Service
+@Service("courseApplicationService")
 public class CourseApplicationServiceImpl extends BaseAbstractService implements CourseApplicationService {
 
 	@Autowired
@@ -130,6 +130,13 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		fillIdentEntity(courseParticRepresentative, null);
 		if (insert) {
 			// insert
+
+			//TODO: situace kdy uzivatel uz existuje, nacist podle username, generovani hesla
+			courseParticRepresentative.setUsername(courseParticRepresentative.getContact().getEmail1());
+			courseParticRepresentative.setPassword("password");
+			courseParticRepresentative.setPasswordGenerated(true);
+			courseParticRepresentative.setRole(ScbUserRole.USER);
+
 			scbUserDao.insert(courseParticRepresentative);
 		} else {
 			// update

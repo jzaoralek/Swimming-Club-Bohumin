@@ -4,10 +4,27 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="SdatPtt" version="3.0" metadata-complete="true">
 
-  <display-name>scb-ui-zk</display-name>
-  
-  <listener>
+	<display-name>scb-ui-zk</display-name>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			classpath:scb-data-service-context.xml
+			classpath:scb-ui-zk-context.xml
+		</param-value>
+	</context-param>
+
+	<listener>
 		<listener-class>org.zkoss.zk.ui.http.HttpSessionListener</listener-class>
+	</listener>
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
 	
 	<servlet>
@@ -28,13 +45,13 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet>
 		<description>The asynchronous update engine for ZK</description>
 		<servlet-name>auEngine</servlet-name>
 		<servlet-class>org.zkoss.zk.au.http.DHtmlUpdateServlet</servlet-class>
 	</servlet>
-	
+
 	<servlet>
 		<servlet-name>dspLoader</servlet-name>
 		<servlet-class>org.zkoss.web.servlet.dsp.InterpreterServlet</servlet-class>
@@ -43,12 +60,12 @@
 			<param-value>true</param-value>
 		</init-param>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>dspLoader</servlet-name>
 		<url-pattern>*.dsp</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>zkLoader</servlet-name>
 		<url-pattern>*.zul</url-pattern>
@@ -61,9 +78,9 @@
 		<servlet-name>auEngine</servlet-name>
 		<url-pattern>/zkau/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<welcome-file-list>
 		<welcome-file>/pages/index.zul</welcome-file>
 	</welcome-file-list>
-	
+
 </web-app>

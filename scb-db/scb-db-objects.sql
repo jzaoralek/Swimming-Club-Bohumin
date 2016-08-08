@@ -28,7 +28,8 @@ CREATE TABLE contact(
 CREATE TABLE course_participant(
 	uuid varchar(36),
   birthdate DATE,
-  personal_number varchar(10),
+  personal_number varchar(12),
+	health_insurance varchar(240),
 	contact_uuid varchar(36) REFERENCES contact(uuid),
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,

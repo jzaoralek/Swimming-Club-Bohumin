@@ -468,3 +468,11 @@ body {
 	margin-right: 20px;
 }
 
+.vbox-content {
+	margin-top: 20px;
+}
+
+.grid-row {
+	padding: 10px; 
+	border: none;
+}

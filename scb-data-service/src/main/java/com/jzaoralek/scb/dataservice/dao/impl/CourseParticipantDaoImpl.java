@@ -18,11 +18,12 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	private static final String BIRTHDATE_PARAM = "birthdate";
 	private static final String PERSONAL_NUMBER_PARAM = "personal_number";
+	private static final String HEALTH_INSURANCE = "health_insurance";
 	private static final String CONTACT_PARAM = "contact_uuid";
 
 	private static final String INSERT = "INSERT INTO course_participant " +
-			"(uuid, birthdate, personal_number, contact_uuid, modif_at, modif_by) " +
-			" VALUES (:"+UUID_PARAM+", :"+BIRTHDATE_PARAM+", :"+PERSONAL_NUMBER_PARAM+", :"+CONTACT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
+			"(uuid, birthdate, personal_number, health_insurance, contact_uuid, modif_at, modif_by) " +
+			" VALUES (:"+UUID_PARAM+", :"+BIRTHDATE_PARAM+", :"+PERSONAL_NUMBER_PARAM+", :"+HEALTH_INSURANCE+", :"+CONTACT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
 
 	@Autowired
 	public CourseParticipantDaoImpl(DataSource ds) {
@@ -47,6 +48,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		fillIdentEntity(courseParticipant, paramMap);
 		paramMap.addValue(BIRTHDATE_PARAM, courseParticipant.getBirthdate());
 		paramMap.addValue(PERSONAL_NUMBER_PARAM, courseParticipant.getPersonalNo());
+		paramMap.addValue(HEALTH_INSURANCE, courseParticipant.getHealthInsurance());
 		paramMap.addValue(CONTACT_PARAM, courseParticipant.getContact() != null ? courseParticipant.getContact().getUuid().toString() : null);
 
 		namedJdbcTemplate.update(INSERT, paramMap);

@@ -14,6 +14,10 @@ public class ScbUser implements IdentEntity {
 	private ScbUserRole role;
 	private Contact contact;
 
+	public ScbUser() {
+		this.contact = new Contact();
+	}
+
 	@Override
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
