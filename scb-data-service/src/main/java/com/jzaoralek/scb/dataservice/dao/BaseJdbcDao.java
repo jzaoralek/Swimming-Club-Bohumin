@@ -1,5 +1,9 @@
 package com.jzaoralek.scb.dataservice.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
+
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,5 +30,11 @@ public abstract class BaseJdbcDao {
 		paramMap.addValue(UUID_PARAM, identEntity.getUuid().toString());
 		paramMap.addValue(MODIF_AT_PARAM, identEntity.getModifAt());
 		paramMap.addValue(MODIF_BY_PARAM, identEntity.getModifBy());
+	}
+
+	protected static void fetchIdentEntity(ResultSet rs, IdentEntity identEntity) throws SQLException {
+		identEntity.setUuid(UUID.fromString(rs.getString(UUID_PARAM)));
+		identEntity.setModifAt(rs.getTimestamp(MODIF_AT_PARAM));
+		identEntity.setModifBy(rs.getString(MODIF_BY_PARAM));
 	}
 }

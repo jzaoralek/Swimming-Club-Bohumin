@@ -38,8 +38,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public List<CourseApplication> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return courseApplicationDao.getAll();
 	}
 
 	@Override

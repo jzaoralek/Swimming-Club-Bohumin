@@ -53,7 +53,7 @@ CREATE TABLE course_application(
 	uuid varchar(36),
 	year_from YEAR NOT NULL,
 	year_to YEAR NOT NULL,
-	course_participant_uuid char(16) REFERENCES course_participant(uuid),
+	course_participant_uuid varchar(36) REFERENCES course_participant(uuid),
 	user_uuid varchar(36) REFERENCES user(uuid),
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE course(
 
 CREATE TABLE course_course_participant(
 	uuid varchar(36),
-	course_participant_uuid char(16) REFERENCES course_participant(uuid),
+	course_participant_uuid varchar(36) REFERENCES course_participant(uuid),
 	course_uuid varchar(36) REFERENCES course(uuid),
 	PRIMARY KEY (uuid)
 );
@@ -95,8 +95,12 @@ CREATE TABLE lesson(
 	time_from time NOT NULL,
 	time_to time NOT NULL,
 	day_of_week ENUM('SUNDAY','MONDAY','TUESDAY','WENDSDAY','THURSDAY','FRIDAY','SATURDAY'),
-	course_uuid char(16) REFERENCES course(uuid),
+	course_uuid varchar(36) REFERENCES course(uuid),
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 )
+
+select * from course_participant
+
+select * from course_application

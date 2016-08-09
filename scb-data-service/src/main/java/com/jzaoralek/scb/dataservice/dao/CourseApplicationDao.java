@@ -7,7 +7,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 
 public interface CourseApplicationDao {
 
-	List<CourseApplication> getAll(boolean deep);
+	List<CourseApplication> getAll();
 	CourseApplication getByUuid(UUID uuid, boolean deep);
 	void insert(CourseApplication courseApplication);
 	void update(CourseApplication courseApplication);
