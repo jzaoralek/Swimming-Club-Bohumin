@@ -1,9 +1,11 @@
 package com.jzaoralek.scb.ui.common.vm;
 
+import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
 
 import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.template.Validators;
+import com.jzaoralek.scb.ui.common.converter.Converters;
+import com.jzaoralek.scb.ui.common.validator.Validators;
 
 public class BaseVM {
 
@@ -49,5 +51,9 @@ public class BaseVM {
 
 	public Validator getBirthNumberValidator() {
 		return Validators.getBirthnumbervalidator();
+	}
+
+	public Converter getDateConverter() {
+		return Converters.getDateconverter();
 	}
 }

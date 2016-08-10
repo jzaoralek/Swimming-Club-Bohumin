@@ -6,7 +6,7 @@
 <zk>
 	<div self="@{define(mainContent)}" 
 			apply="org.zkoss.bind.BindComposer"
-			viewModel="@id('vm') @init('com.ness.sdat.web.demo.security.view.SecurityVM')"
+			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.demo.security.view.SecurityVM')"
 			form="@id('fx') @load(vm) @save(vm, before={'loginCmd'})">
 		
 			<headline label="${c:l('txt.Login')}" />

@@ -1,18 +1,15 @@
-package com.jzaoralek.scb.ui.common.template;
+package com.jzaoralek.scb.ui.common.validator;
 
 import org.zkoss.bind.Validator;
-
-import com.jzaoralek.scb.ui.common.validator.BirthNumberValidator;
-import com.jzaoralek.scb.ui.common.validator.EmailValidator;
-import com.jzaoralek.scb.ui.common.validator.NotNullObjectValidator;
-import com.jzaoralek.scb.ui.common.validator.NotNullValidator;
 
 /**
  * Provide validators to VM classes. Prevent instance in viewModels.
  * @author P3400343
  *
  */
-public class Validators {
+public final class Validators {
+
+	private Validators() {}
 
 	private static final Validator emailValidator = new EmailValidator();
 	private static final NotNullValidator notNullValidator = new NotNullValidator();

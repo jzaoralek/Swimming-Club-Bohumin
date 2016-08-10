@@ -14,4 +14,6 @@ public final class WebConstants {
 	public static final int PHONE_MAXLENGTH = 14;
 	public static final int HEALTH_INFO_MAXLENGTH = 524;
 
+	public static final String WEB_DATE_PATTERN = "dd.MM.yyyy";
+
 }
