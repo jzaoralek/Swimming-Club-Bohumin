@@ -1,11 +1,15 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
@@ -29,10 +33,11 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 	private static final String PHONE2_PARAM = "phone2";
 
 	private static final String INSERT = " INSERT INTO contact " +
-	" (uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, email1, email2, phone1, phone2, modif_at, modif_by) " +
-	" VALUES " +
-	" (:"+UUID_PARAM+", :"+FIRSTNAME_PARAM+", :"+SURNAME_PARAM+", :"+STREET_PARAM+", :"+LAND_REGISTRY_NUMBER_PARAM+", :"+HOUSE_NUMBER_PARAM+", :"+CITY_PARAM+", :"+ZIPCODE_PARAM+", :"+EMAUL1_PARAM+", :"+EMAIL2_PARAM+", :"+PHONE1_PARAM+", :"+PHONE2_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+") ";
-
+		" (uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, email1, email2, phone1, phone2, modif_at, modif_by) " +
+		" VALUES " +
+		" (:"+UUID_PARAM+", :"+FIRSTNAME_PARAM+", :"+SURNAME_PARAM+", :"+STREET_PARAM+", :"+LAND_REGISTRY_NUMBER_PARAM+", :"+HOUSE_NUMBER_PARAM+", :"+CITY_PARAM+", :"+ZIPCODE_PARAM+", :"+EMAUL1_PARAM+", :"+EMAIL2_PARAM+", :"+PHONE1_PARAM+", :"+PHONE2_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+") ";
+	private static final String SELECT_BY_UUID = "SELECT uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, email1, email2, phone1, phone2, modif_at, modif_by from contact WHERE uuid = :" + UUID_PARAM;
+	private static final String DELETE = "DELETE FROM contact where uuid = :" + UUID_PARAM;
 
 	@Autowired
 	public ContactDaoImpl(DataSource ds) {
@@ -47,8 +52,12 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 
 	@Override
 	public Contact getByUuid(UUID uuid) {
-		// TODO Auto-generated method stub
-		return null;
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
+		try {
+			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new ContactRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -79,7 +88,27 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 
 	@Override
 	public void delete(Contact contact) {
-		// TODO Auto-generated method stub
+		namedJdbcTemplate.update(DELETE, new MapSqlParameterSource().addValue(UUID_PARAM, contact.getUuid().toString()));
+	}
 
+	public static final class ContactRowMapper implements RowMapper<Contact> {
+		@Override
+		public Contact mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Contact ret = new Contact();
+			fetchIdentEntity(rs, ret);
+			ret.setCity(rs.getString("city"));
+			ret.setEmail1(rs.getString("email1"));
+			ret.setEmail2(rs.getString("email2"));
+			ret.setFirstname(rs.getString("firstname"));
+			ret.setHouseNumber(rs.getShort("house_number"));
+			ret.setLandRegistryNumber(rs.getInt("land_registry_number"));
+			ret.setPhone1(rs.getString("phone1"));
+			ret.setPhone2(rs.getString("phone2"));
+			ret.setStreet(rs.getString("street"));
+			ret.setZipCode(rs.getString("zip_code"));
+			ret.setSurname(rs.getString("surname"));
+
+			return ret;
+		}
 	}
 }

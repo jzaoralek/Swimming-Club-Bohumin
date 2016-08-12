@@ -8,12 +8,15 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
+import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
+import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
@@ -53,6 +56,14 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					"and ca.user_uuid = usr.uuid " +
 					"and usr.contact_uuid = con_repr.uuid " +
 					"order by ca.modif_at desc ";
+	private static final String SELECT_BY_UUID = "select uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by from course_application where uuid=:" + UUID_PARAM;
+	private static final String DELETE = "DELETE FROM course_application where uuid = :" + UUID_PARAM;
+
+	@Autowired
+	private CourseParticipantDao courseParticipantDao;
+
+	@Autowired
+	private ScbUserDao scbUserDao;
 
 	@Autowired
 	public CourseApplicationDaoImpl(DataSource ds) {
@@ -78,7 +89,9 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	@Override
 	public void delete(CourseApplication courseApplication) {
-		// TODO Auto-generated method stub
+		courseParticipantDao.delete(courseApplication.getCourseParticipant());
+		scbUserDao.delete(courseApplication.getCourseParticRepresentative());
+		namedJdbcTemplate.update(DELETE, new MapSqlParameterSource().addValue(UUID_PARAM, courseApplication.getUuid().toString()));
 	}
 
 	@Override
@@ -88,8 +101,12 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	@Override
 	public CourseApplication getByUuid(UUID uuid, boolean deep) {
-		// TODO Auto-generated method stub
-		return null;
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
+		try {
+			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new CourseApplicationRowMapperDetail(courseParticipantDao, scbUserDao));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	public static final class CourseApplicationRowMapper implements RowMapper<CourseApplication> {
@@ -118,6 +135,37 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticRepresentative.setContact(courseParticRepresentativeContact);
 
 			ret.setCourseParticRepresentative(courseParticRepresentative);
+
+			return ret;
+		}
+	}
+
+	public static final class CourseApplicationRowMapperDetail implements RowMapper<CourseApplication> {
+		private CourseParticipantDao courseParticipantDao;
+		private ScbUserDao scbUserDao;
+
+		public CourseApplicationRowMapperDetail(CourseParticipantDao courseParticipantDao, ScbUserDao scbUserDao) {
+			this.courseParticipantDao = courseParticipantDao;
+			this.scbUserDao = scbUserDao;
+		}
+
+		@Override
+		public CourseApplication mapRow(ResultSet rs, int rowNum) throws SQLException {
+			CourseApplication ret = new CourseApplication();
+			fetchIdentEntity(rs, ret);
+			ret.setYearFrom(rs.getInt("year_from"));
+			ret.setYearTo(rs.getInt("year_to"));
+
+			UUID courseParticipantUuid = rs.getString("course_participant_uuid") != null ? UUID.fromString(rs.getString("course_participant_uuid")) : null;
+			if (courseParticipantUuid != null) {
+				ret.setCourseParticipant(courseParticipantDao.getByUuid(courseParticipantUuid, true));
+			}
+
+			new ScbUser();
+			UUID courseParticipantrepresentativeUuid = rs.getString("user_uuid") != null ? UUID.fromString(rs.getString("user_uuid")) : null;
+			if (courseParticipantrepresentativeUuid != null) {
+				ret.setCourseParticRepresentative(scbUserDao.getByUuid(courseParticipantrepresentativeUuid));
+			}
 
 			return ret;
 		}

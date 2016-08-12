@@ -1,8 +1,11 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,8 @@ import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 
 @Service("courseApplicationService")
 public class CourseApplicationServiceImpl extends BaseAbstractService implements CourseApplicationService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(CourseApplicationServiceImpl.class);
 
 	@Autowired
 	private CourseApplicationDao courseApplicationDao;
@@ -44,41 +49,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public CourseApplication getByUuid(UUID uuid) {
-		CourseApplication ret = new CourseApplication();
-
-		Contact contact = new Contact();
-		contact.setCity("city");
-		contact.setEmail1("email1");
-		contact.setEmail2("email2");
-		contact.setFirstname("firstname");
-		contact.setHouseNumber((short)10);
-		contact.setLandRegistryNumber(1599);
-		contact.setPhone1("phone1");
-		contact.setPhone2("phone2");
-		contact.setStreet("street");
-		contact.setSurname("surname");
-		contact.setUuid(uuid);
-		contact.setZipCode("zipCode");
-
-		CourseParticipant courseParticipant = new CourseParticipant();
-		courseParticipant.setContact(contact);
-		courseParticipant.setUuid(UUID.randomUUID());
-
-		ret.setCourseParticipant(courseParticipant);
-
-		ScbUser user = new ScbUser();
-		user.setContact(contact);
-		user.setUsername("username");
-		user.setPassword("password");
-		user.setPasswordGenerated(false);
-		user.setRole(ScbUserRole.USER);
-		ret.setCourseParticRepresentative(user);
-
-		ret.setUuid(uuid);
-		ret.setYearFrom(2016);
-		ret.setYearTo(2017);
-
-		return ret;
+		return courseApplicationDao.getByUuid(uuid, true);
 	}
 
 	@Override
@@ -111,9 +82,18 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
-	public void delete(UUID uuid) {
-		// TODO Auto-generated method stub
+	public void delete(UUID uuid) throws ScbValidationException {
+		CourseApplication courseApplication = courseApplicationDao.getByUuid(uuid, true);
+		if (courseApplication == null) {
+			LOG.warn("CourseApplication not found, uuid: " + uuid);
+			throw new ScbValidationException(messageSource.getMessage("msg.validation.warn.courseApplication.notExistsInDB", null, Locale.getDefault()));
+		}
 
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Deleting courseApplication: " + courseApplication);
+		}
+
+		courseApplicationDao.delete(courseApplication);
 	}
 
 	private void storeCourseParticRepresentative(ScbUser courseParticRepresentative) {

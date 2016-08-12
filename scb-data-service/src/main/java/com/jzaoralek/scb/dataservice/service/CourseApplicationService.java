@@ -10,5 +10,5 @@ public interface CourseApplicationService {
 	List<CourseApplication> getAll();
 	CourseApplication getByUuid(UUID uuid);
 	CourseApplication store(CourseApplication courseApplication) throws ScbValidationException;
-	void delete(UUID uuid);
+	void delete(UUID uuid) throws ScbValidationException;
 }

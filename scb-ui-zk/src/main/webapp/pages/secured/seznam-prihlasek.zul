@@ -33,6 +33,7 @@
 					style="margin-top: 20px;"
 					mold="paging"
 					pageSize="20"
+					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 					class="listbox" >
 			        <auxhead>
 			            <auxheader class="header" colspan="8" >
@@ -107,7 +108,7 @@
 			         
 			        <template name="model">
 			            <listitem>
-			                <listcell label="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname} " />
+			                <listcell label="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname} ${each.uuid}" />
 			                <listcell label="@load(each.courseParticipant.birthdate) @converter(vm.dateConverter)" />
 			                <listcell label="${each.courseParticipant.personalNo}" />
 			                <listcell label="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" />

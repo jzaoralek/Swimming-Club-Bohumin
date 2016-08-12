@@ -4,7 +4,7 @@
 	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">
 		<menuitem label="Home" onClick="@command('hrefCmd', href='/')" />
 		<menuitem label="${c:l('txt.ui.menu.application')}" onClick="@command('hrefCmd', href='/pages/public/prihlaska-do-klubu.zul')" />
-		<menuitem label="${c:l('txt.ui.login')}" onClick="@command('hrefCmd', href='/pages/login.zul')" />
+		<menuitem label="${c:l('txt.ui.menu.applicationList')}" onClick="@command('hrefCmd', href='/pages/secured/seznam-prihlasek.zul')" />
 		<menu label="Hardware" visible="false">
 			<menupopup>
 				<menu label="Mainboard">

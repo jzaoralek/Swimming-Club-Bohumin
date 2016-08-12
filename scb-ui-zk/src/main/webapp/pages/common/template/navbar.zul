@@ -3,6 +3,8 @@
 <div sclass="navbar navbar-ext" height="75px" style="margin-bottom:0px;" 
 	apply="org.zkoss.bind.BindComposer"
 	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">
+	
+	
 	<hbox hflex="1" vflex="1">
 		<vbox vflex="1" pack="center">
 			<a id="mobileMenu"
@@ -51,17 +53,19 @@
 				</a>
 				-->
 				
-				<button label="${c:l('txt.ui.menu.application')}" 
-					href="/pages/public/prihlaska-do-klubu.zul" 
-					sclass="btn-warning" iconSclass="z-icon-file-text"
-					visible="@load(!vm.isUserLogged())"
-					style="margin-right: 10px; font-weight: bold;" />
+				<div sclass="main-menu">
+					<button label="${c:l('txt.ui.menu.application')}" 
+						href="/pages/public/prihlaska-do-klubu.zul" 
+						sclass="btn-warning" iconSclass="z-icon-file-text"
+						visible="@load(!vm.isUserLogged())"
+						style="margin-right: 10px; font-weight: bold;" />
+				</div>
 				
-				<button
-					tooltiptext="${c:l('txt.ui.login')}"
-					onClick="@command('hrefCmd', href='/pages/login.zul')" 
-					sclass="btn-info" iconSclass="z-icon-user"
-					visible="@load(!vm.isUserLogged())" />
+					<button
+						tooltiptext="${c:l('txt.ui.login')}"
+						onClick="@command('hrefCmd', href='/pages/login.zul')" 
+						sclass="btn-info" iconSclass="z-icon-user"
+						visible="@load(!vm.isUserLogged())" />
 					
 			</hlayout>
 		</vbox>
