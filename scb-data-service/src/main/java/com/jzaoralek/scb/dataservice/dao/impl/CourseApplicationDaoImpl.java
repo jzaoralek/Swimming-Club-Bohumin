@@ -30,7 +30,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	private static final String INSERT = "INSERT INTO course_application (uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by) values (:"+UUID_PARAM+",:"+YEAR_FROM_PARAM+",:"+YEAR_TO_PARAM+",:"+COURSE_PARTICIPANT_UUID_PARAM+",:"+USER_UUID_PARAM+",:"+MODIF_AT_PARAM+",:"+MODIF_BY_PARAM+")";
 	private static final String SELECT_ALL = "select " +
-					"con_part.firstname " +
+					" con_part.firstname " +
 					", con_part.surname " +
 					", cp.birthdate " +
 					", cp.personal_number " +

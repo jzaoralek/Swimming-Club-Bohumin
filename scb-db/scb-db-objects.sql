@@ -100,7 +100,3 @@ CREATE TABLE lesson(
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 )
-
-select * from course_participant
-
-select * from course_application

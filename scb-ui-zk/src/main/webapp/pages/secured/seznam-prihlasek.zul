@@ -115,17 +115,15 @@
 			                <listcell label="${each.courseParticRepresentative.contact.email1}" />
 			                <listcell label="${each.modifAt}" />			                	
 			                <listcell>
-			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="itemMenuPopup" />
+			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourseApplication_${each.uuid}" />
+			                	<menupopup id="menuCourseApplication_${each.uuid}" >
+									<menuitem label="Detail" />
+									<menuitem label="Odstranit" onClick="@command('deleteCmd', uuid=each.uuid)"  />
+						       	</menupopup>
 			                </listcell>
 			            </listitem>
 			        </template>
 			    </listbox>
-			    
-			    <menupopup id="itemMenuPopup" >
-					<menuitem label="Detail" />
-					<menuitem label="Odstranit" />
-		       	</menupopup>
-				
 			</vbox>
 			
 			<vbox hflex="1" />

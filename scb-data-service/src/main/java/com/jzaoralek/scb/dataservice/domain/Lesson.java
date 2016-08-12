@@ -1,7 +1,6 @@
 package com.jzaoralek.scb.dataservice.domain;
 
 import java.sql.Time;
-import java.time.DayOfWeek;
 import java.util.Date;
 import java.util.UUID;
 
@@ -12,7 +11,7 @@ public class Lesson implements IdentEntity {
 	private Date modifAt;
 	private Time timeFrom;
 	private Time timeTo;
-	private DayOfWeek dayOfWeek;
+//	private DayOfWeek dayOfWeek;
 	private Course course;
 
 	@Override
@@ -51,12 +50,12 @@ public class Lesson implements IdentEntity {
 	public void setTimeTo(Time timeTo) {
 		this.timeTo = timeTo;
 	}
-	public DayOfWeek getDayOfWeek() {
-		return dayOfWeek;
-	}
-	public void setDayOfWeek(DayOfWeek dayOfWeek) {
-		this.dayOfWeek = dayOfWeek;
-	}
+//	public DayOfWeek getDayOfWeek() {
+//		return dayOfWeek;
+//	}
+//	public void setDayOfWeek(DayOfWeek dayOfWeek) {
+//		this.dayOfWeek = dayOfWeek;
+//	}
 	public Course getCourse() {
 		return course;
 	}
@@ -67,6 +66,6 @@ public class Lesson implements IdentEntity {
 	@Override
 	public String toString() {
 		return "Lesson [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", timeFrom=" + timeFrom
-				+ ", timeTo=" + timeTo + ", dayOfWeek=" + dayOfWeek + ", course=" + course + "]";
+				+ ", timeTo=" + timeTo + ", course=" + course + "]";
 	}
 }
