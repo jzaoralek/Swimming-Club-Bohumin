@@ -33,6 +33,7 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 	"VALUES (:"+UUID_PARAM+", :"+USERNAME_PARAM+", :"+PASSWORD_PARAM+", :"+PASSWORD_GENERATED_PARAM+", :"+ROLE_PARAM+", :"+CONTACT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
 	private static final String SELECT_BY_UUID ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE uuid=:" + UUID_PARAM;
 	private static final String DELETE = "DELETE FROM user where uuid = :" + UUID_PARAM;
+	private static final String UPDATE = "UPDATE user SET username=:"+USERNAME_PARAM+", password=:"+PASSWORD_PARAM+", password_generated=:"+PASSWORD_GENERATED_PARAM+", role=:"+ROLE_PARAM+", contact_uuid=:"+CONTACT_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 	@Autowired
 	private ContactDao contactDao;
@@ -73,8 +74,15 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 
 	@Override
 	public void update(ScbUser scbUser) {
-		// TODO Auto-generated method stub
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		fillIdentEntity(scbUser, paramMap);
+		paramMap.addValue(USERNAME_PARAM, scbUser.getUsername());
+		paramMap.addValue(PASSWORD_PARAM, scbUser.getPassword());
+		paramMap.addValue(PASSWORD_GENERATED_PARAM, scbUser.isPasswordGenerated() ? "1" : "0");
+		paramMap.addValue(ROLE_PARAM, scbUser.getRole() != null ? scbUser.getRole().name() : null);
+		paramMap.addValue(CONTACT_PARAM, scbUser.getContact().getUuid() != null ? scbUser.getContact().getUuid().toString() : null);
 
+		namedJdbcTemplate.update(UPDATE, paramMap);
 	}
 
 	@Override

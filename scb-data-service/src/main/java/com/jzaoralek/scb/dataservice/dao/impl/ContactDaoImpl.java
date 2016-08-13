@@ -38,6 +38,7 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 		" (:"+UUID_PARAM+", :"+FIRSTNAME_PARAM+", :"+SURNAME_PARAM+", :"+STREET_PARAM+", :"+LAND_REGISTRY_NUMBER_PARAM+", :"+HOUSE_NUMBER_PARAM+", :"+CITY_PARAM+", :"+ZIPCODE_PARAM+", :"+EMAUL1_PARAM+", :"+EMAIL2_PARAM+", :"+PHONE1_PARAM+", :"+PHONE2_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+") ";
 	private static final String SELECT_BY_UUID = "SELECT uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, email1, email2, phone1, phone2, modif_at, modif_by from contact WHERE uuid = :" + UUID_PARAM;
 	private static final String DELETE = "DELETE FROM contact where uuid = :" + UUID_PARAM;
+	private static final String UPDATE = "UPDATE contact SET firstname=:"+FIRSTNAME_PARAM+", surname=:"+SURNAME_PARAM+", street=:"+STREET_PARAM+", land_registry_number=:"+LAND_REGISTRY_NUMBER_PARAM+", house_number=:"+HOUSE_NUMBER_PARAM+", city=:"+CITY_PARAM+", zip_code=:"+ZIPCODE_PARAM+", email1=:"+EMAUL1_PARAM+", email2=:"+EMAIL2_PARAM+", phone1=:"+PHONE1_PARAM+", phone2=:"+PHONE2_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 	@Autowired
 	public ContactDaoImpl(DataSource ds) {
@@ -82,8 +83,21 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 
 	@Override
 	public void update(Contact contact) {
-		// TODO Auto-generated method stub
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		fillIdentEntity(contact, paramMap);
+		paramMap.addValue(FIRSTNAME_PARAM, contact.getFirstname());
+		paramMap.addValue(SURNAME_PARAM, contact.getSurname());
+		paramMap.addValue(STREET_PARAM, contact.getStreet());
+		paramMap.addValue(LAND_REGISTRY_NUMBER_PARAM, contact.getLandRegistryNumber());
+		paramMap.addValue(HOUSE_NUMBER_PARAM, contact.getHouseNumber());
+		paramMap.addValue(CITY_PARAM, contact.getCity());
+		paramMap.addValue(ZIPCODE_PARAM, contact.getZipCode());
+		paramMap.addValue(EMAUL1_PARAM, contact.getEmail1());
+		paramMap.addValue(EMAIL2_PARAM, contact.getEmail2());
+		paramMap.addValue(PHONE1_PARAM, contact.getPhone1());
+		paramMap.addValue(PHONE2_PARAM, contact.getPhone2());
 
+		namedJdbcTemplate.update(UPDATE, paramMap);
 	}
 
 	@Override

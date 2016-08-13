@@ -16,4 +16,7 @@ public final class WebConstants {
 
 	public static final String WEB_DATE_PATTERN = "dd.MM.yyyy";
 
+	public static final String UUID_PARAM = "uuid";
+	public static final String MODE_PARAM = "mode";
+	public static final String FROM_PAGE_PARAM = "fromPage";
 }

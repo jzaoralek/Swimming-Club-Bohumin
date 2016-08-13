@@ -58,6 +58,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					"order by ca.modif_at desc ";
 	private static final String SELECT_BY_UUID = "select uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by from course_application where uuid=:" + UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course_application where uuid = :" + UUID_PARAM;
+	private static final String UPDATE = "UPDATE course_application SET year_from=:"+YEAR_FROM_PARAM+", year_to=:"+YEAR_TO_PARAM+", course_participant_uuid=:"+COURSE_PARTICIPANT_UUID_PARAM+", user_uuid=:"+USER_UUID_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
@@ -84,7 +85,14 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	@Override
 	public void update(CourseApplication courseApplication) {
-		// TODO Auto-generated method stub
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		fillIdentEntity(courseApplication, paramMap);
+		paramMap.addValue(YEAR_FROM_PARAM, courseApplication.getYearFrom());
+		paramMap.addValue(YEAR_TO_PARAM, courseApplication.getYearTo());
+		paramMap.addValue(COURSE_PARTICIPANT_UUID_PARAM, courseApplication.getCourseParticipant().getUuid() != null ? courseApplication.getCourseParticipant().getUuid().toString() : "");
+		paramMap.addValue(USER_UUID_PARAM, courseApplication.getCourseParticRepresentative().getUuid() != null ? courseApplication.getCourseParticRepresentative().getUuid().toString() : "");
+
+		namedJdbcTemplate.update(UPDATE, paramMap);
 	}
 
 	@Override

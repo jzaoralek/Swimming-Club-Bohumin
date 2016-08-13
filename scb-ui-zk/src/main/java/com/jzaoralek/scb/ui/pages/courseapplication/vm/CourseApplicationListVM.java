@@ -9,6 +9,7 @@ import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
@@ -17,6 +18,8 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
+import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -48,7 +51,7 @@ public class CourseApplicationListVM extends BaseVM {
 
 	@NotifyChange("*")
 	@Command
-    public void deleteCmd(@BindingParam("uuid") final UUID uuid) {
+    public void deleteCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
@@ -68,6 +71,14 @@ public class CourseApplicationListVM extends BaseVM {
 				}
 			}
 		);
+	}
+
+	@Command
+    public void detailCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
+		if (uuid ==  null) {
+			throw new IllegalArgumentException("uuid is null");
+		}
+		Executions.sendRedirect("/pages/secured/prihlaska-do-klubu.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.APPLICATION_LIST);
 	}
 
 	public void loadData() {

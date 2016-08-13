@@ -32,6 +32,8 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			" VALUES (:"+UUID_PARAM+", :"+BIRTHDATE_PARAM+", :"+PERSONAL_NUMBER_PARAM+", :"+HEALTH_INSURANCE+", :"+CONTACT_PARAM+", :"+HEALTH_INFO_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
 	private static final String SELECT_BY_UUID = "SELECT uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by FROM course_participant WHERE uuid= :"+UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course_participant where uuid = :" + UUID_PARAM;
+	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + " WHERE uuid=:"+UUID_PARAM;
+
 
 	@Autowired
 	private ContactDao contactDao;
@@ -71,8 +73,14 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	@Override
 	public void update(CourseParticipant courseParticipant) {
-		// TODO Auto-generated method stub
-
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		fillIdentEntity(courseParticipant, paramMap);
+		paramMap.addValue(BIRTHDATE_PARAM, courseParticipant.getBirthdate());
+		paramMap.addValue(PERSONAL_NUMBER_PARAM, courseParticipant.getPersonalNo());
+		paramMap.addValue(HEALTH_INSURANCE, courseParticipant.getHealthInsurance());
+		paramMap.addValue(CONTACT_PARAM, courseParticipant.getContact() != null ? courseParticipant.getContact().getUuid().toString() : null);
+		paramMap.addValue(HEALTH_INFO_PARAM, courseParticipant.getHealthInfo());
+		namedJdbcTemplate.update(UPDATE, paramMap);
 	}
 
 	@Override
@@ -93,7 +101,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		public CourseParticipant mapRow(ResultSet rs, int rowNum) throws SQLException {
 			CourseParticipant ret = new CourseParticipant();
 			fetchIdentEntity(rs, ret);
-			ret.setBirthdate(rs.getDate("birthdate"));
+			ret.setBirthdate(transDate(rs.getDate("birthdate")));
 			ret.setPersonalNo(rs.getString("personal_number"));
 			ret.setHealthInsurance(rs.getString("health_insurance"));
 			ret.setHealthInfo(rs.getString("health_info"));

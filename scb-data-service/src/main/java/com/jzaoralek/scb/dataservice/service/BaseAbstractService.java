@@ -21,7 +21,7 @@ public abstract class BaseAbstractService {
 			return;
 		}
 
-		if (identEntity != null) {
+		if (identEntity != null && identEntity.getUuid() == null) {
 			identEntity.setUuid(UUID.randomUUID());
 		}
 

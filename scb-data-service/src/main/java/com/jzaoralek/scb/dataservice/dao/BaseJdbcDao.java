@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -36,5 +37,20 @@ public abstract class BaseJdbcDao {
 		identEntity.setUuid(UUID.fromString(rs.getString(UUID_PARAM)));
 		identEntity.setModifAt(rs.getTimestamp(MODIF_AT_PARAM));
 		identEntity.setModifBy(rs.getString(MODIF_BY_PARAM));
+	}
+
+	/** Pokud neni d instanci java.util.Date, vraci instanci java.util.Date se stejnou hodnotou
+	 * (dle getTime).
+	 *
+	 * Pro null parametr nedochází vrací null
+	 * @param d
+	 * @return
+	 */
+	protected static Date transDate(Date d) {
+		if (d!=null && d.getClass() != Date.class) {
+			return new Date(d.getTime());
+		} else {
+			return d;
+		}
 	}
 }
