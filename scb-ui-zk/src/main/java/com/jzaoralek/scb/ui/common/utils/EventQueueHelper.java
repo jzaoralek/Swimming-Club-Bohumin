@@ -8,10 +8,12 @@ import org.zkoss.zk.ui.event.EventQueues;
 public final class EventQueueHelper {
 
 	public enum ScbEventQueues {
+		MENU_QUEUE,
 		SDAT_COURSE_APPLICATION_QUEUE;
 	}
 
 	public enum ScbEvent {
+		OPEN_MAIN_MENU_EVENT,
 		RELOAD_COURSE_APPLICATION_DATA_EVENT;
 	}
 

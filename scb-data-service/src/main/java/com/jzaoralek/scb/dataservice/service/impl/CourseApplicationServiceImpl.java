@@ -21,12 +21,16 @@ import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 
 @Service("courseApplicationService")
 public class CourseApplicationServiceImpl extends BaseAbstractService implements CourseApplicationService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseApplicationServiceImpl.class);
+
+	@Autowired
+	private ConfigurationService configurationService;
 
 	@Autowired
 	private CourseApplicationDao courseApplicationDao;
@@ -70,6 +74,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		fillIdentEntity(courseApplication, null);
 		if (insert) {
 			// insert
+			courseApplication.setYearFrom(Integer.valueOf(configurationService.getCourseApplicationYear()));
 			courseApplication.setYearTo(courseApplication.getYearFrom() + 1);
 			courseApplicationDao.insert(courseApplication);
 		} else {

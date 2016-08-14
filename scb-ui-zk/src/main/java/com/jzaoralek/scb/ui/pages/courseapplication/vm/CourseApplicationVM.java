@@ -13,6 +13,7 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -28,9 +29,13 @@ public class CourseApplicationVM extends BaseVM {
 	private boolean securedMode;
 	private String confirmText;
 	private String returnToPage;
+	private String pageHeadline;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
+
+	@WireVariable
+	private ConfigurationService configurationService;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
@@ -43,6 +48,14 @@ public class CourseApplicationVM extends BaseVM {
 		this.securedMode = isSecuredPage();
 
 		this.returnToPage = StringUtils.hasText(fromPage) ? WebPages.valueOf(fromPage).getUrl() : null;
+
+		String year = "";
+		if (courseApplication == null) {
+			year = configurationService.getCourseApplicationYear();
+		} else {
+			year = String.valueOf(courseApplication.getYearFrom());
+		}
+		this.pageHeadline = Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
 	}
 
 	private Boolean isSecuredPage() {
@@ -119,5 +132,8 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public String getConfirmText() {
 		return confirmText;
+	}
+	public String getPageHeadline() {
+		return pageHeadline;
 	}
 }

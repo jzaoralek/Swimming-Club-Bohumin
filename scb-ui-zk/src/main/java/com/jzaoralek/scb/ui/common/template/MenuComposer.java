@@ -5,9 +5,14 @@ import java.util.List;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Menubar;
+
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 
 /**
  * Project: sdat_web
@@ -23,17 +28,18 @@ public class MenuComposer extends SelectorComposer<Component> {
     @Wire
     private Menubar menubar;
 
-    /**
-     * Řešeno přes event queue, protože composer nedokáže registrovat
-     * globální command
-     *
-     * @param evt
-     */
-//    @Subscribe("SDAT_QUEUE")
-    public void eventQueueListener(Event evt) {
-        if (evt.getName().equals("openMainMenuItem")) {
-            openMenuItem((String) evt.getData());
-        }
+    @Override
+    public void doAfterCompose(Component comp) throws Exception {
+    	EventQueues.lookup(ScbEventQueues.MENU_QUEUE.name() , EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
+			@Override
+			public void onEvent(Event event) {
+				if (event.getName().equals(ScbEvent.OPEN_MAIN_MENU_EVENT.name())) {
+					openMenuItem((String) event.getData());
+				}
+			}
+		});
+
+    	super.doAfterCompose(comp);
     }
 
     private void openMenuItem(String itemId) {
