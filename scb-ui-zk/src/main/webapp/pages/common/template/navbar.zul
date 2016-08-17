@@ -34,24 +34,13 @@
 				viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
 				
 				<!-- User menu -->
-				<menubar sclass="user-menu light-blue" visible="@load(vm.isUserLogged())">
-					<menu tooltiptext="John's Avatar" label="@load(vm.loggedUserCompleteName)" image="${c:l('img.loggeduser')}">
+				<menubar sclass="user-menu light-blue" visible="@load(vm.isUserLogged())" >
+					<menu label="@load(vm.loggedUserCompleteName)"  >
 						<menupopup>
-							<menuitem label="Settings" iconSclass="z-icon-cog"/>
-							<menuitem label="Profile" iconSclass="z-icon-user"/>
-							<menuseparator/>
-							<menuitem label="${c:l('txt.Logout')}" iconSclass="z-icon-off" onClick="@command('logoutCmd')" />
+							<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-off" onClick="@command('logoutCmd')" />
 						</menupopup>
 					</menu>
 				</menubar>
-				
-				<!--  
-				<a viewModel="@id('menuvm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')"
-					onClick="@command('hrefCmd', href='/pages/login.zul')" 
-					visible="@load(!vm.isUserLogged())">
-					<label value="${c:l('txt.ui.login')}" />
-				</a>
-				-->
 				
 				<div sclass="main-menu">
 					<button label="${c:l('txt.ui.menu.application')}" 
@@ -61,12 +50,11 @@
 						style="margin-right: 10px; font-weight: bold;" />
 				</div>
 				
-					<button
-						tooltiptext="${c:l('txt.ui.login')}"
-						onClick="@command('hrefCmd', href='/pages/login.zul')" 
-						sclass="btn-info" iconSclass="z-icon-user"
-						visible="@load(!vm.isUserLogged())" />
-					
+				<button
+					tooltiptext="${c:l('txt.ui.login')}"
+					href="/pages/common/login.zul"
+					sclass="btn-info" iconSclass="z-icon-user"
+					visible="@load(!vm.isUserLogged())" />
 			</hlayout>
 		</vbox>
 		

@@ -7,7 +7,9 @@
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:scb-data-service-context.xml</param-value>
+		<param-value>
+			classpath:scb-data-service-context.xml
+		</param-value>
 	</context-param>
 
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
@@ -29,7 +31,7 @@
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
-
+	
 	<!-- UTF-8 -->
 	<!--
 	<filter>

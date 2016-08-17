@@ -1,6 +1,6 @@
 <div sclass="main-menu"
 	apply="org.zkoss.bind.BindComposer"
-	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')" >
+	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')" >
 	
 	<hlayout spacing="0">
 		<!--
@@ -30,30 +30,32 @@
 		
 		<menubar hflex="1" sclass="main-menu-bar" />
 		
-		<menubar hflex="20" sclass="main-menu-bar" autodrop="true" apply="com.jzaoralek.scb.ui.common.template.MenuComposer" id="menubar">
-			
+		<menubar id="menubar" hflex="20" sclass="main-menu-bar" autodrop="true" apply="com.jzaoralek.scb.ui.common.template.MenuComposer" >
 			<!-- Dashboard -->
-			<menuitem 
+			<menuitem
 				label="Home"
 				id="menu_dashboard"
 				iconSclass="z-icon-home" 
-				onClick="@command('hrefCmd', href='/')" >
+				visible="@load(!vm.isUserLogged())"
+				href="/" >
 			</menuitem>
 			
 			<!-- Prihlaska -->
-			<menuitem 
+			<menuitem
 				label="${c:l('txt.ui.menu.application')}" 
 				id="menu_applicationToClub"
 				iconSclass="z-icon-file-text" 
-				onClick="@command('hrefCmd', href='/pages/public/prihlaska-do-klubu.zul')" >
+				visible="@load(!vm.isUserLogged())"
+				href="/pages/public/prihlaska-do-klubu.zul" >
 			</menuitem>
 			
 			<!-- Seznam prihlasek -->
-			<menuitem 
+			<menuitem
 				label="${c:l('txt.ui.menu.applicationList')}" 
 				id="menu_applicationToClubList"
 				iconSclass="z-icon-list-alt" 
-				onClick="@command('hrefCmd', href='/pages/secured/seznam-prihlasek.zul')" >
+				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
+				href="/pages/secured/seznam-prihlasek.zul" >
 			</menuitem>
 			
 		</menubar>
