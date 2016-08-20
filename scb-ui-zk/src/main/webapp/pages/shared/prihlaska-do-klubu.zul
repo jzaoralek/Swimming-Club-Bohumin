@@ -44,7 +44,7 @@
 			<vbox hflex="1" />
 			
 			<!-- Potvrzujici info -->
-			<vbox hflex="20" pack="center" sclass="vbox-content" visible="false">
+			<vbox hflex="20" pack="center" sclass="vbox-content" visible="@load(vm.showNotification)">
 				<window closable="false" border="normal" sclass="alert alert-success">
 					<caption iconSclass="z-icon-check">
 						<label value="@load(vm.confirmText)"/>
@@ -53,7 +53,7 @@
 			</vbox>
 			
 			<!-- Formular -->
-			<vbox hflex="20" pack="center" sclass="vbox-content" >	    
+			<vbox hflex="20" pack="center" sclass="vbox-content" visible="@load(vm.editMode)" >	    
 				
 				<vbox hflex="1" align="end" style="margin: 0px;" visible="false">
 					Údaje označené hvězdičkou jsou povinné.

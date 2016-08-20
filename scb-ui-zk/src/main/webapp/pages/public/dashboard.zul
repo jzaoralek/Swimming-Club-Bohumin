@@ -28,11 +28,8 @@
 			<vbox hflex="1" />
 			
 			<vbox hflex="20" pack="center">
-				<hbox>
-					info o aplikaci
-				</hbox>
-				<hbox>
-					dlazdice s rychlymi odkazy
+				<hbox style="margin-top: 20px">
+					${c:l('txt.ui.dashboard.welcomeInfo')}
 				</hbox>
 			</vbox>
 			

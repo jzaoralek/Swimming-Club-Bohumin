@@ -38,6 +38,7 @@
 				</window>
 					
 				<html>
+					<!-- scb-ui-zk-1.0-SNAPSHOT -->
 					<![CDATA[
 					<form id="loginForm" action="/scb-ui-zk/login" onsubmit="return validateForm()" method="post" >
 						<table>

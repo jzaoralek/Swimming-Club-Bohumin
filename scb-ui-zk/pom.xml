@@ -104,11 +104,36 @@
 			<artifactId>silvertail</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.zkoss.zk</groupId> -->
-<!-- 			<artifactId>zkmax</artifactId> -->
-<!-- 			<version>${zkmaxVersion}</version> -->
-<!-- 		</dependency> -->
+		
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>4.7.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>bcmail-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcprov-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bctsp-jdk14</artifactId>
+					<groupId>org.bouncycastle</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>1.7.5</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-logging</groupId>
