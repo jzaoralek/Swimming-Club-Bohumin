@@ -53,6 +53,10 @@ public class BaseVM {
 		return Validators.getBirthnumbervalidator();
 	}
 
+	public Validator getCaptchaValidator() {
+		return Validators.getCaptchavalidator();
+	}
+
 	public Converter getDateConverter() {
 		return Converters.getDateconverter();
 	}

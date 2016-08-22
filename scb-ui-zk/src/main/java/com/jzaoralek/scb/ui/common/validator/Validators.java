@@ -15,6 +15,7 @@ public final class Validators {
 	private static final NotNullValidator notNullValidator = new NotNullValidator();
 	private static final NotNullObjectValidator notNullObjectValidator = new NotNullObjectValidator();
 	private static final BirthNumberValidator birthNumberValidator = new BirthNumberValidator();
+	private static final CaptchaValidator captchaValidator = new CaptchaValidator();
 
 	public static Validator getEmailValidator() {
 		return emailValidator;
@@ -27,5 +28,8 @@ public final class Validators {
 	}
 	public static BirthNumberValidator getBirthnumbervalidator() {
 		return birthNumberValidator;
+	}
+	public static CaptchaValidator getCaptchavalidator() {
+		return captchaValidator;
 	}
 }

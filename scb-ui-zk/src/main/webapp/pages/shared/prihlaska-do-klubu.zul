@@ -3,11 +3,12 @@
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 
+
 <zk>
 	<div self="@{define(mainContent)}" hflex="1" apply="org.zkoss.bind.BindComposer" 
 			 viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
 			 validationMessages="@id('vmsgs')"
-       		 form="@id('fx') @load(vm.application) @save(vm.application, before='submit')" >
+       		 form="@id('fx') @load(vm) @save(vm, before='submit')" >
 		<style>
 			<!-- cut/hide the vertical borders in the grid rows -->
 			tr.z-row td.z-row-inner { border-right: 0px #CCC;  }			
@@ -82,7 +83,7 @@
 							<cell >
 								<hbox hflex="1" align="center">
 									<textbox id="particFirstname" readonly="@load(!vm.editMode)"
-										value="@bind(fx.courseParticipant.contact.firstname) @validator(vm.notNullValidator)"
+										value="@bind(fx.application.courseParticipant.contact.firstname) @validator(vm.notNullValidator)"
 										maxlength="@load(vm.getFirstnameMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -101,7 +102,7 @@
 							<cell>
 								<hbox hflex="1">
 									<textbox id="particSurname" readonly="@load(!vm.editMode)"
-										value="@bind(fx.courseParticipant.contact.surname) @validator(vm.notNullValidator)"
+										value="@bind(fx.application.courseParticipant.contact.surname) @validator(vm.notNullValidator)"
 										maxlength="@load(vm.getSurnameMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -120,7 +121,7 @@
 							<cell>
 								<hbox hflex="1">
 									<datebox id="particBirthdate" readonly="@load(!vm.editMode)"
-										value="@bind(fx.courseParticipant.birthdate) @validator(vm.notNullObjectValidator)"
+										value="@bind(fx.application.courseParticipant.birthdate) @validator(vm.notNullObjectValidator)"
 	                            		format="@load(vm.dateFormat)" 
 	                            		maxlength="@load(vm.getDateMaxlength())"
 	                            		placeholder="*"
@@ -139,7 +140,7 @@
 							<cell>
 								<hbox hflex="1">
 									<textbox id="particBirthNumber" readonly="@load(!vm.editMode)"
-										value="@bind(fx.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
+										value="@bind(fx.application.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
 	                            		maxlength="@load(vm.getBirthNumberMaxlength())"
 	                            		placeholder="*"
 	                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -158,7 +159,7 @@
 							<cell>
 								<hbox hflex="1">
 									<textbox id="particHealthInsurance" readonly="@load(!vm.editMode)"
-										value="@bind(fx.courseParticipant.healthInsurance) @validator(vm.notNullValidator)"
+										value="@bind(fx.application.courseParticipant.healthInsurance) @validator(vm.notNullValidator)"
 										maxlength="@load(vm.getHealthInsuranceMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -198,7 +199,7 @@
 							<cell>
 								<hbox hflex="1">
 									<textbox id="representativeFirstname" readonly="@load(!vm.editMode)"
-										value="@bind(fx.courseParticRepresentative.contact.firstname) @validator(vm.notNullValidator)" 
+										value="@bind(fx.application.courseParticRepresentative.contact.firstname) @validator(vm.notNullValidator)" 
 										maxlength="@load(vm.getFirstnameMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -217,7 +218,7 @@
 							<cell>
 								<hbox hflex="1">
 									<textbox id="representativeSurname" readonly="@load(!vm.editMode)"
-										value="@bind(fx.courseParticRepresentative.contact.surname) @validator(vm.notNullValidator)"
+										value="@bind(fx.application.courseParticRepresentative.contact.surname) @validator(vm.notNullValidator)"
 										maxlength="@load(vm.getSurnameMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -236,7 +237,7 @@
 							<cell>
 								<hbox hflex="1">
 									<textbox id="representativePhone1" readonly="@load(!vm.editMode)"
-										value="@bind(fx.courseParticRepresentative.contact.phone1) @validator(vm.notNullValidator)"
+										value="@bind(fx.application.courseParticRepresentative.contact.phone1) @validator(vm.notNullValidator)"
 										maxlength="@load(vm.getPhoneMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -254,7 +255,7 @@
 							<label value="${c:l('txt.ui.common.phone')} 2:"/>
 							<cell>
 								<textbox id="representativePhone2" readonly="@load(!vm.editMode)" 
-									value="@bind(fx.courseParticRepresentative.contact.phone2)"
+									value="@bind(fx.application.courseParticRepresentative.contact.phone2)"
 									maxlength="@load(vm.getPhoneMaxlength())"
 									tabindex="9"
 									hflex="3" />
@@ -266,7 +267,7 @@
 							<cell>
 								<hbox hflex="1">
 									<textbox id="representativeEmail1" readonly="@load(!vm.editMode)"
-										value="@bind(fx.courseParticRepresentative.contact.email1) @validator(vm.emailValidator, notNull=true)"
+										value="@bind(fx.application.courseParticRepresentative.contact.email1) @validator(vm.emailValidator, notNull=true)"
 										maxlength="@load(vm.getEmailMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -285,7 +286,7 @@
 							<cell>
 								<hbox hflex="1">
 									<textbox id="representativeEmail2" readonly="@load(!vm.editMode)" 
-										value="@bind(fx.courseParticRepresentative.contact.email2) @validator(vm.emailValidator)"
+										value="@bind(fx.application.courseParticRepresentative.contact.email2) @validator(vm.emailValidator)"
 										maxlength="@load(vm.getEmailMaxlength())"
 										tabindex="11"
 										hflex="3" />
@@ -312,7 +313,7 @@
 					</vbox>
 					<vbox hflex="3">
 						<textbox rows="3" hflex="1" multiline="true" readonly="@load(!vm.editMode)"
-							value="@bind(fx.courseParticipant.healthInfo)"
+							value="@bind(fx.application.courseParticipant.healthInfo)"
 							maxlength="@load(vm.getHealthInfoMaxlength())" />
 					</vbox>
 					<vbox hflex="2">
@@ -332,8 +333,20 @@
 				<hbox style="margin-bottom: 20px; margin-top: 20px" visible="@load(vm.editMode and !vm.securedMode)">
 					<vbox width="180px"/>
 					<vbox>
-						TODO: captcha
+						<vbox>
+<!-- 							onChange="@command('verifyCaptcha', tbox=self ,capt=cap1)" -->
+						    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
+						    <bw.captcha id="cap1" />
+						    <hbox>
+							    <textbox id="captcha" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1)"  />
+							    <span style="margin-left: 10px;" sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[captcha])" >
+									<label value="@bind(vmsgs[captcha])" />
+								</span>						    
+						    </hbox>
+						</vbox>
 					</vbox>
+					
+					
 				</hbox>
 				
 				<hbox style="margin-bottom: 20px;">

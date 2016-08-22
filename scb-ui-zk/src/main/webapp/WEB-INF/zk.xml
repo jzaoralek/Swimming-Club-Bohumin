@@ -21,6 +21,16 @@
 		<value>center,center</value>
 	</library-property>
 	
+	<library-property>
+		<name>org.zkoss.recaptch.publickey</name>
+		<value>6LfSJCgTAAAAAIfziz0FtM64I0VaONrSq1EKnYr8</value>
+	</library-property>
+	
+	<library-property>
+		<name>org.zkoss.recaptch.privatekey</name>
+		<value>6LfSJCgTAAAAAANWtytYVqIlrXhv-BeJ-CokaRs7</value>
+	</library-property>
+	
 	<!-- labels -->
 	<system-config>
 		<label-location>/WEB-INF/labels/scb-labels.properties</label-location>

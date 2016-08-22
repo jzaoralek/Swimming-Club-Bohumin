@@ -33,6 +33,7 @@ public class CourseApplicationVM extends BaseVM {
 	private String confirmText;
 	private String returnToPage;
 	private String pageHeadline;
+	private String captcha;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -182,5 +183,11 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public boolean isShowNotification() {
 		return showNotification;
+	}
+	public String getCaptcha() {
+		return captcha;
+	}
+	public void setCaptcha(String captcha) {
+		this.captcha = captcha;
 	}
 }
