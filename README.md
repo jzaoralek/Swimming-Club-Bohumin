@@ -9,7 +9,7 @@ Used technologies:
 - restful communication
 - AspectJ
 - slf4j
-- OAuth
+- Jasper Reports
 - Maven
 - MySql
 - Tomcat
