@@ -3,7 +3,7 @@
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 
-<zk>
+<zk>	
 	<div self="@{define(mainContent)}" 
 		apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')"
@@ -36,73 +36,100 @@
 						<label value="${c:l('msg.ui.warn.BadCredentials')}" />
 					</caption> 
 				</window>
-					
-				<html>
-					<!-- scb-ui-zk-1.0-SNAPSHOT -->
-					<![CDATA[
-					<form id="loginForm" action="/scb-ui-zk-1.0-SNAPSHOT/login" onsubmit="return validateForm()" method="post" >
-						<table>
-							<tr>
-								<td style="padding: 10px;" >
-									${c:l('txt.ui.common.Username')}
-								</td>
-								<td style="padding: 10px;">
-									<input type="text" id="username" name="username" class="z-textbox" />
-								</td>
-								<td>
-									<span id="usernameRequiredSpan" class="alert alert-danger" style="visibility: hidden" >
-										${c:l('msg.ui.validation.err.valueRequired')}
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td style="padding: 10px;">
-									${c:l('txt.ui.common.password')}
-								</td>
-								<td style="padding: 10px;">
-									<input type="password" id="password" name="password" class="z-textbox" />
-								</td>
-								<td>
-									<span id="passwordRequiredSpan" class="alert alert-danger" style="visibility: hidden" >
-										${c:l('msg.ui.validation.err.valueRequired')}
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2" align="right" style="padding: 10px;">
-									<input id="btnSubmit" type="submit" class="z-button" value="${c:l('txt.ui.common.ToLogin')}" style="margin-right: 5px;" />
-								</td>
-								<td>
-								</td>
-							</tr>
-						</table>
-					</form>
-					
-					<script>
-						function validateForm() {
-						    var username = document.forms["loginForm"]["username"].value;
-						    var password = document.forms["loginForm"]["password"].value;
-						    
-						    var usernameRequiredSpan = document.getElementById('usernameRequiredSpan');
-						    var passwordRequiredSpan = document.getElementById('passwordRequiredSpan');
-						    
-						    usernameRequiredSpan.style = "visibility: hidden";
-						    passwordRequiredSpan.style = "visibility: hidden";
-						    
-						    var valid = true;
-						    if (username == null || username == "") {
-						    	usernameRequiredSpan.style = "visibility: visible";
-						        valid = false;
-						    }
-						    if (password == null || password == "") {
-						    	passwordRequiredSpan.style = "visibility: visible";
-						        valid = false;
-						    }
-						    return valid;
-						}
-					</script>
-					]]>
-				</html>
+				
+				<grid width="455px">
+					<columns>
+						<column />
+					</columns>
+					<rows>
+						<row align="right" >
+							<html>
+								<!-- scb-ui-zk-1.0-SNAPSHOT -->
+								<![CDATA[
+								<form id="loginForm" action="/scb-ui-zk-1.0-SNAPSHOT/login" onsubmit="return validateForm()" method="post" >
+									<table>
+										<tr>
+											<td style="padding: 10px;" >
+												${c:l('txt.ui.common.Username')}
+											</td>
+											<td style="padding: 10px;">
+												<input type="text" id="username" name="username" class="z-textbox" onBlur="validateUsername()" />
+											</td>
+											<td>
+												<span id="usernameRequiredSpan" class="alert alert-danger" style="visibility: hidden" >
+													${c:l('msg.ui.validation.err.valueRequired')}
+												</span>
+											</td>
+										</tr>
+										<tr>
+											<td style="padding: 10px;">
+												${c:l('txt.ui.common.password')}
+											</td>
+											<td style="padding: 10px;">
+												<input type="password" id="password" name="password" class="z-textbox" onBlur="validatePassword()" />
+											</td>
+											<td>
+												<span id="passwordRequiredSpan" class="alert alert-danger" style="visibility: hidden" >
+													${c:l('msg.ui.validation.err.valueRequired')}
+												</span>
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2" align="right" style="padding: 10px;">
+												<input id="btnSubmit" type="submit" class="z-button" value="${c:l('txt.ui.common.ToLogin')}" style="margin-right: 5px;" />
+											</td>
+											<td>
+											</td>
+										</tr>
+									</table>
+								</form>
+								
+								<script>
+									function validateForm() {
+										var usernameValid = validateUsername();
+										var passwordValid = validatePassword();
+										
+										if (!usernameValid || !passwordValid) {
+											return false;
+										}
+										
+										return true;
+									}
+									
+									function validateUsername() {
+										var username = document.forms["loginForm"]["username"].value;
+									    
+									    var usernameRequiredSpan = document.getElementById('usernameRequiredSpan');
+									    
+									    usernameRequiredSpan.style = "visibility: hidden";
+									    
+									    var valid = true;
+									    if (username == null || username == "") {
+									    	usernameRequiredSpan.style = "visibility: visible";
+									        valid = false;
+									    }
+									    return valid;
+									}
+									
+									function validatePassword() {
+									    var password = document.forms["loginForm"]["password"].value;
+									    var passwordRequiredSpan = document.getElementById('passwordRequiredSpan');
+									    
+									    passwordRequiredSpan.style = "visibility: hidden";
+									    
+									    var valid = true;
+									    if (password == null || password == "") {
+									    	passwordRequiredSpan.style = "visibility: visible";
+									        valid = false;
+									    }
+									    return valid;
+									}
+								</script>
+								]]>
+							</html>
+						</row>
+					</rows>
+				</grid>
 			</vbox>
 			
 			<vbox hflex="1" />
