@@ -51,8 +51,9 @@
 						<label value="@load(vm.confirmText)"/>
 					</caption>
 				</window>
+				<button label="${c:l('txt.ui.common.ToDownloadApplication')}" onClick="@command('downloadCmd')" iconSclass="z-icon-download" />
 			</vbox>
-			
+
 			<!-- Formular -->
 			<vbox hflex="20" pack="center" sclass="vbox-content" visible="@load(vm.editMode)" >	    
 				
@@ -274,6 +275,7 @@
 										tabindex="10"
 										hflex="3" />
 									<vbox hflex="2" style="margin-left: 10px;">
+										<a iconSclass="z-icon-info-circle" popup="emailPopup" />
 										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
 											<label value="@bind(vmsgs[representativeEmail1])" />
 										</span>
@@ -302,7 +304,7 @@
 				</grid>
 				
 				<hbox visible="@load(vm.editMode and !vm.securedMode)">
-					<checkbox checked="@bind(vm.healthInfoAgreement)"  />
+					<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="12" />
 					<label value="${c:l('txt.ui.application.healthAgreement')}" />
 				</hbox>
 				
@@ -313,7 +315,7 @@
 					</vbox>
 					<vbox hflex="3">
 						<textbox rows="3" hflex="1" multiline="true" readonly="@load(!vm.editMode)"
-							value="@bind(fx.application.courseParticipant.healthInfo)"
+							value="@bind(fx.application.courseParticipant.healthInfo)" tabindex="13"
 							maxlength="@load(vm.getHealthInfoMaxlength())" />
 					</vbox>
 					<vbox hflex="2">
@@ -321,7 +323,7 @@
 				</hbox>
 				
 				<hbox visible="@load(vm.editMode and !vm.securedMode)">
-					<checkbox checked="@bind(vm.personalInfoProcessAgreement)" />
+					<checkbox checked="@bind(vm.personalInfoProcessAgreement)" tabindex="14" />
 					<hbox>
 						<span>
 							<label value="${c:l('txt.ui.application.personaldataProcessAgreement')}" />
@@ -334,11 +336,10 @@
 					<vbox width="180px"/>
 					<vbox>
 						<vbox>
-<!-- 							onChange="@command('verifyCaptcha', tbox=self ,capt=cap1)" -->
 						    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
 						    <bw.captcha id="cap1" />
 						    <hbox>
-							    <textbox id="captcha" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1)"  />
+							    <textbox id="captcha" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1, validate=(vm.editMode and !vm.securedMode))" tabindex="14" />
 							    <span style="margin-left: 10px;" sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[captcha])" >
 									<label value="@bind(vmsgs[captcha])" />
 								</span>						    
@@ -352,11 +353,11 @@
 				<hbox style="margin-bottom: 20px;">
 					<vbox width="180px"/>
 					<vbox>
-						<button label="Odeslat" 
+						<button label="Odeslat" tabindex="15"
 							onClick="@command('submit')" 
 							iconSclass="z-icon-check" 
 							visible="@load(vm.editMode and !vm.securedMode)" />
-						<button label="Uložit" 
+						<button label="Uložit"
 							onClick="@command('submit')" 
 							iconSclass="z-icon-check" 
 							visible="@load(vm.editMode and vm.securedMode)" />
@@ -364,6 +365,10 @@
 				</hbox>
 			</vbox>
 			
+			<popup id="emailPopup" width="400px">
+		        <label value="${c:l('txt.ui.common.email.info')}" />
+		    </popup>
+									    
 			<script type="text/javascript">
 		        zk.afterMount(function() {
 		            jq("$particBirthNumber").mask("999999/9999");

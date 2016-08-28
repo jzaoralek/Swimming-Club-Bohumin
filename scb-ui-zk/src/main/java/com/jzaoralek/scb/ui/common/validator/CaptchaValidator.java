@@ -12,6 +12,11 @@ public class CaptchaValidator extends AbstractValidator {
 	public void validate(ValidationContext ctx) {
 		String value = (String) ctx.getProperty().getValue();
 		Captcha capt = (Captcha)ctx.getBindContext().getValidatorArg("catpt");
+		Boolean validate = (Boolean)ctx.getBindContext().getValidatorArg("validate");
+
+		if (!validate) {
+			return;
+		}
 
 		if (StringUtils.isEmpty(value)) {
 			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.valueRequired"));

@@ -37,7 +37,7 @@
 					</caption> 
 				</window>
 				
-				<grid width="455px">
+				<grid width="428px" style="margin-top: 20px;">
 					<columns>
 						<column />
 					</columns>
@@ -46,13 +46,13 @@
 							<html>
 								<!-- scb-ui-zk-1.0-SNAPSHOT -->
 								<![CDATA[
-								<form id="loginForm" action="/scb-ui-zk-1.0-SNAPSHOT/login" onsubmit="return validateForm()" method="post" >
+								<form id="loginForm" onsubmit="return validateForm()" method="post" >
 									<table>
 										<tr>
-											<td style="padding: 10px;" >
+											<td style="padding-top: 10px; padding-right: 10px;" >
 												${c:l('txt.ui.common.Username')}
 											</td>
-											<td style="padding: 10px;">
+											<td style="padding-top: 10px; padding-right: 10px;">
 												<input type="text" id="username" name="username" class="z-textbox" onBlur="validateUsername()" />
 											</td>
 											<td>
@@ -62,10 +62,10 @@
 											</td>
 										</tr>
 										<tr>
-											<td style="padding: 10px;">
+											<td style="padding-top: 10px; padding-right: 10px;">
 												${c:l('txt.ui.common.password')}
 											</td>
-											<td style="padding: 10px;">
+											<td style="padding-top: 10px; padding-right: 10px;">
 												<input type="password" id="password" name="password" class="z-textbox" onBlur="validatePassword()" />
 											</td>
 											<td>
@@ -76,7 +76,7 @@
 										</tr>
 										<tr>
 											<td colspan="2" align="right" style="padding: 10px;">
-												<input id="btnSubmit" type="submit" class="z-button" value="${c:l('txt.ui.common.ToLogin')}" style="margin-right: 5px;" />
+												<input id="btnSubmit" type="submit" class="z-button" value="${c:l('txt.ui.common.ToLogin')}" />
 											</td>
 											<td>
 											</td>
@@ -101,11 +101,11 @@
 									    
 									    var usernameRequiredSpan = document.getElementById('usernameRequiredSpan');
 									    
-									    usernameRequiredSpan.style = "visibility: hidden";
+									    usernameRequiredSpan.setAttribute("style", "visibility: hidden");
 									    
 									    var valid = true;
 									    if (username == null || username == "") {
-									    	usernameRequiredSpan.style = "visibility: visible";
+									    	usernameRequiredSpan.setAttribute("style", "visibility: visible");
 									        valid = false;
 									    }
 									    return valid;
@@ -115,16 +115,22 @@
 									    var password = document.forms["loginForm"]["password"].value;
 									    var passwordRequiredSpan = document.getElementById('passwordRequiredSpan');
 									    
-									    passwordRequiredSpan.style = "visibility: hidden";
+									    passwordRequiredSpan.setAttribute("style", "visibility: hidden");
 									    
 									    var valid = true;
 									    if (password == null || password == "") {
-									    	passwordRequiredSpan.style = "visibility: visible";
+									    	passwordRequiredSpan.setAttribute("style", "visibility: visible");
 									        valid = false;
 									    }
 									    return valid;
 									}
-								</script>
+									
+									function init() {
+										document.forms["loginForm"].action = "${pageContext.request.contextPath}" + "/login"
+									}
+									
+									init();
+ 								</script>
 								]]>
 							</html>
 						</row>

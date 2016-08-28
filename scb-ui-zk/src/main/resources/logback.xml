@@ -9,10 +9,10 @@
     </appender>
 
     <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${catalina.base}/logs/scb-data-service.log</File> 
+        <File>${catalina.base}/logs/scb-ui-zk.log</File> 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             daily rollover
-            <FileNamePattern>scb-data-service.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>scb-ui-zk.%d{yyyy-MM-dd}.log</FileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -22,6 +22,12 @@
     
 	<logger name="com.jzaoralek.scb.dataservice" additivity="false">
         <level value="TRACE" />
+        <appender-ref ref="consoleAppender" />
+        <appender-ref ref="dailyRollingFileAppender" />
+    </logger>
+
+	<logger name="org.zkoss" additivity="false">
+        <level value="WARN" />
         <appender-ref ref="consoleAppender" />
         <appender-ref ref="dailyRollingFileAppender" />
     </logger>

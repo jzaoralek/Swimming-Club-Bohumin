@@ -80,6 +80,16 @@
 		<url-pattern>/zkau/*</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<servlet-class>com.jzaoralek.scb.ui.common.servlet.FileDownloadServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<url-pattern>/downloadAttachment</url-pattern>
+	</servlet-mapping>
+	
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>

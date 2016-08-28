@@ -5,6 +5,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.Clients;
 
+import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.servlet.FileDownloadServlet;
+import com.jzaoralek.scb.ui.common.vm.Attachment;
+
 public final class WebUtils {
 
 	private WebUtils() {}
@@ -32,5 +36,14 @@ public final class WebUtils {
 
 	public static HttpServletRequest getRequest() {
 		return (HttpServletRequest)Executions.getCurrent().getNativeRequest();
+	}
+
+	public static void downloadAttachment(Attachment attachment) {
+		if (attachment == null) {
+			return;
+		}
+		Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
+		String attachmentUrl = Executions.getCurrent().getContextPath() + FileDownloadServlet.URL;
+		Clients.evalJavaScript("window.open('"+attachmentUrl+"', '_blank');");
 	}
 }

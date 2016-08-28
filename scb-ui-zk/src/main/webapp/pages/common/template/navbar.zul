@@ -28,19 +28,20 @@
 	
 		<!-- Navbar -->
 		<vbox hflex="10" vflex="1" align="end" pack="center" >
-			<hlayout sclass="nav-user pull-right" 
+			<hlayout sclass="nav-user pull-right"
 				spacing="0" 
 				apply="org.zkoss.bind.BindComposer" 
 				viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
 				
+				<button label="@load(vm.loggedUserCompleteName)"
+					sclass="btn-info" iconSclass="z-icon-caret-down"
+					popup="loggedUserPopup"
+					visible="@load(vm.isUserLogged())" />
+				
 				<!-- User menu -->
-				<menubar sclass="user-menu light-blue" visible="@load(vm.isUserLogged())" >
-					<menu label="@load(vm.loggedUserCompleteName)"  >
-						<menupopup>
-							<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-off" onClick="@command('logoutCmd')" />
-						</menupopup>
-					</menu>
-				</menubar>
+				<menupopup id="loggedUserPopup"  >
+					<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-off" onClick="@command('logoutCmd')" />
+				</menupopup>
 				
 				<div sclass="main-menu">
 					<button label="${c:l('txt.ui.menu.application')}" 

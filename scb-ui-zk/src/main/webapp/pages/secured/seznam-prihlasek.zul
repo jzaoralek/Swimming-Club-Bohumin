@@ -28,11 +28,12 @@
 			<vbox hflex="20" pack="center" apply="org.zkoss.bind.BindComposer" 
 			 	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationListVM')">
 				
-				<listbox model="@load(vm.courseApplicationList)"  
+				<listbox model="@load(vm.courseApplicationList)"
+					id="courseApplicationList"
 					hflex="1"
 					style="margin-top: 20px;"
 					mold="paging"
-					pageSize="20"
+					pageSize="10"
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 					class="listbox" >
 			        <auxhead>
@@ -47,7 +48,8 @@
 			            		</vbox>
 			            		<vbox hflex="1" vflex="1" align="end" pack="center" >
 			            			<hbox>
-		            					<button iconSclass="z-icon-download" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
+			            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=courseApplicationList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
+		            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
 									</hbox>
 								</vbox>
 							</hbox>
@@ -59,36 +61,43 @@
 						<auxheader class="filter">
 							<textbox hflex="1"
 								instant="true"
+								value="@bind(vm.filter.courseParticName)"
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1" 
 								instant="true"
+								value="@bind(vm.filter.birthDate)"
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1" 
 								instant="true"
+								value="@bind(vm.filter.birthNo)"
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1" 
 								instant="true"
+								value="@bind(vm.filter.courseParticRepresentative)"
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1" 
 								instant="true"
+								value="@bind(vm.filter.phone)"
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1" 
 								instant="true"
+								value="@bind(vm.filter.email)"
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1" 
 								instant="true"
+								value="@bind(vm.filter.modifAt)"
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
@@ -114,7 +123,7 @@
 			                <listcell label="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" />
 			                <listcell label="${each.courseParticRepresentative.contact.phone1}" />
 			                <listcell label="${each.courseParticRepresentative.contact.email1}" />
-			                <listcell label="${each.modifAt}" />			                	
+			                <listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" />			                	
 			                <listcell>
 			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourseApplication_${each.uuid}" />
 			                	<menupopup id="menuCourseApplication_${each.uuid}" >

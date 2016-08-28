@@ -15,8 +15,12 @@ public final class WebConstants {
 	public static final int HEALTH_INFO_MAXLENGTH = 524;
 
 	public static final String WEB_DATE_PATTERN = "dd.MM.yyyy";
+	public static final String WEB_DATETIME_PATTERN = "dd.MM.yyyy H:mm:ss";
 
 	public static final String UUID_PARAM = "uuid";
 	public static final String MODE_PARAM = "mode";
 	public static final String FROM_PAGE_PARAM = "fromPage";
+	public static final String ATTACHMENT_PARAM = "attachment";
+
+	public static final String SECURED_PAGE_URL = "/pages/secured";
 }

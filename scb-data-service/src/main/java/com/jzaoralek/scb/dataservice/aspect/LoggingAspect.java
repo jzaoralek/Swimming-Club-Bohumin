@@ -15,7 +15,10 @@ public class LoggingAspect {
 	@Pointcut("execution(* com.jzaoralek.scb.dataservice.controller.*.*(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping)")
 	public void controllerClassPointcut() {}
 
-	@Around("controllerClassPointcut()")
+	@Pointcut("execution(* com.jzaoralek.scb.dataservice.service.*.*.*(..))") // && @annotation(java.lang.Override)
+	public void serviceClassPointcut() {}
+
+	@Around("serviceClassPointcut()") //controllerClassPointcut() &&
 	public Object logControllerMethod(final ProceedingJoinPoint pjp) throws Throwable {
 		return this.logMethod(pjp);
 	}
@@ -54,12 +57,12 @@ public class LoggingAspect {
             logger.error(sb.toString(), e);
             throw e;
         }
-        
+
     }
 
     /**
      * Method for transforming array of the incoming arguments into message
-     * 
+     *
      * @param invocation
      *            - the method invocation
      * @return message which contains all incoming arguments
@@ -73,7 +76,7 @@ public class LoggingAspect {
             for (final Object obj : pjp.getArgs()) {
                 if (obj != null) {
                 	if (arguments.length() > 0) {
-                		arguments.append(", ");                		
+                		arguments.append(", ");
                 	}
                     arguments.append(MessageFormat.format("{0}", obj.toString()));
                 } else {

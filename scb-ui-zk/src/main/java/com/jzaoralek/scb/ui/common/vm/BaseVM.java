@@ -60,4 +60,8 @@ public class BaseVM {
 	public Converter getDateConverter() {
 		return Converters.getDateconverter();
 	}
+
+	public Converter getDateTimeConverter() {
+		return Converters.getDateTimeConverter();
+	}
 }

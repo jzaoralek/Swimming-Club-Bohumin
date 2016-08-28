@@ -2,6 +2,8 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
@@ -20,9 +22,12 @@ import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.vm.Attachment;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class CourseApplicationVM extends BaseVM {
+
+	private static final Logger LOG = LoggerFactory.getLogger(CourseApplicationVM.class);
 
 	private CourseApplication application;
 	private boolean healthInfoAgreement;
@@ -34,6 +39,7 @@ public class CourseApplicationVM extends BaseVM {
 	private String returnToPage;
 	private String pageHeadline;
 	private String captcha;
+	private Attachment attachment;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -67,8 +73,7 @@ public class CourseApplicationVM extends BaseVM {
 	}
 
 	private Boolean isSecuredPage() {
-		// TODO: nahradit nactenim ze security context
-		return WebUtils.getCurrentUrl().contains("/pages/secured");
+		return WebUtils.getCurrentUrl().contains(WebConstants.SECURED_PAGE_URL);
 	}
 
 	@NotifyChange("*")
@@ -77,12 +82,18 @@ public class CourseApplicationVM extends BaseVM {
 		try {
 			if (this.securedMode) {
 				// update
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Updating application: " + this.application);
+				}
 				courseApplicationService.store(application);
 				WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
 				this.editMode = true;
 				this.confirmText = Labels.getLabel("msg.ui.info.changesSaved");
 			} else {
 				// create
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Creating application: " + this.application);
+				}
 				if (!this.healthInfoAgreement || !this.personalInfoProcessAgreement) {
 					WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.agreementWithHealtAndDataInfo"));
 					return;
@@ -96,7 +107,11 @@ public class CourseApplicationVM extends BaseVM {
 				sendMail();
 			}
 		} catch (ScbValidationException e) {
+			LOG.error("ScbValidationException caught for application: " + this.application, e);
 			WebUtils.showNotificationError(e.getMessage());
+		} catch (Exception e) {
+			LOG.error("Unexpected exception caught for application: " + this.application, e);
+			throw new RuntimeException(e);
 		}
     }
 
@@ -105,6 +120,13 @@ public class CourseApplicationVM extends BaseVM {
 		if (StringUtils.hasText(this.returnToPage)) {
 			Executions.sendRedirect(this.returnToPage);
 		}
+	}
+
+	@Command
+	public void downloadCmd() {
+//		Executions.sendRedirect(FileDownloadServlet.URL);
+//		Filedownload.save(this.applicationFile, JasperUtil.REPORT_MIME, "prihlaska.pdf");
+		WebUtils.downloadAttachment(attachment);
 	}
 
     public void sendMail() {
@@ -117,26 +139,19 @@ public class CourseApplicationVM extends BaseVM {
 		sb.append(System.getProperty("line.separator"));
 		sb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
 
-//		this.application.getCourseParticipant().getContact().setFirstname("Jméno");
-//		this.application.getCourseParticipant().getContact().setSurname("Příjmení");
-//		this.application.getCourseParticipant().setBirthdate(Calendar.getInstance().getTime());
-//		this.application.getCourseParticipant().setPersonalNo("111111/1111");
-//		this.application.getCourseParticipant().setHealthInsurance("Všeobecná zdravotní pojišťovna ěěěě šššššš ččččč řřřřř žžžžž ýýýýýý ááááá ííííí ééé úúúú ůůů");
-//		this.application.getCourseParticRepresentative().getContact().setFirstname("Zástupce jméno");
-//		this.application.getCourseParticRepresentative().getContact().setSurname("Zástupce příjmení");
-//		this.application.getCourseParticRepresentative().getContact().setPhone1("111111111");
-//		this.application.getCourseParticRepresentative().getContact().setPhone2(null);
-//		this.application.getCourseParticRepresentative().getContact().setEmail1("a.a@email.cz");
-//		this.application.getCourseParticRepresentative().getContact().setEmail2(null);;
-//		this.application.getCourseParticipant().setHealthInfo("Údaje o zdravotních obtížích");
-
 		byte[] byteArray = JasperUtil.getReport(this.application, this.pageHeadline);
-		//Filedownload.save(byteArray, JasperUtil.REPORT_MIME, "prihlaska.pdf");
 
 		StringBuilder fileName = new StringBuilder();
 		fileName.append("prihlaska_do_klubu");
-		//fileName.append(this.application.getCourseParticipant().getContact().getFirstname() + "_" + this.application.getCourseParticipant().getContact().getSurname());
+		fileName.append("_" + this.application.getCourseParticRepresentative().getContact().getEmail1());
 		fileName.append(".pdf");
+
+		// create attachment for FileDownloadServlet
+		Attachment attachment = new Attachment();
+		attachment.setByteArray(byteArray);
+		attachment.setContentType("application/pdf");
+		attachment.setName(fileName.toString());
+		this.attachment = attachment;
 
 		mailService.sendMail(this.application.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), sb.toString(), byteArray, fileName.toString().toLowerCase());
 	}
