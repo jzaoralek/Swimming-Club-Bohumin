@@ -2,10 +2,9 @@
 
 <div sclass="navbar navbar-ext" height="75px" style="margin-bottom:0px;" 
 	apply="org.zkoss.bind.BindComposer"
-	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">
+	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">	
 	
-	
-	<hbox hflex="1" vflex="1">
+	<hbox hflex="1" vflex="1" >
 		<vbox vflex="1" pack="center">
 			<a id="mobileMenu"
 				iconSclass="z-icon-bars" 
@@ -23,7 +22,7 @@
 		<vbox vflex="1" hflex="10" align="start" pack="center" >
 			<a label="${c:l('txt.ui.organization.name')}" 
 				sclass="pull-left navbar-brand" 
-				style="font-size: 25px; font-weight: bold;" href="/" />
+				style="font-size: 22px; font-weight: bold;" href="/" />
 		</vbox>
 	
 		<!-- Navbar -->
@@ -55,7 +54,8 @@
 					tooltiptext="${c:l('txt.ui.login')}"
 					href="/pages/common/login.zul"
 					sclass="btn-info" iconSclass="z-icon-user"
-					visible="@load(!vm.isUserLogged())" />
+					visible="@load(!vm.isUserLogged())"
+					style="margin-right: 10px; font-weight: bold;" />
 			</hlayout>
 		</vbox>
 		

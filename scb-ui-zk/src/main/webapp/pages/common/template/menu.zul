@@ -50,12 +50,21 @@
 			</menuitem>
 			
 			<!-- Seznam prihlasek -->
-			<menuitem
-				label="${c:l('txt.ui.menu.applicationList')}" 
+			<menuitem style="text-align: center; width: 100px;"
+				label="${c:l('txt.ui.menu.applications')}" 
 				id="menu_applicationToClubList"
-				iconSclass="z-icon-list-alt" 
+				iconSclass="z-icon-files-o" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 				href="/pages/secured/seznam-prihlasek.zul" >
+			</menuitem>
+			
+			<!-- Seznam kurzu -->
+			<menuitem  style="text-align: center; width: 100px;"
+				label="${c:l('txt.ui.menu.courses')}" 
+				id="menu_courseList"
+				iconSclass="z-icon-list-alt" 
+				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
+				href="/pages/secured/seznam-kurzu.zul" >
 			</menuitem>
 			
 		</menubar>

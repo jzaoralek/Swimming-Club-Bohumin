@@ -12,7 +12,7 @@
         <File>${catalina.base}/logs/scb-ui-zk.log</File> 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             daily rollover
-            <FileNamePattern>scb-ui-zk.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${catalina.base}/logs/scb-ui-zk.%d{yyyy-MM-dd}.log</FileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>

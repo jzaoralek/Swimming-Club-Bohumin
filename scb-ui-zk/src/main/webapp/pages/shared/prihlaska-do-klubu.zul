@@ -75,7 +75,7 @@
 		            	</auxheader>
 		            </auxhead>
 					<columns>
-		                <column width="170px" align="right" />
+		                <column width="130px" align="right" />
 		                <column />
 		            </columns>
 					<rows >
@@ -174,6 +174,19 @@
 								</hbox>
 							</cell>
 						</row>
+						<row style="padding: 10px; border: none;">
+							<cell/>
+							<cell>
+								<hbox hflex="1">
+									<textbox rows="3" hflex="3" multiline="true" readonly="@load(!vm.editMode)"
+										value="@bind(fx.application.courseParticipant.healthInfo)" tabindex="6"
+										placeholder="${c:l('txt.ui.application.healthInfo')}"
+										maxlength="@load(vm.getHealthInfoMaxlength())" />
+									<vbox hflex="2" style="margin-left: 10px;">
+									</vbox>
+								</hbox>
+							</cell>
+						</row>
 					</rows>
 				</grid>
 				
@@ -191,7 +204,7 @@
 		            	</auxheader>
 		            </auxhead>
 					<columns>
-		                <column width="170px" align="right" />
+		                <column width="130px" align="right" />
 		                <column />
 		            </columns>
 					<rows>
@@ -204,7 +217,7 @@
 										maxlength="@load(vm.getFirstnameMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-										tabindex="6"
+										tabindex="7"
 										hflex="3" />
 									<vbox hflex="2" style="margin-left: 10px;">
 										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeFirstname])" >
@@ -223,7 +236,7 @@
 										maxlength="@load(vm.getSurnameMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-										tabindex="7"
+										tabindex="8"
 										hflex="3" />
 									<vbox hflex="2" style="margin-left: 10px;">
 										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeSurname])" >
@@ -242,7 +255,7 @@
 										maxlength="@load(vm.getPhoneMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-										tabindex="8"
+										tabindex="9"
 										hflex="3" />
 									<vbox hflex="2" style="margin-left: 10px;">
 										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativePhone1])" >
@@ -258,7 +271,7 @@
 								<textbox id="representativePhone2" readonly="@load(!vm.editMode)" 
 									value="@bind(fx.application.courseParticRepresentative.contact.phone2)"
 									maxlength="@load(vm.getPhoneMaxlength())"
-									tabindex="9"
+									tabindex="10"
 									hflex="3" />
 								<vbox hflex="2"/>
 							</cell>
@@ -272,13 +285,15 @@
 										maxlength="@load(vm.getEmailMaxlength())"
 										placeholder="*"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-										tabindex="10"
+										tabindex="11"
 										hflex="3" />
 									<vbox hflex="2" style="margin-left: 10px;">
-										<a iconSclass="z-icon-info-circle" popup="emailPopup" />
-										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
-											<label value="@bind(vmsgs[representativeEmail1])" />
-										</span>
+										<hbox>
+											<a iconSclass="z-icon-info-circle" popup="emailPopup" />
+											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
+												<label value="@bind(vmsgs[representativeEmail1])" />
+											</span>										
+										</hbox>
 									</vbox>
 								</hbox>
 							</cell>
@@ -290,7 +305,7 @@
 									<textbox id="representativeEmail2" readonly="@load(!vm.editMode)" 
 										value="@bind(fx.application.courseParticRepresentative.contact.email2) @validator(vm.emailValidator)"
 										maxlength="@load(vm.getEmailMaxlength())"
-										tabindex="11"
+										tabindex="12"
 										hflex="3" />
 									<vbox hflex="2" style="margin-left: 10px;">
 										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail2])" >
@@ -304,25 +319,11 @@
 				</grid>
 				
 				<hbox visible="@load(vm.editMode and !vm.securedMode)">
-					<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="12" />
+					<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="13" />
 					<label value="${c:l('txt.ui.application.healthAgreement')}" />
 				</hbox>
 				
-				<hbox style="margin-bottom: 20px; margin-top: 20px" 
-					hflex="1">
-					<vbox width="180px">
-						<label value="${c:l('txt.ui.application.healthInfo')}" />
-					</vbox>
-					<vbox hflex="3">
-						<textbox rows="3" hflex="1" multiline="true" readonly="@load(!vm.editMode)"
-							value="@bind(fx.application.courseParticipant.healthInfo)" tabindex="13"
-							maxlength="@load(vm.getHealthInfoMaxlength())" />
-					</vbox>
-					<vbox hflex="2">
-					</vbox>
-				</hbox>
-				
-				<hbox visible="@load(vm.editMode and !vm.securedMode)">
+				<hbox visible="@load(vm.editMode and !vm.securedMode)" style="margin-top: 20px;">
 					<checkbox checked="@bind(vm.personalInfoProcessAgreement)" tabindex="14" />
 					<hbox>
 						<span>
@@ -333,7 +334,6 @@
 				</hbox>
 				
 				<hbox style="margin-bottom: 20px; margin-top: 20px" visible="@load(vm.editMode and !vm.securedMode)">
-					<vbox width="180px"/>
 					<vbox>
 						<vbox>
 						    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
@@ -346,12 +346,9 @@
 						    </hbox>
 						</vbox>
 					</vbox>
-					
-					
 				</hbox>
 				
 				<hbox style="margin-bottom: 20px;">
-					<vbox width="180px"/>
 					<vbox>
 						<button label="Odeslat" tabindex="15"
 							onClick="@command('submit')" 

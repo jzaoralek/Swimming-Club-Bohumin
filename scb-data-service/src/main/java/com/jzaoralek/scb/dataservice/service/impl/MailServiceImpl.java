@@ -29,15 +29,10 @@ public class MailServiceImpl implements MailService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailServiceImpl.class);
 
-    private static final String MAIL_SMTP_HOST = "smtp.seznam.cz"; // "77.75.72.43";
-    private static final String MAIL_SMTP_PORT = "25";
-    private static final String SMTP_AUTH_USER = "plavanibohumin@seznam.cz";
+    private static final String MAIL_SMTP_HOST = "smtp.gransy.com";
+    private static final String MAIL_SMTP_PORT = "587";
+    private static final String SMTP_AUTH_USER = "info@pkbohumin.cz";
     private static final String SMTP_AUTH_PWD = "bohumin2012";
-
-//    private static final String MAIL_SMTP_HOST = "smtp.gmail.com";
-//    private static final String MAIL_SMTP_PORT = "587";
-//    private static final String SMTP_AUTH_USER = "swimmingclub.bohumin@gmail.com";
-//    private static final String SMTP_AUTH_PWD = "9WzE1118npLu4rhhycBK";
 
     @Override
     public void sendMail(String to, String subject, String text, byte[] attachment, String attachmentName) {

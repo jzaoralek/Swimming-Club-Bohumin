@@ -14,7 +14,9 @@ public final class EventQueueHelper {
 
 	public enum ScbEvent {
 		OPEN_MAIN_MENU_EVENT,
-		RELOAD_COURSE_APPLICATION_DATA_EVENT;
+		RELOAD_COURSE_APPLICATION_DATA_EVENT,
+		RELOAD_COURSE_DATA_EVENT,
+		RELOAD_COURSE_PARTICIPANT_DATA_EVENT;
 	}
 
 	private EventQueueHelper() {}

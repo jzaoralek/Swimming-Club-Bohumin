@@ -25,8 +25,6 @@ import com.jzaoralek.scb.dataservice.domain.ScbUser;
 @Repository
 public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseApplicationDao {
 
-	private static final String YEAR_FROM_PARAM = "YEAR_FROM";
-	private static final String YEAR_TO_PARAM = "YEAR_TO";
 	private static final String COURSE_PARTICIPANT_UUID_PARAM = "COURSE_PARTICIPANT_UUID";
 	private static final String USER_UUID_PARAM = "USER_UUID";
 

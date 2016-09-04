@@ -10,16 +10,13 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
-import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.Attachment;
@@ -36,7 +33,7 @@ public class CourseApplicationVM extends BaseVM {
 	private boolean securedMode;
 	private boolean showNotification;
 	private String confirmText;
-	private String returnToPage;
+
 	private String pageHeadline;
 	private String captcha;
 	private Attachment attachment;
@@ -45,13 +42,11 @@ public class CourseApplicationVM extends BaseVM {
 	private CourseApplicationService courseApplicationService;
 
 	@WireVariable
-	private ConfigurationService configurationService;
-
-	@WireVariable
 	private MailService mailService;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
+
 		CourseApplication courseApplication = null;
 		if (StringUtils.hasText(uuid)) {
 			courseApplication = courseApplicationService.getByUuid(UUID.fromString(uuid));
@@ -61,15 +56,13 @@ public class CourseApplicationVM extends BaseVM {
 		this.securedMode = isSecuredPage();
 		this.showNotification = false;
 
-		this.returnToPage = StringUtils.hasText(fromPage) ? WebPages.valueOf(fromPage).getUrl() : null;
+		setReturnPage(fromPage);
 
-		String year = "";
 		if (courseApplication == null) {
-			year = configurationService.getCourseApplicationYear();
+			this.pageHeadline = getNewCourseApplicationTitle();
 		} else {
-			year = String.valueOf(courseApplication.getYearFrom());
+			this.pageHeadline = Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {String.valueOf(courseApplication.getYearFrom())});
 		}
-		this.pageHeadline = Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
 	}
 
 	private Boolean isSecuredPage() {
@@ -116,13 +109,6 @@ public class CourseApplicationVM extends BaseVM {
     }
 
 	@Command
-    public void backCmd() {
-		if (StringUtils.hasText(this.returnToPage)) {
-			Executions.sendRedirect(this.returnToPage);
-		}
-	}
-
-	@Command
 	public void downloadCmd() {
 //		Executions.sendRedirect(FileDownloadServlet.URL);
 //		Filedownload.save(this.applicationFile, JasperUtil.REPORT_MIME, "prihlaska.pdf");
@@ -154,10 +140,6 @@ public class CourseApplicationVM extends BaseVM {
 		this.attachment = attachment;
 
 		mailService.sendMail(this.application.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), sb.toString(), byteArray, fileName.toString().toLowerCase());
-	}
-
-	public Boolean isBackButtonVisible() {
-		return StringUtils.hasText(this.returnToPage);
 	}
 
 	private void initItem(CourseApplication courseApplication) {

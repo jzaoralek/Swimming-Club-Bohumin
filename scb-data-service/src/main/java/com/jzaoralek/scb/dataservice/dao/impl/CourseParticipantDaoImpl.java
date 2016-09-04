@@ -26,11 +26,24 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	private static final String HEALTH_INSURANCE = "health_insurance";
 	private static final String CONTACT_PARAM = "contact_uuid";
 	private static final String HEALTH_INFO_PARAM = "health_info";
+	private static final String COURSE_PARTICIPANT_UUID_PARAM = "course_participant_uuid";
+	private static final String COURSE_UUID_PARAM = "course_uuid";
 
 	private static final String INSERT = "INSERT INTO course_participant " +
 			"(uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by) " +
 			" VALUES (:"+UUID_PARAM+", :"+BIRTHDATE_PARAM+", :"+PERSONAL_NUMBER_PARAM+", :"+HEALTH_INSURANCE+", :"+CONTACT_PARAM+", :"+HEALTH_INFO_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
 	private static final String SELECT_BY_UUID = "SELECT uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by FROM course_participant WHERE uuid= :"+UUID_PARAM;
+
+	private static final String SELECT_BY_COURSE_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by FROM course_participant cp, course_course_participant ccp "
+			+ "WHERE cp.uuid = ccp.course_participant_uuid "
+			+ "AND ccp.course_uuid = :"+COURSE_UUID_PARAM;
+	private static final String DELETE_ALL_FROM_COURSE = "DELETE from course_course_participant WHERE course_uuid = :"+COURSE_UUID_PARAM;
+	private static final String DELETE_PARTICIPANT_FROM_COURSE = "DELETE from course_course_participant WHERE course_uuid = :"+COURSE_UUID_PARAM+" AND course_participant_uuid = :"+COURSE_PARTICIPANT_UUID_PARAM;
+
+	private static final String INSERT_COURSE_COURSE_PARTICIPANT = "INSERT INTO course_course_participant " +
+			"(uuid, course_participant_uuid, course_uuid) " +
+			" VALUES (:"+UUID_PARAM+", :"+COURSE_PARTICIPANT_UUID_PARAM+", :"+COURSE_UUID_PARAM+")";
+
 	private static final String DELETE = "DELETE FROM course_participant where uuid = :" + UUID_PARAM;
 	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + " WHERE uuid=:"+UUID_PARAM;
 
@@ -88,6 +101,34 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		contactDao.delete(courseParticipant.getContact());
 		namedJdbcTemplate.update(DELETE, new MapSqlParameterSource().addValue(UUID_PARAM, courseParticipant.getUuid().toString()));
 
+	}
+
+	@Override
+	public void deleteAllFromCourse(UUID courseUuid) {
+		namedJdbcTemplate.update(DELETE_ALL_FROM_COURSE, new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()));
+	}
+
+	@Override
+	public void deleteParticipantFromCourse(UUID participantUuid, UUID courseUuid) {
+		namedJdbcTemplate.update(DELETE_ALL_FROM_COURSE, new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(COURSE_PARTICIPANT_UUID_PARAM, participantUuid.toString()));
+	}
+
+	@Override
+	public void insetToCourse(List<CourseParticipant> courseParticipantList, UUID courseUuid) {
+		MapSqlParameterSource paramMap = null;
+		for (CourseParticipant item : courseParticipantList) {
+			paramMap = new MapSqlParameterSource();
+			paramMap.addValue(UUID_PARAM, UUID.randomUUID());
+			paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
+			paramMap.addValue(COURSE_PARTICIPANT_UUID_PARAM, item.getUuid().toString());
+			namedJdbcTemplate.update(INSERT_COURSE_COURSE_PARTICIPANT, paramMap);
+		}
+	}
+
+	@Override
+	public List<CourseParticipant> getByCourseUuid(UUID courseUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
 	}
 
 	public static final class CourseParticipantRowMapper implements RowMapper<CourseParticipant> {

@@ -3,6 +3,10 @@ package com.jzaoralek.scb.dataservice.domain;
 import java.util.Date;
 import java.util.UUID;
 
+import org.springframework.util.StringUtils;
+
+import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
+
 public class CourseApplication implements IdentEntity {
 
 	private UUID uuid;
@@ -65,6 +69,17 @@ public class CourseApplication implements IdentEntity {
 	}
 	public void setCourseParticRepresentative(ScbUser courseParticRepresentative) {
 		this.courseParticRepresentative = courseParticRepresentative;
+	}
+	public void fillYearFromTo(String value) {
+		if (!StringUtils.hasText(value)) {
+			return;
+		}
+		String[] years = value.split(ConfigurationServiceImpl.COURSE_YEAR_DELIMITER);
+		if (years.length < 2) {
+			return;
+		}
+		this.yearFrom = Integer.valueOf(years[0]);
+		this.yearTo = Integer.valueOf(years[1]);
 	}
 
 	@Override

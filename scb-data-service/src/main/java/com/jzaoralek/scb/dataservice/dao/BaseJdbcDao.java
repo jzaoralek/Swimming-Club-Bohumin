@@ -18,6 +18,8 @@ public abstract class BaseJdbcDao {
 	protected static final String UUID_PARAM = "UUID";
 	protected static final String MODIF_AT_PARAM = "MODIF_AT";
 	protected static final String MODIF_BY_PARAM = "MODIF_BY";
+	protected static final String YEAR_FROM_PARAM = "YEAR_FROM";
+	protected static final String YEAR_TO_PARAM = "YEAR_TO";
 
 	protected final JdbcTemplate jdbcTemplate;
 	protected final NamedParameterJdbcTemplate namedJdbcTemplate;

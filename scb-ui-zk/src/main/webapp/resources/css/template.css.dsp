@@ -3125,7 +3125,7 @@ a.z-tab-content{
 }
 
 .main-menu-bar > ul{
-	border-bottom: 2px solid #79b0ce;
+	/* border-bottom: 2px solid #79b0ce; */
     border-width: 0 0 2px;
 }
 

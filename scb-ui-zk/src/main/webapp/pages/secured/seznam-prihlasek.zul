@@ -1,4 +1,4 @@
-<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.menu.applicationList')}"?>
+<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.menu.applications')}"?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 
@@ -15,7 +15,7 @@
 			<vbox hflex="1" />
 			
 			<vbox hflex="20" pack="center">
-				<headline label="${c:l('txt.ui.menu.applicationList')}" menuSelected="menu_applicationToClubList" />
+				<headline label="${c:l('txt.ui.menu.applications')}" menuSelected="menu_applicationToClubList" />
 			</vbox>
 			
 			<vbox hflex="1" />

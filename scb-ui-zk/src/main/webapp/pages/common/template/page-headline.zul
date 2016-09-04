@@ -5,8 +5,7 @@
 		  <label value="${arg.label}" />
 		  <a label="${arg.description}" 
 		  	if="${arg.description != null}"
-		  	iconSclass="z-icon-angle-double-right"
-		  	sclass="subtitle" />
+		  	iconSclass="z-icon-angle-double-right" />
 	</hbox>
 
 </zk>

@@ -1,0 +1,226 @@
+<?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
+<?page title="${c:l('txt.ui.organization.name')} - ${vm.pageHeadline}" ?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+<?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
+
+
+<zk>
+	<div self="@{define(mainContent)}" hflex="1" apply="org.zkoss.bind.BindComposer" 
+			 viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseVM')"
+			 validationMessages="@id('vmsgs')"
+       		 form="@id('fx') @load(vm) @save(vm, before='submit')" >
+		<style>
+			<!-- cut/hide the vertical borders in the grid rows -->
+			tr.z-row td.z-row-inner { border-right: 0px #CCC;  }			
+		</style>
+		
+		<hlayout spacing="0">
+			<vbox hflex="1" />
+			
+			<vbox hflex="20" pack="center" >
+				<hbox hflex="1" align="center" vflex="1" >
+					<vbox hflex="3">
+						<headline label="${vm.pageHeadline}" menuSelected="menu_courseList" />
+					</vbox>
+					<vbox hflex="1" vflex="1" align="end" pack="center">
+						<button onClick="@command('backCmd')" 
+							label="${c:l('txt.ui.common.Back')}" 
+							iconSclass="z-icon-arrow-left" />
+					</vbox>
+				</hbox>
+			</vbox>
+			
+			<vbox hflex="1" />
+		</hlayout>
+		
+		<hlayout spacing="0">
+		
+			<vbox hflex="1" />
+
+			<!-- Formular -->
+			<vbox hflex="20" pack="center" sclass="vbox-content" >	    
+				
+				<grid hflex="1" >
+					<columns>
+		                <column width="100px" align="right" />
+		                <column />
+		            </columns>
+					<rows >
+						<row style="padding: 10px; border: none;">
+							<label value="${c:l('txt.ui.common.name')}"/>
+							<cell >
+								<hbox hflex="1" align="center">
+									<textbox id="courseName"
+										value="@bind(fx.course.name) @validator(vm.notNullValidator)"
+										maxlength="@load(vm.getNameMaxlength())"
+										placeholder="*"
+										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+										tabindex="1"
+										hflex="3" />
+									<vbox hflex="2" style="margin-left: 10px;">
+										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[courseName])" >
+											<label value="@bind(vmsgs[courseName])" />
+										</span>
+									</vbox>
+								</hbox>
+							</cell>
+						</row>
+						<row style="padding: 10px; border: none;">
+							<label value="${c:l('txt.ui.common.description')}"/>
+							<cell>
+								<hbox hflex="1">
+									<textbox id="courseDescription"
+										value="@bind(fx.course.description)"
+										maxlength="@load(vm.getDescriptionMaxlength())"
+										tabindex="2"
+										hflex="3" />
+									<vbox hflex="2" style="margin-left: 10px;">
+										
+									</vbox>
+								</hbox>
+							</cell>
+						</row>
+						<row style="padding: 10px; border: none;">
+							<label value="${c:l('txt.ui.common.year')}"/>
+							<cell>
+								<hbox hflex="1">
+									<listbox id="courseYear" 
+										selectedItem="@bind(vm.courseYearSelected)" 
+										model="@load(vm.courseYearList)"
+										mold="select"
+										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+										height="25px"
+										tabindex="2"  >
+									</listbox>
+									
+									<vbox hflex="2" style="margin-left: 10px;">
+										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[courseYear])" >
+											<label value="@bind(vmsgs[courseYear])" />
+										</span>
+									</vbox>
+								</hbox>
+							</cell>
+						</row>
+					</rows>
+				</grid>
+				
+				<hbox style="margin-top: 20px;">
+					<vbox>
+						<button label="Uložit"
+							onClick="@command('submit')" 
+							iconSclass="z-icon-check" />
+					</vbox>
+				</hbox>
+				
+				<!-- Lekce -->
+				<listbox model="@load(vm.course.lessonList)"
+					id="lessonList"
+					hflex="1"
+					style="margin-top: 20px;"
+					mold="paging"
+					pageSize="10"
+					visible="@load(vm.updateMode)"
+					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+					class="listbox" >
+			        <auxhead>
+			            <auxheader class="header" colspan="3" >
+			            	<hbox hflex="1" height="42px" align="center" >
+				            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+			            			<hbox>
+				            			<vbox>
+				            				<label value="${c:l('txt.ui.common.lessons')}" />
+										</vbox>
+			            			</hbox>
+			            		</vbox>
+			            		<vbox hflex="1" vflex="1" align="end" pack="center" >
+			            			<hbox>
+			            				<button onClick="@command('newLessonCmd')" tooltiptext="${c:l('txt.ui.common.new')}" sclass="btn-warning" iconSclass="z-icon-plus" />
+<!-- 			            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=lessonList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" /> -->
+<!-- 		            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" /> -->
+									</hbox>
+								</vbox>
+							</hbox>
+			            </auxheader>
+			        </auxhead>
+					
+			        <listhead>
+			            <listheader label="${c:l('txt.ui.common.dayOfWeek')}" align="left" />
+			            <listheader label="${c:l('txt.ui.common.time')}" align="left" />
+			            <listheader width="50px" align="center" />
+			        </listhead>
+			         
+			        <template name="model">
+			            <listitem>
+			                <listcell label="TODO" />
+			                <listcell label="TODO" />	                	
+			                <listcell>
+			                	<button iconSclass="z-icon-close" tooltiptext="Odebrat" onClick="@command('lessonDeleteCmd', uuid=each.uuid)" hflex="min" width="20px" />
+			                </listcell>
+			            </listitem>
+			        </template>
+			    </listbox>
+			    
+				<!-- Ucastnici kurzu -->
+				<listbox model="@load(vm.course.participantList)"
+					id="courseParticipantList"
+					hflex="1"
+					style="margin-top: 20px;"
+					mold="paging"
+					pageSize="10"
+					visible="@load(vm.updateMode)"
+					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+					class="listbox" >
+			        <auxhead>
+			            <auxheader class="header" colspan="3" >
+			            	<hbox hflex="1" height="42px" align="center" >
+				            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+			            			<hbox>
+				            			<vbox>
+				            				<label value="${c:l('txt.ui.common.participants')}" />
+										</vbox>
+			            			</hbox>
+			            		</vbox>
+			            		<vbox hflex="1" vflex="1" align="end" pack="center" >
+			            			<hbox>
+			            				<button onClick="@command('newCourseParticipantCmd')" tooltiptext="${c:l('txt.ui.common.new')}" sclass="btn-warning" iconSclass="z-icon-plus" />
+<!-- 			            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=courseParticipantList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" /> -->
+<!-- 		            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" /> -->
+									</hbox>
+								</vbox>
+							</hbox>
+			            </auxheader>
+			        </auxhead>
+					
+			        <listhead>
+			            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(courseParticipant.contact.surname)" align="left" />
+			            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(courseParticipant.birthdate)" align="left" />
+			            <listheader width="50px" align="center" />
+			        </listhead>
+			         
+			        <template name="model">
+			            <listitem>
+			                <listcell label="${each.contact.surname} ${each.contact.firstname}" />
+			                <listcell label="@load(each.birthdate) @converter(vm.dateConverter)" />	                	
+			                <listcell>
+			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}" />
+			                	<menupopup id="menuCourse_${each.uuid}" >
+									<menuitem label="Detail" onClick="@command('courseParticipantDetailCmd', uuid=each.uuid)" />
+									<menuitem label="Odebrat" onClick="@command('courseParticipantDeleteCmd', uuid=each.uuid)"  />
+						       	</menupopup>
+			                </listcell>
+			            </listitem>
+			        </template>
+			    </listbox>
+			    
+			    
+			    
+			</vbox>
+			
+			<vbox hflex="1" />
+		</hlayout>
+	</div>
+</zk>
+
+
+

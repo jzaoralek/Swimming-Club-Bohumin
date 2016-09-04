@@ -74,8 +74,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		fillIdentEntity(courseApplication, null);
 		if (insert) {
 			// insert
-			courseApplication.setYearFrom(Integer.valueOf(configurationService.getCourseApplicationYear()));
-			courseApplication.setYearTo(courseApplication.getYearFrom() + 1);
+			courseApplication.fillYearFromTo(configurationService.getCourseApplicationYear());
 			courseApplicationDao.insert(courseApplication);
 		} else {
 			// update
@@ -109,7 +108,6 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		// kontakt zastupce
 		storeContact(courseParticRepresentative.getContact());
 
-		courseParticRepresentative.getUuid();
 		boolean insert = courseParticRepresentative.getUuid() == null;
 		fillIdentEntity(courseParticRepresentative, null);
 		if (insert) {
