@@ -53,7 +53,7 @@
 			</props>
 		</property>
 		<property name="password" value="scb2016*" />
-		<!-- <property name="password" value="scb"/> -->
+<!-- 		<property name="password" value="scb"/> -->
 	</bean>
 
 </beans>

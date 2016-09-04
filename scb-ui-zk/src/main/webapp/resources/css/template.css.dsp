@@ -2839,9 +2839,8 @@ body {
 }
 .page-header .z-label {
   padding: 0;
-  margin: 0 8px;
+  margin: 0 0px;
   font-size: 24px;
-  font-weight: lighter;
   color: #2679B5;
 }
 .page-header .subtitle {
