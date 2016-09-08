@@ -110,7 +110,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	@Override
 	public void deleteParticipantFromCourse(UUID participantUuid, UUID courseUuid) {
-		namedJdbcTemplate.update(DELETE_ALL_FROM_COURSE, new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(COURSE_PARTICIPANT_UUID_PARAM, participantUuid.toString()));
+		namedJdbcTemplate.update(DELETE_PARTICIPANT_FROM_COURSE, new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(COURSE_PARTICIPANT_UUID_PARAM, participantUuid.toString()));
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		MapSqlParameterSource paramMap = null;
 		for (CourseParticipant item : courseParticipantList) {
 			paramMap = new MapSqlParameterSource();
-			paramMap.addValue(UUID_PARAM, UUID.randomUUID());
+			paramMap.addValue(UUID_PARAM, UUID.randomUUID().toString());
 			paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
 			paramMap.addValue(COURSE_PARTICIPANT_UUID_PARAM, item.getUuid().toString());
 			namedJdbcTemplate.update(INSERT_COURSE_COURSE_PARTICIPANT, paramMap);

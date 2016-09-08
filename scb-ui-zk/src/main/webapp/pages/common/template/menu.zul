@@ -1,4 +1,4 @@
-<div sclass="main-menu"
+<div sclass="main-menu" 
 	apply="org.zkoss.bind.BindComposer"
 	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')" >
 	

@@ -52,6 +52,11 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 
 	@Override
+	public List<Course> getAllExceptCourse(UUID courseUuid) {
+		return courseDao.getAllExceptCourse(courseUuid);
+	}
+
+	@Override
 	public Course getByUuid(UUID uuid) {
 		return courseDao.getByUuid(uuid);
 	}
@@ -60,6 +65,10 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	public Course store(Course course) throws ScbValidationException {
 		if (course == null) {
 			throw new IllegalArgumentException("course is null");
+		}
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Storing course: " + course);
 		}
 
 		boolean insert = course.getUuid() == null;
@@ -74,9 +83,9 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 
 	@Override
-	public void storeCourseParticipants(List<CourseParticipant> newCourseParticipantList, Course course) throws ScbValidationException {
-		if (course == null) {
-			throw new IllegalArgumentException("course is null");
+	public void storeCourseParticipants(List<CourseParticipant> newCourseParticipantList, UUID courseUuid) throws ScbValidationException {
+		if (courseUuid == null) {
+			throw new IllegalArgumentException("courseUuid is null");
 		}
 		if (CollectionUtils.isEmpty(newCourseParticipantList)) {
 			LOG.warn("CourseParticipantList is empty.");
@@ -84,7 +93,7 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		}
 
 		// nacist kurz vcetne ucastniku - nove DAO
-		Course courseDB = courseDao.getByUuid(course.getUuid());
+		Course courseDB = courseDao.getByUuid(courseUuid);
 		List<CourseParticipant> courseParticipantListFinal = new ArrayList<CourseParticipant>();
 		if (!CollectionUtils.isEmpty(courseDB.getParticipantList())) {
 			// courseParticipantList porovnat z puvodni mnozinou a vzbrat pouze pridane
@@ -102,7 +111,7 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 			courseParticipantListFinal.addAll(courseDB.getParticipantList());
 		}
 		// nastavit do course
-		course.setParticipantList(courseParticipantListFinal);
+		courseDB.setParticipantList(courseParticipantListFinal);
 		// ulozit
 		courseDao.update(courseDB);
 	}

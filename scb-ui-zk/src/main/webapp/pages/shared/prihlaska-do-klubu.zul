@@ -6,7 +6,9 @@
 <zk>
 	<style>
 		<!-- cut/hide the vertical borders in the grid rows -->
-		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }			
+		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
+		
+		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
 	</style>
 
 	<borderlayout self="@{define(mainContent)}" hflex="1" apply="org.zkoss.bind.BindComposer" 

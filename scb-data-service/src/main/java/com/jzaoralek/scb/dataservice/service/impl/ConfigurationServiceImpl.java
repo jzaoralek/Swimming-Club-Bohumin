@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.javatuples.Pair;
 import org.springframework.stereotype.Service;
 
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -18,6 +19,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public String getCourseApplicationYear() {
 		return courseYearList.get(0);
+	}
+
+	@Override
+	public Pair<Integer, Integer> getYearFromTo() {
+		String[] yearFromToArr = getCourseApplicationYear().split(COURSE_YEAR_DELIMITER);
+		return new Pair<Integer, Integer>(Integer.valueOf(yearFromToArr[0]), Integer.valueOf(yearFromToArr[1]));
 	}
 
 	@Override

@@ -82,11 +82,11 @@
 			         
 			        <template name="model">
 			            <listitem>
-			                <listcell label="${each.name}" />
-			                <listcell label="${each.description}" />
-			                <listcell label="${each.year}" />	
-			                <listcell label="${each.participantListCount}" />
-			                <listcell label="${each.lessonListCount}" />	                	
+			                <listcell label="${each.name}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.description}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.year}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />	
+			                <listcell label="${each.participantListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.lessonListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />	                	
 			                <listcell>
 			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}" />
 			                	<menupopup id="menuCourse_${each.uuid}" >

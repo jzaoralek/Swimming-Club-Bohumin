@@ -2,7 +2,6 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
+import com.jzaoralek.scb.dataservice.dao.LessonDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
 
 @Repository
@@ -25,6 +25,9 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
+
+	@Autowired
+	private LessonDao lessonDao;
 
 	private static final String NAME_PARAM = "NAME";
 	private static final String DESCRIPTION_PARAM = "DESCRIPTION";
@@ -36,6 +39,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	private static final String UPDATE = "UPDATE course SET uuid = :"+UUID_PARAM+" , name = :"+NAME_PARAM+", description = :"+DESCRIPTION_PARAM+", year_from = :"+YEAR_FROM_PARAM+", year_to = :"+YEAR_TO_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course where uuid = :" + UUID_PARAM;
 	private static final String SELECT_ALL = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course";
+	private static final String SELECT_ALL_EXCEPT_COURSE = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course where uuid != :"+COURSE_UUID_PARAM;
 	private static final String SELECT_BY_UUID = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course WHERE uuid=:" + UUID_PARAM;
 
 	@Autowired
@@ -45,14 +49,20 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 
 	@Override
 	public List<Course> getAll() {
-		return namedJdbcTemplate.query(SELECT_ALL, new CourseRowMapper(courseParticipantDao));
+		return namedJdbcTemplate.query(SELECT_ALL, new CourseRowMapper(courseParticipantDao, lessonDao));
+	}
+
+	@Override
+	public List<Course> getAllExceptCourse(UUID courseUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		return namedJdbcTemplate.query(SELECT_ALL_EXCEPT_COURSE, paramMap, new CourseRowMapper(courseParticipantDao, lessonDao));
 	}
 
 	@Override
 	public Course getByUuid(UUID uuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
 		try {
-			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new CourseRowMapper(courseParticipantDao));
+			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new CourseRowMapper(courseParticipantDao, lessonDao));
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
@@ -60,6 +70,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 
 	@Override
 	public void delete(Course course) {
+		courseParticipantDao.deleteAllFromCourse(course.getUuid());
 		namedJdbcTemplate.update(DELETE, new MapSqlParameterSource().addValue(UUID_PARAM, course.getUuid().toString()));
 	}
 
@@ -95,9 +106,11 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 
 	public static final class CourseRowMapper implements RowMapper<Course> {
 		private CourseParticipantDao courseParticipantDao;
-//
-		public CourseRowMapper(CourseParticipantDao courseParticipantDao) {
+		private LessonDao lessonDao;
+
+		public CourseRowMapper(CourseParticipantDao courseParticipantDao, LessonDao lessonDao) {
 			this.courseParticipantDao = courseParticipantDao;
+			this.lessonDao = lessonDao;
 		}
 
 		@Override
@@ -108,7 +121,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			ret.setYearTo(rs.getInt("year_to"));
 			ret.setDescription(rs.getString("description"));
 			ret.setName(rs.getString("name"));
-			ret.setLessonList(Collections.EMPTY_LIST);
+			ret.setLessonList(lessonDao.getByCourse(ret.getUuid()));
 			ret.setParticipantList(courseParticipantDao.getByCourseUuid(ret.getUuid()));
 
 			return ret;

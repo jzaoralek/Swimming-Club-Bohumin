@@ -100,6 +100,18 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		courseApplicationDao.delete(courseApplication);
 	}
 
+	@Override
+	@Transactional(rollbackFor=Throwable.class, readOnly=true)
+	public List<CourseApplication> getNotInCourse(UUID courseUuid, int yearFrom, int yearTo) {
+		return courseApplicationDao.getNotInCourse(courseUuid, yearFrom, yearTo);
+	}
+
+	@Override
+	@Transactional(rollbackFor=Throwable.class, readOnly=true)
+	public List<CourseApplication> getInCourse(UUID courseUuid, int yearFrom, int yearTo) {
+		return courseApplicationDao.getInCourse(courseUuid, yearFrom, yearTo);
+	}
+
 	private void storeCourseParticRepresentative(ScbUser courseParticRepresentative) {
 		if (courseParticRepresentative == null) {
 			throw new IllegalArgumentException("courseParticRepresentative is null");

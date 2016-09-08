@@ -2,8 +2,10 @@ package com.jzaoralek.scb.ui.common.utils;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.util.StringUtils;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.servlet.FileDownloadServlet;
@@ -45,5 +47,13 @@ public final class WebUtils {
 		Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
 		String attachmentUrl = Executions.getCurrent().getContextPath() + FileDownloadServlet.URL;
 		Clients.evalJavaScript("window.open('"+attachmentUrl+"', '_blank');");
+	}
+
+	public static void openModal(String uri) {
+		if (!StringUtils.hasText(uri)) {
+			return;
+		}
+		Window window = (Window)Executions.createComponents(uri, null, null);
+		window.doModal();
 	}
 }

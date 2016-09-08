@@ -3140,7 +3140,7 @@ a.z-tab-content{
 	background-color: white;
 	display: block;
 	position: absolute;
-	bottom: -3px;
+	bottom: 0px;
 	left: 0px;
 	right: 0px;
 }

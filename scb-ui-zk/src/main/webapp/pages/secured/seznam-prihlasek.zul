@@ -117,13 +117,13 @@
 			         
 			        <template name="model">
 			            <listitem>
-			                <listcell label="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}" />
-			                <listcell label="@load(each.courseParticipant.birthdate) @converter(vm.dateConverter)" />
-			                <listcell label="${each.courseParticipant.personalNo}" />
-			                <listcell label="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" />
-			                <listcell label="${each.courseParticRepresentative.contact.phone1}" />
-			                <listcell label="${each.courseParticRepresentative.contact.email1}" />
-			                <listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" />			                	
+			                <listcell label="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="@load(each.courseParticipant.birthdate) @converter(vm.dateConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.courseParticipant.personalNo}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.courseParticRepresentative.contact.phone1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.courseParticRepresentative.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />			                	
 			                <listcell>
 			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourseApplication_${each.uuid}" />
 			                	<menupopup id="menuCourseApplication_${each.uuid}" >

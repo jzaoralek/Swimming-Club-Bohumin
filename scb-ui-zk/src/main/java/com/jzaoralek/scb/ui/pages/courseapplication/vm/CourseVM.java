@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -19,6 +20,7 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
@@ -38,6 +40,7 @@ public class CourseVM extends BaseVM {
 	private String courseYearSelected;
 	private String pageHeadline;
 	private Boolean updateMode;
+	private List<CourseParticipant> participantSelectedList;
 
 	@WireVariable
 	private CourseService courseService;
@@ -51,7 +54,6 @@ public class CourseVM extends BaseVM {
 		if (StringUtils.hasText(uuid)) {
 			course = courseService.getByUuid(UUID.fromString(uuid));
 		}
-
 		if (course != null) {
 			this.course = course;
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseDetail");
@@ -70,14 +72,14 @@ public class CourseVM extends BaseVM {
 			@Override
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT.name())) {
-					loadData(uuid);
+					loadData((UUID)event.getData());
 				}
 			}
 		});
 	}
 
-	public void loadData(String uuid) {
-		this.course = courseService.getByUuid(UUID.fromString(uuid));
+	public void loadData(UUID uuid) {
+		this.course = courseService.getByUuid(uuid);
 		BindUtils.postNotifyChange(null, null, this, "course");
 	}
 
@@ -110,22 +112,45 @@ public class CourseVM extends BaseVM {
 
 	@NotifyChange("*")
 	@Command
+    public void courseParticipantsDeleteCmd() {
+		if (CollectionUtils.isEmpty(this.participantSelectedList)) {
+			return;
+		}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Deleting courseParticipant course participants: " + participantSelectedList + " for course uuid:" + this.course.getUuid());
+		}
+
+		for (CourseParticipant item : this.participantSelectedList) {
+			courseService.deleteParticipantFromCourse(item.getUuid(), this.course.getUuid());
+		}
+
+		loadData(this.course.getUuid());
+	}
+
+	@NotifyChange("*")
+	@Command
     public void courseParticipantDeleteCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting courseParticipant with uuid: " + uuid + " for course uuid:" + this.course.getUuid());
+			LOG.debug("Deleting courseParticipants with uuid: " + uuid + " for course uuid:" + this.course.getUuid());
 		}
 
 		courseService.deleteParticipantFromCourse(uuid, this.course.getUuid());
-		EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT, null, null);
-		//WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseDeleted"));
+		loadData(this.course.getUuid());
 	}
 
 	@Command
-	public void newCourseParticipantCmd() {
+	public void addCourseParticipantsFromApplicationCmd() {
+		 EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_APPLICATION_DATA_EVENT, null, this.course);
+		 WebUtils.openModal("/pages/secured/participant-to-course-window.zul");
+	}
 
+	@Command
+	public void addCourseParticipantsFromCourseCmd() {
+		EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_COURSE_DATA_EVENT, null, this.course);
+		WebUtils.openModal("/pages/secured/participant-to-course-window.zul");
 	}
 
 	@Command
@@ -155,5 +180,13 @@ public class CourseVM extends BaseVM {
 
 	public Boolean getUpdateMode() {
 		return updateMode;
+	}
+
+	public List<CourseParticipant> getParticipantSelectedList() {
+		return participantSelectedList;
+	}
+
+	public void setParticipantSelectedList(List<CourseParticipant> participantSelectedList) {
+		this.participantSelectedList = participantSelectedList;
 	}
 }

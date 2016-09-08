@@ -10,9 +10,10 @@ import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 public interface CourseService {
 
 	List<Course> getAll();
+	List<Course> getAllExceptCourse(UUID courseUuid);
 	Course getByUuid(UUID uuid);
 	Course store(Course course) throws ScbValidationException;
 	void delete(UUID uuid) throws ScbValidationException;
-	void storeCourseParticipants(List<CourseParticipant> newCourseParticipantList, Course course) throws ScbValidationException;
+	void storeCourseParticipants(List<CourseParticipant> newCourseParticipantList, UUID courseUuid) throws ScbValidationException;
 	void deleteParticipantFromCourse(UUID participantUuid, UUID courseUuid);
 }

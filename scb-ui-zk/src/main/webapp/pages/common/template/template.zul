@@ -4,7 +4,7 @@
 <zk>
 	<borderlayout sclass="content-wrapper" >
 		<north border="none" >
-			<vlayout>
+			<vlayout id="vlayoutElem">
 				<include src="/pages/common/template/navbar.zul"/>
 				<include src="/pages/common/template/menu.zul"/>
 			</vlayout>
@@ -13,4 +13,30 @@
 			<div self="@{insert(mainContent)}" vflex="1" hflex="1" ></div>
 		</center>
 	</borderlayout>
+	
+	<script type="text/javascript">
+		// Skryti tlacitek toolbaru, na zaklade Title, coz vim ze neni idealni, volano z Composer
+		function hideToolbarbutton() {
+			var elems = document.getElementsByTagName('*'), i;
+			// , 'Paste'
+			var titlesToHideArr = ['New Book', 'Save Book', 'Export to PDF', 'Sort &#38; Filter', 'Protect Sheet', 'Insert Picture', 'Insert Chart', 'Hyperlink'];
+		    for (i in elems) {
+		    	if (elems[i].className != null) { 
+			    	if (elems[i].className != '') {
+			    		if (elems[i].className.startsWith('z-vlayout-inner'))
+			    		{
+			    			hideElem(elems[i]);
+			    		}
+			    	}
+			    }
+			}
+		}
+		
+		function hideElem(elem) {
+    		elem.style.padding = '0px';
+		}
+	</script>
+	<zscript>
+		//Clients.evalJavaScript("hideToolbarbutton()");
+	</zscript>
 </zk>

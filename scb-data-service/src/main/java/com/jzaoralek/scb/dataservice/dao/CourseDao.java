@@ -8,6 +8,7 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 public interface CourseDao {
 
 	List<Course> getAll();
+	List<Course> getAllExceptCourse(UUID courseUuid);
 	Course getByUuid(UUID uuid);
 	void insert(Course course);
 	void update(Course course);
