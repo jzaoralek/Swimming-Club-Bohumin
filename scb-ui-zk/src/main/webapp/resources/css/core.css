@@ -476,3 +476,33 @@ body {
 	padding: 10px; 
 	border: none;
 }
+
+.form-input-text {
+	height: 30px;
+	max-width: 650px;
+}
+
+.form-input-textarea {
+	max-width: 650px;
+}
+
+.form-grid-cell {
+	height: 0px;
+}
+
+.form-grid-validation-hbox {
+	margin-right: 5px; 
+	max-width: 650px;
+	height: 30px
+}
+
+.form-grid-row {
+	padding-left: 10px; 
+	padding-right: 10px; 
+	border: none; 
+	background: white;
+}
+
+.form-grid {
+	max-width: 720px;
+}

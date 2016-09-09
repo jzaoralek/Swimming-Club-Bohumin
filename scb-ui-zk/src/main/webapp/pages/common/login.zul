@@ -15,10 +15,10 @@
 				<hlayout spacing="0">
 					<vbox hflex="1" />
 					
-					<vbox hflex="20" pack="center" >
-						<hbox hflex="1" >
+					<vbox hflex="20" pack="center" align="center" >
+						<hbox hflex="1" pack="center" >
 							<vbox >
-								<headline label="${c:l('txt.ui.common.Login')}" />
+								<headline label="${c:l('txt.ui.login')}" />
 							</vbox>
 						</hbox>
 					</vbox>
@@ -29,7 +29,7 @@
 				<hlayout xmlns:h="xhtml" >
 					<vbox hflex="1" />
 					
-					<vbox hflex="20" pack="center" >
+					<vbox hflex="20" pack="center" align="center" >
 						<window closable="true" border="normal" sclass="alert alert-danger"
 							visible="@load(vm.loginFailure)">
 							<caption iconSclass="z-icon-times">

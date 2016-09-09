@@ -2840,7 +2840,7 @@ body {
 .page-header .z-label {
   padding: 0;
   margin: 0 0px;
-  font-size: 24px;
+  font-size: 30px;
   color: #2679B5;
 }
 .page-header .subtitle {

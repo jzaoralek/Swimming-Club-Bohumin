@@ -22,18 +22,18 @@
 				<hlayout spacing="0">
 					<vbox hflex="1" />
 					
-					<vbox hflex="20" pack="center" >
-						<hbox hflex="1" >
-							<vbox hflex="3">
+					<vbox hflex="20" pack="center" align="center" >
+						<hbox hflex="1" pack="end" align="center" >
+							<vbox hflex="1" align="center" >
 								<headline label="${vm.pageHeadline}" menuSelected="menu_applicationToClub" />
 							</vbox>
-							<vbox hflex="1" vflex="1" align="end" pack="center">
-								<button onClick="@command('backCmd')" 
-									label="${c:l('txt.ui.common.Back')}" 
-									visible="@load(vm.isBackButtonVisible())"
-									iconSclass="z-icon-arrow-left" />
-							</vbox>
 						</hbox>
+						<vbox hflex="1" vflex="1" align="end" pack="center">
+							<button onClick="@command('backCmd')" 
+								label="${c:l('txt.ui.common.Back')}" 
+								visible="@load(vm.isBackButtonVisible())"
+								iconSclass="z-icon-arrow-left" />
+						</vbox>
 					</vbox>
 					
 					<vbox hflex="1" />
@@ -44,7 +44,7 @@
 					<vbox hflex="1" />
 					
 					<!-- Potvrzujici info -->
-					<vbox hflex="20" pack="center" sclass="vbox-content" visible="@load(vm.showNotification)">
+					<vbox hflex="20" pack="center" align="center" sclass="vbox-content" visible="@load(vm.showNotification)">
 						<window closable="false" border="normal" sclass="alert alert-success">
 							<caption iconSclass="z-icon-check">
 								<label value="@load(vm.confirmText)"/>
@@ -54,14 +54,14 @@
 					</vbox>
 		
 					<!-- Formular -->
-					<vbox hflex="20" pack="center" sclass="vbox-content" visible="@load(vm.editMode)" >	    
+					<vbox hflex="20" pack="center" align="center" sclass="vbox-content" visible="@load(vm.editMode)" >	    
 						
 						<vbox hflex="1" align="end" style="margin: 0px;" visible="false">
 							Údaje označené hvězdičkou jsou povinné.
 						</vbox>
 						
 						<!-- Ucastnik -->
-						<grid hflex="1"  >
+						<grid hflex="1" sclass="form-grid" >
 				            <auxhead>
 				            	<auxheader colspan="2" style="background: #428CCD;">
 				            		<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
@@ -74,52 +74,53 @@
 				            	</auxheader>
 				            </auxhead>
 							<columns>
-				                <column width="130px" align="right" />
-				                <column />
+				                <column align="center" hflex="1" />
 				            </columns>
 							<rows style="background: white;" >
-								<row style="padding: 10px; border: none; background: white;">
-									<label value="${c:l('txt.ui.common.firstname')}"/>
-									<cell >
-										<hbox hflex="1" align="center">
+								<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
+									<cell sclass="form-grid-cell" >
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.firstname')}"/>
 											<textbox id="particFirstname" readonly="@load(!vm.editMode)"
 												value="@bind(fx.application.courseParticipant.contact.firstname) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getFirstnameMaxlength())"
 												placeholder="*"
+												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 												tabindex="1"
-												hflex="3" />
-											<vbox hflex="2" style="margin-left: 10px;">
-												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particFirstname])" >
+												hflex="1" />
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+												<span sclass="alert alert-danger" visible="@load(not empty vmsgs[particFirstname])" >
 													<label value="@bind(vmsgs[particFirstname])" />
 												</span>
-											</vbox>
-										</hbox>
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.surname')}"/>
-									<cell>
-										<hbox hflex="1">
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;;">
+									<cell sclass="form-grid-cell">
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.surname')}"/>
 											<textbox id="particSurname" readonly="@load(!vm.editMode)"
 												value="@bind(fx.application.courseParticipant.contact.surname) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getSurnameMaxlength())"
 												placeholder="*"
+												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 												tabindex="2"
-												hflex="3" />
-											<vbox hflex="2" style="margin-left: 10px;">
+												hflex="1" />
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particSurname])" >
 													<label value="@bind(vmsgs[particSurname])" />
 												</span>
-											</vbox>
-										</hbox>
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.birthDate')}"/>
-									<cell>
-										<hbox hflex="1">
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
+									<cell sclass="form-grid-cell">
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.birthDate')}"/>
 											<datebox id="particBirthdate" readonly="@load(!vm.editMode)"
 												value="@bind(fx.application.courseParticipant.birthdate) @validator(vm.notNullObjectValidator)"
 			                            		format="@load(vm.dateFormat)" 
@@ -127,70 +128,70 @@
 			                            		placeholder="*"
 			                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 			                            		tabindex="3" />
-			                            	<vbox hflex="2" style="margin-left: 10px;">
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
-													<label value="@bind(vmsgs[particBirthdate])" />
-												</span>
-											</vbox>
-										</hbox>
+														<label value="@bind(vmsgs[particBirthdate])" />
+													</span>
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.birthNumber')}"/>
-									<cell>
-										<hbox hflex="1">
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
+									<cell sclass="form-grid-cell">
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.birthNumber')}"/>
 											<textbox id="particBirthNumber" readonly="@load(!vm.editMode)"
 												value="@bind(fx.application.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
 			                            		maxlength="@load(vm.getBirthNumberMaxlength())"
 			                            		placeholder="*"
+			                            		sclass="form-input-text"
 			                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 			                            		tabindex="4"
-			                            		hflex="3" />
-			                            	<vbox hflex="2" style="margin-left: 10px;">
+			                            		hflex="1" />
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
 													<label value="@bind(vmsgs[particBirthNumber])" />
 												</span>
-											</vbox>
-										</hbox>
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.healthInsurance')}"/>
-									<cell>
-										<hbox hflex="1">
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
+									<cell sclass="form-grid-cell">
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.healthInsurance')}"/>
 											<textbox id="particHealthInsurance" readonly="@load(!vm.editMode)"
 												value="@bind(fx.application.courseParticipant.healthInsurance) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getHealthInsuranceMaxlength())"
 												placeholder="*"
+												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 												tabindex="5"
-												hflex="3" />
-											<vbox hflex="2" style="margin-left: 10px;">
+												hflex="1" />
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particHealthInsurance])" >
 													<label value="@bind(vmsgs[particHealthInsurance])" />
 												</span>
-											</vbox>
-										</hbox>
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<cell/>
-									<cell>
-										<hbox hflex="1">
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 30px 30px;">
+									<cell sclass="form-grid-cell">
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.application.healthInfo')}"/>
 											<textbox rows="3" hflex="3" multiline="true" readonly="@load(!vm.editMode)"
 												value="@bind(fx.application.courseParticipant.healthInfo)" tabindex="6"
-												placeholder="${c:l('txt.ui.application.healthInfo')}"
+												sclass="form-input-textarea"
 												maxlength="@load(vm.getHealthInfoMaxlength())" />
-											<vbox hflex="2" style="margin-left: 10px;">
-											</vbox>
-										</hbox>
+										</vbox>
 									</cell>
 								</row>
 							</rows>
 						</grid>
 						
 						<!-- Zakonny zastupce -->
-						<grid hflex="1" style="margin-top: 20px;margin-bottom: 20px;" >
+						<grid hflex="1" sclass="form-grid" style="margin-top: 20px;margin-bottom: 20px;" >
 				            <auxhead>
 				            	<auxheader colspan="2" style="background: #428CCD;">
 				            		<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
@@ -203,126 +204,140 @@
 				            	</auxheader>
 				            </auxhead>
 							<columns>
-				                <column width="130px" align="right" />
-				                <column />
+				                <column align="center" hflex="1" />
 				            </columns>
 							<rows style="background: white;">
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.firstname')}"/>
-									<cell>
-										<hbox hflex="1">
+								<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
+									<cell sclass="form-grid-cell" >
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.firstname')}"/>
 											<textbox id="representativeFirstname" readonly="@load(!vm.editMode)"
 												value="@bind(fx.application.courseParticRepresentative.contact.firstname) @validator(vm.notNullValidator)" 
 												maxlength="@load(vm.getFirstnameMaxlength())"
 												placeholder="*"
+												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 												tabindex="7"
-												hflex="3" />
-											<vbox hflex="2" style="margin-left: 10px;">
+												hflex="1" />
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeFirstname])" >
 													<label value="@bind(vmsgs[representativeFirstname])" />
 												</span>
-											</vbox>
-										</hbox>
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.surname')}"/>
-									<cell>
-										<hbox hflex="1">
+								
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+									<cell sclass="form-grid-cell" >
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.surname')}"/>
 											<textbox id="representativeSurname" readonly="@load(!vm.editMode)"
 												value="@bind(fx.application.courseParticRepresentative.contact.surname) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getSurnameMaxlength())"
 												placeholder="*"
+												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 												tabindex="8"
-												hflex="3" />
-											<vbox hflex="2" style="margin-left: 10px;">
+												hflex="1" />
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeSurname])" >
 													<label value="@bind(vmsgs[representativeSurname])" />
 												</span>
-											</vbox>
-										</hbox>
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.phone')} 1"/>
-									<cell>
-										<hbox hflex="1">
+								
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+									<cell sclass="form-grid-cell" >
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.phone')} 1"/>
 											<textbox id="representativePhone1" readonly="@load(!vm.editMode)"
 												value="@bind(fx.application.courseParticRepresentative.contact.phone1) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getPhoneMaxlength())"
 												placeholder="*"
+												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 												tabindex="9"
-												hflex="3" />
-											<vbox hflex="2" style="margin-left: 10px;">
+												hflex="1" />
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativePhone1])" >
 													<label value="@bind(vmsgs[representativePhone1])" />
 												</span>
-											</vbox>
-										</hbox>
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.phone')} 2:"/>
-									<cell>
-										<textbox id="representativePhone2" readonly="@load(!vm.editMode)" 
-											value="@bind(fx.application.courseParticRepresentative.contact.phone2)"
-											maxlength="@load(vm.getPhoneMaxlength())"
-											tabindex="10"
-											hflex="3" />
-										<vbox hflex="2"/>
+								
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+									<cell sclass="form-grid-cell" >
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.phone')} 2:"/>
+											<textbox id="representativePhone2" readonly="@load(!vm.editMode)" 
+												value="@bind(fx.application.courseParticRepresentative.contact.phone2)"
+												maxlength="@load(vm.getPhoneMaxlength())"
+												sclass="form-input-text"
+												tabindex="10"
+												hflex="1" />
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+												
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.email')} 1"/>
-									<cell>
-										<hbox hflex="1">
-											<textbox id="representativeEmail1" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticRepresentative.contact.email1) @validator(vm.emailValidator, notNull=true)"
-												maxlength="@load(vm.getEmailMaxlength())"
-												placeholder="*"
-												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-												tabindex="11"
-												hflex="3" />
-											<vbox hflex="2" style="margin-left: 10px;">
-												<hbox>
-													<a iconSclass="z-icon-info-circle" popup="emailPopup" />
-													<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
+								
+								<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 30px;" >
+									<cell sclass="form-grid-cell" >
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.email')} 1"/>
+											<hbox hflex="1">
+												<textbox id="representativeEmail1" readonly="@load(!vm.editMode)"
+													value="@bind(fx.application.courseParticRepresentative.contact.email1) @validator(vm.emailValidator, notNull=true)"
+													maxlength="@load(vm.getEmailMaxlength())"
+													placeholder="*"
+													sclass="form-input-text"
+													tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+													tabindex="11"
+													hflex="1" />
+												<a iconSclass="z-icon-info-circle" popup="emailPopup" style="margin-left: 5px" />
+											</hbox>
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
 														<label value="@bind(vmsgs[representativeEmail1])" />
-													</span>										
-												</hbox>
-											</vbox>
-										</hbox>
+													</span>	
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
-								<row style="padding: 10px; border: none;">
-									<label value="${c:l('txt.ui.common.email')} 2"/>
-									<cell>
-										<hbox hflex="1">
+								
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 30px 30px;" >
+									<cell sclass="form-grid-cell" >
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.email')} 2"/>
 											<textbox id="representativeEmail2" readonly="@load(!vm.editMode)" 
 												value="@bind(fx.application.courseParticRepresentative.contact.email2) @validator(vm.emailValidator)"
 												maxlength="@load(vm.getEmailMaxlength())"
+												sclass="form-input-text"
 												tabindex="12"
-												hflex="3" />
-											<vbox hflex="2" style="margin-left: 10px;">
+												hflex="1" />
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail2])" >
 													<label value="@bind(vmsgs[representativeEmail2])" />
 												</span>
-											</vbox>
-										</hbox>
+											</hbox>
+										</vbox>
 									</cell>
 								</row>
 							</rows>
 						</grid>
 						
-						<hbox visible="@load(vm.editMode and !vm.securedMode)">
+						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)">
 							<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="13" />
 							<label value="${c:l('txt.ui.application.healthAgreement')}" />
 						</hbox>
 						
-						<hbox visible="@load(vm.editMode and !vm.securedMode)" style="margin-top: 20px;">
+						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" style="margin-top: 20px;">
 							<checkbox checked="@bind(vm.personalInfoProcessAgreement)" tabindex="14" />
 							<hbox>
 								<span>
@@ -333,17 +348,15 @@
 						</hbox>
 						
 						<hbox style="margin-bottom: 20px; margin-top: 20px" visible="@load(vm.editMode and !vm.securedMode)">
-							<vbox>
-								<vbox>
-								    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
-								    <bw.captcha id="cap1" />
-								    <hbox>
-									    <textbox id="captcha" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1, validate=(vm.editMode and !vm.securedMode))" tabindex="14" />
-									    <span style="margin-left: 10px;" sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[captcha])" >
-											<label value="@bind(vmsgs[captcha])" />
-										</span>						    
-								    </hbox>
-								</vbox>
+							<vbox align="center">
+							    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
+							    <bw.captcha id="cap1" />
+							    <textbox id="captcha" style="margin-bottom: 15px;" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1, validate=(vm.editMode and !vm.securedMode))" tabindex="14" />
+							    <hbox height="20px">
+								    <span style="margin-left: 10px;" sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[captcha])" >
+										<label value="@bind(vmsgs[captcha])" />
+									</span>
+								</hbox>
 							</vbox>
 						</hbox>
 						

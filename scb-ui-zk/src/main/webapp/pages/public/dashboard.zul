@@ -11,7 +11,7 @@
 				
 					<vbox hflex="1" />
 					
-					<vbox hflex="20" pack="center">
+					<vbox hflex="20" pack="center" align="center">
 						<hbox>
 							<headline label="${c:l('txt.ui.dashboard.welcomeInfo')}"  menuSelected="menu_dashboard" iconSclass="z-icon-tachometer" />
 						</hbox>

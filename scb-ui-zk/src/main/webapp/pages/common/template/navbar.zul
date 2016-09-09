@@ -53,7 +53,7 @@
 				<button
 					tooltiptext="${c:l('txt.ui.login')}"
 					href="/pages/common/login.zul"
-					sclass="btn-info" iconSclass="z-icon-user"
+					sclass="btn-info" iconSclass="z-icon-sign-in"
 					visible="@load(!vm.isUserLogged())"
 					style="margin-right: 10px; font-weight: bold;" />
 			</hlayout>
