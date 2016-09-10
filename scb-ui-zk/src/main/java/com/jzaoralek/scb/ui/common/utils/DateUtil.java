@@ -403,7 +403,6 @@ public class DateUtil {
 	 * @return true if is an intersection
 	 */
 	public static boolean isIntersection(Date startA, Date endA, Date startB, Date endB) {
-
 		if (startA == null || startB == null || endA == null || endB == null) {
 			throw new IllegalArgumentException("some date is null");
 		}

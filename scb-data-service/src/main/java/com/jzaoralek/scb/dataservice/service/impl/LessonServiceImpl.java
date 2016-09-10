@@ -14,6 +14,7 @@ import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
+import com.jzaoralek.scb.dataservice.utils.DateUtils;
 
 @Service("lessonService")
 public class LessonServiceImpl extends BaseAbstractService implements LessonService {
@@ -48,6 +49,9 @@ public class LessonServiceImpl extends BaseAbstractService implements LessonServ
 			LOG.debug("Storing lesson: " + lesson);
 		}
 
+		// pokud prunik s existujici lekci ve stejny den v tydnu, ohlasit chybu
+		storeValidation(lesson);
+
 		boolean insert = lesson.getUuid() == null;
 		// ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername()
 		fillIdentEntity(lesson, null);
@@ -73,5 +77,19 @@ public class LessonServiceImpl extends BaseAbstractService implements LessonServ
 			LOG.debug("Deleting lesson: " + lesson);
 		}
 		lessonDao.delete(lesson);
+	}
+
+	private void storeValidation(Lesson lesson) throws ScbValidationException {
+		// validace zda-li lekce ve stejny den a stejný čas
+		List<Lesson> sameDayOfWeekCourseLessonList = lessonDao.getByCourseAndDayOfWeek(lesson.getCourseUuid(), lesson.getDayOfWeek());
+		for (Lesson item : sameDayOfWeekCourseLessonList) {
+			if (lesson.getUuid() != null && item.getUuid().toString().equals(lesson.getUuid().toString())) {
+				continue;
+			}
+
+			if (DateUtils.isIntersection(lesson.getTimeFrom(), lesson.getTimeTo(), item.getTimeFrom(), item.getTimeTo())) {
+				throw new ScbValidationException(messageSource.getMessage("msg.validation.warn.lesson.sameTimeIntervalAsOtherLesson", null, Locale.getDefault()));
+			}
+		}
 	}
 }

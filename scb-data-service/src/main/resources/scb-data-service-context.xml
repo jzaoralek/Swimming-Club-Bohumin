@@ -52,8 +52,8 @@
 				<prop key="characterEncoding">utf8</prop>
 			</props>
 		</property>
-<!-- 		<property name="password" value="scb2016*" /> -->
-		<property name="password" value="scb"/>
+		<property name="password" value="scb2016*" />
+<!-- 		<property name="password" value="scb"/> -->
 	</bean>
 
 </beans>
