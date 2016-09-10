@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.LessonDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
 
 @Repository
 public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
@@ -41,6 +43,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	private static final String SELECT_ALL = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course";
 	private static final String SELECT_ALL_EXCEPT_COURSE = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course where uuid != :"+COURSE_UUID_PARAM;
 	private static final String SELECT_BY_UUID = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course WHERE uuid=:" + UUID_PARAM;
+	private static final String SELECT_BY_COURSE_PARTICIPANT = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by FROM course_course_participant ccp, course c WHERE ccp.course_uuid = c.uuid AND ccp.course_participant_uuid = :" + UUID_PARAM;
 
 	@Autowired
 	public CourseDaoImpl(DataSource ds) {
@@ -66,6 +69,12 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, courseParticipantUuid.toString());
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_PARTICIPANT, paramMap, new SimpleCourseRowMapper());
 	}
 
 	@Override
@@ -104,6 +113,21 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 
 	}
 
+	public static final class SimpleCourseRowMapper implements RowMapper<Course> {
+
+		@Override
+		public Course mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Course ret = new Course();
+			fetchIdentEntity(rs, ret);
+			ret.setYearFrom(rs.getInt("year_from"));
+			ret.setYearTo(rs.getInt("year_to"));
+			ret.setDescription(rs.getString("description"));
+			ret.setName(rs.getString("name"));
+
+			return ret;
+		}
+	}
+
 	public static final class CourseRowMapper implements RowMapper<Course> {
 		private CourseParticipantDao courseParticipantDao;
 		private LessonDao lessonDao;
@@ -122,6 +146,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			ret.setDescription(rs.getString("description"));
 			ret.setName(rs.getString("name"));
 			ret.setLessonList(lessonDao.getByCourse(ret.getUuid()));
+			Collections.sort(ret.getLessonList(), Lesson.DAY_OF_WEEK_COMP);
 			ret.setParticipantList(courseParticipantDao.getByCourseUuid(ret.getUuid()));
 
 			return ret;

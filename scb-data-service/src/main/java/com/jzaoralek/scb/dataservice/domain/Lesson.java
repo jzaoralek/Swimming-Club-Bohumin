@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.domain;
 
 import java.sql.Time;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.UUID;
 
@@ -9,13 +10,23 @@ import org.springframework.util.StringUtils;
 public class Lesson implements IdentEntity {
 
 	public enum DayOfWeek {
-		SUNDAY,
-		MONDAY,
-		TUESDAY,
-		WEDNESDAY,
-		THURSDAY,
-		FRIDAY,
-		SATURDAY;
+		MONDAY(0),
+		TUESDAY(1),
+		WEDNESDAY(2),
+		THURSDAY(3),
+		FRIDAY(4),
+		SATURDAY(5),
+		SUNDAY(6);
+
+		private int index;
+
+		private DayOfWeek(int index) {
+			this.index = index;
+		}
+
+		public int getIndex() {
+			return index;
+		}
 
 		public static DayOfWeek fromString(String value) {
 			if (!StringUtils.hasText(value)) {
@@ -25,6 +36,24 @@ public class Lesson implements IdentEntity {
 			return DayOfWeek.valueOf(value);
 		}
 	}
+
+	public static final Comparator<Lesson> DAY_OF_WEEK_COMP =
+			new Comparator<Lesson>() {
+				@Override
+				public int compare(Lesson o1, Lesson o2) {
+					int poradi1 = o1.getDayOfWeek().getIndex();
+					int poradi2 = o2.getDayOfWeek().getIndex();
+					if(poradi1>poradi2){
+						return 1;
+					}
+					else if(poradi1<poradi2){
+						return -1;
+					}
+					else{
+						return 0;
+					}
+				}
+			};
 
 	private UUID uuid;
 	private String modifBy;
@@ -89,6 +118,25 @@ public class Lesson implements IdentEntity {
 	public void setCourseUuid(UUID courseUuid) {
 		this.courseUuid = courseUuid;
 	}
+
+	public static class DayOfWeekComparator implements Comparator<Lesson> {
+
+		@Override
+		public int compare(Lesson o1, Lesson o2) {
+			int poradi1 = o1.getDayOfWeek().getIndex();
+			int poradi2 = o2.getDayOfWeek().getIndex();
+			if(poradi1>poradi2){
+				return 1;
+			}
+			else if(poradi1<poradi2){
+				return -1;
+			}
+			else{
+				return 0;
+			}
+		}
+	}
+
 
 	@Override
 	public String toString() {

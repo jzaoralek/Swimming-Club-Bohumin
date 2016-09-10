@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.util.CollectionUtils;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class CourseParticipant implements IdentEntity {
@@ -18,6 +20,7 @@ public class CourseParticipant implements IdentEntity {
 	private String healthInsurance;
 	private String healthInfo;
 	private List<Result> resultList;
+	private List<Course> courseList;
 
 	public CourseParticipant() {
 		this.contact = new Contact();
@@ -85,10 +88,37 @@ public class CourseParticipant implements IdentEntity {
 		this.healthInfo = healthInfo;
 	}
 
+	public List<Course> getCourseList() {
+		return courseList;
+	}
+
+	public void setCourseList(List<Course> courseList) {
+		this.courseList = courseList;
+	}
+
+	public boolean inCourse() {
+		return !CollectionUtils.isEmpty(this.courseList);
+	}
+
+	public String inCourseInfo() {
+		String ret = null;
+		if (!CollectionUtils.isEmpty(this.courseList)) {
+			StringBuilder sb = new StringBuilder();
+			for (Course course : this.courseList) {
+				sb.append(course.getName() + "\n");
+			}
+
+			ret = sb.toString();
+		}
+
+		return ret;
+	}
+
 	@Override
 	public String toString() {
 		return "CourseParticipant [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", contact="
 				+ contact + ", birthdate=" + birthdate + ", personalNo=" + personalNo + ", healthInsurance="
-				+ healthInsurance + ", healthInfo=" + healthInfo + ", resultList=" + resultList + "]";
+				+ healthInsurance + ", healthInfo=" + healthInfo + ", resultList=" + resultList + ", courseList="
+				+ courseList + "]";
 	}
 }

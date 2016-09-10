@@ -39,7 +39,7 @@ public class LessonServiceImpl extends BaseAbstractService implements LessonServ
 	}
 
 	@Override
-	public Lesson store(Lesson lesson) {
+	public Lesson store(Lesson lesson) throws ScbValidationException {
 		if (lesson == null) {
 			throw new IllegalArgumentException("lesson is null");
 		}
@@ -49,6 +49,7 @@ public class LessonServiceImpl extends BaseAbstractService implements LessonServ
 		}
 
 		boolean insert = lesson.getUuid() == null;
+		// ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername()
 		fillIdentEntity(lesson, null);
 		if (insert) {
 			lessonDao.insert(lesson);

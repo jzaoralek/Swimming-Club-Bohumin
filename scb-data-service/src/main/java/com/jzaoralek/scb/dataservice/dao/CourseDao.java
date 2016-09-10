@@ -10,6 +10,7 @@ public interface CourseDao {
 	List<Course> getAll();
 	List<Course> getAllExceptCourse(UUID courseUuid);
 	Course getByUuid(UUID uuid);
+	List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid);
 	void insert(Course course);
 	void update(Course course);
 	void delete(Course course);

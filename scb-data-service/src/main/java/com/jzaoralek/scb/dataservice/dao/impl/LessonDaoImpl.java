@@ -22,9 +22,9 @@ import com.jzaoralek.scb.dataservice.domain.Lesson.DayOfWeek;
 @Repository
 public class LessonDaoImpl extends BaseJdbcDao implements LessonDao {
 
-	private static final String TIME_FROM_PARAM = "DESCRIPTION";
-	private static final String TIME_TO_PARAM = "DESCRIPTION";
-	private static final String DAY_OF_WEEK_PARAM = "DESCRIPTION";
+	private static final String TIME_FROM_PARAM = "TIME_FROM";
+	private static final String TIME_TO_PARAM = "TIME_TO";
+	private static final String DAY_OF_WEEK_PARAM = "DAY_OF_WEEK";
 
 	private static final String SELECT_ALL = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson";
 	private static final String SELECT_BY_COURSE = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson WHERE course_uuid = :"+COURSE_UUID_PARAM;
@@ -72,7 +72,7 @@ public class LessonDaoImpl extends BaseJdbcDao implements LessonDao {
 		paramMap.addValue(TIME_FROM_PARAM, lesson.getTimeFrom());
 		paramMap.addValue(TIME_TO_PARAM, lesson.getTimeTo());
 		paramMap.addValue(DAY_OF_WEEK_PARAM, lesson.getDayOfWeek().name());
-		paramMap.addValue(COURSE_UUID_PARAM, lesson.getCourseUuid());
+		paramMap.addValue(COURSE_UUID_PARAM, lesson.getCourseUuid().toString());
 
 		namedJdbcTemplate.update(INSERT, paramMap);
 	}
@@ -84,7 +84,7 @@ public class LessonDaoImpl extends BaseJdbcDao implements LessonDao {
 		paramMap.addValue(TIME_FROM_PARAM, lesson.getTimeFrom());
 		paramMap.addValue(TIME_TO_PARAM, lesson.getTimeTo());
 		paramMap.addValue(DAY_OF_WEEK_PARAM, lesson.getDayOfWeek().name());
-		paramMap.addValue(COURSE_UUID_PARAM, lesson.getCourseUuid());
+		paramMap.addValue(COURSE_UUID_PARAM, lesson.getCourseUuid().toString());
 
 		namedJdbcTemplate.update(UPDATE, paramMap);
 

@@ -83,6 +83,14 @@ public class BaseVM {
 		return Converters.getDateTimeConverter();
 	}
 
+	public Converter getTimeConverter() {
+		return Converters.getTimeconverter();
+	}
+
+	public Converter getEnumLabelConverter() {
+		return Converters.getEnumlabelconverter();
+	}
+
 	public Boolean isBackButtonVisible() {
 		return StringUtils.hasText(this.returnToPage);
 	}

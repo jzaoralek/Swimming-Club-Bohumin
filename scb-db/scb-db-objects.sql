@@ -94,7 +94,7 @@ CREATE TABLE lesson(
 	uuid varchar(36),
 	time_from time NOT NULL,
 	time_to time NOT NULL,
-	day_of_week ENUM('SUNDAY','MONDAY','TUESDAY','WENDSDAY','THURSDAY','FRIDAY','SATURDAY'),
+	day_of_week ENUM('SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'),
 	course_uuid varchar(36) REFERENCES course(uuid),
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,

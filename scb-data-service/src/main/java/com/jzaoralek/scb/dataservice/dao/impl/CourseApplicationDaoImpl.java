@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
+import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.Contact;
@@ -24,6 +25,9 @@ import com.jzaoralek.scb.dataservice.domain.ScbUser;
 
 @Repository
 public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseApplicationDao {
+
+	@Autowired
+	private CourseDao courseDao;
 
 	private static final String COURSE_PARTICIPANT_UUID_PARAM = "COURSE_PARTICIPANT_UUID";
 	private static final String USER_UUID_PARAM = "USER_UUID";
@@ -161,19 +165,19 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	@Override
 	public List<CourseApplication> getAll() {
-		return namedJdbcTemplate.query(SELECT_ALL, new CourseApplicationRowMapper());
+		return namedJdbcTemplate.query(SELECT_ALL, new CourseApplicationRowMapper(courseDao));
 	}
 
 	@Override
 	public List<CourseApplication> getNotInCourse(UUID courseUuid, int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_NOT_IN_COURSE, paramMap, new CourseApplicationRowMapper());
+		return namedJdbcTemplate.query(SELECT_NOT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
 	}
 
 	@Override
 	public List<CourseApplication> getInCourse(UUID courseUuid, int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_IN_COURSE, paramMap, new CourseApplicationRowMapper());
+		return namedJdbcTemplate.query(SELECT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
 	}
 
 	@Override
@@ -187,6 +191,12 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	}
 
 	public static final class CourseApplicationRowMapper implements RowMapper<CourseApplication> {
+		private CourseDao courseDao;
+
+		public CourseApplicationRowMapper(CourseDao courseDao) {
+			this.courseDao = courseDao;
+		}
+
 		@Override
 		public CourseApplication mapRow(ResultSet rs, int rowNum) throws SQLException {
 			CourseApplication ret = new CourseApplication();
@@ -196,6 +206,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipant.setUuid(UUID.fromString(rs.getString("participant_uuid")));
 			courseParticipant.setBirthdate(rs.getDate("birthdate"));
 			courseParticipant.setPersonalNo(rs.getString("personal_number"));
+			courseParticipant.setCourseList(courseDao.getByCourseParticipantUuid(courseParticipant.getUuid()));
 
 			Contact courseParticipantContact = new Contact();
 			courseParticipantContact.setFirstname(rs.getString("firstname"));

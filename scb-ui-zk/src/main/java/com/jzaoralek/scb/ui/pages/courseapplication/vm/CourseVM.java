@@ -21,9 +21,11 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.dataservice.service.LessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -44,6 +46,9 @@ public class CourseVM extends BaseVM {
 
 	@WireVariable
 	private CourseService courseService;
+
+	@WireVariable
+	private LessonService lessonService;
 
 	@WireVariable
 	private ConfigurationService configurationService;
@@ -103,6 +108,18 @@ public class CourseVM extends BaseVM {
 		}
     }
 
+	@NotifyChange("*")
+	@Command
+    public void lessonDeleteCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
+		try {
+			lessonService.delete(uuid);
+			loadData(this.course.getUuid());
+		} catch (ScbValidationException e) {
+			LOG.error("ScbValidationException caught during deleting lesson uuid: "+ uuid+" for course: " + this.course, e);
+			WebUtils.showNotificationError(e.getMessage());
+		}
+	}
+
 	@Command
     public void courseParticipantDetailCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
 		if (uuid ==  null) {
@@ -155,7 +172,16 @@ public class CourseVM extends BaseVM {
 
 	@Command
 	public void newLessonCmd() {
+		Lesson lesson = new Lesson();
+		lesson.setCourseUuid(this.course.getUuid());
+		EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.LESSON_NEW_DATA_EVENT, null, lesson);
+		WebUtils.openModal("/pages/secured/lesson-to-course-window.zul");
+	}
 
+	@Command
+	public void detailCmd(@BindingParam("lesson") final Lesson lesson) {
+		EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.LESSON_DETAIL_DATA_EVENT, null, lesson);
+		WebUtils.openModal("/pages/secured/lesson-to-course-window.zul");
 	}
 
 	public Course getCourse() {

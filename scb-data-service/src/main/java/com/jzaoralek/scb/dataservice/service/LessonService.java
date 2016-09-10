@@ -11,6 +11,6 @@ public interface LessonService {
 	List<Lesson> getAll();
 	List<Lesson> getByCourse(UUID courseUuid);
 	Lesson getByUuid(UUID uuid);
-	Lesson store(Lesson lesson);
+	Lesson store(Lesson lesson) throws ScbValidationException;
 	void delete(UUID lessonUuid) throws ScbValidationException;
 }
