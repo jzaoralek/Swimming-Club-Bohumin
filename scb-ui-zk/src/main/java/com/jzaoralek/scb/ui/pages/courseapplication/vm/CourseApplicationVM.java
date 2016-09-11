@@ -116,14 +116,14 @@ public class CourseApplicationVM extends BaseVM {
 	}
 
     public void sendMail() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
-		sb.append(System.getProperty("line.separator"));
-		sb.append(System.getProperty("line.separator"));
-		sb.append(Labels.getLabel("msg.ui.mail.courseApplication.text1"));
-		sb.append(System.getProperty("line.separator"));
-		sb.append(System.getProperty("line.separator"));
-		sb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
+		StringBuilder mailToRepresentativeSb = new StringBuilder();
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text1"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
 
 		byte[] byteArray = JasperUtil.getReport(this.application, this.pageHeadline);
 
@@ -139,7 +139,21 @@ public class CourseApplicationVM extends BaseVM {
 		attachment.setName(fileName.toString());
 		this.attachment = attachment;
 
-		mailService.sendMail(this.application.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), sb.toString(), byteArray, fileName.toString().toLowerCase());
+		// mail to course participant representative
+		mailService.sendMail(this.application.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), byteArray, fileName.toString().toLowerCase());
+
+		StringBuilder mailToClupSb = new StringBuilder();
+		String courseApplicationYear = configurationService.getCourseApplicationYear();
+		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text0", new Object[] {courseApplicationYear}));
+		mailToClupSb.append(System.getProperty("line.separator"));
+		String participantInfo = this.application.getCourseParticipant().getContact().getFirstname() + " " + this.application.getCourseParticipant().getContact().getSurname() + ", " + getDateConverter().coerceToUi(this.application.getCourseParticipant().getBirthdate(), null, null);
+		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text1", new Object[] {participantInfo}));
+		mailToClupSb.append(System.getProperty("line.separator"));
+		String representativeInfo = this.application.getCourseParticRepresentative().getContact().getFirstname() + " " + this.application.getCourseParticRepresentative().getContact().getSurname() + ", " + this.application.getCourseParticRepresentative().getContact().getEmail1() + ", " + this.application.getCourseParticRepresentative().getContact().getPhone1();
+		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
+
+		// mail to club
+		mailService.sendMail(Labels.getLabel("txt.ui.organization.email"), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
 	}
 
 	private void initItem(CourseApplication courseApplication) {

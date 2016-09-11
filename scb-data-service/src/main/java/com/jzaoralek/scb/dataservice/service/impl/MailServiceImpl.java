@@ -46,7 +46,6 @@ public class MailServiceImpl implements MailService {
         properties.put("mail.smtp.starttls.enable", "true");
         properties.put("mail.smtp.port", MAIL_SMTP_PORT);
 
-
        // Get the default Session object.
        Authenticator auth = new SMTPAuthenticator();
        Session session = Session.getDefaultInstance(properties, auth);
@@ -75,16 +74,13 @@ public class MailServiceImpl implements MailService {
 
           // Part two is attachment
 
-          DataSource dataSource = new ByteArrayDataSource(attachment, "application/pdf");
-          MimeBodyPart pdfBodyPart = new MimeBodyPart();
-          pdfBodyPart.setDataHandler(new DataHandler(dataSource));
-          pdfBodyPart.setFileName(attachmentName);
-
-//          messageBodyPart = new MimeBodyPart();
-//          DataSource source = new FileDataSource(attachment);
-//          messageBodyPart.setDataHandler(new DataHandler(source));
-//          messageBodyPart.setFileName(attachment.getName());
-          multipart.addBodyPart(pdfBodyPart);
+          if (attachment != null) {
+        	  DataSource dataSource = new ByteArrayDataSource(attachment, "application/pdf");
+        	  MimeBodyPart pdfBodyPart = new MimeBodyPart();
+        	  pdfBodyPart.setDataHandler(new DataHandler(dataSource));
+        	  pdfBodyPart.setFileName(attachmentName);
+        	  multipart.addBodyPart(pdfBodyPart);
+          }
 
           // Send the complete message parts
           message.setContent(multipart);

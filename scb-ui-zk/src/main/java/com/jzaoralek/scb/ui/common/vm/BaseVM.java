@@ -17,7 +17,7 @@ import com.jzaoralek.scb.ui.common.validator.Validators;
 public class BaseVM {
 
 	@WireVariable
-	private ConfigurationService configurationService;
+	protected ConfigurationService configurationService;
 
 	private String returnToPage;
 
