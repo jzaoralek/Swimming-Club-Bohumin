@@ -19,6 +19,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.ListModel;
@@ -55,11 +56,13 @@ public class CourseListVM {
 	public void init() {
 		loadData();
 
-		EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
+		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
+		eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.RELOAD_COURSE_DATA_EVENT.name())) {
 					loadData();
+					eq.unsubscribe(this);
 				}
 			}
 		});
@@ -105,7 +108,7 @@ public class CourseListVM {
 						EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);
 						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseDeleted"));
 					} catch (ScbValidationException e) {
-						LOG.error("ScbValidationException caught for course with uuid: " + uuid, e);
+						LOG.warn("ScbValidationException caught for course with uuid: " + uuid);
 						WebUtils.showNotificationError(e.getMessage());
 					}
 				}

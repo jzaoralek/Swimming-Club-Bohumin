@@ -6,6 +6,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -30,11 +31,13 @@ public class MenuComposer extends SelectorComposer<Component> {
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
-    	EventQueues.lookup(ScbEventQueues.MENU_QUEUE.name() , EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
+    	final EventQueue eq = EventQueues.lookup(ScbEventQueues.MENU_QUEUE.name() , EventQueues.DESKTOP, true);
+    	eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.OPEN_MAIN_MENU_EVENT.name())) {
 					openMenuItem((String) event.getData());
+					eq.unsubscribe(this);
 				}
 			}
 		});

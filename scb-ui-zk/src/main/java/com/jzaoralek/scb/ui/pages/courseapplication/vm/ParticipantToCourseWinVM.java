@@ -16,6 +16,7 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Window;
@@ -58,13 +59,16 @@ public class ParticipantToCourseWinVM extends BaseVM {
 	@Init
 	public void init() {
 
-		EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
+		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
+		eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.COURSE_UUID_FROM_APPLICATION_DATA_EVENT.name())) {
 					initData((Course)event.getData(), true);
+					eq.unsubscribe(this);
 				} else if (event.getName().equals(ScbEvent.COURSE_UUID_FROM_COURSE_DATA_EVENT.name())) {
 					initData((Course)event.getData(), false);
+					eq.unsubscribe(this);
 				}
 			}
 		});
@@ -157,7 +161,7 @@ public class ParticipantToCourseWinVM extends BaseVM {
 			EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT, null, courseUuid);
 			window.detach();
 		} catch (ScbValidationException e) {
-			LOG.error("ScbValidationException caught during addin courseParticipantList to course uuid: " + courseUuid, e);
+			LOG.warn("ScbValidationException caught during addin courseParticipantList to course uuid: " + courseUuid);
 			WebUtils.showNotificationError(e.getMessage());
 		}
 	}

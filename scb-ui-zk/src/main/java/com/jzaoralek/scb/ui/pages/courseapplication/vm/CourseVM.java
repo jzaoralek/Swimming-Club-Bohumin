@@ -16,6 +16,7 @@ import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
@@ -73,7 +74,8 @@ public class CourseVM extends BaseVM {
 		this.courseYearList = configurationService.getCourseYearList();
 		this.courseYearSelected = configurationService.getCourseYearList().get(0);
 
-		EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
+		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
+		eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT.name())) {
@@ -100,7 +102,7 @@ public class CourseVM extends BaseVM {
 			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
 			this.updateMode = true;
 		} catch (ScbValidationException e) {
-			LOG.error("ScbValidationException caught for course: " + this.course, e);
+			LOG.warn("ScbValidationException caught for course: " + this.course);
 			WebUtils.showNotificationError(e.getMessage());
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for course: " + this.course, e);
@@ -115,7 +117,7 @@ public class CourseVM extends BaseVM {
 			lessonService.delete(uuid);
 			loadData(this.course.getUuid());
 		} catch (ScbValidationException e) {
-			LOG.error("ScbValidationException caught during deleting lesson uuid: "+ uuid+" for course: " + this.course, e);
+			LOG.warn("ScbValidationException caught during deleting lesson uuid: "+ uuid+" for course: " + this.course);
 			WebUtils.showNotificationError(e.getMessage());
 		}
 	}

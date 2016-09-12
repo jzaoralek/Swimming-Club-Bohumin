@@ -17,6 +17,7 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
@@ -38,7 +39,7 @@ public class LessonToCourseWinVM extends BaseVM {
 	private static final Logger LOG = LoggerFactory.getLogger(LessonToCourseWinVM.class);
 
 	private final List<Listitem> dayOfWeekList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(Lesson.DayOfWeek.class));
-	private final List<String> dayTimeList = Arrays.asList("6:00","6:30","7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00");
+	private final List<String> dayTimeList = Arrays.asList("6:00","6:15","6:30","6:45","7:00","7:15","7:30","7:45","8:00","8:15","8:30","8:45","9:00","9:15","9:30","9:45","10:00","10:15","10:30","10:45","11:00","11:15","11:30","11:45","12:00","12:15","12:30","12:45","13:00","13:15","13:30","13:45","14:00","14:15","14:30","14:45","15:00","15:15","15:30","15:45","16:00","16:15","16:30","16:45","17:00","17:15","17:30","17:45","18:00","18:15","18:30","18:45","19:00","19:15","19:30","19:45","20:00","20:15","20:30","20:45","21:00");
 	private final DateFormat timeFormat = new SimpleDateFormat(WebConstants.WEB_TIME_PATTERN);
 
 	@WireVariable
@@ -53,14 +54,17 @@ public class LessonToCourseWinVM extends BaseVM {
 
 	@Init
 	public void init() {
-		EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
+		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
+		eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.LESSON_NEW_DATA_EVENT.name())) {
 					initData((Lesson)event.getData());
+					eq.unsubscribe(this);
 				}
 				if (event.getName().equals(ScbEvent.LESSON_DETAIL_DATA_EVENT.name())) {
 					initData((Lesson)event.getData());
+					eq.unsubscribe(this);
 				}
 			}
 		});
@@ -128,7 +132,7 @@ public class LessonToCourseWinVM extends BaseVM {
 			EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT, null, this.lesson.getCourseUuid());
 			window.detach();
 		} catch (ScbValidationException e) {
-			LOG.error("ScbValidationException caught during storing lesson to course uuid: " + this.lesson.getCourseUuid(), e);
+			LOG.warn("ScbValidationException caught during storing lesson to course uuid: " + this.lesson.getCourseUuid());
 			WebUtils.showNotificationError(e.getMessage());
 		} catch (ParseException e) {
 			LOG.error("ParseException caught during storing lesson to course uuid: " + this.lesson.getCourseUuid(), e);

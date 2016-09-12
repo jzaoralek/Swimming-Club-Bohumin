@@ -100,7 +100,7 @@ public class CourseApplicationVM extends BaseVM {
 				sendMail();
 			}
 		} catch (ScbValidationException e) {
-			LOG.error("ScbValidationException caught for application: " + this.application, e);
+			LOG.warn("ScbValidationException caught for application: " + this.application);
 			WebUtils.showNotificationError(e.getMessage());
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for application: " + this.application, e);
