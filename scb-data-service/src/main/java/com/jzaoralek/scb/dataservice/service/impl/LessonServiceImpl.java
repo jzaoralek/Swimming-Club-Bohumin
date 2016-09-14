@@ -54,7 +54,7 @@ public class LessonServiceImpl extends BaseAbstractService implements LessonServ
 
 		boolean insert = lesson.getUuid() == null;
 		// ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername()
-		fillIdentEntity(lesson, null);
+		fillIdentEntity(lesson);
 		if (insert) {
 			lessonDao.insert(lesson);
 		} else {

@@ -14,6 +14,9 @@
 			authentication-failure-url="/pages/common/login.zul?loginFailure=true" />
 		<csrf disabled="true" />
 		<logout invalidate-session="true" logout-url="/logout" logout-success-url="/pages/common/login.zul" />
+		<headers>
+			<frame-options policy="SAMEORIGIN"/>
+		</headers>
 	</http>
 
 	<authentication-manager alias="authenticationManager">

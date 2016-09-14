@@ -26,34 +26,49 @@
 	<!-- Definition for logging aspect -->
 	<bean id="loggingAspect" class="com.jzaoralek.scb.dataservice.aspect.LoggingAspect" />
 
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="scb-data-service-message" />
 	</bean>
 
-	<!-- <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
-		<property name="locations"> <list> <value>classpath:${user.name}.properties</value> 
-		</list> </property> </bean> <bean id="props" class="org.springframework.beans.factory.config.PropertiesFactoryBean"> 
-		<property name="location" value="classpath:${user.name}.properties" /> </bean> -->
-
-	<!-- Initialization for data source <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
-		<property name="driverClassName" value="com.mysql.jdbc.Driver"/> <property 
-		name="url" value="${db_url}"/> <property name="username" value="${db_user}"/> 
-		<property name="password" value="${db_pwd}"/> </bean> -->
-
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
+		<property name="locations">
+			<list>
+				<value>classpath:${user.name}.properties</value>
+				<value>classpath:smtp.properties</value>
+			</list> 
+		</property> 
+	</bean> 
+	
+<!-- 	<bean id="props" class="org.springframework.beans.factory.config.PropertiesFactoryBean">  -->
+<!-- 		<property name="location" value="classpath:${user.name}.properties" /> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="dataSource" -->
+<!-- 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+<!-- 		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
+<!-- 		<property name="url" value="jdbc:mysql://localhost:3306/scb" /> -->
+<!-- 		<property name="username" value="scb" /> -->
+<!-- 		<property name="connectionProperties"> -->
+<!-- 			<props> -->
+<!-- 				<prop key="useUnicode">yes</prop> -->
+<!-- 				<prop key="characterEncoding">utf8</prop> -->
+<!-- 			</props> -->
+<!-- 		</property> -->
+<!-- 		<property name="password" value="scb"/> -->
+<!-- 	</bean> -->
+	
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/scb" />
-		<property name="username" value="scb" />
+		<property name="url" value="${db_url}" />
+		<property name="username" value="${db_user}" />
 		<property name="connectionProperties">
 			<props>
 				<prop key="useUnicode">yes</prop>
 				<prop key="characterEncoding">utf8</prop>
 			</props>
 		</property>
-		<property name="password" value="scb2016*" />
-<!-- 		<property name="password" value="scb"/> -->
+		<property name="password" value="${db_pwd}"/>
 	</bean>
 
 </beans>

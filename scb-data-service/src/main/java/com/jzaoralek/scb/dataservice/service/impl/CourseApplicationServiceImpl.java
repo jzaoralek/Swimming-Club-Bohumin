@@ -46,8 +46,8 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
-	public List<CourseApplication> getAll() {
-		return courseApplicationDao.getAll();
+	public List<CourseApplication> getAll(int yearFrom, int yearTo) {
+		return courseApplicationDao.getAll(yearFrom, yearTo);
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 
 		// prihlaska
 		boolean insert = courseApplication.getUuid() == null;
-		fillIdentEntity(courseApplication, null);
+		fillIdentEntity(courseApplication);
 		if (insert) {
 			// insert
 			courseApplication.fillYearFromTo(configurationService.getCourseApplicationYear());
@@ -112,6 +112,11 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		return courseApplicationDao.getInCourse(courseUuid, yearFrom, yearTo);
 	}
 
+	@Override
+	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
+		return courseApplicationDao.getAssignedToCourse(yearFrom, yearTo);
+	}
+
 	private void storeCourseParticRepresentative(ScbUser courseParticRepresentative) {
 		if (courseParticRepresentative == null) {
 			throw new IllegalArgumentException("courseParticRepresentative is null");
@@ -121,7 +126,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		storeContact(courseParticRepresentative.getContact());
 
 		boolean insert = courseParticRepresentative.getUuid() == null;
-		fillIdentEntity(courseParticRepresentative, null);
+		fillIdentEntity(courseParticRepresentative);
 		if (insert) {
 			// insert
 
@@ -148,7 +153,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 
 		// ucastnik
 		boolean courseParticInsert = courseParticipant.getUuid() == null;
-		fillIdentEntity(courseParticipant, null);
+		fillIdentEntity(courseParticipant);
 		if (courseParticInsert) {
 			// insert
 			courseParticipantDao.insert(courseParticipant);
@@ -164,7 +169,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 
 		boolean insert = (contact.getUuid() == null);
-		fillIdentEntity(contact, null);
+		fillIdentEntity(contact);
 		if (insert) {
 			// insert
 			contactDao.insert(contact);

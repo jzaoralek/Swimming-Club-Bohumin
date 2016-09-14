@@ -72,7 +72,7 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		}
 
 		boolean insert = course.getUuid() == null;
-		fillIdentEntity(course, null);
+		fillIdentEntity(course);
 		if (insert) {
 			courseDao.insert(course);
 		} else {

@@ -50,7 +50,7 @@ public class CourseApplicationController extends AbstractScbDataServiceControlle
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public List<CourseApplication> read() {
     	// just for test purposes
-        return courseApplicationService.getAll();
+        return courseApplicationService.getAll(2016, 2017);
     }
 
     /**

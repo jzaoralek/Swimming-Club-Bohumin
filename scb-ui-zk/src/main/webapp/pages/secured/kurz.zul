@@ -89,7 +89,6 @@
 										selectedItem="@bind(vm.courseYearSelected)" 
 										model="@load(vm.courseYearList)"
 										mold="select"
-										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 										disabled="@load(vm.updateMode)"
 										height="25px"
 										tabindex="2"  >

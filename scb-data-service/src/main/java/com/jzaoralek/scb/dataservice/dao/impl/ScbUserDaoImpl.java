@@ -33,7 +33,7 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 	"VALUES (:"+UUID_PARAM+", :"+USERNAME_PARAM+", :"+PASSWORD_PARAM+", :"+PASSWORD_GENERATED_PARAM+", :"+ROLE_PARAM+", :"+CONTACT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
 	private static final String SELECT_BY_UUID ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE uuid=:" + UUID_PARAM;
 	private static final String DELETE = "DELETE FROM user where uuid = :" + UUID_PARAM;
-	private static final String UPDATE = "UPDATE user SET username=:"+USERNAME_PARAM+", password=:"+PASSWORD_PARAM+", password_generated=:"+PASSWORD_GENERATED_PARAM+", role=:"+ROLE_PARAM+", contact_uuid=:"+CONTACT_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE = "UPDATE user SET username=:"+USERNAME_PARAM+", password=:"+PASSWORD_PARAM+", password_generated=:"+PASSWORD_GENERATED_PARAM+", role=:"+ROLE_PARAM+", contact_uuid=:"+CONTACT_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 	@Autowired
 	private ContactDao contactDao;

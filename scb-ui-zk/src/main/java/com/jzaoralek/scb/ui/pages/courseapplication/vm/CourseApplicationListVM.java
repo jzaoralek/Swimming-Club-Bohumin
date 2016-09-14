@@ -32,6 +32,7 @@ import org.zkoss.zul.Listheader;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
+import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
@@ -53,9 +54,21 @@ public class CourseApplicationListVM extends BaseVM {
 	private List<CourseApplication> courseApplicationList;
 	private List<CourseApplication> courseApplicationListBase;
 	private CourseApplicationFilter filter = new CourseApplicationFilter();
+	private List<String> courseYearList;
+	private String courseYearSelected;
 
 	@Init
 	public void init() {
+		// pridat filtr rocniku, ma byt i pro seznam prihlasek, defaultne nastavit aktualni rocnik
+		// na zaklade url zjistit zda-li seznam prihlasek nebo seznam ucastniku
+		// ulozit do atributu
+		// pro seznam ucastniku na strance
+		// - skryt moznost zruseni
+		// - detail nasmerovat na detail ucastnika
+
+		this.courseYearList = configurationService.getCourseYearList();
+		this.courseYearSelected = configurationService.getCourseApplicationYear();
+
 		loadData();
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
@@ -125,6 +138,12 @@ public class CourseApplicationListVM extends BaseVM {
 		filter.setEmptyValues();
 	}
 
+	@NotifyChange("*")
+	@Command
+	public void courseYearChangeCmd() {
+		loadData();
+	}
+
 	@SuppressWarnings("unchecked")
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
 		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
@@ -160,7 +179,17 @@ public class CourseApplicationListVM extends BaseVM {
 	}
 
 	public void loadData() {
-		this.courseApplicationList = courseApplicationService.getAll();
+		if (!StringUtils.hasText(this.courseYearSelected)) {
+			return;
+		}
+		String[] years = this.courseYearSelected.split(ConfigurationServiceImpl.COURSE_YEAR_DELIMITER);
+		if (years.length < 2) {
+			return;
+		}
+		int yearFrom = Integer.valueOf(years[0]);
+		int yearTo = Integer.valueOf(years[1]);
+
+		this.courseApplicationList = courseApplicationService.getAll(yearFrom, yearTo);
 		this.courseApplicationListBase = this.courseApplicationList;
 		BindUtils.postNotifyChange(null, null, this, "courseApplicationList");
 	}
@@ -175,6 +204,18 @@ public class CourseApplicationListVM extends BaseVM {
 
 	public void setFilter(CourseApplicationFilter filter) {
 		this.filter = filter;
+	}
+
+	public List<String> getCourseYearList() {
+		return courseYearList;
+	}
+
+	public String getCourseYearSelected() {
+		return courseYearSelected;
+	}
+
+	public void setCourseYearSelected(String courseYearSelected) {
+		this.courseYearSelected = courseYearSelected;
 	}
 
 	public static class CourseApplicationFilter {

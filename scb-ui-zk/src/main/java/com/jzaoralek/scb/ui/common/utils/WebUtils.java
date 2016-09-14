@@ -10,11 +10,10 @@ import org.springframework.util.StringUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
-import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.servlet.FileDownloadServlet;
 import com.jzaoralek.scb.ui.common.vm.Attachment;
 
 public final class WebUtils {
@@ -50,9 +49,11 @@ public final class WebUtils {
 		if (attachment == null) {
 			return;
 		}
-		Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
-		String attachmentUrl = Executions.getCurrent().getContextPath() + FileDownloadServlet.URL;
-		Clients.evalJavaScript("window.open('"+attachmentUrl+"', '_blank');");
+		Filedownload.save(attachment.getByteArray(), attachment.getContentType(), attachment.getName());
+
+//		Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
+//		String attachmentUrl = Executions.getCurrent().getContextPath() + FileDownloadServlet.URL;
+//		Clients.evalJavaScript("window.open('"+attachmentUrl+"', '_blank');");
 	}
 
 	public static void openModal(String uri) {

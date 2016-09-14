@@ -60,19 +60,20 @@ public class CourseVM extends BaseVM {
 		if (StringUtils.hasText(uuid)) {
 			course = courseService.getByUuid(UUID.fromString(uuid));
 		}
+		this.courseYearList = configurationService.getCourseYearList();
 		if (course != null) {
 			this.course = course;
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseDetail");
 			this.updateMode = true;
+			this.courseYearSelected = course.getYear();
 		} else {
 			this.course = new Course();
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseNew");
 			this.updateMode = false;
+			this.courseYearSelected = configurationService.getCourseApplicationYear();
 		}
 
 		setReturnPage(fromPage);
-		this.courseYearList = configurationService.getCourseYearList();
-		this.courseYearSelected = configurationService.getCourseYearList().get(0);
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {

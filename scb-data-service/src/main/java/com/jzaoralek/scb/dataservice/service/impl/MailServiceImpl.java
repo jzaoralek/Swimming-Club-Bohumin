@@ -20,6 +20,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jzaoralek.scb.dataservice.service.MailService;
@@ -29,10 +30,17 @@ public class MailServiceImpl implements MailService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailServiceImpl.class);
 
-    private static final String MAIL_SMTP_HOST = "smtp.gransy.com";
-    private static final String MAIL_SMTP_PORT = "587";
-    private static final String SMTP_AUTH_USER = "info@pkbohumin.cz";
-    private static final String SMTP_AUTH_PWD = "bohumin2012";
+    @Value("${smtp.host}")
+    private String mailSmtpHost;
+
+	@Value("${smtp.port}")
+    private String mailSmtpPort;
+
+    @Value("${smtp.user}")
+    private String mailSmtpUser;
+
+    @Value("${smtp.pwd}")
+    private String mailSmtpPassword;
 
     @Override
     public void sendMail(String to, String subject, String text, byte[] attachment, String attachmentName) {
@@ -41,10 +49,10 @@ public class MailServiceImpl implements MailService {
         }
         // Get system properties
         Properties properties = System.getProperties();
-        properties.put("mail.smtp.host", MAIL_SMTP_HOST);
+        properties.put("mail.smtp.host", mailSmtpHost);
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.port", MAIL_SMTP_PORT);
+        properties.put("mail.smtp.port", mailSmtpPort);
 
        // Get the default Session object.
        Authenticator auth = new SMTPAuthenticator();
@@ -57,7 +65,7 @@ public class MailServiceImpl implements MailService {
           // Create a default MimeMessage object.
           MimeMessage message = new MimeMessage(session);
           // Set From: header field of the header.
-          message.setFrom(new InternetAddress(SMTP_AUTH_USER));
+          message.setFrom(new InternetAddress(mailSmtpUser));
           // Set To: header field of the header.
           message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
           // Set Subject: header field
@@ -101,8 +109,8 @@ public class MailServiceImpl implements MailService {
     private class SMTPAuthenticator extends javax.mail.Authenticator {
         @Override
 		public PasswordAuthentication getPasswordAuthentication() {
-           String username = SMTP_AUTH_USER;
-           String password = SMTP_AUTH_PWD;
+           String username = mailSmtpUser;
+           String password = mailSmtpPassword;
            return new PasswordAuthentication(username, password);
         }
     }

@@ -1,16 +1,12 @@
 package com.jzaoralek.scb.ui.common.security;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.zk.ui.Executions;
 
-import com.jzaoralek.scb.dataservice.domain.security.SecuredUser;
-import com.jzaoralek.scb.dataservice.domain.security.SecuredUserProfileType;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 public class SecurityVM {
 
@@ -33,50 +29,19 @@ public class SecurityVM {
     }
 
     public String getLoggedUser() {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String username = null;
-		if (principal instanceof UserDetails) {
-			username = ((UserDetails)principal).getUsername();
-		} else {
-			username = principal.toString();
-		}
-
-		return username;
+		return SecurityUtils.getLoggedUserUsername();
 	}
 
     public String getLoggedUserCompleteName() {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (principal == null) {
-			return null;
-		}
-		if (principal instanceof SecuredUser) {
-			return ((SecuredUser)principal).getCompleteName();
-		} else {
-			return principal.toString();
-		}
+		return SecurityUtils.getLoggedUserCompleteName();
 	}
 
     public Boolean isUserLogged() {
-    	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	return (principal instanceof UserDetails);
+    	return SecurityUtils.isUserLogged();
     }
 
     public Boolean userInRole(String role) {
-    	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (principal == null) {
-			return false;
-		}
-		SecuredUser user = null;
-		if (principal instanceof SecuredUser) {
-			user = (SecuredUser)principal;
-		}
-
-		if ((user == null) || (user.getAuthorities() == null)) {
-			return false;
-	    }
-
-		GrantedAuthority authority = SecuredUserProfileType.valueOf(role);
-		return user.getAuthorities().contains(authority);
+    	return SecurityUtils.userInRole(role);
     }
 
     public Boolean isLoggedUserInRole(String role) {

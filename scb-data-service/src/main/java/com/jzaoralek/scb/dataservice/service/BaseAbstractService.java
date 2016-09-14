@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.domain.IdentEntity;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 public abstract class BaseAbstractService {
 
@@ -16,7 +17,7 @@ public abstract class BaseAbstractService {
 	@Autowired
     protected MessageSource messageSource;
 
-	protected void fillIdentEntity(IdentEntity identEntity, String userUuid) {
+	protected void fillIdentEntity(IdentEntity identEntity) {
 		if (identEntity == null) {
 			return;
 		}
@@ -25,7 +26,8 @@ public abstract class BaseAbstractService {
 			identEntity.setUuid(UUID.randomUUID());
 		}
 
+		String loggedUserUsername = SecurityUtils.getLoggedUserUsername();
 		identEntity.setModifAt(Calendar.getInstance().getTime());
-		identEntity.setModifBy(StringUtils.hasText(userUuid) ? userUuid : ANONYM_USER_UUID);
+		identEntity.setModifBy(StringUtils.hasText(loggedUserUsername) ? loggedUserUsername : ANONYM_USER_UUID);
 	}
 }

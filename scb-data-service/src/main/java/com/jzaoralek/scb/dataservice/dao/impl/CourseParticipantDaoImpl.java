@@ -45,7 +45,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			" VALUES (:"+UUID_PARAM+", :"+COURSE_PARTICIPANT_UUID_PARAM+", :"+COURSE_UUID_PARAM+")";
 
 	private static final String DELETE = "DELETE FROM course_participant where uuid = :" + UUID_PARAM;
-	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + " WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + ", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 
 	@Autowired

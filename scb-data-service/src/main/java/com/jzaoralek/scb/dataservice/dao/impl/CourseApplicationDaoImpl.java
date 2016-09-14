@@ -117,9 +117,39 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			"AND cp.uuid IN (SELECT ccp.course_participant_uuid FROM course_course_participant ccp WHERE ccp.course_uuid = :"+COURSE_UUID_PARAM+") " +
 			"order by ca.modif_at desc ";
 
+	private static final String SELECT_ASSIGNED_TO_COURSE = "select " +
+			" con_part.firstname " +
+			", con_part.surname " +
+			", cp.uuid \"participant_uuid\" " +
+			", cp.birthdate " +
+			", cp.personal_number " +
+			", con_repr.firstname \"representative_firstname\" " +
+			", con_repr.surname \"representative_surname\" " +
+			", con_repr.phone1 " +
+			", con_repr.email1 " +
+			", ca.uuid " +
+			", ca.modif_at " +
+			", ca.modif_by " +
+			"from  " +
+			"course_application ca " +
+			", course_participant cp " +
+			", contact con_part " +
+			", contact con_repr " +
+			", user usr " +
+			", course_course_participant ccp " +
+			"where " +
+			"ca.course_participant_uuid = cp.uuid " +
+			"and cp.contact_uuid = con_part.uuid " +
+			"and ca.user_uuid = usr.uuid " +
+			"and usr.contact_uuid = con_repr.uuid " +
+			"AND ca.year_from = :"+YEAR_FROM_PARAM+" " +
+			"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
+			"AND cp.uuid = ccp.course_participant_uuid " +
+			"order by ca.modif_at desc ";
+
 	private static final String SELECT_BY_UUID = "select uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by from course_application where uuid=:" + UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course_application where uuid = :" + UUID_PARAM;
-	private static final String UPDATE = "UPDATE course_application SET year_from=:"+YEAR_FROM_PARAM+", year_to=:"+YEAR_TO_PARAM+", course_participant_uuid=:"+COURSE_PARTICIPANT_UUID_PARAM+", user_uuid=:"+USER_UUID_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE = "UPDATE course_application SET year_from=:"+YEAR_FROM_PARAM+", year_to=:"+YEAR_TO_PARAM+", course_participant_uuid=:"+COURSE_PARTICIPANT_UUID_PARAM+", user_uuid=:"+USER_UUID_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
@@ -164,8 +194,9 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	}
 
 	@Override
-	public List<CourseApplication> getAll() {
-		return namedJdbcTemplate.query(SELECT_ALL, new CourseApplicationRowMapper(courseDao));
+	public List<CourseApplication> getAll(int yearFrom, int yearTo) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
+		return namedJdbcTemplate.query(SELECT_ALL, paramMap, new CourseApplicationRowMapper(courseDao));
 	}
 
 	@Override
@@ -178,6 +209,12 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	public List<CourseApplication> getInCourse(UUID courseUuid, int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
 		return namedJdbcTemplate.query(SELECT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
+	}
+
+	@Override
+	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
+		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
 	}
 
 	@Override
