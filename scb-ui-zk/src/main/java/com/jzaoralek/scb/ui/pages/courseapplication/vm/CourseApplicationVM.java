@@ -10,6 +10,7 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
@@ -37,6 +38,7 @@ public class CourseApplicationVM extends BaseVM {
 	private String pageHeadline;
 	private String captcha;
 	private Attachment attachment;
+	private String borderLayoutCenterStyle;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -194,6 +196,9 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public boolean isShowNotification() {
 		return showNotification;
+	}
+	public String getBorderLayoutCenterStyle() {
+		return !this.securedMode ? "background:#dfe8f6 url('"+Executions.getCurrent().getContextPath()+"/resources/img/background2014Full.jpg') no-repeat center center;" : "";
 	}
 	public String getCaptcha() {
 		return captcha;

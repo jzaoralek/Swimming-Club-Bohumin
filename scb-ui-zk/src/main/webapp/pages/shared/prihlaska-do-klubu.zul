@@ -4,19 +4,12 @@
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 
 <zk>
-	<style>
-		<!-- cut/hide the vertical borders in the grid rows -->
-		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
-		
-		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
-	</style>
-
 	<borderlayout self="@{define(mainContent)}" hflex="1" apply="org.zkoss.bind.BindComposer" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
 		validationMessages="@id('vmsgs')"
 	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
-		<center border="none" 
-			style="background:#dfe8f6 url('${pageContext.request.contextPath}/resources/img/background2014Full.jpg') no-repeat center center;"
+		<center border="none"
+			style="@load(vm.getBorderLayoutCenterStyle())"
 			autoscroll="true" >
 			<div>
 				<hlayout spacing="0">

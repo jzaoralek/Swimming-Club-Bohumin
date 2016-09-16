@@ -67,6 +67,15 @@
 				href="/pages/secured/seznam-kurzu.zul" >
 			</menuitem>
 			
+			<!-- Seznam ucastniku -->
+			<menuitem style="text-align: center; width: 100px;"
+				label="${c:l('txt.ui.common.participants')}" 
+				id="menu_courseParticipantList"
+				iconSclass="z-icon-child" 
+				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
+				href="/pages/secured/seznam-ucastniku.zul" >
+			</menuitem>
+			
 		</menubar>
 		
 		<menubar hflex="1" sclass="main-menu-bar" />

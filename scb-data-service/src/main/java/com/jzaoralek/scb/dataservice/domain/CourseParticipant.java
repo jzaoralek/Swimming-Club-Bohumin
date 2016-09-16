@@ -102,13 +102,14 @@ public class CourseParticipant implements IdentEntity {
 
 	public String inCourseInfo() {
 		String ret = null;
+		String DELIMITER = ", ";
 		if (!CollectionUtils.isEmpty(this.courseList)) {
 			StringBuilder sb = new StringBuilder();
 			for (Course course : this.courseList) {
-				sb.append(course.getName() + "\n");
+				sb.append(course.getName() + DELIMITER);
 			}
 
-			ret = sb.toString();
+			ret = sb.substring(0, sb.length() - DELIMITER.length());
 		}
 
 		return ret;

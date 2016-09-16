@@ -2,6 +2,13 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
      
 <zk>
+	<style>
+		<!-- cut/hide the vertical borders in the grid rows -->
+		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
+		
+		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
+	</style>
+	
 	<borderlayout sclass="content-wrapper" >
 		<north border="none" >
 			<vlayout id="vlayoutElem">

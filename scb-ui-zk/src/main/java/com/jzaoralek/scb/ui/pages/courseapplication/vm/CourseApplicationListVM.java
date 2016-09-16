@@ -48,6 +48,11 @@ public class CourseApplicationListVM extends BaseVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseApplicationListVM.class);
 
+	public enum PageMode {
+		COURSE_APPLICATION_LIST,
+		CORSE_PARTICIPANT_LIST;
+	}
+
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
 
@@ -56,6 +61,7 @@ public class CourseApplicationListVM extends BaseVM {
 	private CourseApplicationFilter filter = new CourseApplicationFilter();
 	private List<String> courseYearList;
 	private String courseYearSelected;
+	private PageMode pageMode;
 
 	@Init
 	public void init() {
@@ -69,6 +75,7 @@ public class CourseApplicationListVM extends BaseVM {
 		this.courseYearList = configurationService.getCourseYearList();
 		this.courseYearSelected = configurationService.getCourseApplicationYear();
 
+		setPageMode();
 		loadData();
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
@@ -81,6 +88,16 @@ public class CourseApplicationListVM extends BaseVM {
 				}
 			}
 		});
+	}
+
+	private void setPageMode() {
+		if (WebUtils.getCurrentUrl().contains(WebPages.APPLICATION_LIST.getUrl())) {
+			this.pageMode = PageMode.COURSE_APPLICATION_LIST;
+		} else if (WebUtils.getCurrentUrl().contains(WebPages.PARTICIPANT_LIST.getUrl())) {
+			this.pageMode = PageMode.CORSE_PARTICIPANT_LIST;
+		} else {
+			throw new IllegalStateException("Unexpected page url: " + WebUtils.getCurrentUrl());
+		}
 	}
 
 	@NotifyChange("*")
@@ -116,7 +133,9 @@ public class CourseApplicationListVM extends BaseVM {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
-		Executions.sendRedirect("/pages/secured/prihlaska-do-klubu.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.APPLICATION_LIST);
+		String targetPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_DETAIL.getUrl() : WebPages.PARTICIPANT_DETAIL.getUrl();
+		WebPages fromPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_LIST : WebPages.PARTICIPANT_LIST;
+		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
 	}
 
 	@Command
@@ -189,7 +208,7 @@ public class CourseApplicationListVM extends BaseVM {
 		int yearFrom = Integer.valueOf(years[0]);
 		int yearTo = Integer.valueOf(years[1]);
 
-		this.courseApplicationList = courseApplicationService.getAll(yearFrom, yearTo);
+		this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getAll(yearFrom, yearTo) : courseApplicationService.getAssignedToCourse(yearFrom, yearTo);
 		this.courseApplicationListBase = this.courseApplicationList;
 		BindUtils.postNotifyChange(null, null, this, "courseApplicationList");
 	}
@@ -234,9 +253,11 @@ public class CourseApplicationListVM extends BaseVM {
 		private String email;
 		private String emailLc;
 		private String modifAt;
+		private String course;
+		private String courseLc;
 
-		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, boolean emptyMatch) {
-			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null) {
+		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean emptyMatch) {
+			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null) {
 				return emptyMatch;
 			}
 			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
@@ -260,6 +281,9 @@ public class CourseApplicationListVM extends BaseVM {
 			if (modifAt != null && !modifAtIn.contains(modifAt)) {
 				return false;
 			}
+			if (course != null && !courseIn.toLowerCase().contains(courseLc)) {
+				return false;
+			}
 			return true;
 		}
 
@@ -276,6 +300,7 @@ public class CourseApplicationListVM extends BaseVM {
 						, item.getCourseParticRepresentative().getContact().getPhone1()
 						, item.getCourseParticRepresentative().getContact().getEmail1()
 						, dateTimeFormat.format(item.getModifAt())
+						, item.getCourseParticipant().inCourseInfo()
 						, true)) {
 					ret.add(item);
 				}
@@ -347,6 +372,14 @@ public class CourseApplicationListVM extends BaseVM {
 			this.modifAt = StringUtils.hasText(modifAt) ? modifAt.trim() : null;
 		}
 
+		public String getCourse() {
+			return course == null ? "" : course;
+		}
+		public void setCourse(String name) {
+			this.course = StringUtils.hasText(name) ? name.trim() : null;
+			this.courseLc = this.course == null ? null : this.course.toLowerCase();
+		}
+
 		public void setEmptyValues() {
 			code = null;
 			courseParticName = null;
@@ -358,6 +391,8 @@ public class CourseApplicationListVM extends BaseVM {
 			email = null;
 			emailLc = null;
 			modifAt = null;
+			course = null;
+			courseLc = null;
 		}
 	}
 }
