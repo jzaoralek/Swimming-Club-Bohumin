@@ -18,7 +18,7 @@
 					<vbox hflex="20" pack="center" align="center" >
 						<hbox hflex="1" pack="end" align="center" >
 							<vbox hflex="1" align="center" >
-								<headline label="${vm.pageHeadline}" menuSelected="menu_applicationToClub" />
+								<headline label="${vm.pageHeadline}" menuSelected="menu_applicationToClubList" />
 							</vbox>
 						</hbox>
 						<vbox hflex="1" vflex="1" align="end" pack="center">
