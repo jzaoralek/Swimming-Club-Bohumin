@@ -5,9 +5,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 
 <zk>
-	<borderlayout self="@{define(mainContent)}" 
-		apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')"
+	<borderlayout self="@{define(mainContent)}" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')"
 		form="@id('fx') @load(vm) @save(vm, before={'loginCmd'})" 
 		vflex="1">
 		<center border="none" style="background:#dfe8f6 url('${pageContext.request.contextPath}/resources/img/background2014Full.jpg') no-repeat center center;" >

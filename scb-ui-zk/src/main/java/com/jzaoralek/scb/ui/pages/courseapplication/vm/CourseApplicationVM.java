@@ -34,11 +34,10 @@ public class CourseApplicationVM extends BaseVM {
 	private boolean securedMode;
 	private boolean showNotification;
 	private String confirmText;
-
+	private String errotText;
 	private String pageHeadline;
 	private String captcha;
 	private Attachment attachment;
-	private String borderLayoutCenterStyle;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -48,6 +47,13 @@ public class CourseApplicationVM extends BaseVM {
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
+		// kontrola zda-li prihlasky povolene
+		if (!isSecuredPage() && !isCourseApplicationAllowed()) {
+			this.editMode = false;
+			this.showNotification = true;
+			this.errotText = Labels.getLabel("msg.ui.warn.courseApplicationsNotAllowed");
+			return;
+		}
 
 		CourseApplication courseApplication = null;
 		if (StringUtils.hasText(uuid)) {
@@ -65,10 +71,6 @@ public class CourseApplicationVM extends BaseVM {
 		} else {
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {String.valueOf(courseApplication.getYearFrom())});
 		}
-	}
-
-	private Boolean isSecuredPage() {
-		return WebUtils.getCurrentUrl().contains(WebConstants.SECURED_PAGE_URL);
 	}
 
 	@NotifyChange("*")
@@ -190,6 +192,9 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public String getConfirmText() {
 		return confirmText;
+	}
+	public String getErrotText() {
+		return errotText;
 	}
 	public String getPageHeadline() {
 		return pageHeadline;

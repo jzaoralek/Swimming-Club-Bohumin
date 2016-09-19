@@ -1,0 +1,60 @@
+<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.menu.configuration')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+
+<zk>
+	<div self="@{define(mainContent)}" hflex="1" >
+		
+		<hlayout spacing="0">
+			<vbox hflex="1" />
+			
+			<vbox hflex="20" pack="center">
+				<headline label="${c:l('txt.ui.menu.configuration')}" menuSelected="menu_configuration" />
+			</vbox>
+			
+			<vbox hflex="1" />
+		</hlayout>
+		
+		<hlayout spacing="0">
+		
+			<vbox hflex="1" />
+			
+			<vbox hflex="20" pack="center" 
+			 	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.configuration.vm.ConfigVM')">
+				
+				<listbox model="@load(vm.configList)"
+					id="configList"
+					hflex="1"
+					style="margin-top: 20px;"
+					mold="paging"
+					pageSize="10"
+					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+					class="listbox" >
+			        
+			        <listhead>
+			            <listheader label="${c:l('txt.ui.common.name')}" align="left" />
+			            <listheader label="${c:l('txt.ui.common.value')}" align="left" />
+			            <listheader width="50px" align="center" >
+			            	<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
+			            </listheader>
+			        </listhead>
+			         
+			        <template name="model">
+			            <listitem>
+			                <listcell label="${each.description}" />
+			                <listcell label="${each.value}" visible="${each.type eq 'STRING'}" />
+			                <listcell label="${each.value}" visible="${each.type eq 'BOOLEAN'}" />
+			                <listcell label="${each.value}" visible="${each.type eq 'INTEGER'}" />
+			                <listcell>
+			                	<button iconSclass="z-icon-check" hflex="min" width="20px" />
+			                </listcell>
+			            </listitem>
+			        </template>
+			    </listbox>
+			</vbox>
+			
+			<vbox hflex="1" />
+			
+		</hlayout>
+	</div>
+</zk>

@@ -15,8 +15,8 @@ public class Contact implements IdentEntity {
 	private String firstname;
 	private String surname;
 	private String street;
-	private long landRegistryNumber;
-	private short houseNumber;
+	private Long landRegistryNumber;
+	private Short houseNumber;
 	private String city;
 	private String zipCode;
 	private String email1;
@@ -66,16 +66,16 @@ public class Contact implements IdentEntity {
 	public void setStreet(String street) {
 		this.street = street;
 	}
-	public long getLandRegistryNumber() {
+	public Long getLandRegistryNumber() {
 		return landRegistryNumber;
 	}
-	public void setLandRegistryNumber(long landRegistryNumber) {
+	public void setLandRegistryNumber(Long landRegistryNumber) {
 		this.landRegistryNumber = landRegistryNumber;
 	}
-	public short getHouseNumber() {
+	public Short getHouseNumber() {
 		return houseNumber;
 	}
-	public void setHouseNumber(short houseNumber) {
+	public void setHouseNumber(Short houseNumber) {
 		this.houseNumber = houseNumber;
 	}
 	public String getCity() {

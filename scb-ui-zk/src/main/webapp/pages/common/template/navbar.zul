@@ -46,7 +46,7 @@
 					<button label="${c:l('txt.ui.menu.application')}" 
 						href="/pages/public/prihlaska-do-klubu.zul" 
 						sclass="btn-warning" iconSclass="z-icon-file-text"
-						visible="@load(!vm.isUserLogged())"
+						visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())"
 						style="margin-right: 10px; font-weight: bold;" />
 				</div>
 				

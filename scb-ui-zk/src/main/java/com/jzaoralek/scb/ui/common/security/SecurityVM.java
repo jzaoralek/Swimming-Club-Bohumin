@@ -7,8 +7,9 @@ import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.zk.ui.Executions;
 
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
+import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-public class SecurityVM {
+public class SecurityVM extends BaseVM {
 
 //	private static final Logger logger = Logger.getLogger(SecurityVM.class);
 

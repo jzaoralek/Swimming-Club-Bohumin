@@ -12,6 +12,7 @@ import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.converter.Converters;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.validator.Validators;
 
 public class BaseVM {
@@ -107,7 +108,18 @@ public class BaseVM {
 		return Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
 	}
 
+	protected Boolean isSecuredPage() {
+		return WebUtils.getCurrentUrl().contains(WebConstants.SECURED_PAGE_URL);
+	}
 	protected void setReturnPage(String fromPage) {
 		this.returnToPage = StringUtils.hasText(fromPage) ? WebPages.valueOf(fromPage).getUrl() : null;
 	}
+
+	/**
+	 * Kontrola povoleni podavani prihlasek.
+	 * @return
+	 */
+    public boolean isCourseApplicationAllowed() {
+    	return configurationService.isCourseApplicationsAllowed();
+    }
 }

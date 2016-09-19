@@ -6,6 +6,7 @@ DROP TABLE result;
 DROP TABLE course;
 DROP TABLE course_course_participant;
 DROP TABLE lesson;
+DROP TABLE configuration;
 
 CREATE TABLE contact(
 	uuid varchar(36),
@@ -100,3 +101,14 @@ CREATE TABLE lesson(
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 )
+
+CREATE TABLE configuration(
+	uuid varchar(36),
+	name  ENUM('COURSE_APPLICATION_ALLOWED','COURSE_APPLICATION_YEAR') NOT NULL,
+	description VARCHAR(100),
+	val VARCHAR(240),
+  type  ENUM('STRING','INTEGER','BOOLEAN') NOT NULL,
+	modif_at TIMESTAMP NOT NULL,
+	modif_by varchar(36) NOT NULL,
+	PRIMARY KEY (uuid)
+);

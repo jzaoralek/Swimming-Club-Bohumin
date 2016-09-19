@@ -4,7 +4,7 @@
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 
 <zk>
-	<borderlayout self="@{define(mainContent)}" hflex="1" apply="org.zkoss.bind.BindComposer" 
+	<borderlayout self="@{define(mainContent)}" hflex="1" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseParticipantVM')"
 		validationMessages="@id('vmsgs')"
 	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
