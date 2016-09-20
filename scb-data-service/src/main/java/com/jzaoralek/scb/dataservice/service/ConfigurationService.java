@@ -11,6 +11,7 @@ public interface ConfigurationService {
 	String getCourseApplicationYear();
 	Pair<Integer,Integer> getYearFromTo();
 	List<String> getCourseYearList();
+	List<String> getCourseYearFromActualYearList();
 	boolean isCourseApplicationsAllowed();
 	List<Config> getAll();
 	void update(Config config);

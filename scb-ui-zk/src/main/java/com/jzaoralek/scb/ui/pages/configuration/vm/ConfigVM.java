@@ -15,10 +15,12 @@ import com.jzaoralek.scb.ui.common.vm.BaseVM;
 public class ConfigVM extends BaseVM {
 
 	private List<Config> configList;
+	private List<String> courseYearList;
 
 	@Init
 	public void init() {
 		this.configList = configurationService.getAll();
+		this.courseYearList = configurationService.getCourseYearFromActualYearList();
 	}
 
 	@NotifyChange("configList")
@@ -40,5 +42,9 @@ public class ConfigVM extends BaseVM {
 
 	public void setConfigList(List<Config> configList) {
 		this.configList = configList;
+	}
+
+	public List<String> getCourseYearList() {
+		return courseYearList;
 	}
 }

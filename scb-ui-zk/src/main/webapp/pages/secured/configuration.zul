@@ -42,11 +42,27 @@
 			        <template name="model">
 			            <listitem>
 			                <listcell label="${each.description}" />
-			                <listcell label="${each.value}" visible="${each.type eq 'STRING'}" />
-			                <listcell label="${each.value}" visible="${each.type eq 'BOOLEAN'}" />
-			                <listcell label="${each.value}" visible="${each.type eq 'INTEGER'}" />
 			                <listcell>
-			                	<button iconSclass="z-icon-check" hflex="min" width="20px" />
+		                		<listbox selectedItem="@bind(each.value)" 
+									model="@load(vm.courseYearList)"
+									mold="select"
+									visible="${each.type eq 'STRING'}"
+									height="25px" >
+									<template name="model">
+										<listitem label="${each}" value="${each}" />
+									</template>
+								</listbox>
+				                <listbox selectedItem="@bind(each.value)"
+									visible="${each.type eq 'BOOLEAN'}"
+									mold="select"
+									height="25px" >
+									<listitem label="Ano" value="true" />
+									<listitem label="Ne" value="false" />
+								</listbox>
+				                <label value="@load(each.value)" visible="${each.type eq 'INTEGER'}" />
+			                </listcell>
+			                <listcell>
+			                	<button iconSclass="z-icon-check" hflex="min" width="20px" onClick="@command('updateCmd', config=each)" />
 			                </listcell>
 			            </listitem>
 			        </template>

@@ -1,7 +1,6 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
 
 <div sclass="navbar navbar-ext" height="75px" style="margin-bottom:0px;" 
-	apply="org.zkoss.bind.BindComposer"
 	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">	
 	
 	<hbox hflex="1" vflex="1" >
@@ -28,8 +27,7 @@
 		<!-- Navbar -->
 		<vbox hflex="10" vflex="1" align="end" pack="center" >
 			<hlayout sclass="nav-user pull-right"
-				spacing="0" 
-				apply="org.zkoss.bind.BindComposer" 
+				spacing="0"  
 				viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
 				
 				<button label="@load(vm.loggedUserCompleteName)"

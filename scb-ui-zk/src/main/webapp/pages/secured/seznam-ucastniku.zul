@@ -25,7 +25,7 @@
 		
 			<vbox hflex="1" />
 			
-			<vbox hflex="20" pack="center" apply="org.zkoss.bind.BindComposer" 
+			<vbox hflex="20" pack="center"
 			 	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationListVM')">
 				
 				<listbox model="@load(vm.courseApplicationList)"

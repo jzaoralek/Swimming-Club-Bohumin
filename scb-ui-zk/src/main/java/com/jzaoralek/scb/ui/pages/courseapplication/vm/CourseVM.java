@@ -60,7 +60,7 @@ public class CourseVM extends BaseVM {
 		if (StringUtils.hasText(uuid)) {
 			course = courseService.getByUuid(UUID.fromString(uuid));
 		}
-		this.courseYearList = configurationService.getCourseYearList();
+		this.courseYearList = configurationService.getCourseYearFromActualYearList();
 		if (course != null) {
 			this.course = course;
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseDetail");

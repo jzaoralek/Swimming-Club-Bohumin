@@ -17,14 +17,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	public static final String COURSE_YEAR_DELIMITER = "/";
 	public static final int ACTUAL_YEAR = Calendar.getInstance().get(Calendar.YEAR);
+	public static final int START_YEAR = 2016;
 
 	@Autowired
 	private ConfigurationDao configurationDao;
 
 	@Override
 	public String getCourseApplicationYear() {
-		Integer courseYear = Integer.valueOf(configurationDao.getByName(Config.ConfigName.COURSE_APPLICATION_YEAR.name()).getValue());
-		return String.valueOf(courseYear) + COURSE_YEAR_DELIMITER + String.valueOf(courseYear+1);
+		return configurationDao.getByName(Config.ConfigName.COURSE_APPLICATION_YEAR.name()).getValue();
 	}
 
 	@Override
@@ -45,17 +45,26 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public Pair<Integer, Integer> getYearFromTo() {
 		String[] yearFromToArr = getCourseApplicationYear().split(COURSE_YEAR_DELIMITER);
-		return new Pair<Integer, Integer>(Integer.valueOf(yearFromToArr[0]), Integer.valueOf(yearFromToArr[1]));
+		return new Pair<>(Integer.valueOf(yearFromToArr[0]), Integer.valueOf(yearFromToArr[1]));
 	}
 
 	@Override
 	public List<String> getCourseYearList() {
-		List<String> ret = new ArrayList<String>();
+		return getYearList(true);
+	}
+
+	@Override
+	public List<String> getCourseYearFromActualYearList() {
+		return getYearList(false);
+	}
+
+	private  List<String> getYearList(boolean fromStartYear) {
+		List<String> ret = new ArrayList<>();
 		int endLoopYear = ACTUAL_YEAR + 1;
-		int year = Integer.valueOf(configurationDao.getByName(Config.ConfigName.COURSE_APPLICATION_YEAR.name()).getValue());
-		for (int i = year; i <= endLoopYear; i++) {
-			ret.add(year + COURSE_YEAR_DELIMITER + (year + 1));
-			year++;
+		int startYear = fromStartYear ? START_YEAR : ACTUAL_YEAR;
+		for (int i = startYear; i <= endLoopYear; i++) {
+			ret.add(startYear + COURSE_YEAR_DELIMITER + (startYear + 1));
+			startYear++;
 		}
 		return ret;
 	}

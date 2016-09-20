@@ -74,6 +74,15 @@
 				href="/pages/secured/seznam-ucastniku.zul" >
 			</menuitem>
 			
+			<!-- Nastaveni -->
+			<menuitem style="text-align: center; width: 100px;"
+				label="${c:l('txt.ui.menu.configuration')}" 
+				id="menu_configuration"
+				iconSclass="z-icon-cog" 
+				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
+				href="/pages/secured/configuration.zul" >
+			</menuitem>
+			
 		</menubar>
 		
 		<menubar hflex="1" sclass="main-menu-bar" />
