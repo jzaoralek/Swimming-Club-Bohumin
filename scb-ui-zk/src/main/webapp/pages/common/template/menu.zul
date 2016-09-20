@@ -1,0 +1,82 @@
+<div sclass="main-menu" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')" >
+	
+	<hlayout spacing="0">
+		<!--
+		<div sclass="quick-buttons">
+			<div sclass="qb-container" tooltip="quickButtons, position=after_start, delay=100">
+				<button type="button" class="btn-success" />
+				<button type="button" class="btn-info" style="left: -1px;" />
+				<button type="button" class="btn-warning" style="top: 1px;"/>
+				<button type="button" class="btn-danger" style="left: -1px;top: 1px;"/>
+			</div>
+		</div>
+		
+		<popup id="quickButtons" sclass="quick-buttons-popup" width="57px">
+			<vlayout spacing="0">
+				<button type="button" class="btn-success" iconSclass="z-icon-signal"/>
+				<button type="button" class="btn-info" iconSclass="z-icon-pencil"/>
+				<button type="button" class="btn-warning" iconSclass="z-icon-group"/>
+				<button type="button" class="btn-danger" iconSclass="z-icon-cogs"/>
+			</vlayout>
+		</popup>
+		
+		<popup id="calpp" zclass="tooltip" sclass="right tooltip-error cal">
+			<span zclass="tooltip-arrow"/>
+			<label zclass="tooltip-inner" value="Přechod na layout s menu vlevo"/>
+		</popup>
+		-->
+		
+		<menubar hflex="1" sclass="main-menu-bar" />
+		
+		<menubar id="menubar" hflex="20" sclass="main-menu-bar" autodrop="true" apply="com.jzaoralek.scb.ui.common.template.MenuComposer" >
+			<!-- Dashboard -->
+			<menuitem
+				label="Home"
+				id="menu_dashboard"
+				iconSclass="z-icon-home" 
+				visible="@load(!vm.isUserLogged())"
+				href="/" >
+			</menuitem>
+			
+			<!-- Prihlaska -->
+			<menuitem
+				label="${c:l('txt.ui.menu.application')}" 
+				id="menu_applicationToClub"
+				iconSclass="z-icon-file-text" 
+				visible="@load(!vm.isUserLogged())"
+				href="/pages/public/prihlaska-do-klubu.zul" >
+			</menuitem>
+			
+			<!-- Seznam prihlasek -->
+			<menuitem style="text-align: center; width: 100px;"
+				label="${c:l('txt.ui.menu.applications')}" 
+				id="menu_applicationToClubList"
+				iconSclass="z-icon-files-o" 
+				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
+				href="/pages/secured/seznam-prihlasek.zul" >
+			</menuitem>
+			
+			<!-- Seznam kurzu -->
+			<menuitem  style="text-align: center; width: 100px;"
+				label="${c:l('txt.ui.menu.courses')}" 
+				id="menu_courseList"
+				iconSclass="z-icon-list-alt" 
+				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
+				href="/pages/secured/seznam-kurzu.zul" >
+			</menuitem>
+			
+			<!-- Seznam ucastniku -->
+			<menuitem style="text-align: center; width: 100px;"
+				label="${c:l('txt.ui.common.participants')}" 
+				id="menu_courseParticipantList"
+				iconSclass="z-icon-child" 
+				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
+				href="/pages/secured/seznam-ucastniku.zul" >
+			</menuitem>
+			
+		</menubar>
+		
+		<menubar hflex="1" sclass="main-menu-bar" />
+		
+	</hlayout>
+</div>

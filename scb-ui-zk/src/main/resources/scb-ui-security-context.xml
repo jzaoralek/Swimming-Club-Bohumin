@@ -1,0 +1,29 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+	<http auto-config="true">
+		<intercept-url pattern="/" access="permitAll" />
+		<intercept-url pattern="/pages/secured/**" access="hasRole('ADMIN')" />
+		<form-login login-page="/pages/common/login.zul"
+			login-processing-url="/login"
+			username-parameter="username"
+			password-parameter="password"
+			authentication-success-handler-ref="customSuccessHandler"
+			authentication-failure-url="/pages/common/login.zul?loginFailure=true" />
+		<csrf disabled="true" />
+		<logout invalidate-session="true" logout-url="/logout" logout-success-url="/pages/common/login.zul" />
+		<headers>
+			<frame-options policy="SAMEORIGIN"/>
+		</headers>
+	</http>
+
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref="customUserDetailsService" />
+	</authentication-manager>
+
+	<beans:bean id="customUserDetailsService" class="com.jzaoralek.scb.dataservice.service.impl.CustomUserDetailsService" />
+	<beans:bean id="customSuccessHandler" class="com.jzaoralek.scb.ui.common.security.CustomSuccessHandler" />
+	
+</beans:beans>

@@ -1,0 +1,14 @@
+<hlayout spacing="0" style="background: #e4e6e9; border: 1px solid #cfcfcf;">
+	<vbox hflex="1" />
+	
+	<vbox hflex="20" pack="center" align="end" >
+		<hbox align="center" height="50px">
+			${c:l('txt.ui.common.contact')}: 
+			<label value="${c:l('txt.ui.organization.phone')}" style="white-space: nowrap;" />, 
+			<a href="mailto:${c:l('txt.ui.organization.email')} ">${c:l('txt.ui.organization.email')} </a>
+			
+		</hbox>
+	</vbox>
+	
+	<vbox hflex="1" />
+</hlayout>

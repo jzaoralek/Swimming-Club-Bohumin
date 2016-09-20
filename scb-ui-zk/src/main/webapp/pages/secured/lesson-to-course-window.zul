@@ -1,0 +1,74 @@
+<window id="modalWindow"
+	title="Lekce" 
+	border="normal" 
+    width="300px"
+    position="center,center" 
+    closable="true">
+    
+    <style>
+		<!-- cut/hide the vertical borders in the grid rows -->
+		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
+		
+		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
+	</style>
+	
+    <vbox align="center" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.LessonToCourseWinVM')"
+    	validationMessages="@id('vmsgs')"
+	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
+    	
+    	<grid hflex="1" sclass="form-grid" >
+			<columns>
+                <column align="center" />
+                <column align="center" />
+                <column align="center" />
+            </columns>
+			<rows style="background: white;" >
+				<row sclass="form-grid-row" style="border: none;" >
+					<label value="${c:l('txt.ui.common.dayOfWeek')}"/>
+					<label value="${c:l('txt.ui.common.from')}"/>
+					<label value="${c:l('txt.ui.common.to')}"/>				
+				</row>
+				<row sclass="form-grid-row" style="border: none; padding-bottom: 10px;" >
+					<cell sclass="form-grid-cell" >
+						<listbox selectedItem="@bind(vm.dayOfWeekSelected)" 
+							model="@load(vm.dayofWeekList)"
+							sclass="form-input-text"
+							mold="select" >
+							<template name="model">
+				               	<listitem label="@bind(each.label)" value="@bind(each)"/>
+				               </template>
+						</listbox>
+					</cell>
+					<cell sclass="form-grid-cell" >
+						<listbox selectedItem="@bind(vm.timeFromSelected)" 
+							model="@load(vm.timeFromList)"
+							sclass="form-input-text"
+							onSelect="@command('changeTimeFromCmd')"
+							mold="select" >
+							<template name="model">
+				               	<listitem label="@bind(each)" value="@bind(each)"/>
+				               </template>
+						</listbox>
+					</cell>
+					<cell sclass="form-grid-cell" >
+						<listbox selectedItem="@bind(vm.timeToSelected)" 
+							model="@load(vm.timeToList)"
+							sclass="form-input-text"
+							mold="select" >
+							<template name="model">
+				               	<listitem label="@bind(each)" value="@bind(each)"/>
+				               </template>
+						</listbox>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		
+		<button label="OK"
+			onClick="@command('submitCmd', window=modalWindow)"
+			sclass="btn-success"
+			style="margin-top: 10px"
+			iconSclass="z-icon-check"  />
+	    
+    </vbox>
+</window>

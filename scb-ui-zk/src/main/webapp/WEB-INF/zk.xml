@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<zk>
+	<client-config>
+		<debug-js>false</debug-js>
+	</client-config>
+
+	<library-property>
+		<name>org.zkoss.web.classWebResource.cache</name>
+		<value>false</value>
+	</library-property>
+
+	<library-property>
+		<name>org.zkoss.web.preferred.locale</name>
+		<value>cs</value>
+	</library-property>
+
+	<library-property>
+		<name>org.zkoss.zul.progressbox.position</name>
+		<value>center,center</value>
+	</library-property>
+	
+	<library-property>
+		<name>org.zkoss.recaptch.publickey</name>
+		<value>6LfSJCgTAAAAAIfziz0FtM64I0VaONrSq1EKnYr8</value>
+	</library-property>
+	
+	<library-property>
+		<name>org.zkoss.recaptch.privatekey</name>
+		<value>6LfSJCgTAAAAAANWtytYVqIlrXhv-BeJ-CokaRs7</value>
+	</library-property>
+	
+	<!-- labels -->
+	<system-config>
+		<label-location>/WEB-INF/labels/scb-labels.properties</label-location>
+		<max-upload-size>102400</max-upload-size>
+	</system-config>
+	
+	<device-config>
+		<device-type>ajax</device-type>
+		<timeout-uri>/pages/index.zul</timeout-uri><!-- An empty URL can cause the browser to reload the same URL -->
+	</device-config>
+	
+	<desktop-config>
+		<theme-uri>/resources/css/core.css</theme-uri>
+		<theme-uri>/resources/bootstrap/css/bootstrap.css</theme-uri>
+		<theme-uri>/resources/css/fonts.css</theme-uri>
+		<theme-uri>/resources/css/template.css.dsp</theme-uri>
+	</desktop-config>
+	
+	<language-config>
+		<addon-uri>/WEB-INF/lang-addon.xml</addon-uri>
+	</language-config>
+</zk>

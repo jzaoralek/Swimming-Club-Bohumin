@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="prihlaska_report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a55adce4-c6f6-4eb2-9966-8c944668fcb1">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="214"/>
+	<parameter name="reportTitle" class="java.lang.String"/>
+	<parameter name="courseParticipantTitle" class="java.lang.String"/>
+	<parameter name="organizationNameTitle" class="java.lang.String"/>
+	<parameter name="contactPhone" class="java.lang.String"/>
+	<parameter name="contactEmail" class="java.lang.String"/>
+	<parameter name="courseParticFirstname" class="java.lang.String"/>
+	<parameter name="courseParticSurname" class="java.lang.String"/>
+	<parameter name="courseParticBirthdate" class="java.lang.String"/>
+	<parameter name="courseParticPersonalNo" class="java.lang.String"/>
+	<parameter name="courseParticHealthInsurance" class="java.lang.String"/>
+	<parameter name="representativeTitle" class="java.lang.String"/>
+	<parameter name="representativeFirstname" class="java.lang.String"/>
+	<parameter name="representativeSurname" class="java.lang.String"/>
+	<parameter name="representativePhone1" class="java.lang.String"/>
+	<parameter name="representativePhone2" class="java.lang.String"/>
+	<parameter name="representativeEmail1" class="java.lang.String"/>
+	<parameter name="representativeEmail2" class="java.lang.String"/>
+	<parameter name="healthInfo" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="33" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="33" uuid="42c8225c-1943-423f-bf8d-62c70ee17220"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true" pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="656" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="46" width="555" height="119" uuid="f6442b9a-b0b7-452e-be51-7476ba7af911"/>
+			</rectangle>
+			<textField>
+				<reportElement x="154" y="55" width="401" height="20" uuid="f88813cd-2437-468a-8544-0f729fdde4b2"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseParticFirstname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="55" width="120" height="20" uuid="6e745830-58a5-4d9d-a17f-4166f0318dda"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Jméno]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="154" y="75" width="401" height="20" uuid="983083af-f595-4c6c-9d21-295784995ecd"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseParticSurname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="75" width="120" height="20" uuid="d4c57c73-3b43-45dd-b335-723b26936721"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Příjmení]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="154" y="95" width="401" height="20" uuid="cdcd5377-5ba1-4382-8117-6098602b9ac8"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseParticBirthdate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="95" width="120" height="20" uuid="85d30aff-f98e-4840-b04c-2871924ccd7f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Datum narození]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="154" y="117" width="401" height="20" uuid="2c30b425-0254-4cf5-a07a-94032d1e75dd"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseParticPersonalNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="115" width="120" height="20" uuid="41a93e16-d734-41c9-bbe4-c74682fd4f10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Rodné číslo]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="154" y="137" width="401" height="20" uuid="72901e24-191c-411c-aeae-394fe40cf06c"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseParticHealthInsurance}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="135" width="120" height="20" uuid="833b932a-36f9-497e-911b-814f07f1f095"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Zdravotní pojišťovna]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="192" width="193" height="20" uuid="a37fdf94-6e24-44ac-b810-81339c35bf25"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{representativeTitle}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="212" width="555" height="140" uuid="8176680b-b7b0-4867-8aef-712fd364963c"/>
+			</rectangle>
+			<textField>
+				<reportElement x="154" y="222" width="401" height="20" uuid="70945f04-821e-4775-89ac-ce2ae7119488"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{representativeFirstname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="222" width="120" height="20" uuid="539af50e-ed42-40fd-9771-2196ec8c28d7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Jméno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="242" width="120" height="20" uuid="14161566-04f6-40a9-a352-911b394cb6ee"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Příjmení]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="154" y="242" width="401" height="20" uuid="681b7880-055a-40c6-abc8-ab8e4c4707dd"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{representativeSurname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="262" width="120" height="20" uuid="0176b6e3-27ae-485d-b5c0-6f745f502b31"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Telefon 1]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="154" y="262" width="401" height="20" uuid="f7278769-3e5a-468b-aaf8-0cc412bef17f"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{representativePhone1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="154" y="282" width="401" height="20" uuid="f9aba1a9-0493-4ffc-81cb-9e91bf121de4"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{representativePhone2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="282" width="120" height="20" uuid="8ddb2d05-2d8b-4fba-976a-db2fb653ad06"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Telefon 2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="302" width="120" height="20" uuid="0282a00e-4ac1-430e-8297-1687298fa139"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Email 1]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="154" y="302" width="401" height="20" uuid="4dfb0f34-76be-46d8-99d6-f0cf7d7eb2c2"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{representativeEmail1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="322" width="120" height="20" uuid="9ef1e2ea-c806-410e-baa5-9cd0fdfb188a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Email 2]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="154" y="322" width="401" height="20" uuid="ce9c3552-e249-4544-8e98-17f85fe86e76"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{representativeEmail2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="466" width="555" height="31" uuid="ae97241e-1948-46bc-a3d2-4e2f36bfdfa7"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Souhlasím s kolektivním plaveckým výcvikem svého syna/dcery. Prohlašuji na základě lékařského posouzení zdravotního stavu, že můj syn/dcera je způsobilý/způsobilá absolvovat fyzickou zátěž sportovních tréninků a plaveckých závodů bez nebezpečí poškození jeho/jejího zdravotního stavu. V případě změny zdravotního stavu budu neprodleně informovat zástupce Plaveckého klubu Bohumín.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="507" width="555" height="24" uuid="2a73ab7e-b4aa-458c-8cea-7e2801facb90"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Souhlasím se zpracováním osobních údajů podle zákona č. 101/2000 Sb.Souhlasím s možností fotografování svého syna/dcery a s možností zveřejnění fotografií nebo videa v rámci propagace Plaveckého klubu Bohumín. Potvrzuji, že jsem se seznámil s Provozním řádem aquacentra Bohumín.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="377" width="229" height="20" uuid="9588d3c3-fe63-4be3-9251-f1114d68704d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Údaje o zdravotní způsobilosti, popř. zdravotních obtížích]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="397" width="555" height="47" uuid="7d56db2b-83a7-4a63-b801-9e9f03695646"/>
+				<textElement>
+					<font size="8" pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{healthInfo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="342" y="616" width="178" height="1" uuid="1578fa23-e4b8-4321-ac35-505f5b653295"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="342" y="627" width="178" height="20" uuid="6c62e128-617d-4389-a22a-c4d83c15520c"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[datum a podpis zákonného zástupce]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="26" width="120" height="20" uuid="67c65775-59ef-4925-87df-84d66e33761c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Účastník (dítě)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="23" splitType="Stretch"/>
+	</detail>
+	<pageFooter>
+		<band height="37" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="12" uuid="d516e05f-202a-47cd-a719-a9c07bf60aca"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{organizationNameTitle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="12" width="555" height="14" uuid="7c96577f-ef74-4087-835f-e27f16d30e6e"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{contactPhone}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="24" width="555" height="11" uuid="6a5aea12-5d24-47a7-90e4-69aa5411e65a"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{contactEmail}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

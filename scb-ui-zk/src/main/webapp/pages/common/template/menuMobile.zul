@@ -1,0 +1,40 @@
+<zk>
+	<menubar id="menubar" orient="vertical" autodrop="true" 
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
+		<menuitem label="Home" 
+			href="/" visible="@load(!vm.isUserLogged())" />
+		<menuitem label="${c:l('txt.ui.menu.application')}" 
+			href="/pages/public/prihlaska-do-klubu.zul" 
+			visible="@load(!vm.isUserLogged())" />
+		<menuitem label="${c:l('txt.ui.menu.applications')}" 
+			href="/pages/secured/seznam-prihlasek.zul" 
+			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+		<menuitem label="${c:l('txt.ui.menu.courses')}" 
+			href="/pages/secured/seznam-kurzu.zul" 
+			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+		<menuitem label="${c:l('txt.ui.common.participants')}" 
+			href="/pages/secured/seznam-ucastniku.zul" 
+			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+		<menu label="Hardware" visible="false">
+			<menupopup>
+				<menu label="Mainboard">
+					<menupopup>
+						<menuitem label="AMD"
+							onClick="alert(self.label)" />
+						<menuitem label="Intel"
+							onClick="alert(self.label)" />
+						<menuitem label="Others"
+							onClick="alert(self.label)" />
+					</menupopup>
+				</menu>
+				<menuseparator></menuseparator>
+				<menuitem label="PC" onClick="alert(self.label)" visible="false" />
+				<menuitem label="Mac" onClick="alert(self.label)" visible="false" />
+				<menuitem label="Others" onClick="alert(self.label)" visible="false" />
+			</menupopup>
+		</menu>
+		<menuitem label="TV &amp; Audio" onClick="alert(self.label)" visible="false" />
+		<menuitem label="Photo &amp; Video" onClick="alert(self.label)" visible="false" />
+		<menuitem label="Communication" onClick="alert(self.label)" visible="false" />
+	</menubar>
+</zk>
