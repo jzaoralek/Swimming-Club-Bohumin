@@ -255,9 +255,10 @@ public class CourseApplicationListVM extends BaseVM {
 		private String modifAt;
 		private String course;
 		private String courseLc;
+		private Boolean inCourse;
 
-		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean emptyMatch) {
-			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null) {
+		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean inCourseIn, boolean emptyMatch) {
+			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null && inCourse == null) {
 				return emptyMatch;
 			}
 			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
@@ -284,6 +285,9 @@ public class CourseApplicationListVM extends BaseVM {
 			if (course != null && !courseIn.toLowerCase().contains(courseLc)) {
 				return false;
 			}
+			if (inCourse != null && (inCourse != inCourseIn)) {
+				return false;
+			}
 			return true;
 		}
 
@@ -301,6 +305,7 @@ public class CourseApplicationListVM extends BaseVM {
 						, item.getCourseParticRepresentative().getContact().getEmail1()
 						, dateTimeFormat.format(item.getModifAt())
 						, item.getCourseParticipant().inCourseInfo()
+						, item.getCourseParticipant().inCourse()
 						, true)) {
 					ret.add(item);
 				}
@@ -379,6 +384,13 @@ public class CourseApplicationListVM extends BaseVM {
 			this.course = StringUtils.hasText(name) ? name.trim() : null;
 			this.courseLc = this.course == null ? null : this.course.toLowerCase();
 		}
+		public Boolean getInCourse() {
+			return inCourse;
+		}
+
+		public void setInCourse(Boolean inCourse) {
+			this.inCourse = inCourse;
+		}
 
 		public void setEmptyValues() {
 			code = null;
@@ -393,6 +405,7 @@ public class CourseApplicationListVM extends BaseVM {
 			modifAt = null;
 			course = null;
 			courseLc = null;
+			inCourse = null;
 		}
 	}
 }

@@ -1,5 +1,8 @@
 package com.jzaoralek.scb.ui.common.vm;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
@@ -16,6 +19,8 @@ import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.validator.Validators;
 
 public class BaseVM {
+
+	private List<Boolean> booleanListItem = Arrays.asList(null, Boolean.TRUE, Boolean.FALSE);
 
 	@WireVariable
 	protected ConfigurationService configurationService;
@@ -101,6 +106,10 @@ public class BaseVM {
 		if (StringUtils.hasText(this.returnToPage)) {
 			Executions.sendRedirect(this.returnToPage);
 		}
+	}
+
+	public List<Boolean> getBooleanListItem() {
+		return booleanListItem;
 	}
 
 	public String getNewCourseApplicationTitle() {

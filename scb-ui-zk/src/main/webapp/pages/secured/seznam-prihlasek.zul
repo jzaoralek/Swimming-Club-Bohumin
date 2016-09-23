@@ -36,7 +36,7 @@
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 					class="listbox" >
 			        <auxhead>
-			            <auxheader class="header" colspan="8" >
+			            <auxheader class="header" colspan="9" >
 			            	<hbox hflex="1" height="42px" align="center" >
 				            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
 			            			<hbox>
@@ -111,6 +111,18 @@
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
+							<listbox selectedItem="@bind(vm.filter.inCourse)"
+								onSelect="@command('filterDomCmd')"
+								mold="select"
+								hflex="1"
+								model="@load(vm.booleanListItem)"
+								height="25px" >
+								<template name="model">
+									<listitem label="${each ? 'Ano' : (each eq null ? '' : 'Ne')}" value="${each}" />
+								</template>
+							</listbox>
+						</auxheader>
+						<auxheader class="filter">
 						</auxheader>
 					</auxhead>
 					
@@ -122,6 +134,7 @@
 			            <listheader label="${c:l('txt.ui.common.phone')}" sort="auto(courseParticRepresentative.contact.phone1)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.email')}" sort="auto(courseParticRepresentative.contact.email1)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.createdAt')}" sort="auto(modifAt)" align="left" />
+			            <listheader label="V kurzu" align="center" width="57px" />
 			            <listheader width="50px" align="center" />
 			        </listhead>
 			         
@@ -134,6 +147,8 @@
 			                <listcell label="${each.courseParticRepresentative.contact.phone1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="${each.courseParticRepresentative.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />			                	
+		            		<listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.inCourseInfo()}" />
+                			<listcell visible="${!each.courseParticipant.inCourse()}" />
 			                <listcell>
 			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourseApplication_${each.uuid}" />
 			                	<menupopup id="menuCourseApplication_${each.uuid}" >

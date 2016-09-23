@@ -223,9 +223,10 @@ public class ParticipantToCourseWinVM extends BaseVM {
 		private String birthNo;
 		private String courseParticRepresentative;
 		private String courseParticRepresentativeLc;
+		private Boolean inCourse;
 
-		public boolean matches(String courseParticNameIn, String birthNoIn, String courseParticRepresentativeIn, boolean emptyMatch) {
-			if (courseParticName == null && birthNo == null && courseParticRepresentative == null) {
+		public boolean matches(String courseParticNameIn, String birthNoIn, String courseParticRepresentativeIn, boolean inCourseIn, boolean emptyMatch) {
+			if (courseParticName == null && birthNo == null && courseParticRepresentative == null && inCourse == null) {
 				return emptyMatch;
 			}
 			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
@@ -235,6 +236,9 @@ public class ParticipantToCourseWinVM extends BaseVM {
 				return false;
 			}
 			if (courseParticRepresentative != null && !courseParticRepresentativeIn.toLowerCase().contains(courseParticRepresentativeLc)) {
+				return false;
+			}
+			if (inCourse != null && (inCourse != inCourseIn)) {
 				return false;
 			}
 			return true;
@@ -249,6 +253,7 @@ public class ParticipantToCourseWinVM extends BaseVM {
 				if (matches(item.getCourseParticipant().getContact().getSurname() + " " + item.getCourseParticipant().getContact().getFirstname()
 						, item.getCourseParticipant().getPersonalNo()
 						, item.getCourseParticRepresentative().getContact().getSurname() + " " + item.getCourseParticRepresentative().getContact().getFirstname()
+						, item.getCourseParticipant().inCourse()
 						, true)) {
 					ret.add(item);
 				}
@@ -281,11 +286,20 @@ public class ParticipantToCourseWinVM extends BaseVM {
 			this.birthNo = StringUtils.hasText(birthNo) ? birthNo.trim() : null;
 		}
 
+		public Boolean getInCourse() {
+			return inCourse;
+		}
+
+		public void setInCourse(Boolean inCourse) {
+			this.inCourse = inCourse;
+		}
+
 		public void setEmptyValues() {
 			courseParticName = null;
 			courseParticNameLc = null;
 			birthNo = null;
 			courseParticRepresentative = null;
+			inCourse = null;
 		}
 	}
 }
