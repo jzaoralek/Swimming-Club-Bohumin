@@ -54,6 +54,7 @@ public class CourseVM extends BaseVM {
 	@WireVariable
 	private ConfigurationService configurationService;
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) final String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
 		Course course = null;
@@ -75,7 +76,7 @@ public class CourseVM extends BaseVM {
 
 		setReturnPage(fromPage);
 
-		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
+		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
@@ -128,6 +129,10 @@ public class CourseVM extends BaseVM {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
+
+//		String targetPage = WebPages.PARTICIPANT_DETAIL.getUrl();
+//		WebPages fromPage = WebPages.COURSE_DETAIL;
+//		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
 	}
 
 	@NotifyChange("*")
@@ -163,13 +168,13 @@ public class CourseVM extends BaseVM {
 
 	@Command
 	public void addCourseParticipantsFromApplicationCmd() {
-		 EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_APPLICATION_DATA_EVENT, null, this.course);
+		 EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_APPLICATION_DATA_EVENT, null, this.course);
 		 WebUtils.openModal("/pages/secured/participant-to-course-window.zul");
 	}
 
 	@Command
 	public void addCourseParticipantsFromCourseCmd() {
-		EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_COURSE_DATA_EVENT, null, this.course);
+		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_COURSE_DATA_EVENT, null, this.course);
 		WebUtils.openModal("/pages/secured/participant-to-course-window.zul");
 	}
 
@@ -177,13 +182,13 @@ public class CourseVM extends BaseVM {
 	public void newLessonCmd() {
 		Lesson lesson = new Lesson();
 		lesson.setCourseUuid(this.course.getUuid());
-		EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.LESSON_NEW_DATA_EVENT, null, lesson);
+		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.LESSON_NEW_DATA_EVENT, null, lesson);
 		WebUtils.openModal("/pages/secured/lesson-to-course-window.zul");
 	}
 
 	@Command
 	public void detailCmd(@BindingParam("lesson") final Lesson lesson) {
-		EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.LESSON_DETAIL_DATA_EVENT, null, lesson);
+		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.LESSON_DETAIL_DATA_EVENT, null, lesson);
 		WebUtils.openModal("/pages/secured/lesson-to-course-window.zul");
 	}
 

@@ -7,6 +7,7 @@ DROP TABLE course;
 DROP TABLE course_course_participant;
 DROP TABLE lesson;
 DROP TABLE configuration;
+DROP TABLE codelist_item;
 
 CREATE TABLE contact(
 	uuid varchar(36),
@@ -61,18 +62,6 @@ CREATE TABLE course_application(
 	PRIMARY KEY (uuid)
 );
 
-CREATE TABLE result(
-	uuid varchar(36),
-	result_time time NOT NULL,
-	result_date date NOT NULL,
-	style ENUM('VOLNY_STYL','PRSA','ZNAK','MOTYL') NOT NULL,
-	distance MEDIUMINT NOT NULL,
-	course_participant_uuid varchar(36) REFERENCES course_participant(uuid),
-	modif_at TIMESTAMP NOT NULL,
-	modif_by varchar(36) NOT NULL,
-	PRIMARY KEY (uuid)
-);
-
 CREATE TABLE course(
 	uuid varchar(36),
 	name VARCHAR(100) NOT NULL,
@@ -104,10 +93,33 @@ CREATE TABLE lesson(
 
 CREATE TABLE configuration(
 	uuid varchar(36),
-	name  ENUM('COURSE_APPLICATION_ALLOWED','COURSE_APPLICATION_YEAR') NOT NULL,
+	name ENUM('COURSE_APPLICATION_ALLOWED','COURSE_APPLICATION_YEAR') NOT NULL,
 	description VARCHAR(100),
 	val VARCHAR(240),
   type  ENUM('STRING','INTEGER','BOOLEAN') NOT NULL,
+	modif_at TIMESTAMP NOT NULL,
+	modif_by varchar(36) NOT NULL,
+	PRIMARY KEY (uuid)
+);
+
+CREATE TABLE codelist_item (
+	uuid varchar(36),
+	item_type ENUM('SWIMMING_STYLE') NOT NULL,
+	name VARCHAR(100) NOT NULL,
+	description VARCHAR(240),
+	modif_at TIMESTAMP NOT NULL,
+	modif_by varchar(36) NOT NULL,
+	PRIMARY KEY (uuid)
+);
+
+CREATE TABLE result(
+	uuid varchar(36),
+	result_time LONG NOT NULL,
+	result_date date NOT NULL,
+	style_uuid varchar(36) REFERENCES codelist_item(uuid),
+	distance MEDIUMINT NOT NULL,
+	description varchar(240),
+	course_participant_uuid varchar(36) REFERENCES course_participant(uuid),
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)

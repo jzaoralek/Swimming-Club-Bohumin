@@ -81,6 +81,10 @@ public class BaseVM {
 		return Validators.getCaptchavalidator();
 	}
 
+	public Validator getTimeIntervalValidator() {
+		return Validators.getTimeintervalvalidator();
+	}
+
 	public Converter getDateConverter() {
 		return Converters.getDateconverter();
 	}
@@ -95,6 +99,14 @@ public class BaseVM {
 
 	public Converter getEnumLabelConverter() {
 		return Converters.getEnumlabelconverter();
+	}
+
+	public Converter getTimeSecondConverter() {
+		return Converters.getTimeSecondconverter();
+	}
+
+	public Converter getIntervaltomillsConverter() {
+		return Converters.getIntervaltomillsconverter();
 	}
 
 	public Boolean isBackButtonVisible() {

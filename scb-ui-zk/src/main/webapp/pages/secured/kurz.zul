@@ -114,8 +114,8 @@
 				
 				<tabbox id="tb" hflex="1" visible="@load(vm.updateMode)" style="margin-top: 20px;">
 				    <tabs id="tabs">
-				        <tab id="courseParticipants" label="${c:l('txt.ui.common.participants')}" />
-				        <tab id="lessons" label="${c:l('txt.ui.common.lessons')}" />
+				        <tab id="courseParticipants" label="${c:l('txt.ui.common.participants')}" iconSclass="z-icon-child" />
+				        <tab id="lessons" label="${c:l('txt.ui.common.lessons')}" iconSclass="z-icon-calendar" />
 				    </tabs>
 				    <tabpanels>
 				        <tabpanel>

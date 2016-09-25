@@ -8,6 +8,8 @@ public final class Converters {
 	private static final DateTimeConverter dateTimeConverter = new DateTimeConverter();
 	private static final TimeConverter timeConverter = new TimeConverter();
 	private static final EnumLabelConverter enumLabelConverter = new EnumLabelConverter();
+	private static final TimeSecondConverter timeSecondConverter = new TimeSecondConverter();
+	private static final IntervalToMillsConverter intervalToMillsConverter = new IntervalToMillsConverter();
 
 	public static DateConverter getDateconverter() {
 		return dateConverter;
@@ -23,5 +25,13 @@ public final class Converters {
 
 	public static EnumLabelConverter getEnumlabelconverter() {
 		return enumLabelConverter;
+	}
+
+	public static TimeSecondConverter getTimeSecondconverter() {
+		return timeSecondConverter;
+	}
+
+	public static IntervalToMillsConverter getIntervaltomillsconverter() {
+		return intervalToMillsConverter;
 	}
 }
