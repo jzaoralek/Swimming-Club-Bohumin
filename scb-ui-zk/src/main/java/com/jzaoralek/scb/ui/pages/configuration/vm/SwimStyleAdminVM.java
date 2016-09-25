@@ -45,11 +45,11 @@ public class SwimStyleAdminVM extends BaseVM {
 	public void init() {
 		loadData();
 
-		final EventQueue eq = EventQueues.lookup(ScbEventQueues.RESULT_QUEUE.name() , EventQueues.DESKTOP, true);
+		final EventQueue eq = EventQueues.lookup(ScbEventQueues.CODE_LIST_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
-				if (event.getName().equals(ScbEvent.RELOAD_RESULT_LIST_DATA_EVENT.name())) {
+				if (event.getName().equals(ScbEvent.RELOAD_CODELIST_DATA_EVENT.name())) {
 					loadData();
 				}
 			}
