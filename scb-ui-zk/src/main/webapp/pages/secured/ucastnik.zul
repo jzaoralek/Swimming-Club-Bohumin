@@ -297,9 +297,8 @@
 									</grid>
 						    	</tabpanel>
 						    	<tabpanel>
-						    	
 						    		<!-- Vysledky -->
-						    		<hbox hflex="1" pack="start">
+						    		<hbox pack="start">
 						    			<label value="${c:l('txt.ui.common.style')}: "/>
 						    			<listbox selectedItem="@bind(vm.swimStyleListitemSelected)"
 											onSelect="@command('loadResultsByStyleCmd')"
@@ -314,8 +313,7 @@
 						    		
 						    		<listbox model="@load(vm.participant.courseParticipant.resultList)"
 										id="resultList"
-										hflex="1"
-										style="margin-top: 10px;"
+										style="margin-top: 10px; max-width: 700px;"
 										mold="paging"
 										pageSize="10"
 										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
