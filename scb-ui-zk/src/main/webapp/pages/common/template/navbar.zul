@@ -32,7 +32,7 @@
 				
 				<button label="@load(vm.loggedUserCompleteName)"
 					sclass="btn-info" iconSclass="z-icon-caret-down"
-					popup="loggedUserPopup"
+					popup="loggedUserPopup, position=after_end"
 					visible="@load(vm.isUserLogged())" />
 				
 				<!-- User menu -->

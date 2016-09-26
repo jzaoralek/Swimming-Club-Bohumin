@@ -43,6 +43,7 @@ public class ResultDaoImpl extends BaseJdbcDao implements ResultDao {
 			"VALUES (:"+UUID_PARAM+", :"+RESULT_TIME_PARAM+", :"+RESULT_DATE_PARAM+", :"+STYLE_UUID_PARAM+", :"+DISTANCE_PARAM+", :"+DESCRIPTION_PARAM+", :"+COURSE_PARTICIPANT_UUID_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
 	private static final String UPDATE = "UPDATE result SET result_time = :"+RESULT_TIME_PARAM+", result_date = :"+RESULT_DATE_PARAM+", style_uuid = :"+STYLE_UUID_PARAM+", distance = :"+DISTANCE_PARAM+", description = :"+DESCRIPTION_PARAM+", course_participant_uuid = :"+COURSE_PARTICIPANT_UUID_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" " +
 			"WHERE uuid = :"+UUID_PARAM;
+	private static final String SELECT_COUNT_BY_STYLE = "SELECT COUNT(*) FROM result WHERE style_uuid = :" + STYLE_UUID_PARAM;
 
 	@Autowired
 	public ResultDaoImpl(DataSource ds) {
@@ -107,6 +108,13 @@ public class ResultDaoImpl extends BaseJdbcDao implements ResultDao {
 	@Override
 	public void deleteByCourseParticipant(UUID courseParticUuid) {
 		namedJdbcTemplate.update(DELETE_BY_COURSE_PARTICIPANT, new MapSqlParameterSource().addValue(COURSE_PARTICIPANT_UUID_PARAM, courseParticUuid.toString()));
+	}
+
+	@Override
+	public boolean styleUsedInResult(UUID styleUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(STYLE_UUID_PARAM, styleUuid.toString());
+		Integer count = namedJdbcTemplate.queryForObject(SELECT_COUNT_BY_STYLE, paramMap, Integer.class);
+		return count > 0;
 	}
 
 	public static final class ResultRowMapper implements RowMapper<Result> {

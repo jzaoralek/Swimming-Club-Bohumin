@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jzaoralek.scb.dataservice.dao.CodeListDao;
+import com.jzaoralek.scb.dataservice.dao.ResultDao;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
@@ -23,6 +24,9 @@ public class CodeListServiceImpl extends BaseAbstractService implements CodeList
 
 	@Autowired
 	private CodeListDao codeListDao;
+
+	@Autowired
+	private ResultDao resultDao;
 
 	@Override
 	public List<CodeListItem> getItemListByType(CodeListType type) {
@@ -69,7 +73,11 @@ public class CodeListServiceImpl extends BaseAbstractService implements CodeList
 			throw new ScbValidationException(messageSource.getMessage("msg.validation.warn.recordNotExistsInDB", null, Locale.getDefault()));
 		}
 
-		// TODO: pokud pouzita na nejakem vysledku, nelze odstranit
+		// kontrola, pokud styl pouzit na nejakem vysledku, nelze odstranit
+		if (resultDao.styleUsedInResult(uuid)) {
+			LOG.warn("Style is used in result, cannot be deleted, uuid: " + uuid);
+			throw new ScbValidationException(messageSource.getMessage("msg.validation.warn.styleCannotBeDeleteBecauseUsedInResult", null, Locale.getDefault()));
+		}
 
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Deleting codeListItem: " + item);

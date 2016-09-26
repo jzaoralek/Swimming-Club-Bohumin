@@ -113,7 +113,7 @@
 						                <listcell label="${each.name}" onDoubleClick="@command('detailCmd', item=each)" />
 						                <listcell label="${each.description}" onDoubleClick="@command('detailCmd', item=each)" />                	
 						                <listcell>
-						                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}" />
+						                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
 						                	<menupopup id="menuCourse_${each.uuid}" >
 												<menuitem label="Detail" onClick="@command('detailCmd', item=each)" />
 												<menuitem label="Odstranit" onClick="@command('deleteCmd', uuid=each.uuid)"  />

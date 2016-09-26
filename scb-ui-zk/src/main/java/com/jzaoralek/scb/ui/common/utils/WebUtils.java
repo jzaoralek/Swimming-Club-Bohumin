@@ -50,10 +50,6 @@ public final class WebUtils {
 			return;
 		}
 		Filedownload.save(attachment.getByteArray(), attachment.getContentType(), attachment.getName());
-
-//		Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
-//		String attachmentUrl = Executions.getCurrent().getContextPath() + FileDownloadServlet.URL;
-//		Clients.evalJavaScript("window.open('"+attachmentUrl+"', '_blank');");
 	}
 
 	public static void openModal(String uri) {

@@ -14,5 +14,5 @@ public interface ResultDao {
 	void update(Result result);
 	void delete(UUID uuid);
 	void deleteByCourseParticipant(UUID courseParticUuid);
-
+	boolean styleUsedInResult(UUID styleUuid);
 }

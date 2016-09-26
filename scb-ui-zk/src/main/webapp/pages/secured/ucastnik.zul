@@ -369,7 +369,7 @@
 								                <listcell label="@load(each.resultDate) @converter(vm.dateConverter)" onDoubleClick="@command('resultDetailCmd', result=each)" />	
 								                <listcell label="@load(each.resultTime) @converter(vm.intervaltomillsConverter)" onDoubleClick="@command('resultDetailCmd', result=each)" />                	
 								                <listcell>
-								                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}" />
+								                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
 								                	<menupopup id="menuCourse_${each.uuid}" >
 														<menuitem label="Detail" onClick="@command('resultDetailCmd', result=each)" />
 														<menuitem label="Odstranit" onClick="@command('resultDeleteCmd', uuid=each.uuid)"  />
