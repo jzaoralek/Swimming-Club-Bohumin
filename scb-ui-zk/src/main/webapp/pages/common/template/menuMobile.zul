@@ -15,6 +15,15 @@
 		<menuitem label="${c:l('txt.ui.common.participants')}" 
 			href="/pages/secured/seznam-ucastniku.zul" 
 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+		<menuitem label="${c:l('txt.ui.common.participants')}" 
+			href="/pages/secured/seznam-ucastniku.zul" 
+			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+		<menuitem label="${c:l('txt.ui.menu.users')}" 
+			href="/pages/secured/seznam-uzivatelu.zul" 
+			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+		<menuitem label="${c:l('txt.ui.menu.configuration')}" 
+			href="/pages/secured/configuration.zul" 
+			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
 		<menu label="Hardware" visible="false">
 			<menupopup>
 				<menu label="Mainboard">

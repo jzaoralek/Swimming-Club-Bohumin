@@ -7,11 +7,12 @@ import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.zk.ui.Executions;
 
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class SecurityVM extends BaseVM {
 
-//	private static final Logger logger = Logger.getLogger(SecurityVM.class);
+	private static final String CHANGE_PASSWORD_WINDOW= "/pages/secured/change-password-window.zul";
 
 	private String username;
 	private String password;
@@ -28,6 +29,11 @@ public class SecurityVM extends BaseVM {
     public void logoutCmd() {
     	Executions.sendRedirect("/logout");
     }
+
+    @Command
+	public void changePasswordCmd() {
+		WebUtils.openModal(CHANGE_PASSWORD_WINDOW);
+	}
 
     public String getLoggedUser() {
 		return SecurityUtils.getLoggedUserUsername();

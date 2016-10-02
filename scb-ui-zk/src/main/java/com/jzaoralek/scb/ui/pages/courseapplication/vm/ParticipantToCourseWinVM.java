@@ -59,7 +59,7 @@ public class ParticipantToCourseWinVM extends BaseVM {
 	@Init
 	public void init() {
 
-		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
+		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
@@ -158,7 +158,7 @@ public class ParticipantToCourseWinVM extends BaseVM {
 			}
 			// ulozit do databaze
 			courseService.storeCourseParticipants(courseParticipantList, courseUuid);
-			EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT, null, courseUuid);
+			EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT, null, courseUuid);
 			window.detach();
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught during addin courseParticipantList to course uuid: " + courseUuid);
@@ -223,9 +223,10 @@ public class ParticipantToCourseWinVM extends BaseVM {
 		private String birthNo;
 		private String courseParticRepresentative;
 		private String courseParticRepresentativeLc;
+		private Boolean inCourse;
 
-		public boolean matches(String courseParticNameIn, String birthNoIn, String courseParticRepresentativeIn, boolean emptyMatch) {
-			if (courseParticName == null && birthNo == null && courseParticRepresentative == null) {
+		public boolean matches(String courseParticNameIn, String birthNoIn, String courseParticRepresentativeIn, boolean inCourseIn, boolean emptyMatch) {
+			if (courseParticName == null && birthNo == null && courseParticRepresentative == null && inCourse == null) {
 				return emptyMatch;
 			}
 			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
@@ -235,6 +236,9 @@ public class ParticipantToCourseWinVM extends BaseVM {
 				return false;
 			}
 			if (courseParticRepresentative != null && !courseParticRepresentativeIn.toLowerCase().contains(courseParticRepresentativeLc)) {
+				return false;
+			}
+			if (inCourse != null && (inCourse != inCourseIn)) {
 				return false;
 			}
 			return true;
@@ -249,6 +253,7 @@ public class ParticipantToCourseWinVM extends BaseVM {
 				if (matches(item.getCourseParticipant().getContact().getSurname() + " " + item.getCourseParticipant().getContact().getFirstname()
 						, item.getCourseParticipant().getPersonalNo()
 						, item.getCourseParticRepresentative().getContact().getSurname() + " " + item.getCourseParticRepresentative().getContact().getFirstname()
+						, item.getCourseParticipant().inCourse()
 						, true)) {
 					ret.add(item);
 				}
@@ -281,11 +286,20 @@ public class ParticipantToCourseWinVM extends BaseVM {
 			this.birthNo = StringUtils.hasText(birthNo) ? birthNo.trim() : null;
 		}
 
+		public Boolean getInCourse() {
+			return inCourse;
+		}
+
+		public void setInCourse(Boolean inCourse) {
+			this.inCourse = inCourse;
+		}
+
 		public void setEmptyValues() {
 			courseParticName = null;
 			courseParticNameLc = null;
 			birthNo = null;
 			courseParticRepresentative = null;
+			inCourse = null;
 		}
 	}
 }

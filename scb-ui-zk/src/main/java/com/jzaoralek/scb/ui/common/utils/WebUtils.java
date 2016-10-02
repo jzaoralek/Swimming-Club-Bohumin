@@ -21,15 +21,15 @@ public final class WebUtils {
 	private WebUtils() {}
 
 	public static void showNotificationInfo(String msg) {
-		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_INFO, null, null, 4000, true);
+		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_INFO, null, null, 6000, true);
 	};
 
 	public static void showNotificationError(String msg) {
-		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_ERROR, null, null, 4000, true);
+		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_ERROR, null, null, 6000, true);
 	};
 
 	public static void showNotificationWarning(String msg) {
-		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_WARNING, null, null, 4000, true);
+		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_WARNING, null, null, 6000, true);
 	};
 
 	/**
@@ -50,10 +50,6 @@ public final class WebUtils {
 			return;
 		}
 		Filedownload.save(attachment.getByteArray(), attachment.getContentType(), attachment.getName());
-
-//		Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
-//		String attachmentUrl = Executions.getCurrent().getContextPath() + FileDownloadServlet.URL;
-//		Clients.evalJavaScript("window.open('"+attachmentUrl+"', '_blank');");
 	}
 
 	public static void openModal(String uri) {
@@ -84,6 +80,17 @@ public final class WebUtils {
 			item.setValue(object);
 			messagesList.add(item);
 		}
+		return messagesList;
+	}
+
+	public static List<Listitem> getMessageItemsFromEnumWithEmptyItem(EnumSet<? extends Enum<?>> enumSet){
+
+		List<Listitem> messagesList = getMessageItemsFromEnum(enumSet);
+		Listitem item= new Listitem();
+		item.setLabel("");
+		item.setValue(null);
+		messagesList.add(0, item);
+
 		return messagesList;
 	}
 

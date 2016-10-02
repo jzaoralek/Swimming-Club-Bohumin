@@ -56,7 +56,7 @@ public class CourseListVM {
 	public void init() {
 		loadData();
 
-		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
+		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
@@ -105,7 +105,7 @@ public class CourseListVM {
 				public void onOkEvent() {
 					try {
 						courseService.delete(uuid);
-						EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);
+						EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);
 						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseDeleted"));
 					} catch (ScbValidationException e) {
 						LOG.warn("ScbValidationException caught for course with uuid: " + uuid);

@@ -4,7 +4,7 @@ Web Application for Swimming Club Bohumin clients.
 
 Used technologies:
 - Spring framework, Spring MVC
-- ZK Framework (initial phase) ReactJS (final solution)
+- ZK Framework (initial phase), ReactJS (final solution)
 - NODE.js
 - restful communication
 - AspectJ
@@ -12,6 +12,7 @@ Used technologies:
 - Jasper Reports
 - Maven
 - MySql
-- Tomcat
+- JeTTy (locale), Tomcat(pord)
+- SonarQube
 - Jenkins
 - GitHub

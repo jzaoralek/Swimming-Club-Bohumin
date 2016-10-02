@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.utils;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +11,6 @@ import com.jzaoralek.scb.dataservice.domain.security.SecuredUserProfileType;
 
 public final class SecurityUtils {
 
-//	private static Logger LOG = Logger.getLogger(SecurityUtils.class);
-
 	private SecurityUtils() {}
 
 	public static ScbUser getLoggedUser() {
@@ -19,8 +18,8 @@ public final class SecurityUtils {
 		if (principal == null) {
 			return null;
 		}
-		if (principal instanceof ScbUser) {
-			return (ScbUser)principal;
+		if (principal instanceof SecuredUser) {
+			return ((SecuredUser)principal).getScbUser();
 		}
 
 		return null;
@@ -28,7 +27,7 @@ public final class SecurityUtils {
 
 	public static String getLoggedUserUsername() {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String username = null;
+		String username;
 		if (principal instanceof UserDetails) {
 			username = ((UserDetails)principal).getUsername();
 		} else {
@@ -72,4 +71,12 @@ public final class SecurityUtils {
 		GrantedAuthority authority = SecuredUserProfileType.valueOf(role);
 		return user.getAuthorities().contains(authority);
     }
+
+	/**
+	 * Generate password with size of 6 letters with at least one number.
+	 * @return
+	 */
+	public static String generatePassword() {
+		return RandomStringUtils.random(5, true, true) + RandomStringUtils.random(1, false, true);
+	}
 }

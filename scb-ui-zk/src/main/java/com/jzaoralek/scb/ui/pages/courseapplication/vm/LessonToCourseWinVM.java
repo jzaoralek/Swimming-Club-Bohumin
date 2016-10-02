@@ -54,7 +54,7 @@ public class LessonToCourseWinVM extends BaseVM {
 
 	@Init
 	public void init() {
-		final EventQueue eq = EventQueues.lookup(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
+		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) {
@@ -129,7 +129,7 @@ public class LessonToCourseWinVM extends BaseVM {
 
 			// ulozit do databaze
 			lessonService.store(lesson);
-			EventQueueHelper.publish(ScbEventQueues.SDAT_COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT, null, this.lesson.getCourseUuid());
+			EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT, null, this.lesson.getCourseUuid());
 			window.detach();
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught during storing lesson to course uuid: " + this.lesson.getCourseUuid());

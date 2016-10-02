@@ -76,7 +76,7 @@ public class ScbUser implements IdentEntity {
 	@Override
 	public String toString() {
 		return "ScbUser [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", username=" + username
-				+ ", password=" + password + ", passwordGenerated=" + passwordGenerated + ", role=" + role
+				+ ", password=" + "***" + ", passwordGenerated=" + passwordGenerated + ", role=" + role
 				+ ", contact=" + contact + "]";
 	}
 }

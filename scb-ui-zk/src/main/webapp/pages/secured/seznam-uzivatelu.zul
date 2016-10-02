@@ -1,0 +1,127 @@
+<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.menu.users')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+
+<zk>
+	<div self="@{define(mainContent)}" hflex="1" >
+		
+		<hlayout spacing="0">
+			<vbox hflex="1" />
+			
+			<vbox hflex="20" pack="center">
+				<headline label="${c:l('txt.ui.menu.users')}" menuSelected="menu_userList" />
+			</vbox>
+			
+			<vbox hflex="1" />
+		</hlayout>
+		
+		<hlayout spacing="0">
+		
+			<vbox hflex="1" />
+			
+			<vbox hflex="20" pack="center" 
+				viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.UserListVM')">
+				
+				<listbox model="@load(vm.userList)"
+					id="userList"
+					hflex="1"
+					style="margin-top: 20px;"
+					mold="paging"
+					pageSize="10"
+					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+					class="listbox" >
+			        <auxhead>
+			            <auxheader class="header" colspan="6" >
+			            	<hbox hflex="1" height="42px" align="center" >
+				            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+			            			<hbox vflex="1" align="center">
+			            				<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" sclass="btn-warning" iconSclass="z-icon-plus" />
+			            			</hbox>
+			            		</vbox>
+			            		<vbox hflex="1" vflex="1" align="end" pack="center" >
+			            			<hbox>
+			            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=userList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
+		            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
+									</hbox>
+								</vbox>
+							</hbox>
+			            </auxheader>
+			        </auxhead>
+			        
+			        <!-- Filter -->
+					<auxhead height="37px">
+						<auxheader class="filter">
+							<textbox hflex="1"
+								instant="true"
+								value="@bind(vm.filter.usernameName)"
+								onChange="@command('filterDomCmd')" />
+						</auxheader>
+						<auxheader class="filter">
+							<listbox selectedItem="@bind(vm.filter.roleItem)" 
+								model="@load(vm.roleListWithEmptyItem)"
+								onSelect="@command('filterDomCmd')"
+								sclass="form-input-text"
+								hflex="1"
+								height="24px"
+								mold="select" >
+								<template name="model">
+					               	<listitem label="@bind(each.label)" value="@bind(each)"/>
+					               </template>
+							</listbox>
+						</auxheader>
+						<auxheader class="filter">
+							<textbox hflex="1"
+								instant="true"
+								value="@bind(vm.filter.completeName)"
+								onChange="@command('filterDomCmd')" />
+						</auxheader>
+						<auxheader class="filter">
+							<textbox hflex="1"
+								instant="true"
+								value="@bind(vm.filter.email)"
+								onChange="@command('filterDomCmd')" />
+						</auxheader>
+						<auxheader class="filter">
+							<textbox hflex="1"
+								instant="true"
+								value="@bind(vm.filter.phone)"
+								onChange="@command('filterDomCmd')" />
+						</auxheader>
+						<auxheader class="filter">
+						</auxheader>
+					</auxhead>
+					
+			        <listhead>
+			            <listheader label="${c:l('txt.ui.common.Username')}" sort="auto(username)" align="left" />
+			            <listheader label="${c:l('txt.ui.common.Role')}" sort="auto(role)" align="left" />
+			            <listheader label="${c:l('txt.ui.common.firstname')}" align="left" sort="auto(contact.completeName)" />
+			            <listheader label="${c:l('txt.ui.common.email')}" sort="auto(contact.email1)" align="left"  />
+			            <listheader label="${c:l('txt.ui.common.phone')}" sort="auto(contact.phone1)" align="left"  />
+			            <listheader width="50px" align="center" />
+			        </listhead>
+			         
+			        <template name="model">
+			            <listitem>
+			                <listcell label="${each.username}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="@load(each.role) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.contact.getCompleteName()}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />	
+			                <listcell label="${each.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.contact.phone1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />	                	
+			                <listcell>
+			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
+			                	<menupopup id="menuCourse_${each.uuid}" >
+									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
+									<menuitem label="${c:l('txt.ui.common.resetPassword')}" onClick="@command('resetPwdCmd', uuid=each.uuid)" />
+									<menuitem label="Odstranit" onClick="@command('deleteCmd', uuid=each.uuid)" visible="@load(vm.canDelete(each.uuid))"  />
+						       	</menupopup>
+			                </listcell>
+			            </listitem>
+			        </template>
+			    </listbox>
+			</vbox>
+			
+			<vbox hflex="1" />
+			
+		</hlayout>
+	</div>
+</zk>

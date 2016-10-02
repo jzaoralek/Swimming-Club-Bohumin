@@ -1,7 +1,7 @@
 <window id="modalWindow"
 	title="${c:l('txt.ui.common.assignParticipantToCourse')}" 
 	border="normal" 
-    width="550px"
+    width="480px"
     position="center,center" 
     closable="true">
     
@@ -65,28 +65,32 @@
 				</auxheader>
 				<auxheader class="filter">
 				</auxheader>
-<!-- 				<auxheader class="filter"> -->
-<!-- 					<textbox hflex="1"  -->
-<!-- 						instant="true" -->
-<!-- 						value="@bind(vm.filter.birthNo)" -->
-<!-- 						onChange="@command('filterDomCmd')" /> -->
-<!-- 				</auxheader> -->
 				<auxheader class="filter">
 					<textbox hflex="1" 
 						instant="true"
 						value="@bind(vm.filter.courseParticRepresentative)"
 						onChange="@command('filterDomCmd')" />
 				</auxheader>
-				<auxheader class="filter" />
+				<auxheader class="filter" >
+					<listbox selectedItem="@bind(vm.filter.inCourse)"
+						onSelect="@command('filterDomCmd')"
+						mold="select"
+						hflex="1"
+						model="@load(vm.booleanListItem)"
+						height="25px" >
+						<template name="model">
+							<listitem label="${each ? 'Ano' : (each eq null ? '' : 'Ne')}" value="${each}" />
+						</template>
+					</listbox>
+				</auxheader>
 			</auxhead>
 			
 	        <listhead>
 	            <listheader width="25px" />
 	            <listheader label="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" sort="auto(courseParticipant.contact.surname)" align="left" hflex="3" />
 	            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(courseParticipant.birthdate)" align="center" hflex="2" />
-<!-- 	            <listheader label="${c:l('txt.ui.common.birthNumber')}" align="center" sort="auto(courseParticipant.personalNo)" hflex="2" /> -->
 	            <listheader label="${c:l('txt.ui.common.representative')}" sort="auto(courseParticRepresentative.contact.surname)" align="left" hflex="3" />
-	            <listheader label="V kurzu" align="center" hflex="1" />
+	            <listheader label="V kurzu" align="center" width="57px" />
 	        </listhead>
 	         
 	        <template name="model">
@@ -94,9 +98,8 @@
 	                <listcell/>
 	                <listcell label="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}" />
 	                <listcell label="@load(each.courseParticipant.birthdate) @converter(vm.dateConverter)" />
-<!-- 	                <listcell label="${each.courseParticipant.personalNo}" /> -->
 	                <listcell label="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" />
-	                <listcell iconSclass="z-icon-check" style="color: red;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.inCourseInfo()}" />
+	                <listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.getInCourseInfo()}" />
 	                <listcell visible="${!each.courseParticipant.inCourse()}" />
 	            </listitem>
 	        </template>

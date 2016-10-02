@@ -1,0 +1,136 @@
+<window id="modalWindow"
+	title="${c:l('txt.ui.common.result')}" 
+	border="normal" 
+    width="300px"
+    position="center,center" 
+    closable="true">
+    
+    <style>
+		<!-- cut/hide the vertical borders in the grid rows -->
+		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
+		
+		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
+	</style>
+	
+    <vbox align="center" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.ResultWinVM')"
+    	validationMessages="@id('vmsgs')"
+	    form="@id('fx') @load(vm) @save(vm, before='submitCmd')" >
+    	
+    	<grid hflex="1" sclass="form-grid" >
+			<columns>
+                <column align="center" hflex="1"/>
+            </columns>
+			<rows style="background: white;" >
+				<row sclass="form-grid-row" style="border: none; padding: 20px 30px 0px 30px;" >
+					<cell sclass="form-grid-cell" >
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.style')}"/>
+							<listbox id="resultStyle" 
+								selectedItem="@bind(fx.swimStyleListitemSelected)"
+								mold="select"
+								model="@load(vm.swimStyleListitemList)"
+								height="25px"
+								sclass="form-input-text"
+								tabindex="1"
+								hflex="1" >
+								<template name="model">
+									<listitem label="${each.label}" value="${each.value}" />
+								</template>
+							</listbox>
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" visible="@load(not empty vmsgs[resultStyle])" >
+									<label value="@bind(vmsgs[resultStyle])" />
+								</span>
+							</hbox>
+						</vbox>
+					</cell>		
+				</row>
+				
+				<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
+					<cell sclass="form-grid-cell" >
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.distance')}"/>
+							<intbox id="resultDistance"
+								value="@bind(fx.result.distance) @validator(vm.notNullObjectValidator)"
+								placeholder="*"
+								sclass="form-input-text"
+								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+								tabindex="2"
+								hflex="1" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" visible="@load(not empty vmsgs[resultDistance])" >
+									<label value="@bind(vmsgs[resultDistance])" />
+								</span>
+							</hbox>
+						</vbox>
+					</cell>		
+				</row>
+				
+				<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
+					<cell sclass="form-grid-cell">
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.date')}"/>
+							<datebox id="resultDate"
+								value="@bind(fx.result.resultDate) @validator(vm.notNullObjectValidator)"
+                           		format="@load(vm.dateFormat)" 
+                           		maxlength="@load(vm.getDateMaxlength())"
+                           		placeholder="*"
+                           		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+                           		tabindex="3" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[resultDate])" >
+										<label value="@bind(vmsgs[resultDate])" />
+									</span>
+							</hbox>
+						</vbox>
+					</cell>
+				</row>
+				
+				<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
+					<cell sclass="form-grid-cell">
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.resultTime')} (min:sec,ms)"/>
+							<textbox id="resultTime"
+								value="@bind(fx.resultTimeStr) @validator(vm.timeIntervalValidator)"
+                           		placeholder="*"
+                           		maxlength="9"
+                           		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+                           		tabindex="4"
+                           		hflex="1" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[resultTime])" >
+										<label value="@bind(vmsgs[resultTime])" />
+									</span>
+							</hbox>
+						</vbox>
+					</cell>
+				</row>
+				
+				<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
+					<cell sclass="form-grid-cell">
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.description')}"/>
+							<textbox id="resultDescription"
+								value="@bind(fx.result.description)"
+                           		tabindex="5"
+                           		maxlength="240"
+                           		multiline="true"
+                           		rows="3"
+                           		hflex="1" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+							</hbox>
+						</vbox>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		
+		<button label="OK"
+			onClick="@command('submitCmd', window=modalWindow)"
+			sclass="btn-success"
+			tabindex="5"
+			style="margin-top: 10px"
+			iconSclass="z-icon-check"  />
+	    
+    </vbox>
+</window>

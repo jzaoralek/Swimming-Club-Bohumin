@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
+import com.jzaoralek.scb.dataservice.dao.ResultDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
@@ -23,6 +24,7 @@ import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 @Service("courseApplicationService")
 public class CourseApplicationServiceImpl extends BaseAbstractService implements CourseApplicationService {
@@ -42,6 +44,9 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	private ScbUserDao scbUserDao;
 
 	@Autowired
+	private ResultDao resultDao;
+
+	@Autowired
 	private CourseParticipantDao courseParticipantDao;
 
 	@Override
@@ -53,7 +58,11 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public CourseApplication getByUuid(UUID uuid) {
-		return courseApplicationDao.getByUuid(uuid, true);
+		CourseApplication courseApplication = courseApplicationDao.getByUuid(uuid, true);
+		if (courseApplication.getCourseParticipant() != null) {
+			courseApplication.getCourseParticipant().setResultList(resultDao.getByCourseParticipant(courseApplication.getCourseParticipant().getUuid()));
+		}
+		return courseApplication;
 	}
 
 	@Override
@@ -132,7 +141,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 
 			//TODO: situace kdy uzivatel uz existuje, nacist podle username, generovani hesla
 			courseParticRepresentative.setUsername(courseParticRepresentative.getContact().getEmail1());
-			courseParticRepresentative.setPassword("password");
+			courseParticRepresentative.setPassword(SecurityUtils.generatePassword());
 			courseParticRepresentative.setPasswordGenerated(true);
 			courseParticRepresentative.setRole(ScbUserRole.USER);
 
