@@ -147,7 +147,7 @@
 			                <listcell label="${each.courseParticRepresentative.contact.phone1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="${each.courseParticRepresentative.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />			                	
-		            		<listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.inCourseInfo()}" />
+		            		<listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.getInCourseInfo()}" />
                 			<listcell visible="${!each.courseParticipant.inCourse()}" />
 			                <listcell>
 			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourseApplication_${each.uuid}, position=after_end" />

@@ -99,7 +99,7 @@
 	                <listcell label="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}" />
 	                <listcell label="@load(each.courseParticipant.birthdate) @converter(vm.dateConverter)" />
 	                <listcell label="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" />
-	                <listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.inCourseInfo()}" />
+	                <listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.getInCourseInfo()}" />
 	                <listcell visible="${!each.courseParticipant.inCourse()}" />
 	            </listitem>
 	        </template>

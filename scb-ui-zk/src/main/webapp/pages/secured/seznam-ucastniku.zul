@@ -108,7 +108,7 @@
 			            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(courseParticipant.birthdate)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.representative')}" sort="auto(courseParticRepresentative.contact.surname)"  align="left" />
 			            <listheader label="${c:l('txt.ui.common.phone')}" sort="auto(courseParticRepresentative.contact.phone1)" align="left" />
-			            <listheader label="${c:l('txt.ui.common.course')}" sort="auto(courseParticipant.inCourseInfo()})" align="left" />
+			            <listheader label="${c:l('txt.ui.common.course')}" sort="auto(courseParticipant.inCourseInfo)" align="left" />
 			            <listheader width="50px" align="center" />
 			        </listhead>
 			         
@@ -118,7 +118,7 @@
 			                <listcell label="@load(each.courseParticipant.birthdate) @converter(vm.dateConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="${each.courseParticRepresentative.contact.phone1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
-			                <listcell label="${each.courseParticipant.inCourseInfo()}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />			                	
+			                <listcell label="${each.courseParticipant.getInCourseInfo()}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />			                	
 			                <listcell>
 			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourseApplication_${each.uuid}, position=after_end" />
 			                	<menupopup id="menuCourseApplication_${each.uuid}" >

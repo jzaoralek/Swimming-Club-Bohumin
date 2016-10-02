@@ -100,7 +100,7 @@ public class CourseParticipant implements IdentEntity {
 		return !CollectionUtils.isEmpty(this.courseList);
 	}
 
-	public String inCourseInfo() {
+	public String getInCourseInfo() {
 		String ret = null;
 		String DELIMITER = ", ";
 		if (!CollectionUtils.isEmpty(this.courseList)) {

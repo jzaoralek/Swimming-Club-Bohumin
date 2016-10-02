@@ -60,6 +60,9 @@ public class Contact implements IdentEntity {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
+	public String getCompleteName() {
+		return this.surname + " " + this.firstname;
+	}
 	public String getStreet() {
 		return street;
 	}

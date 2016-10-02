@@ -6,7 +6,9 @@ public enum WebPages {
 	COURSE_LIST("/pages/secured/seznam-kurzu.zul"),
 	COURSE_DETAIL("/pages/secured/kurz.zul"),
 	PARTICIPANT_LIST("/pages/secured/seznam-ucastniku.zul"),
-	PARTICIPANT_DETAIL("/pages/secured/ucastnik.zul");
+	PARTICIPANT_DETAIL("/pages/secured/ucastnik.zul"),
+	USER_LIST("/pages/secured/seznam-uzivatelu.zul"),
+	USER_DETAIL("/pages/secured/uzivatel.zul");
 
 	private String url;
 

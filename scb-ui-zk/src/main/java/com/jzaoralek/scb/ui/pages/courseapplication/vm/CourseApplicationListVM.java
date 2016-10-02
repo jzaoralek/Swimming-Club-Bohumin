@@ -304,7 +304,7 @@ public class CourseApplicationListVM extends BaseVM {
 						, item.getCourseParticRepresentative().getContact().getPhone1()
 						, item.getCourseParticRepresentative().getContact().getEmail1()
 						, dateTimeFormat.format(item.getModifAt())
-						, item.getCourseParticipant().inCourseInfo()
+						, item.getCourseParticipant().getInCourseInfo()
 						, item.getCourseParticipant().inCourse()
 						, true)) {
 					ret.add(item);

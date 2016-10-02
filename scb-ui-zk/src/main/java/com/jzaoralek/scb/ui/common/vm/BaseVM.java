@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.ui.common.vm;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
@@ -10,7 +11,9 @@ import org.zkoss.bind.annotation.Command;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -20,7 +23,9 @@ import com.jzaoralek.scb.ui.common.validator.Validators;
 
 public class BaseVM {
 
-	private List<Boolean> booleanListItem = Arrays.asList(null, Boolean.TRUE, Boolean.FALSE);
+	private final List<Boolean> booleanListItem = Arrays.asList(null, Boolean.TRUE, Boolean.FALSE);
+	private final List<Listitem> roleList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(ScbUserRole.class));
+	private final List<Listitem> roleListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(ScbUserRole.class));
 
 	@WireVariable
 	protected ConfigurationService configurationService;
@@ -85,6 +90,10 @@ public class BaseVM {
 		return Validators.getTimeintervalvalidator();
 	}
 
+	public Validator getPasswordValidator() {
+		return Validators.getPasswordvalidator();
+	}
+
 	public Converter getDateConverter() {
 		return Converters.getDateconverter();
 	}
@@ -122,6 +131,28 @@ public class BaseVM {
 
 	public List<Boolean> getBooleanListItem() {
 		return booleanListItem;
+	}
+
+	public List<Listitem> getRoleList() {
+		return roleList;
+	}
+
+	public List<Listitem> getRoleListWithEmptyItem() {
+		return roleListWithEmptyItem;
+	}
+
+	protected Listitem getRoleListItem(ScbUserRole role) {
+		if (role == null) {
+			return null;
+		}
+
+		for (Listitem item : this.roleList) {
+			if (item.getValue() == role) {
+				return item;
+			}
+		}
+
+		return null;
 	}
 
 	public String getNewCourseApplicationTitle() {

@@ -11,7 +11,8 @@ public final class EventQueueHelper {
 		MENU_QUEUE,
 		COURSE_APPLICATION_QUEUE,
 		CODE_LIST_QUEUE,
-		RESULT_QUEUE;
+		RESULT_QUEUE,
+		USER_QUEUE;
 	}
 
 	public enum ScbEvent {
@@ -28,7 +29,8 @@ public final class EventQueueHelper {
 		CODELIST_DETAIL_DATA_EVENT,
 		RELOAD_RESULT_LIST_DATA_EVENT,
 		RESULT_DETAIL_DATA_EVENT,
-		RESULT_NEW_DATA_EVENT;
+		RESULT_NEW_DATA_EVENT,
+		RELOAD_USER_DATA_EVENT;
 	}
 
 	private EventQueueHelper() {}

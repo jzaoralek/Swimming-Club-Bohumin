@@ -28,6 +28,7 @@ public final class WebConstants {
 
 	public static final String MINUTE_SECOND_DELIM = ":";
 	public static final String SECOND_MILISECOND_DELIM = ",";
+	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
 	public static final String SECURED_PAGE_URL = "/pages/secured";
 }

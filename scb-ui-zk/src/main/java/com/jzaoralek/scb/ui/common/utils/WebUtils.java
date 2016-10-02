@@ -21,15 +21,15 @@ public final class WebUtils {
 	private WebUtils() {}
 
 	public static void showNotificationInfo(String msg) {
-		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_INFO, null, null, 4000, true);
+		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_INFO, null, null, 6000, true);
 	};
 
 	public static void showNotificationError(String msg) {
-		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_ERROR, null, null, 4000, true);
+		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_ERROR, null, null, 6000, true);
 	};
 
 	public static void showNotificationWarning(String msg) {
-		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_WARNING, null, null, 4000, true);
+		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_WARNING, null, null, 6000, true);
 	};
 
 	/**
@@ -80,6 +80,17 @@ public final class WebUtils {
 			item.setValue(object);
 			messagesList.add(item);
 		}
+		return messagesList;
+	}
+
+	public static List<Listitem> getMessageItemsFromEnumWithEmptyItem(EnumSet<? extends Enum<?>> enumSet){
+
+		List<Listitem> messagesList = getMessageItemsFromEnum(enumSet);
+		Listitem item= new Listitem();
+		item.setLabel("");
+		item.setValue(null);
+		messagesList.add(0, item);
+
 		return messagesList;
 	}
 

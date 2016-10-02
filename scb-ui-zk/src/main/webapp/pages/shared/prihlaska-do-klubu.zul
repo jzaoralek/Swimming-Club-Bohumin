@@ -389,12 +389,12 @@
 													tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 													tabindex="16"
 													hflex="1" />
-												<a iconSclass="z-icon-info-circle" popup="emailPopup" style="margin-left: 5px" />
+												<a iconSclass="z-icon-info-circle" popup="emailPopup" style="margin-left: 5px; font-size: large;" />
 											</hbox>
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
-														<label value="@bind(vmsgs[representativeEmail1])" />
-													</span>	
+													<label value="@bind(vmsgs[representativeEmail1])" />
+												</span>	
 											</hbox>
 										</vbox>
 									</cell>
@@ -463,7 +463,7 @@
 						</hbox>
 					</vbox>
 					
-					<popup id="emailPopup" width="400px">
+					<popup id="emailPopup" >
 				        <label value="${c:l('txt.ui.common.email.info')}" />
 				    </popup>
 											    

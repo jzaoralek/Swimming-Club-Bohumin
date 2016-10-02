@@ -71,7 +71,6 @@ public class MailServiceImpl implements MailService {
           // Set Subject: header field
           message.setSubject(subject);
           // Now set the actual message
-//          message.setText(text);
           BodyPart messageBodyPart = new MimeBodyPart();
           // Now set the actual message
           messageBodyPart.setText(text);

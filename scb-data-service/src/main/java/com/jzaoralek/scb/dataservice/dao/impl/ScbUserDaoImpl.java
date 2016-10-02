@@ -18,6 +18,7 @@ import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
+import com.jzaoralek.scb.dataservice.utils.vo.Cover;
 
 @Repository
 public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
@@ -31,9 +32,14 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 	private static final String INSERT = "INSERT INTO user " +
 	"(uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by) " +
 	"VALUES (:"+UUID_PARAM+", :"+USERNAME_PARAM+", :"+PASSWORD_PARAM+", :"+PASSWORD_GENERATED_PARAM+", :"+ROLE_PARAM+", :"+CONTACT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
+	// TODO: odebrat podminku pro vyber podle role
+	private static final String SELECT_ALL ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE role='ADMIN' ORDER BY username";
 	private static final String SELECT_BY_UUID ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE uuid=:" + UUID_PARAM;
+	private static final String SELECT_BY_USERNAME ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE username=:" + USERNAME_PARAM;
 	private static final String DELETE = "DELETE FROM user where uuid = :" + UUID_PARAM;
 	private static final String UPDATE = "UPDATE user SET username=:"+USERNAME_PARAM+", password=:"+PASSWORD_PARAM+", password_generated=:"+PASSWORD_GENERATED_PARAM+", role=:"+ROLE_PARAM+", contact_uuid=:"+CONTACT_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE_PASSWORD = "UPDATE user SET password=:"+PASSWORD_PARAM+", password_generated=:"+PASSWORD_GENERATED_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String SELECT_COUNT_BY_USERNAME = "SELECT COUNT(*) FROM user WHERE username = :" + USERNAME_PARAM;
 
 	@Autowired
 	private ContactDao contactDao;
@@ -45,8 +51,7 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 
 	@Override
 	public List<ScbUser> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return namedJdbcTemplate.query(SELECT_ALL, new ScbUserRowMapper(contactDao));
 	}
 
 	@Override
@@ -54,6 +59,16 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
 		try {
 			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new ScbUserRowMapper(contactDao));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public ScbUser getByUsername(String username) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(USERNAME_PARAM, username);
+		try {
+			return namedJdbcTemplate.queryForObject(SELECT_BY_USERNAME, paramMap, new ScbUserRowMapper(contactDao));
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
@@ -86,9 +101,26 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 	}
 
 	@Override
+	public void updatePassword(ScbUser scbUser, Cover<char[]> password) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		fillIdentEntity(scbUser, paramMap);
+		paramMap.addValue(PASSWORD_PARAM, String.valueOf(password.value(), 0, password.value().length));
+		paramMap.addValue(PASSWORD_GENERATED_PARAM, scbUser.isPasswordGenerated() ? "1" : "0");
+
+		namedJdbcTemplate.update(UPDATE_PASSWORD, paramMap);
+	}
+
+	@Override
 	public void delete(ScbUser scbUser) {
 		contactDao.delete(scbUser.getContact());
 		namedJdbcTemplate.update(DELETE, new MapSqlParameterSource().addValue(UUID_PARAM, scbUser.getUuid().toString()));
+	}
+
+	@Override
+	public Boolean userWithSameUsernameExists(String username) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(USERNAME_PARAM, username);
+		Integer count = namedJdbcTemplate.queryForObject(SELECT_COUNT_BY_USERNAME, paramMap, Integer.class);
+		return count > 0;
 	}
 
 	public static final class ScbUserRowMapper implements RowMapper<ScbUser> {

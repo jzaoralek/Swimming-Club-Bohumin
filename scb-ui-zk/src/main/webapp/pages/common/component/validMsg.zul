@@ -1,14 +1,7 @@
 <zk>
-	<custom-attributes vmsgs="${arg.vmsg}" />
+	<custom-attributes vmsg="${arg.vmsg}" />
 	<custom-attributes elem="${arg.elem}" />
-	<span sclass="alert alert-danger" 
-		hflex="min" 
-		visible="@load(not empty vmsgs[elem])" >
-		<label value="@bind(vmsgs[elem])" />
+	<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsg[elem])" >
+		<label value="@bind(vmsg[elem])" />
 	</span>
-	
-	<label value="@load(vmsgs)" />
-	<label value="@load(elem)" />
-	<label value="@load(not empty vmsgs[elem])" />
-	<label value="@load(vmsgs[elem])" />
 </zk>

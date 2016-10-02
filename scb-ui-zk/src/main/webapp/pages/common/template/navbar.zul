@@ -37,7 +37,9 @@
 				
 				<!-- User menu -->
 				<menupopup id="loggedUserPopup"  >
-					<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-off" onClick="@command('logoutCmd')" />
+					<menuitem label="${c:l('txt.ui.common.changePassword')}" onClick="@command('changePasswordCmd')" />
+					<menuseparator/>
+					<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-sign-out" onClick="@command('logoutCmd')" />
 				</menupopup>
 				
 				<div sclass="main-menu">

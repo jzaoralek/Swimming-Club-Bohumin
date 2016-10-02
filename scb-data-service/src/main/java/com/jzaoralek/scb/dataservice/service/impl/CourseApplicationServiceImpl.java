@@ -24,6 +24,7 @@ import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 @Service("courseApplicationService")
 public class CourseApplicationServiceImpl extends BaseAbstractService implements CourseApplicationService {
@@ -140,7 +141,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 
 			//TODO: situace kdy uzivatel uz existuje, nacist podle username, generovani hesla
 			courseParticRepresentative.setUsername(courseParticRepresentative.getContact().getEmail1());
-			courseParticRepresentative.setPassword("password");
+			courseParticRepresentative.setPassword(SecurityUtils.generatePassword());
 			courseParticRepresentative.setPasswordGenerated(true);
 			courseParticRepresentative.setRole(ScbUserRole.USER);
 

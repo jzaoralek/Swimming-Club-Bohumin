@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.security.SecuredUser;
 import com.jzaoralek.scb.dataservice.domain.security.SecuredUserProfile;
@@ -22,17 +23,18 @@ import com.jzaoralek.scb.dataservice.domain.security.SecuredUserProfileType;
 @Service("customUserDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
 
+	@Autowired
+	private ScbUserDao scbUserDa;
+
 	@Override
 	@Transactional(readOnly=true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// TODO: (JZAORALE, OV), napojit na service do db
-		SecuredUser user = findByUsernameFake(username);
-
-		if (user == null) {
+		ScbUser scbUser = scbUserDa.getByUsername(username);
+		if (scbUser == null) {
 			throw new UsernameNotFoundException("Username not found: " + username);
 		}
 
-		return user;
+		return buildSecuredUser(scbUser);
 	}
 
 	private static List<GrantedAuthority> getGrantedAuthorities(Set<SecuredUserProfile> profiles){
@@ -44,23 +46,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 		return authorities;
     }
 
-	private static SecuredUser findByUsernameFake(String username) {
-		SecuredUser ret = null;
-		if ("a.kuder".equals(username)) {
-			Set<SecuredUserProfile> profiles = new HashSet<SecuredUserProfile>();
-			SecuredUserProfile profile = new SecuredUserProfile();
-			profile.setType(SecuredUserProfileType.ADMIN.name());
-			profiles.add(profile);
-			ret = new SecuredUser(username, "popov", true, true, true, true, getGrantedAuthorities(profiles));
-			ret.setUserProfiles(profiles);
-			ScbUser scbUser = new ScbUser();
-			scbUser.setUsername(username);
-			Contact contact = new Contact();
-			contact.setFirstname("Adrian");
-			contact.setSurname("Kuder");
-			scbUser.setContact(contact);
-			ret.setScbUser(scbUser);
-		}
+	private SecuredUser buildSecuredUser(ScbUser scbUser) {
+		Set<SecuredUserProfile> profiles = new HashSet<SecuredUserProfile>();
+		SecuredUserProfile profile = new SecuredUserProfile();
+		profile.setType(SecuredUserProfileType.fromScbUserRole(scbUser.getRole()).name());
+		profiles.add(profile);
+		SecuredUser ret = new SecuredUser(scbUser.getUsername(), scbUser.getPassword(), true, true, true, true, getGrantedAuthorities(profiles));
+		ret.setUserProfiles(profiles);
+		ret.setScbUser(scbUser);
 		return ret;
 	}
+
 }
