@@ -147,7 +147,8 @@ public class CourseApplicationListVM extends BaseVM {
 	@NotifyChange("courseApplicationList")
 	@Command
 	public void exportToExcel(@BindingParam("listbox") Listbox listbox) {
-		ExcelUtil.exportToExcel("seznam_prihlasek.xls", buildExcelRowData(listbox));
+		String filename = this.pageMode == PageMode.COURSE_APPLICATION_LIST ? "seznam_prihlasek.xls" : "seznam_ucastniku.xls";
+		ExcelUtil.exportToExcel(filename, buildExcelRowData(listbox));
 	}
 
 	@NotifyChange("*")
@@ -183,14 +184,25 @@ public class CourseApplicationListVM extends BaseVM {
 		for (int i = 0; i < model.getSize(); i++) {
 			if (model.getElementAt(i) instanceof CourseApplication) {
 				item = (CourseApplication)model.getElementAt(i);
-				data.put(String.valueOf(i+1),
-						new Object[] { item.getCourseParticipant().getContact().getSurname() + item.getCourseParticipant().getContact().getFirstname(),
+				if (this.pageMode == PageMode.COURSE_APPLICATION_LIST) {
+					data.put(String.valueOf(i+1),
+						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
 								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
 								item.getCourseParticipant().getPersonalNo(),
-								item.getCourseParticRepresentative().getContact().getSurname() + item.getCourseParticRepresentative().getContact().getFirstname(),
+								item.getCourseParticRepresentative().getContact().getCompleteName(),
 								item.getCourseParticRepresentative().getContact().getPhone1(),
 								item.getCourseParticRepresentative().getContact().getEmail1(),
-								dateFormat.format(item.getModifAt())});
+								dateFormat.format(item.getModifAt()),
+								item.getCourseParticipant().getInCourseInfo()});
+				} else {
+					data.put(String.valueOf(i+1),
+						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
+								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
+								item.getCourseParticRepresentative().getContact().getCompleteName(),
+								item.getCourseParticRepresentative().getContact().getPhone1(),
+								item.getCourseParticRepresentative().getContact().getEmail1(),
+								item.getCourseParticipant().getInCourseInfo()});
+				}
 			}
 		}
 
