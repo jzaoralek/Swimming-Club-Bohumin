@@ -1,28 +1,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.jzaoralek.scb</groupId>
 	<artifactId>scb-ui-zk</artifactId>
 	<packaging>war</packaging>
-	<version>1.0-SNAPSHOT</version>
 	<name>scb-ui-zk Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 
+	<parent>
+		<groupId>com.jzaoralek.scb</groupId>
+		<artifactId>scb-pom</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../scb-pom</relativePath>
+	</parent>
+	
 	<properties>
-		<spring-version>4.2.0.RELEASE</spring-version>
-		<spring-security.version>4.0.4.RELEASE</spring-security.version>
-		<application.version>0.0.1-SNAPSHOT</application.version>
 		<zk.version>8.0.1.1</zk.version>
-<!-- 		<zkmaxVersion>8.0.1.1-Eval</zkmaxVersion> -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<scb.version>1.0-SNAPSHOT</scb.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
 		
@@ -30,31 +29,26 @@
 		<dependency>
 			<groupId>com.jzaoralek.scb</groupId>
 			<artifactId>scb-data-service</artifactId>
-			<version>${scb.version}</version>
 		</dependency>
 
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>${spring-version}</version>
 		</dependency>
 
 		<!-- Spring security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>${spring-security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>${spring-security.version}</version>
 		</dependency>
 
 		<!-- ZK -->
@@ -154,20 +148,17 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>3.0-alpha-1</version>
-<!-- 			<scope>provided</scope> -->
 		</dependency>
 		
 		<dependency>
 			<groupId>org.javatuples</groupId>
 			<artifactId>javatuples</artifactId>
-			<version>1.2</version>
 		</dependency>
 		
 		<dependency>
@@ -175,7 +166,6 @@
 		    <artifactId>joda-time</artifactId>
 		    <version>2.9.4</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>

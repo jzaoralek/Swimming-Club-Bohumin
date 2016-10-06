@@ -56,6 +56,7 @@ public class CourseParticipantVM extends BaseVM {
 
 	private List<Listitem> swimStyleListitemList;
 	private Listitem swimStyleListitemSelected;
+	private String pageHeadline;
 	private CourseApplication participant;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -63,6 +64,7 @@ public class CourseParticipantVM extends BaseVM {
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
 		if (StringUtils.hasText(uuid)) {
 			this.participant = courseApplicationService.getByUuid(UUID.fromString(uuid));
+			this.pageHeadline = Labels.getLabel("txt.ui.common.participantDetail") + " " + this.participant.getCourseParticipant().getContact().getCompleteName();
 		}
 		setReturnPage(fromPage);
 		fillSwimStyleItemList();
@@ -187,4 +189,9 @@ public class CourseParticipantVM extends BaseVM {
 	public void setSwimStyleListitemSelected(Listitem swimStyleListitemSelected) {
 		this.swimStyleListitemSelected = swimStyleListitemSelected;
 	}
+
+	public String getPageHeadline() {
+		return pageHeadline;
+	}
+
 }
