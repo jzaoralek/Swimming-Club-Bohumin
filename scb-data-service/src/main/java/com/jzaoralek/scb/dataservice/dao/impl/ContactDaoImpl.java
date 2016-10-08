@@ -47,7 +47,6 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 
 	@Override
 	public List<Contact> getAll() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

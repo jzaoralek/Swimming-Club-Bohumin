@@ -112,7 +112,7 @@
 			                	<menupopup id="menuCourse_${each.uuid}" >
 									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
 									<menuitem label="${c:l('txt.ui.common.resetPassword')}" onClick="@command('resetPwdCmd', uuid=each.uuid)" />
-									<menuitem label="Odstranit" onClick="@command('deleteCmd', uuid=each.uuid)" visible="@load(vm.canDelete(each.uuid))"  />
+									<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)" visible="@load(vm.canDelete(each.uuid))"  />
 						       	</menupopup>
 			                </listcell>
 			            </listitem>

@@ -1,13 +1,9 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -25,17 +21,12 @@ import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.Result;
 import com.jzaoralek.scb.dataservice.service.CodeListService;
 import com.jzaoralek.scb.dataservice.service.ResultService;
-import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class ResultWinVM extends BaseVM {
-
-	private static final Logger LOG = LoggerFactory.getLogger(ResultWinVM.class);
-
-	private final DateFormat timeFormat = new SimpleDateFormat(WebConstants.WEB_TIME_SECONDS_PATTERN);
 
 	@WireVariable
 	private ResultService resultService;

@@ -21,6 +21,7 @@ import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CodeListService;
+import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -64,15 +65,17 @@ public class SwimStyleAdminVM extends BaseVM {
 
 	@NotifyChange("codeListItemList")
 	@Command
-	public void deleteCmd(@BindingParam("uuid") final UUID uuid) {
-		if (uuid ==  null) {
-			throw new IllegalArgumentException("uuid is null");
+	public void deleteCmd(@BindingParam(WebConstants.ITEM_PARAM) final CodeListItem item) {
+		if (item ==  null) {
+			throw new IllegalArgumentException("CodeListItem is null");
 		}
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting codeListItem with uuid: " + uuid);
+			LOG.debug("Deleting codeListItem with uuid: " + item.getUuid());
 		}
+		final Object[] msgParams = new Object[] {item.getName()};
+		final UUID uuid = item.getUuid();
 		MessageBoxUtils.showDefaultConfirmDialog(
-			"msg.ui.quest.deleteItem",
+			"msg.ui.quest.deleteItem.arg",
 			"msg.ui.title.deleteRecord",
 			new SzpEventListener() {
 				@Override
@@ -80,13 +83,14 @@ public class SwimStyleAdminVM extends BaseVM {
 					try {
 						codeListService.delete(uuid);
 						EventQueueHelper.publish(ScbEventQueues.CODE_LIST_QUEUE, ScbEvent.RELOAD_CODELIST_DATA_EVENT, null, null);
-						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.itemDeleted"));
+						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.itemDeleted.arg", msgParams));
 					} catch (ScbValidationException e) {
 						LOG.warn("ScbValidationException caught for codeListItem with uuid: " + uuid, e);
 						WebUtils.showNotificationError(e.getMessage());
 					}
 				}
-			}
+			},
+			msgParams
 		);
 	}
 

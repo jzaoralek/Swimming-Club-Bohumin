@@ -37,6 +37,11 @@
 		<max-upload-size>102400</max-upload-size>
 	</system-config>
 	
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/pages/common/error/errorPageWin.zul</location>
+	</error-page>
+	
 	<device-config>
 		<device-type>ajax</device-type>
 		<timeout-uri>/pages/index.zul</timeout-uri><!-- An empty URL can cause the browser to reload the same URL -->

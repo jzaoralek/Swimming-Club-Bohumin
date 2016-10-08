@@ -40,20 +40,27 @@ import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-public class CourseListVM {
+public class CourseListVM extends BaseVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseListVM.class);
 
 	private List<Course> courseList;
 	private List<Course> courseListBase;
+	private List<String> courseYearList;
+	private String courseYearSelected;
 	private final CourseApplicationFilter filter = new CourseApplicationFilter();
 
 	@WireVariable
 	private CourseService courseService;
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init() {
+		this.courseYearList = configurationService.getCourseYearList();
+		this.courseYearSelected = configurationService.getCourseApplicationYear();
+
 		loadData();
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
@@ -90,13 +97,15 @@ public class CourseListVM {
 
 	@NotifyChange("*")
 	@Command
-    public void deleteCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
-		if (uuid ==  null) {
-			throw new IllegalArgumentException("uuid is null");
+    public void deleteCmd(@BindingParam(WebConstants.ITEM_PARAM) final Course item) {
+		if (item ==  null) {
+			throw new IllegalArgumentException("Course");
 		}
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting course with uuid: " + uuid);
+			LOG.debug("Deleting course with uuid: " + item.getUuid());
 		}
+		final Object[] msgParams = new Object[] {item.getName()};
+		final UUID uuid = item.getUuid();
 		MessageBoxUtils.showDefaultConfirmDialog(
 			"msg.ui.quest.deleteCourse",
 			"msg.ui.title.deleteRecord",
@@ -106,14 +115,21 @@ public class CourseListVM {
 					try {
 						courseService.delete(uuid);
 						EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);
-						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseDeleted"));
+						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseDeleted", msgParams));
 					} catch (ScbValidationException e) {
 						LOG.warn("ScbValidationException caught for course with uuid: " + uuid);
 						WebUtils.showNotificationError(e.getMessage());
 					}
 				}
-			}
+			},
+			msgParams
 		);
+	}
+
+	@NotifyChange("*")
+	@Command
+	public void courseYearChangeCmd() {
+		loadData();
 	}
 
 	@Command
@@ -128,7 +144,17 @@ public class CourseListVM {
 	}
 
 	public void loadData() {
-		this.courseList = courseService.getAll();
+		if (!StringUtils.hasText(this.courseYearSelected)) {
+			return;
+		}
+		String[] years = this.courseYearSelected.split(ConfigurationServiceImpl.COURSE_YEAR_DELIMITER);
+		if (years.length < 2) {
+			return;
+		}
+		int yearFrom = Integer.parseInt(years[0]);
+		int yearTo = Integer.parseInt(years[1]);
+
+		this.courseList = courseService.getAll(yearFrom, yearTo);
 		this.courseListBase = this.courseList;
 		BindUtils.postNotifyChange(null, null, this, "courseList");
 	}
@@ -168,6 +194,18 @@ public class CourseListVM {
 
 	public CourseApplicationFilter getFilter() {
 		return filter;
+	}
+
+	public String getCourseYearSelected() {
+		return courseYearSelected;
+	}
+
+	public void setCourseYearSelected(String courseYearSelected) {
+		this.courseYearSelected = courseYearSelected;
+	}
+
+	public List<String> getCourseYearList() {
+		return courseYearList;
 	}
 
 	public static class CourseApplicationFilter {

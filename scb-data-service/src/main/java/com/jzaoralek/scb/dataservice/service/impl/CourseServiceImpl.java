@@ -47,8 +47,8 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 
 	@Override
-	public List<Course> getAll() {
-		return courseDao.getAll();
+	public List<Course> getAll(int yearFrom, int yearTo) {
+		return courseDao.getAll(yearFrom, yearTo);
 	}
 
 	@Override

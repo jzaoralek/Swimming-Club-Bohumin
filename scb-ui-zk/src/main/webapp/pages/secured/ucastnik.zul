@@ -1,4 +1,4 @@
-<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.menu.application')}"?>
+<?page title="${c:l('txt.ui.organization.name')} - ${vm.pageHeadline}"?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
@@ -17,7 +17,7 @@
 					<vbox hflex="20" pack="center" align="center" >
 						<hbox hflex="1" pack="end" align="center" >
 							<vbox hflex="1" align="center" >
-								<headline label="${c:l('txt.ui.common.participantDetail')}" menuSelected="menu_courseParticipantList" />
+								<headline label="${vm.pageHeadline}" menuSelected="menu_courseParticipantList" />
 							</vbox>
 						</hbox>
 						<vbox hflex="1" vflex="1" align="end" pack="center">
@@ -372,7 +372,7 @@
 								                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
 								                	<menupopup id="menuCourse_${each.uuid}" >
 														<menuitem label="Detail" onClick="@command('resultDetailCmd', result=each)" />
-														<menuitem label="Odstranit" onClick="@command('resultDeleteCmd', uuid=each.uuid)"  />
+														<menuitem label="Odstranit" onClick="@command('resultDeleteCmd', item=each)"  />
 											       	</menupopup>
 								                </listcell>
 								            </listitem>
