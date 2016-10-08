@@ -372,7 +372,7 @@
 								                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
 								                	<menupopup id="menuCourse_${each.uuid}" >
 														<menuitem label="Detail" onClick="@command('resultDetailCmd', result=each)" />
-														<menuitem label="Odstranit" onClick="@command('resultDeleteCmd', uuid=each.uuid)"  />
+														<menuitem label="Odstranit" onClick="@command('resultDeleteCmd', item=each)"  />
 											       	</menupopup>
 								                </listcell>
 								            </listitem>

@@ -31,6 +31,7 @@ import com.jzaoralek.scb.dataservice.service.CodeListService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.ResultService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -64,7 +65,7 @@ public class CourseParticipantVM extends BaseVM {
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
 		if (StringUtils.hasText(uuid)) {
 			this.participant = courseApplicationService.getByUuid(UUID.fromString(uuid));
-			this.pageHeadline = Labels.getLabel("txt.ui.common.participantDetail") + " " + this.participant.getCourseParticipant().getContact().getCompleteName();
+			this.pageHeadline = this.participant.getCourseParticipant().getContact().getCompleteName();
 		}
 		setReturnPage(fromPage);
 		fillSwimStyleItemList();
@@ -128,15 +129,17 @@ public class CourseParticipantVM extends BaseVM {
 	}
 
 	@Command
-	public void resultDeleteCmd(@BindingParam("uuid") final UUID uuid) {
-		if (uuid ==  null) {
-			throw new IllegalArgumentException("uuid is null");
+	public void resultDeleteCmd(@BindingParam(WebConstants.ITEM_PARAM) final Result item) {
+		if (item ==  null) {
+			throw new IllegalArgumentException("Result is null");
 		}
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting result with uuid: " + uuid);
+			LOG.debug("Deleting result with uuid: " + item.getUuid());
 		}
+		final Object[] msgParams = new Object[] {item.getStyle().getName() + ", " + item.getDistance()+"m" + ", " + Converters.getIntervaltomillsconverter().coerceToUi(item.getResultTime(), null, null)};
+		final UUID uuid = item.getUuid();
 		MessageBoxUtils.showDefaultConfirmDialog(
-			"msg.ui.quest.deleteItem",
+			"msg.ui.quest.deleteItem.arg",
 			"msg.ui.title.deleteRecord",
 			new SzpEventListener() {
 				@Override
@@ -144,13 +147,14 @@ public class CourseParticipantVM extends BaseVM {
 					try {
 						resultService.delete(uuid);
 						EventQueueHelper.publish(ScbEventQueues.RESULT_QUEUE, ScbEvent.RELOAD_RESULT_LIST_DATA_EVENT, null, null);
-						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.itemDeleted"));
+						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.itemDeleted.arg", msgParams));
 					} catch (ScbValidationException e) {
 						LOG.warn("ScbValidationException caught for result with uuid: " + uuid, e);
 						WebUtils.showNotificationError(e.getMessage());
 					}
 				}
-			}
+			},
+			msgParams
 		);
 	}
 

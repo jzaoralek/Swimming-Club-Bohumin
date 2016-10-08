@@ -25,6 +25,9 @@ public final class WebConstants {
 	public static final String MODE_PARAM = "mode";
 	public static final String FROM_PAGE_PARAM = "fromPage";
 	public static final String ATTACHMENT_PARAM = "attachment";
+	public static final String ITEM_PARAM = "item";
+
+	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 
 	public static final String MINUTE_SECOND_DELIM = ":";
 	public static final String SECOND_MILISECOND_DELIM = ",";

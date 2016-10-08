@@ -101,13 +101,15 @@ public class UserListVM extends BaseVM {
 	}
 
 	@Command
-    public void deleteCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
-		if (uuid ==  null) {
-			throw new IllegalArgumentException("uuid is null");
+    public void deleteCmd(@BindingParam(WebConstants.ITEM_PARAM) final ScbUser item) {
+		if (item ==  null) {
+			throw new IllegalArgumentException("ScbUser is null");
 		}
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting user with uuid: " + uuid);
+			LOG.debug("Deleting user with uuid: " + item.getUuid());
 		}
+		final Object[] msgParams = new Object[] {item.getUsername()};
+		final UUID uuid = item.getUuid();
 		MessageBoxUtils.showDefaultConfirmDialog(
 			"msg.ui.quest.deleteUser",
 			"msg.ui.title.deleteRecord",
@@ -117,13 +119,14 @@ public class UserListVM extends BaseVM {
 					try {
 						scbUserService.delete(uuid);
 						EventQueueHelper.publish(ScbEventQueues.USER_QUEUE, ScbEvent.RELOAD_USER_DATA_EVENT, null, null);
-						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.userDeleted"));
+						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.userDeleted", msgParams));
 					} catch (ScbValidationException e) {
 						LOG.warn("ScbValidationException caught for user with uuid: " + uuid);
 						WebUtils.showNotificationError(e.getMessage());
 					}
 				}
-			}
+			},
+			msgParams
 		);
 	}
 
@@ -254,7 +257,7 @@ public class UserListVM extends BaseVM {
 			if (email != null && !emailIn.toLowerCase().contains(emailLc)) {
 				return false;
 			}
-			if (roleItem != null && ((ScbUserRole)roleItem.getValue()) != roleIn) {
+			if (roleItem != null && roleItem.getValue() != null && ((ScbUserRole)roleItem.getValue()) != roleIn) {
 				return false;
 			}
 			return true;

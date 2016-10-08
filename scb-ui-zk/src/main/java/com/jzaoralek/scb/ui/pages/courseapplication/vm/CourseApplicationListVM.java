@@ -63,15 +63,9 @@ public class CourseApplicationListVM extends BaseVM {
 	private String courseYearSelected;
 	private PageMode pageMode;
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init() {
-		// pridat filtr rocniku, ma byt i pro seznam prihlasek, defaultne nastavit aktualni rocnik
-		// na zaklade url zjistit zda-li seznam prihlasek nebo seznam ucastniku
-		// ulozit do atributu
-		// pro seznam ucastniku na strance
-		// - skryt moznost zruseni
-		// - detail nasmerovat na detail ucastnika
-
 		this.courseYearList = configurationService.getCourseYearList();
 		this.courseYearSelected = configurationService.getCourseApplicationYear();
 
@@ -102,13 +96,15 @@ public class CourseApplicationListVM extends BaseVM {
 
 	@NotifyChange("*")
 	@Command
-    public void deleteCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
-		if (uuid ==  null) {
-			throw new IllegalArgumentException("uuid is null");
+    public void deleteCmd(@BindingParam(WebConstants.ITEM_PARAM) final CourseApplication item) {
+		if (item ==  null) {
+			throw new IllegalArgumentException("CourseApplication is null");
 		}
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting application with uuid: " + uuid);
+			LOG.debug("Deleting application with uuid: " + item.getUuid());
 		}
+		final Object[] msgParams = new Object[] {item.getCourseParticipant().getContact().getCompleteName()};
+		final UUID uuid = item.getUuid();
 		MessageBoxUtils.showDefaultConfirmDialog(
 			"msg.ui.quest.deleteApplication",
 			"msg.ui.title.deleteRecord",
@@ -118,13 +114,14 @@ public class CourseApplicationListVM extends BaseVM {
 					try {
 						courseApplicationService.delete(uuid);
 						EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT, null, null);
-						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationDeleted"));
+						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationDeleted", msgParams));
 					} catch (ScbValidationException e) {
 						LOG.warn("ScbValidationException caught for application with uuid: " + uuid);
 						WebUtils.showNotificationError(e.getMessage());
 					}
 				}
-			}
+			},
+			msgParams
 		);
 	}
 
@@ -164,7 +161,6 @@ public class CourseApplicationListVM extends BaseVM {
 		loadData();
 	}
 
-	@SuppressWarnings("unchecked")
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
 		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
 

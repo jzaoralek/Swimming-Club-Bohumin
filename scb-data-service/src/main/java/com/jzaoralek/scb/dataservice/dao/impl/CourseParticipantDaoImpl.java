@@ -58,7 +58,6 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	@Override
 	public List<CourseParticipant> getAll() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

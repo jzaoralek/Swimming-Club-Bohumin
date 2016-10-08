@@ -40,7 +40,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 
 	private static final String UPDATE = "UPDATE course SET uuid = :"+UUID_PARAM+" , name = :"+NAME_PARAM+", description = :"+DESCRIPTION_PARAM+", year_from = :"+YEAR_FROM_PARAM+", year_to = :"+YEAR_TO_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course where uuid = :" + UUID_PARAM;
-	private static final String SELECT_ALL = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course";
+	private static final String SELECT_ALL = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course WHERE year_from = :"+YEAR_FROM_PARAM+" AND year_to = :"+YEAR_TO_PARAM;
 	private static final String SELECT_ALL_EXCEPT_COURSE = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course where uuid != :"+COURSE_UUID_PARAM;
 	private static final String SELECT_BY_UUID = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course WHERE uuid=:" + UUID_PARAM;
 	private static final String SELECT_BY_COURSE_PARTICIPANT = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by FROM course_course_participant ccp, course c WHERE ccp.course_uuid = c.uuid AND ccp.course_participant_uuid = :" + UUID_PARAM;
@@ -51,8 +51,9 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	}
 
 	@Override
-	public List<Course> getAll() {
-		return namedJdbcTemplate.query(SELECT_ALL, new CourseRowMapper(courseParticipantDao, lessonDao));
+	public List<Course> getAll(int yearFrom, int yearTo) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
+		return namedJdbcTemplate.query(SELECT_ALL, paramMap, new CourseRowMapper(courseParticipantDao, lessonDao));
 	}
 
 	@Override

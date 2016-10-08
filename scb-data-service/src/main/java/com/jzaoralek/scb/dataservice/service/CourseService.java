@@ -9,7 +9,7 @@ import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 
 public interface CourseService {
 
-	List<Course> getAll();
+	List<Course> getAll(int yearFrom, int yearTo);
 	List<Course> getAllExceptCourse(UUID courseUuid);
 	Course getByUuid(UUID uuid);
 	Course store(Course course) throws ScbValidationException;
