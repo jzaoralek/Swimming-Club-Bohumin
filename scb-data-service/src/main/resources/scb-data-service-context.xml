@@ -33,8 +33,8 @@
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
 		<property name="locations">
 			<list>
-				<value>classpath:${user.name}.properties</value>
-				<value>classpath:smtp.properties</value>
+				<value>classpath:config/${user.name}.properties</value>
+				<value>classpath:config/smtp.properties</value>
 			</list> 
 		</property> 
 	</bean>

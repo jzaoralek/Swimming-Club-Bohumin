@@ -31,7 +31,6 @@
 		<property name="locations">
 			<list>
 				<value>classpath:${user.name}.properties</value>
-				<value>classpath:smtp.properties</value>
 			</list> 
 		</property> 
 	</bean> 
