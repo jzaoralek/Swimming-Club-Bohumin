@@ -4,3 +4,7 @@
 /build/
 /.project
 /.classpath
+
+/src/main/resources/config/P3400343.properties
+/src/main/resources/config/pkbohumin.cz.properties
+/src/main/resources/config/smtp.properties
