@@ -89,7 +89,7 @@ CREATE TABLE lesson(
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
-)
+);
 
 CREATE TABLE configuration(
 	uuid varchar(36),

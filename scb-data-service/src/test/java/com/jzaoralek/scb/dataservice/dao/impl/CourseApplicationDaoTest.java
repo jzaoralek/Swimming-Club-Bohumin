@@ -2,7 +2,9 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,6 +17,14 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 
 	@Autowired
 	private CourseApplicationDao courseApplicationDao;
+
+	@Before
+	public void setUp() {
+	}
+
+	@After
+    public void tearDown() {
+    }
 
 	@Test
 	public void testGetAll() {

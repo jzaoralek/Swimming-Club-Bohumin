@@ -107,7 +107,7 @@
 		    <groupId>com.github.livesense</groupId>
 		    <artifactId>org.liveSense.jdbc.mysql</artifactId>
 		</dependency>
-		
+	
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

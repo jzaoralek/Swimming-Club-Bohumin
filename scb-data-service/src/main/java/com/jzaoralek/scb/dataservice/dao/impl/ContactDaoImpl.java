@@ -2,7 +2,6 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -43,11 +42,6 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 	@Autowired
 	public ContactDaoImpl(DataSource ds) {
 		super(ds);
-	}
-
-	@Override
-	public List<Contact> getAll() {
-		return null;
 	}
 
 	@Override

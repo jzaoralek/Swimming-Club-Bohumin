@@ -48,6 +48,5 @@
 		</property>
 		<property name="password" value="${db_pwd}"/>
 	</bean>
-
   	  		
 </beans>
