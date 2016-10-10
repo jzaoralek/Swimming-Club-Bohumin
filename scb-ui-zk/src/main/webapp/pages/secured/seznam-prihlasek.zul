@@ -126,7 +126,7 @@
 						</auxheader>
 					</auxhead>
 					
-			        <listhead>
+			        <listhead >
 			            <listheader label="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" sort="auto(courseParticipant.contact.surname)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(courseParticipant.birthdate)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.birthNumber')}" align="left" sort="auto(courseParticipant.personalNo)" />

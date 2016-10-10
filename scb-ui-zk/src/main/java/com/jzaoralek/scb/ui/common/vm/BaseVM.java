@@ -168,6 +168,7 @@ public class BaseVM {
 	protected Boolean isSecuredPage() {
 		return WebUtils.getCurrentUrl().contains(WebConstants.SECURED_PAGE_URL);
 	}
+
 	protected void setReturnPage(String fromPage) {
 		this.returnToPage = StringUtils.hasText(fromPage) ? WebPages.valueOf(fromPage).getUrl() : null;
 	}

@@ -32,8 +32,11 @@ public class ManifestSolver {
 			if (exec != null) {
 				ServletContext context = exec.getDesktop().getWebApp().getServletContext();
 				if (context != null) {
-					try (InputStream is = context.getResourceAsStream(WebConstants.APP_MANIFEST)) {
+					try {
+						InputStream is = context.getResourceAsStream(WebConstants.APP_MANIFEST);
 						manifest = new Manifest(is);
+					} catch (Exception e) {
+						LOG.error("Unexpected exception caught.", e);
 					}
 				}
 			}
