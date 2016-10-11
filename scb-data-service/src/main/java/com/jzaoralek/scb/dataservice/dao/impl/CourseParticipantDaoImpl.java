@@ -57,11 +57,6 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	}
 
 	@Override
-	public List<CourseParticipant> getAll() {
-		return null;
-	}
-
-	@Override
 	public CourseParticipant getByUuid(UUID uuid, boolean deep) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
 		try {

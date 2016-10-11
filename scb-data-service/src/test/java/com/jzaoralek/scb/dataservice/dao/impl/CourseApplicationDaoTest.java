@@ -1,6 +1,6 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
-import java.util.List;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -9,7 +9,10 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jzaoralek.scb.dataservice.dao.BaseTestCase;
+import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
+import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
+import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 
 
@@ -18,8 +21,33 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	@Autowired
 	private CourseApplicationDao courseApplicationDao;
 
+	@Autowired
+	private ScbUserDao scbUserDao;
+
+	@Autowired
+	private ContactDao contactDao;
+
+	@Autowired
+	private CourseParticipantDao courseParticipantDao;
+
+
+	private CourseApplication item;
+
 	@Before
 	public void setUp() {
+		item = new CourseApplication();
+		fillIdentEntity(item);
+		item.setCourseParticipant(buildCourseParticipantUUIDGenerated());
+		item.setCourseParticRepresentative(buildScbUser());
+		item.setYearFrom(YEAR_FROM);
+		item.setYearTo(YEAR_TO);
+
+		contactDao.insert(item.getCourseParticipant().getContact());
+		courseParticipantDao.insert(item.getCourseParticipant());
+
+		contactDao.insert(item.getCourseParticRepresentative().getContact());
+		scbUserDao.insert(item.getCourseParticRepresentative());
+		courseApplicationDao.insert(item);
 	}
 
 	@After
@@ -28,43 +56,51 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 
 	@Test
 	public void testGetAll() {
-		List<CourseApplication> courseApplicationList = courseApplicationDao.getAll(2016, 2017);
-		Assert.assertNotNull(courseApplicationList);
+		assertList(courseApplicationDao.getAll(YEAR_FROM, YEAR_TO), 1, ITEM_UUID);
 	}
 
 
 	@Test
 	public void testGetNotInCourse() {
-
+		assertList(courseApplicationDao.getNotInCourse(UUID.randomUUID(), YEAR_FROM, YEAR_TO), 1, ITEM_UUID);
 	}
 
 	@Test
 	public void testGetInCourse() {
-
+		assertList(courseApplicationDao.getInCourse(UUID.randomUUID(), YEAR_FROM, YEAR_TO), 0, ITEM_UUID);
 	}
 
 	@Test
 	public void testGetAssignedToCourse() {
-
+		assertList(courseApplicationDao.getAssignedToCourse(YEAR_FROM, YEAR_TO), 0, ITEM_UUID);
 	}
 
 	@Test
 	public void testGetByUuid() {
-
-	}
-
-	@Test
-	public void testInsert() {
-
+		CourseApplication item = courseApplicationDao.getByUuid(ITEM_UUID, false);
+		Assert.assertNotNull(item);
+		Assert.assertTrue(ITEM_UUID.toString().equals(item.getUuid().toString()));
+		Assert.assertTrue(YEAR_FROM == item.getYearFrom());
+		Assert.assertTrue(YEAR_TO == item.getYearTo());
 	}
 
 	@Test
 	public void testUpdate() {
+		item.setYearFrom(2017);
+		item.setYearTo(2018);
 
+		courseApplicationDao.update(item);
+		CourseApplication item = courseApplicationDao.getByUuid(ITEM_UUID, false);
+		Assert.assertNotNull(item);
+		Assert.assertTrue(ITEM_UUID.toString().equals(item.getUuid().toString()));
+		Assert.assertTrue(2017 == item.getYearFrom());
+		Assert.assertTrue(2018 == item.getYearTo());
 	}
 
 	@Test
 	public void testDelete() {
-
+		courseApplicationDao.delete(item);
+		CourseApplication item = courseApplicationDao.getByUuid(ITEM_UUID, false);
+		Assert.assertNull(item);
 	}
 }

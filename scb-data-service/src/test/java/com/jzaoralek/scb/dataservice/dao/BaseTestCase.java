@@ -8,11 +8,15 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.IdentEntity;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 
 @ContextConfiguration(locations={"/scb-data-service-test-context.xml"})
 public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringContextTests {
@@ -36,6 +40,19 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 	protected static final String CODELIST_ITEM_NAME = "itemName";
 	protected static final CodeListType CODELIST_ITEM_TYPE = CodeListType.SWIMMING_STYLE;
 
+	protected static final Date PARTIC_BIRTHDATE = Calendar.getInstance().getTime();
+	protected static final String PARTIC_HEALTH_INFO = "healthInfo";
+	protected static final String PARTIC_PERSONAL_NO = "9825366669";
+
+	protected static final int YEAR_FROM = 2016;
+	protected static final int YEAR_TO = 2017;
+
+	protected static final String USERNAME = "username";
+	protected static final String PASSWORD = "password";
+	protected static final boolean PASSWORD_GENERATED = true;
+	protected static final ScbUserRole ROLE = ScbUserRole.ADMIN;
+
+
 	protected void fillIdentEntity(IdentEntity identEntity) {
 		if (identEntity == null) {
 			return;
@@ -49,11 +66,26 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 		identEntity.setModifBy(MODIF_BY);
 	}
 
+	protected void fillIdentEntityUuid(IdentEntity identEntity, UUID uuid) {
+		if (identEntity == null) {
+			return;
+		}
+
+		if (identEntity != null && identEntity.getUuid() == null) {
+			identEntity.setUuid(uuid);
+		}
+
+		identEntity.setModifAt(MODIF_AT);
+		identEntity.setModifBy(MODIF_BY);
+	}
+
 	protected void assertList(List<? extends IdentEntity> list, int expectedSize, UUID expectedUuid) {
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() == expectedSize);
-		IdentEntity item = list.get(0);
-		Assert.assertTrue(expectedUuid.toString().equals(item.getUuid().toString()));
+		if (!CollectionUtils.isEmpty(list)) {
+			IdentEntity item = list.get(0);
+			Assert.assertTrue(expectedUuid.toString().equals(item.getUuid().toString()));
+		}
 	}
 
 	protected Contact buildContact() {
@@ -74,11 +106,61 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 		return ret;
 	}
 
+	protected Contact buildContactGeneratedUuid() {
+		Contact ret = new Contact();
+		fillIdentEntityUuid(ret, UUID.randomUUID());
+		ret.setFirstname(CONTACT_FIRSTNAME);
+		ret.setSurname(CONTACT_SURNAME);
+		ret.setStreet(CONTACT_STREET);
+		ret.setLandRegistryNumber(CONTACT_LAND_REGISTRY_NO);
+		ret.setHouseNumber(CONTACT_HOUSE_NO);
+		ret.setCity(CONTACT_CITY);
+		ret.setZipCode(CONTACT_ZIP_CODE);
+		ret.setEmail1(CONTACT_EMAIL1);
+		ret.setEmail2(CONTACT_EMAIL2);
+		ret.setPhone1(CONTACT_PHONE1);
+		ret.setPhone2(CONTACT_PHONE2);
+
+		return ret;
+	}
+
+	protected CourseParticipant buildCourseParticipantUUIDGenerated() {
+		CourseParticipant ret = new CourseParticipant();
+		fillIdentEntity(ret);
+		ret.setBirthdate(PARTIC_BIRTHDATE);
+		ret.setContact(buildContactGeneratedUuid());
+		ret.setHealthInfo(PARTIC_HEALTH_INFO);
+		ret.setPersonalNo(PARTIC_PERSONAL_NO);
+		return ret;
+	}
+
+	protected CourseParticipant buildCourseParticipant() {
+		CourseParticipant ret = new CourseParticipant();
+		fillIdentEntity(ret);
+		ret.setBirthdate(PARTIC_BIRTHDATE);
+		ret.setContact(buildContact());
+		ret.setHealthInfo(PARTIC_HEALTH_INFO);
+		ret.setPersonalNo(PARTIC_PERSONAL_NO);
+		return ret;
+	}
+
 	protected CodeListItem buildCodelistItem() {
 		CodeListItem ret = new CodeListItem();
 		fillIdentEntity(ret);
 		ret.setName(CODELIST_ITEM_NAME);
 		ret.setType(CODELIST_ITEM_TYPE);
+
+		return ret;
+	}
+
+	protected ScbUser buildScbUser() {
+		ScbUser ret = new ScbUser();
+		fillIdentEntity(ret);
+		ret.setUsername(USERNAME);
+		ret.setPassword(PASSWORD);
+		ret.setPasswordGenerated(PASSWORD_GENERATED);
+		ret.setRole(ROLE);
+		ret.setContact(buildContact());
 
 		return ret;
 	}

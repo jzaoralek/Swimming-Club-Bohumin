@@ -13,11 +13,6 @@ import com.jzaoralek.scb.dataservice.utils.vo.Cover;
 
 public class ScbUserDaoTest extends BaseTestCase {
 
-	private static final String USERNAME = "username";
-	private static final String PASSWORD = "password";
-	private static final boolean PASSWORD_GENERATED = true;
-	private static final ScbUserRole ROLE = ScbUserRole.ADMIN;
-
 	@Autowired
 	private ScbUserDao scbUserDao;
 
@@ -25,14 +20,7 @@ public class ScbUserDaoTest extends BaseTestCase {
 
 	@Before
 	public void setUp() {
-		item = new ScbUser();
-		fillIdentEntity(item);
-
-		item.setUsername(USERNAME);
-		item.setPassword(PASSWORD);
-		item.setPasswordGenerated(PASSWORD_GENERATED);
-		item.setRole(ROLE);
-		item.setContact(buildContact());
+		item = buildScbUser();
 
 		scbUserDao.insert(item);
 	}

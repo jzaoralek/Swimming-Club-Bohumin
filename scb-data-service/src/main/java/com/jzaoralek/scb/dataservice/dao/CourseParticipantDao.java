@@ -7,7 +7,6 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 
 public interface CourseParticipantDao {
 
-	List<CourseParticipant> getAll();
 	CourseParticipant getByUuid(UUID uuid, boolean deep);
 	List<CourseParticipant> getByCourseUuid(UUID courseUuid);
 	void deleteParticipantFromCourse(UUID participantUuid, UUID courseUuid);
