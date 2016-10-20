@@ -46,6 +46,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", ca.uuid " +
 					", ca.modif_at " +
 					", ca.modif_by " +
+					", con_part.city " +
+					", con_part.street " +
+					", con_part.land_registry_number " +
+					", con_part.house_number " +
+					", con_part.zip_code " +
 					"from  " +
 					"course_application ca " +
 					", course_participant cp " +
@@ -74,6 +79,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", ca.uuid " +
 					", ca.modif_at " +
 					", ca.modif_by " +
+					", con_part.city " +
+					", con_part.street " +
+					", con_part.land_registry_number " +
+					", con_part.house_number " +
+					", con_part.zip_code " +
 					"from  " +
 					"course_application ca " +
 					", course_participant cp " +
@@ -103,6 +113,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
+			", con_part.city " +
+			", con_part.street " +
+			", con_part.land_registry_number " +
+			", con_part.house_number " +
+			", con_part.zip_code " +
 			"from  " +
 			"course_application ca " +
 			", course_participant cp " +
@@ -132,6 +147,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
+			", con_part.city " +
+			", con_part.street " +
+			", con_part.land_registry_number " +
+			", con_part.house_number " +
+			", con_part.zip_code " +
 			"from  " +
 			"course_application ca " +
 			", course_participant cp " +
@@ -250,6 +270,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			Contact courseParticipantContact = new Contact();
 			courseParticipantContact.setFirstname(rs.getString("firstname"));
 			courseParticipantContact.setSurname(rs.getString("surname"));
+			courseParticipantContact.setCity(rs.getString("city"));
+			courseParticipantContact.setStreet(rs.getString("street"));
+			courseParticipantContact.setLandRegistryNumber(rs.getLong("land_registry_number"));
+			courseParticipantContact.setHouseNumber(rs.getShort("house_number"));
+			courseParticipantContact.setZipCode(rs.getString("zip_code"));
 			courseParticipant.setContact(courseParticipantContact);
 
 			ret.setCourseParticipant(courseParticipant);

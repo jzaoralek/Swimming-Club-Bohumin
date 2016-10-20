@@ -168,10 +168,11 @@ public class CourseApplicationListVM extends BaseVM {
 
 		// header
 		Listhead lh = listbox.getListhead();
-		Object[] headerArray = new Object[lh.getChildren().size()];
+		Object[] headerArray = new Object[lh.getChildren().size() + 1];
 		for (int i = 0; i < lh.getChildren().size(); i++) {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
+		headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.residence");
 		data.put("0", headerArray);
 
 		// rows
@@ -189,7 +190,8 @@ public class CourseApplicationListVM extends BaseVM {
 								item.getCourseParticRepresentative().getContact().getPhone1(),
 								item.getCourseParticRepresentative().getContact().getEmail1(),
 								dateFormat.format(item.getModifAt()),
-								item.getCourseParticipant().getInCourseInfo()});
+								item.getCourseParticipant().getInCourseInfo(),
+								item.getCourseParticipant().getContact().buildResidence()});
 				} else {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
@@ -197,7 +199,8 @@ public class CourseApplicationListVM extends BaseVM {
 								item.getCourseParticRepresentative().getContact().getCompleteName(),
 								item.getCourseParticRepresentative().getContact().getPhone1(),
 								item.getCourseParticRepresentative().getContact().getEmail1(),
-								item.getCourseParticipant().getInCourseInfo()});
+								item.getCourseParticipant().getInCourseInfo(),
+								item.getCourseParticipant().getContact().buildResidence()});
 				}
 			}
 		}

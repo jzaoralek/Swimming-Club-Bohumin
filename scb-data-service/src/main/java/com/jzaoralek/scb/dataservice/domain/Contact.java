@@ -117,6 +117,16 @@ public class Contact implements IdentEntity {
 	public void setPhone2(String phone2) {
 		this.phone2 = phone2;
 	}
+	public String buildResidence() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.city + ", ");
+		sb.append(this.street + " ");
+		sb.append(this.landRegistryNumber);
+		if (this.houseNumber != null && this.houseNumber > 0) {
+			sb.append("/"+this.houseNumber);
+		}
+		return sb.toString();
+	}
 
 	@Override
 	public String toString() {
