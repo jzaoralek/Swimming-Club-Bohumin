@@ -94,6 +94,18 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	}
 
 	@Override
+	@Transactional(rollbackFor=Throwable.class)
+	public void updatePayed(UUID uuid, boolean payed) throws ScbValidationException {
+		CourseApplication courseApplication = courseApplicationDao.getByUuid(uuid, true);
+		if (courseApplication == null) {
+			LOG.warn("CourseApplication not found, uuid: " + uuid);
+			throw new ScbValidationException(messageSource.getMessage("msg.validation.warn.courseApplication.notExistsInDB", null, Locale.getDefault()));
+		}
+
+		courseApplicationDao.updatePayed(courseApplication, payed);
+	}
+
+	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public void delete(UUID uuid) throws ScbValidationException {
 		CourseApplication courseApplication = courseApplicationDao.getByUuid(uuid, true);

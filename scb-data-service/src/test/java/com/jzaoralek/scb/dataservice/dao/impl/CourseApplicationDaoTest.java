@@ -98,6 +98,17 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	}
 
 	@Test
+	public void testUpdatePayed() {
+		item.setPayed(true);
+
+		courseApplicationDao.update(item);
+		CourseApplication item = courseApplicationDao.getByUuid(ITEM_UUID, false);
+		Assert.assertNotNull(item);
+		Assert.assertTrue(ITEM_UUID.toString().equals(item.getUuid().toString()));
+		Assert.assertTrue(item.isPayed());
+	}
+
+	@Test
 	public void testDelete() {
 		courseApplicationDao.delete(item);
 		CourseApplication item = courseApplicationDao.getByUuid(ITEM_UUID, false);

@@ -14,6 +14,7 @@ public class CourseApplication implements IdentEntity {
 	private Date modifAt;
 	private int yearFrom;
 	private int yearTo;
+	private boolean payed;
 	private CourseParticipant courseParticipant;
 	private ScbUser courseParticRepresentative;
 
@@ -58,6 +59,12 @@ public class CourseApplication implements IdentEntity {
 	public void setYearTo(int yearTo) {
 		this.yearTo = yearTo;
 	}
+	public boolean isPayed() {
+		return payed;
+	}
+	public void setPayed(boolean payed) {
+		this.payed = payed;
+	}
 	public CourseParticipant getCourseParticipant() {
 		return courseParticipant;
 	}
@@ -85,7 +92,7 @@ public class CourseApplication implements IdentEntity {
 	@Override
 	public String toString() {
 		return "CourseApplication [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", yearFrom="
-				+ yearFrom + ", yearTo=" + yearTo + ", courseParticipant=" + courseParticipant
+				+ yearFrom + ", yearTo=" + yearTo + ", payed=" + payed + ", courseParticipant=" + courseParticipant
 				+ ", courseParticRepresentative=" + courseParticRepresentative + "]";
 	}
 }

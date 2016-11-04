@@ -31,6 +31,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	private static final String COURSE_PARTICIPANT_UUID_PARAM = "COURSE_PARTICIPANT_UUID";
 	private static final String USER_UUID_PARAM = "USER_UUID";
+	private static final String PAYED_PARAM = "PAYED";
 
 	private static final String INSERT = "INSERT INTO course_application (uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by) values (:"+UUID_PARAM+",:"+YEAR_FROM_PARAM+",:"+YEAR_TO_PARAM+",:"+COURSE_PARTICIPANT_UUID_PARAM+",:"+USER_UUID_PARAM+",:"+MODIF_AT_PARAM+",:"+MODIF_BY_PARAM+")";
 	private static final String SELECT_ALL = "select " +
@@ -46,6 +47,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", ca.uuid " +
 					", ca.modif_at " +
 					", ca.modif_by " +
+					", ca.payed " +
 					", con_part.city " +
 					", con_part.street " +
 					", con_part.land_registry_number " +
@@ -79,6 +81,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", ca.uuid " +
 					", ca.modif_at " +
 					", ca.modif_by " +
+					", ca.payed " +
 					", con_part.city " +
 					", con_part.street " +
 					", con_part.land_registry_number " +
@@ -113,6 +116,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
+			", ca.payed " +
 			", con_part.city " +
 			", con_part.street " +
 			", con_part.land_registry_number " +
@@ -147,6 +151,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
+			", ca.payed " +
 			", con_part.city " +
 			", con_part.street " +
 			", con_part.land_registry_number " +
@@ -169,9 +174,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			"AND cp.uuid = ccp.course_participant_uuid " +
 			"order by con_part.surname ";
 
-	private static final String SELECT_BY_UUID = "select uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by from course_application where uuid=:" + UUID_PARAM;
+	private static final String SELECT_BY_UUID = "select uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by, payed from course_application where uuid=:" + UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course_application where uuid = :" + UUID_PARAM;
-	private static final String UPDATE = "UPDATE course_application SET year_from=:"+YEAR_FROM_PARAM+", year_to=:"+YEAR_TO_PARAM+", course_participant_uuid=:"+COURSE_PARTICIPANT_UUID_PARAM+", user_uuid=:"+USER_UUID_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE = "UPDATE course_application SET year_from=:"+YEAR_FROM_PARAM+", year_to=:"+YEAR_TO_PARAM+", course_participant_uuid=:"+COURSE_PARTICIPANT_UUID_PARAM+", user_uuid=:"+USER_UUID_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", payed = :"+PAYED_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE_PAYED = "UPDATE course_application SET modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", payed = :"+PAYED_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
@@ -204,8 +210,20 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		paramMap.addValue(YEAR_TO_PARAM, courseApplication.getYearTo());
 		paramMap.addValue(COURSE_PARTICIPANT_UUID_PARAM, courseApplication.getCourseParticipant().getUuid() != null ? courseApplication.getCourseParticipant().getUuid().toString() : "");
 		paramMap.addValue(USER_UUID_PARAM, courseApplication.getCourseParticRepresentative().getUuid() != null ? courseApplication.getCourseParticRepresentative().getUuid().toString() : "");
+		paramMap.addValue(PAYED_PARAM, courseApplication.isPayed() ? "1" : "0");
 
 		namedJdbcTemplate.update(UPDATE, paramMap);
+	}
+
+	@Override
+	public void updatePayed(CourseApplication courseApplication, boolean payed) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		fillIdentEntity(courseApplication, paramMap);
+
+		paramMap.addValue(COURSE_PARTICIPANT_UUID_PARAM, courseApplication.getCourseParticipant().getUuid() != null ? courseApplication.getCourseParticipant().getUuid().toString() : "");
+		paramMap.addValue(PAYED_PARAM, payed ? "1" : "0");
+
+		namedJdbcTemplate.update(UPDATE_PAYED, paramMap);
 	}
 
 	@Override
@@ -289,6 +307,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 			ret.setCourseParticRepresentative(courseParticRepresentative);
 
+			ret.setPayed(rs.getInt("payed") == 1);
+
 			return ret;
 		}
 	}
@@ -319,6 +339,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			if (courseParticipantrepresentativeUuid != null) {
 				ret.setCourseParticRepresentative(scbUserDao.getByUuid(courseParticipantrepresentativeUuid));
 			}
+			ret.setPayed(rs.getInt("payed") == 1);
 
 			return ret;
 		}

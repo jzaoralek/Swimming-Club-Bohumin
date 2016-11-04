@@ -13,5 +13,6 @@ public interface CourseApplicationService {
 	List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo);
 	CourseApplication getByUuid(UUID uuid);
 	CourseApplication store(CourseApplication courseApplication) throws ScbValidationException;
+	void updatePayed(UUID uuid, boolean payed) throws ScbValidationException;
 	void delete(UUID uuid) throws ScbValidationException;
 }

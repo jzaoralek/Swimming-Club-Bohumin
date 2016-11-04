@@ -14,5 +14,6 @@ public interface CourseApplicationDao {
 	CourseApplication getByUuid(UUID uuid, boolean deep);
 	void insert(CourseApplication courseApplication);
 	void update(CourseApplication courseApplication);
+	void updatePayed(CourseApplication courseApplication, boolean payed);
 	void delete(CourseApplication courseApplication);
 }

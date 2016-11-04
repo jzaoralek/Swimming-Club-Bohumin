@@ -78,7 +78,6 @@ public class CourseApplicationListVM extends BaseVM {
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT.name())) {
 					loadData();
-					eq.unsubscribe(this);
 				}
 			}
 		});
@@ -161,6 +160,28 @@ public class CourseApplicationListVM extends BaseVM {
 		loadData();
 	}
 
+	@NotifyChange("*")
+	@Command
+	public void updatePayedCmd(@BindingParam(WebConstants.CHECKED_PARAM) final Boolean checked
+			, @BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
+		if (checked == null) {
+			throw new IllegalArgumentException("checked is null");
+		}
+		if (uuid == null) {
+			throw new IllegalArgumentException("uuid is null");
+		}
+
+		try {
+			courseApplicationService.updatePayed(uuid, checked);
+			EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT, null, null);
+			//WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationDeleted", msgParams));
+		} catch (ScbValidationException e) {
+			LOG.warn("ScbValidationException caught for application with uuid: " + uuid);
+			WebUtils.showNotificationError(e.getMessage());
+		}
+
+	}
+
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
 		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
 
@@ -200,6 +221,7 @@ public class CourseApplicationListVM extends BaseVM {
 								item.getCourseParticRepresentative().getContact().getPhone1(),
 								item.getCourseParticRepresentative().getContact().getEmail1(),
 								item.getCourseParticipant().getInCourseInfo(),
+								item.isPayed() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
 								item.getCourseParticipant().getContact().buildResidence()});
 				}
 			}
@@ -267,9 +289,10 @@ public class CourseApplicationListVM extends BaseVM {
 		private String course;
 		private String courseLc;
 		private Boolean inCourse;
+		private Boolean payed;
 
-		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean inCourseIn, boolean emptyMatch) {
-			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null && inCourse == null) {
+		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean inCourseIn, boolean payedIn, boolean emptyMatch) {
+			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null && inCourse == null && payed == null) {
 				return emptyMatch;
 			}
 			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
@@ -299,6 +322,9 @@ public class CourseApplicationListVM extends BaseVM {
 			if (inCourse != null && (inCourse != inCourseIn)) {
 				return false;
 			}
+			if (payed != null && (payed != payedIn)) {
+				return false;
+			}
 			return true;
 		}
 
@@ -317,6 +343,7 @@ public class CourseApplicationListVM extends BaseVM {
 						, dateTimeFormat.format(item.getModifAt())
 						, item.getCourseParticipant().getInCourseInfo()
 						, item.getCourseParticipant().inCourse()
+						, item.isPayed()
 						, true)) {
 					ret.add(item);
 				}
@@ -403,6 +430,14 @@ public class CourseApplicationListVM extends BaseVM {
 			this.inCourse = inCourse;
 		}
 
+		public Boolean getPayed() {
+			return payed;
+		}
+
+		public void setPayed(Boolean payed) {
+			this.payed = payed;
+		}
+
 		public void setEmptyValues() {
 			code = null;
 			courseParticName = null;
@@ -417,6 +452,7 @@ public class CourseApplicationListVM extends BaseVM {
 			course = null;
 			courseLc = null;
 			inCourse = null;
+			payed = null;
 		}
 	}
 }
