@@ -12,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
@@ -28,6 +29,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	private static final String HEALTH_INFO_PARAM = "health_info";
 	private static final String COURSE_PARTICIPANT_UUID_PARAM = "course_participant_uuid";
 	private static final String COURSE_UUID_PARAM = "course_uuid";
+	private static final String LEARNING_LESSON_UUID_PARAM = "learning_lesson_uuid";
 
 	private static final String INSERT = "INSERT INTO course_participant " +
 			"(uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by) " +
@@ -37,6 +39,14 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	private static final String SELECT_BY_COURSE_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by FROM course_participant cp, course_course_participant ccp "
 			+ "WHERE cp.uuid = ccp.course_participant_uuid "
 			+ "AND ccp.course_uuid = :"+COURSE_UUID_PARAM;
+
+	private static final String SELECT_BY_LEARNING_LESSON_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by FROM course_participant cp, participant_learning_lesson cpl "
+			+ "WHERE cp.uuid = cpl.course_participant_uuid "
+			+ "AND cpl.learning_lesson_uuid = " + LEARNING_LESSON_UUID_PARAM;
+
+	private static final String INSERT_PARTIC_LEARNING_LESSON = "INSERT INTO participant_learning_lesson (course_participant_uuid, learning_lesson_uuid) VALUES (:"+COURSE_PARTICIPANT_UUID_PARAM+", :"+LEARNING_LESSON_UUID_PARAM+")";
+	private static final String DELETE_ALL_FROM_LEARNING_LESSON = "DELETE FROM participant_learning_lesson WHERE learning_lesson_uuid = :"+LEARNING_LESSON_UUID_PARAM;
+
 	private static final String DELETE_ALL_FROM_COURSE = "DELETE from course_course_participant WHERE course_uuid = :"+COURSE_UUID_PARAM;
 	private static final String DELETE_PARTICIPANT_FROM_COURSE = "DELETE from course_course_participant WHERE course_uuid = :"+COURSE_UUID_PARAM+" AND course_participant_uuid = :"+COURSE_PARTICIPANT_UUID_PARAM;
 
@@ -123,6 +133,31 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	public List<CourseParticipant> getByCourseUuid(UUID courseUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
 		return namedJdbcTemplate.query(SELECT_BY_COURSE_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
+	}
+
+	@Override
+	public List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(LEARNING_LESSON_UUID_PARAM, learningLessonUuid.toString());
+		return namedJdbcTemplate.query(SELECT_BY_LEARNING_LESSON_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
+	}
+
+	@Override
+	public void insertToLearningLesson(UUID learningLessonUuid, List<CourseParticipant> participantList) {
+		if (CollectionUtils.isEmpty(participantList)) {
+			return;
+		}
+		MapSqlParameterSource paramMap;
+		for (CourseParticipant item : participantList) {
+			paramMap = new MapSqlParameterSource();
+			paramMap.addValue(LEARNING_LESSON_UUID_PARAM, learningLessonUuid.toString());
+			paramMap.addValue(COURSE_PARTICIPANT_UUID_PARAM, item.getUuid().toString());
+			namedJdbcTemplate.update(INSERT_PARTIC_LEARNING_LESSON, paramMap);
+		}
+	}
+
+	@Override
+	public void deleteAllFromLearningLesson(UUID learningLessonUuid) {
+		namedJdbcTemplate.update(DELETE_ALL_FROM_LEARNING_LESSON, new MapSqlParameterSource().addValue(LEARNING_LESSON_UUID_PARAM, learningLessonUuid.toString()));
 	}
 
 	public static final class CourseParticipantRowMapper implements RowMapper<CourseParticipant> {

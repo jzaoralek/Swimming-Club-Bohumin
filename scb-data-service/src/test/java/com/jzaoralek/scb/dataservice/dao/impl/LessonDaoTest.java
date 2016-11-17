@@ -1,6 +1,5 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
-import java.sql.Time;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -15,11 +14,6 @@ import com.jzaoralek.scb.dataservice.domain.Lesson.DayOfWeek;
 
 public class LessonDaoTest extends BaseTestCase {
 
-	private static final Time TIME_FROM = new Time(1000);
-	private static final Time TIME_TO = new Time(1050);
-	private static final DayOfWeek DAY_OF_WEEK = DayOfWeek.MONDAY;
-	private static final UUID COURSE_UUID = UUID.randomUUID();
-
 	@Autowired
 	private LessonDao lessonDao;
 
@@ -27,13 +21,7 @@ public class LessonDaoTest extends BaseTestCase {
 
 	@Before
 	public void setUp() {
-		item = new Lesson();
-		fillIdentEntity(item);
-		item.setTimeFrom(TIME_FROM);
-		item.setTimeTo(TIME_TO);
-		item.setDayOfWeek(DAY_OF_WEEK);
-		item.setCourseUuid(COURSE_UUID);
-//		item.setCourse();
+		item = buildLesson();
 
 		lessonDao.insert(item);
 	}

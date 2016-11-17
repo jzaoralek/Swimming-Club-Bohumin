@@ -1,12 +1,14 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
@@ -38,6 +40,11 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 	@Test
 	public void testGetByCourseUuid() {
 		assertList(courseParticipantDao.getByCourseUuid(UUID.randomUUID()), 0, null);
+	}
+
+	@Test
+	public void testGetByLearningLessonUuid() {
+		assertList(courseParticipantDao.getByLearningLessonUuid(UUID.randomUUID()), 0, null);
 	}
 
 	@Test
@@ -75,5 +82,29 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 	public void testDelete() {
 		courseParticipantDao.delete(item);
 		Assert.assertNull(courseParticipantDao.getByUuid(ITEM_UUID, false));
+	}
+
+	@Test
+	public void testInsertToLearningLesson() {
+		UUID learningLessonUuid = UUID.randomUUID();
+		courseParticipantDao.insertToLearningLesson(learningLessonUuid, Arrays.asList(item));
+
+		List<CourseParticipant> courseParticipantList = courseParticipantDao.getByLearningLessonUuid(learningLessonUuid);
+		Assert.assertTrue(!CollectionUtils.isEmpty(courseParticipantList));
+		Assert.assertTrue(!courseParticipantList.isEmpty() && courseParticipantList.size() == 1);
+	}
+
+	@Test
+	public void testDeleteAllFromLearningLesson() {
+		UUID learningLessonUuid = UUID.randomUUID();
+		courseParticipantDao.insertToLearningLesson(learningLessonUuid, Arrays.asList(item));
+
+		List<CourseParticipant> courseParticipantList = courseParticipantDao.getByLearningLessonUuid(learningLessonUuid);
+		Assert.assertTrue(!CollectionUtils.isEmpty(courseParticipantList));
+		Assert.assertTrue(!courseParticipantList.isEmpty() && courseParticipantList.size() == 1);
+
+		courseParticipantDao.deleteAllFromLearningLesson(learningLessonUuid);
+		courseParticipantList = courseParticipantDao.getByLearningLessonUuid(learningLessonUuid);
+		Assert.assertTrue(CollectionUtils.isEmpty(courseParticipantList));
 	}
 }

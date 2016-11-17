@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.dao;
 
+import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,8 @@ import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.IdentEntity;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
+import com.jzaoralek.scb.dataservice.domain.Lesson.DayOfWeek;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 
@@ -52,6 +55,12 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 	protected static final boolean PASSWORD_GENERATED = true;
 	protected static final ScbUserRole ROLE = ScbUserRole.ADMIN;
 
+	protected static final Time TIME_FROM = new Time(1000);
+	protected static final Time TIME_TO = new Time(1050);
+	protected static final String DESCRIPTION = "description";
+
+	protected static final DayOfWeek DAY_OF_WEEK = DayOfWeek.MONDAY;
+	protected static final UUID COURSE_UUID = UUID.randomUUID();
 
 	protected void fillIdentEntity(IdentEntity identEntity) {
 		if (identEntity == null) {
@@ -161,6 +170,17 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 		ret.setPasswordGenerated(PASSWORD_GENERATED);
 		ret.setRole(ROLE);
 		ret.setContact(buildContact());
+
+		return ret;
+	}
+
+	protected Lesson buildLesson() {
+		Lesson ret = new Lesson();
+		fillIdentEntity(ret);
+		ret.setTimeFrom(TIME_FROM);
+		ret.setTimeTo(TIME_TO);
+		ret.setDayOfWeek(DAY_OF_WEEK);
+		ret.setCourseUuid(COURSE_UUID);
 
 		return ret;
 	}

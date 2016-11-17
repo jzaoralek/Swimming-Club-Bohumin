@@ -22,8 +22,6 @@ import com.jzaoralek.scb.dataservice.domain.Lesson.DayOfWeek;
 @Repository
 public class LessonDaoImpl extends BaseJdbcDao implements LessonDao {
 
-	private static final String TIME_FROM_PARAM = "TIME_FROM";
-	private static final String TIME_TO_PARAM = "TIME_TO";
 	private static final String DAY_OF_WEEK_PARAM = "DAY_OF_WEEK";
 
 	private static final String SELECT_ALL = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson";

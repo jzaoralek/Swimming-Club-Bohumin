@@ -9,6 +9,9 @@ public interface CourseParticipantDao {
 
 	CourseParticipant getByUuid(UUID uuid, boolean deep);
 	List<CourseParticipant> getByCourseUuid(UUID courseUuid);
+	List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid);
+	void insertToLearningLesson(UUID learningLessonUuid, List<CourseParticipant> participantList);
+	void deleteAllFromLearningLesson(UUID learningLessonUuid);
 	void deleteParticipantFromCourse(UUID participantUuid, UUID courseUuid);
 	void deleteAllFromCourse(UUID courseUuid);
 	void insetToCourse(List<CourseParticipant> courseParticipantList, UUID courseUuid);

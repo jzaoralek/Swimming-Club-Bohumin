@@ -21,6 +21,10 @@ public abstract class BaseJdbcDao {
 	protected static final String YEAR_FROM_PARAM = "YEAR_FROM";
 	protected static final String YEAR_TO_PARAM = "YEAR_TO";
 	protected static final String COURSE_UUID_PARAM = "COURSE_UUID";
+	protected static final String LESSON_UUID_PARAM = "LESSON_UUID";
+	protected static final String TIME_FROM_PARAM = "TIME_FROM";
+	protected static final String TIME_TO_PARAM = "TIME_TO";
+	protected static final String DESCRIPTION_PARAM = "description";
 
 	protected final JdbcTemplate jdbcTemplate;
 	protected final NamedParameterJdbcTemplate namedJdbcTemplate;
