@@ -12,7 +12,7 @@
 	<borderlayout sclass="content-wrapper" >
 		<north border="none" >
 			<vlayout id="vlayoutElem">
-				<include src="/pages/common/template/navbar.zul"/>
+				<include src="/pages/common/template/navbar.zul" style="margin-bottom: -5px"/>
 				<include src="/pages/common/template/menu.zul"/>
 			</vlayout>
 		</north>

@@ -88,6 +88,14 @@ public class CourseListVM extends BaseVM {
 		Executions.sendRedirect("/pages/secured/kurz.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 	}
 
+	@Command
+    public void courseLearningLessonsCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
+		if (uuid ==  null) {
+			throw new IllegalArgumentException("uuid is null");
+		}
+		Executions.sendRedirect("/pages/secured/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+	}
+
 	@NotifyChange("*")
 	@Command
 	public void refreshDataCmd() {

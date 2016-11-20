@@ -24,9 +24,9 @@ public class LessonDaoImpl extends BaseJdbcDao implements LessonDao {
 
 	private static final String DAY_OF_WEEK_PARAM = "DAY_OF_WEEK";
 
-	private static final String SELECT_ALL = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson";
-	private static final String SELECT_BY_COURSE = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson WHERE course_uuid = :"+COURSE_UUID_PARAM;
-	private static final String SELECT_BY_COURSE_AND_DAY_OF_WEEK = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson WHERE course_uuid = :"+COURSE_UUID_PARAM+" AND day_of_week = :"+DAY_OF_WEEK_PARAM;
+	private static final String SELECT_ALL = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson ORDER BY day_of_week, time_from";
+	private static final String SELECT_BY_COURSE = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson WHERE course_uuid = :"+COURSE_UUID_PARAM + " ORDER BY day_of_week, time_from";
+	private static final String SELECT_BY_COURSE_AND_DAY_OF_WEEK = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson WHERE course_uuid = :"+COURSE_UUID_PARAM+" AND day_of_week = :"+DAY_OF_WEEK_PARAM + " ORDER BY day_of_week, time_from";
 	private static final String SELECT_BY_UUID = "SELECT uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by FROM lesson WHERE uuid = :" + UUID_PARAM;
 	private static final String INSERT = "INSERT INTO lesson (uuid, time_from, time_to, day_of_week, course_uuid, modif_at, modif_by) " +
 			"VALUES (:"+UUID_PARAM+", :"+TIME_FROM_PARAM+", :"+TIME_TO_PARAM+", :"+DAY_OF_WEEK_PARAM+", :"+COURSE_UUID_PARAM+",:"+MODIF_AT_PARAM+",:"+MODIF_BY_PARAM+")";

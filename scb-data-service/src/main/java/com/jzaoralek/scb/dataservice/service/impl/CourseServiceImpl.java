@@ -62,6 +62,11 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 
 	@Override
+	public List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid) {
+		return courseParticipantDao.getByCourseUuid(courseUuid);
+	}
+
+	@Override
 	public Course store(Course course) throws ScbValidationException {
 		if (course == null) {
 			throw new IllegalArgumentException("course is null");

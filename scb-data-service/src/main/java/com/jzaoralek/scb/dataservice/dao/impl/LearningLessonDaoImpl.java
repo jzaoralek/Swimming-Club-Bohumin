@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,9 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 
 	private static final String LESSON_DATE_PARAM = "LESSON_DATE";
 
-	private static final String SELECT_BY_LESSON= "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid = " + LESSON_UUID_PARAM;
+	private static final String SELECT_BY_LESSON = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid = :" + LESSON_UUID_PARAM;
+	private static final String SELECT_BY_COURSE = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+")";
+	private static final String SELECT_BY_UUID = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE uuid = :" + UUID_PARAM;
 	private static final String INSERT = "INSERT INTO learning_lesson "
 			+ "(uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid) "
 			+ "VALUES (:"+UUID_PARAM+", :"+LESSON_DATE_PARAM+", :"+TIME_FROM_PARAM+", :"+TIME_TO_PARAM+", :"+DESCRIPTION_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+LESSON_UUID_PARAM+")";
@@ -49,7 +52,23 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 	@Override
 	public List<LearningLesson> getByLesson(UUID lessonUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(LESSON_UUID_PARAM, lessonUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_LESSON, paramMap, new LearningLessonRowMapper(courseParticipantDao, lessonDao));
+		return namedJdbcTemplate.query(SELECT_BY_LESSON, paramMap, new LearningLessonRowMapper(courseParticipantDao, lessonDao, false));
+	}
+
+	@Override
+	public List<LearningLesson> getByCourse(UUID courseUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		return namedJdbcTemplate.query(SELECT_BY_COURSE, paramMap, new LearningLessonRowMapper(courseParticipantDao, lessonDao, false));
+	}
+
+	@Override
+	public LearningLesson getByUUID(UUID uuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
+		try {
+			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new LearningLessonRowMapper(courseParticipantDao, lessonDao, true));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -99,10 +118,12 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 	public static final class LearningLessonRowMapper implements RowMapper<LearningLesson> {
 		private final CourseParticipantDao courseParticipantDao;
 		private final LessonDao lessonDao;
+		private final boolean detail;
 
-		public LearningLessonRowMapper(CourseParticipantDao courseParticipantDao, LessonDao lessonDao) {
+		public LearningLessonRowMapper(CourseParticipantDao courseParticipantDao, LessonDao lessonDao, boolean detail) {
 			this.courseParticipantDao = courseParticipantDao;
 			this.lessonDao = lessonDao;
+			this.detail = detail;
 		}
 
 		@Override
@@ -110,12 +131,15 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			LearningLesson ret = new LearningLesson();
 			fetchIdentEntity(rs, ret);
 			ret.setDescription(rs.getString("description"));
-			UUID lessonUuid = UUID.fromString(rs.getString("lesson_uuid"));
-			ret.setLesson(lessonDao.getByUuid(lessonUuid));
-			ret.setParticipantList(courseParticipantDao.getByLearningLessonUuid(ret.getUuid()));
-			ret.setLessonDate(rs.getDate("lesson_date"));
+			ret.setLessonDate(transDate(rs.getDate("lesson_date")));
 			ret.setTimeFrom(rs.getTime("time_from"));
 			ret.setTimeTo(rs.getTime("time_to"));
+			UUID lessonUuid = UUID.fromString(rs.getString("lesson_uuid"));
+			ret.setLesson(lessonDao.getByUuid(lessonUuid));
+
+			if (this.detail) {
+				ret.setParticipantList(courseParticipantDao.getByLearningLessonUuid(ret.getUuid()));
+			}
 
 			return ret;
 		}

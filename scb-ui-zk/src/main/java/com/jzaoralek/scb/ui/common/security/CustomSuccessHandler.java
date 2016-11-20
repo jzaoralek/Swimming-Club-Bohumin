@@ -50,7 +50,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if (isDba(roles)) {
             url = "/db";
         } else if (isAdmin(roles)) {
-            url = "/pages/secured/seznam-prihlasek.zul";
+            url = "/pages/secured/seznam-kurzu.zul";
         } else if (isUser(roles)) {
             url = "/user";
         } else {

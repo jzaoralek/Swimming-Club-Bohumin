@@ -17,6 +17,16 @@ public class LearningLesson implements IdentEntity {
 	private Lesson lesson;
 	private List<CourseParticipant> participantList;
 
+	public LearningLesson() {
+	}
+
+	public LearningLesson(Lesson lesson, Date date) {
+		this.setLesson(lesson);
+		this.setTimeFrom(lesson.getTimeFrom());
+		this.setTimeTo(lesson.getTimeTo());
+		this.setLessonDate(date);
+	}
+
 	@Override
 	public UUID getUuid() {
 		return uuid;

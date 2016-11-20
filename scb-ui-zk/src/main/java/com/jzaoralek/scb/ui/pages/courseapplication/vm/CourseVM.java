@@ -41,7 +41,6 @@ public class CourseVM extends BaseVM {
 	private Course course;
 	private List<String> courseYearList;
 	private String courseYearSelected;
-	private String pageHeadline;
 	private Boolean updateMode;
 	private List<CourseParticipant> participantSelectedList;
 
@@ -206,10 +205,6 @@ public class CourseVM extends BaseVM {
 
 	public void setCourseYearSelected(String courseYearSelected) {
 		this.courseYearSelected = courseYearSelected;
-	}
-
-	public String getPageHeadline() {
-		return pageHeadline;
 	}
 
 	public Boolean getUpdateMode() {

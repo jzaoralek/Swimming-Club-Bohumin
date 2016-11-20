@@ -51,7 +51,7 @@ public class LearningLessonDaoTest extends BaseTestCase {
 	@Test
 	public void testUpdate() {
 		List<LearningLesson> list = learningLessonDao.getByLesson(lessonItem.getUuid());
-		LearningLesson itemDB = list.get(0);
+		LearningLesson itemDB = learningLessonDao.getByUUID(list.get(0).getUuid());
 
 		String descriptionUpdated = "descriptionUpdated";
 		itemDB.setDescription(descriptionUpdated);

@@ -1,0 +1,97 @@
+<?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
+<?page title="${c:l('txt.ui.organization.name')}" ?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+<?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
+
+
+<zk>
+	<div self="@{define(mainContent)}" hflex="1" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseLearningLessonsVM')"
+			 validationMessages="@id('vmsgs')"
+       		 form="@id('fx') @load(vm) @save(vm, before='submit')" >
+		
+		<hlayout spacing="0">
+			<vbox hflex="1" />
+			
+			<vbox hflex="20" pack="center" >
+				<hbox hflex="1" align="center" vflex="1" >
+					<vbox hflex="3">
+						<headline label="${vm.pageHeadline}" menuSelected="menu_courseList" />
+					</vbox>
+					<vbox hflex="1" vflex="1" align="end" pack="center">
+						<button onClick="@command('backCmd')" 
+							label="${c:l('txt.ui.common.Back')}" 
+							iconSclass="z-icon-arrow-left" />
+					</vbox>
+				</hbox>
+			</vbox>
+			
+			<vbox hflex="1" />
+		</hlayout>
+		
+		<hlayout spacing="0">
+			<vbox hflex="1" />
+				<!-- Formular -->
+				<vbox hflex="20" pack="center" sclass="vbox-content" >	    
+					<listbox model="@load(vm.learningLessonList)"
+						id="courseList"
+						hflex="1"
+						style="margin-bottom: 20px;"
+						emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+						class="listbox" >
+				        <auxhead>
+				            <auxheader class="header" colspan="5" >
+				            	<hbox hflex="1" height="42px" align="center" >
+					            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+				            			<hbox vflex="1" align="center">
+				            				<button onClick="@command('previousMonthCmd')" 
+				            					tooltiptext="${c:l('txt.ui.common.previousMonth')}" 
+				            					sclass="btn-warning" 
+				            					disabled="@load(vm.prevMonthBtnDisabled)"
+				            					iconSclass="z-icon-arrow-left" />
+				            				<vbox width="120px" align="center">
+					            				<label id="lblActualMonth" value="@load(vm.monthSelectedLabel)" />
+				            				</vbox>
+				            				<button onClick="@command('nextMonthCmd')" 
+				            					tooltiptext="${c:l('txt.ui.common.nextMonth')}" 
+				            					sclass="btn-warning"
+				            					disabled="@load(vm.nextMonthBtnDisabled)" 
+				            					iconSclass="z-icon-arrow-right"/>
+				            			</hbox>
+				            		</vbox>
+								</hbox>
+				            </auxheader>
+				        </auxhead>
+				        
+				        <listhead>
+				        	<listheader label="${c:l('txt.ui.common.dayOfWeek')}" align="left" sort="auto(lesson.dayOfWeek)" />
+				        	<listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(lessonDate)" />
+							<listheader label="${c:l('txt.ui.common.time')}" align="left" />
+				            <listheader label="${c:l('txt.ui.common.lessonProcessed')}" align="center" />
+				            <listheader width="50px" align="center" />
+				        </listhead>
+				         
+				        <template name="model">
+				            <listitem>
+				            	<listcell label="@load(each.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" onDoubleClick="@command('lessonDetailCmd', item=each)" />
+				            	<listcell label="@load(each.lessonDate) @converter(vm.dateConverter)" onDoubleClick="@command('lessonDetailCmd', item=each)" />
+				                <listcell onDoubleClick="@command('lessonDetailCmd', item=each)" >
+				                	<label value="@load(each.timeFrom) @converter(vm.timeConverter)" /> - 
+				                	<label value="@load(each.timeTo) @converter(vm.timeConverter)" />
+				                </listcell>              	
+				                <listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" tooltiptext="${c:l('txt.ui.common.yes')}" visible="${each.uuid ne null}" onDoubleClick="@command('lessonDetailCmd', item=each)" />
+                				<listcell visible="${each.uuid eq null}" onDoubleClick="@command('lessonDetailCmd', item=each)" />
+				                <listcell>
+				                	<button iconSclass="z-icon-pencil" onClick="@command('lessonDetailCmd', item=each)" hflex="min" width="20px" />
+				                </listcell>
+				            </listitem>
+				        </template>
+				    </listbox>
+				</vbox>
+			<vbox hflex="1" />
+		</hlayout>
+	</div>
+</zk>
+
+
+

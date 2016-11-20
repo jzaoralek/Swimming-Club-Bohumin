@@ -85,7 +85,7 @@
 			            <listheader label="${c:l('txt.ui.common.year')}" align="left" sort="auto(year)" />
 			            <listheader label="${c:l('txt.ui.common.participantCount')}" sort="auto(participantListCount)" align="left"  />
 			            <listheader label="${c:l('txt.ui.common.lessonPerWeekCount')}" sort="auto(lessonListCount)" align="left"  />
-			            <listheader width="50px" align="center" />
+			            <listheader width="140px" align="center" />
 			        </listhead>
 			         
 			        <template name="model">
@@ -96,9 +96,11 @@
 			                <listcell label="${each.participantListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="${each.lessonListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />	                	
 			                <listcell>
+			                	<button label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
 			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
 			                	<menupopup id="menuCourse_${each.uuid}" >
 									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
+									<menuitem label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
 									<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)"  />
 						       	</menupopup>
 			                </listcell>

@@ -27,6 +27,7 @@ import com.jzaoralek.scb.ui.common.validator.Validators;
 public class BaseVM {
 
 	private final String appVersion = ManifestSolver.getMainAttributeValue("Application-version");
+	protected String pageHeadline;
 
 	private final List<Boolean> booleanListItem = Arrays.asList(null, Boolean.TRUE, Boolean.FALSE);
 	private final List<Listitem> roleList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(ScbUserRole.class));
@@ -175,6 +176,10 @@ public class BaseVM {
 
 	public String getAppVersion() {
 		return appVersion;
+	}
+
+	public String getPageHeadline() {
+		return pageHeadline;
 	}
 
 	/**

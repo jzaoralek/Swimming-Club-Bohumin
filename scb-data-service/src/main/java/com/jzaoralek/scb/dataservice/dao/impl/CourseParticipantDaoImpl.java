@@ -42,7 +42,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	private static final String SELECT_BY_LEARNING_LESSON_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by FROM course_participant cp, participant_learning_lesson cpl "
 			+ "WHERE cp.uuid = cpl.course_participant_uuid "
-			+ "AND cpl.learning_lesson_uuid = " + LEARNING_LESSON_UUID_PARAM;
+			+ "AND cpl.learning_lesson_uuid = :" + LEARNING_LESSON_UUID_PARAM;
 
 	private static final String INSERT_PARTIC_LEARNING_LESSON = "INSERT INTO participant_learning_lesson (course_participant_uuid, learning_lesson_uuid) VALUES (:"+COURSE_PARTICIPANT_UUID_PARAM+", :"+LEARNING_LESSON_UUID_PARAM+")";
 	private static final String DELETE_ALL_FROM_LEARNING_LESSON = "DELETE FROM participant_learning_lesson WHERE learning_lesson_uuid = :"+LEARNING_LESSON_UUID_PARAM;

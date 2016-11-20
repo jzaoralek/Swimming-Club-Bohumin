@@ -3031,7 +3031,7 @@ a.z-tab-content{
 
 .navbar-ext {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
-    margin-bottom: 4px;
+    margin-bottom: 0px;
 }
 
 .main-menu .z-menu:LAST-CHILD{

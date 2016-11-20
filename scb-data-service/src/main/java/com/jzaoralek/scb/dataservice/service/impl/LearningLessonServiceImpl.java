@@ -27,6 +27,16 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 	}
 
 	@Override
+	public List<LearningLesson> getByCourse(UUID courseUuid) {
+		return learningLessonDao.getByCourse(courseUuid);
+	}
+
+	@Override
+	public LearningLesson getByUUID(UUID uuid) {
+		return learningLessonDao.getByUUID(uuid);
+	}
+
+	@Override
 	public LearningLesson store(LearningLesson lesson) {
 		if (lesson == null) {
 			throw new IllegalArgumentException("learningLesson is null");
