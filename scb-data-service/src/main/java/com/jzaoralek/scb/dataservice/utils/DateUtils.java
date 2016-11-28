@@ -3,6 +3,7 @@ package com.jzaoralek.scb.dataservice.utils;
 import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public final class DateUtils {
 
@@ -33,5 +34,27 @@ public final class DateUtils {
 		} else {
 			return true;
 		}
+	}
+	
+	/**
+	 * Converts given Date to normalized form.
+	 * <p>
+	 * Normalized form has zero time part in default GregorianCalendar.
+	 *
+	 * @param d date to be normalized or null
+	 * @return new instance of java.util.Date with normalized time part
+	 */
+	public static Date normalizeToDay(Date d) {
+		if (d == null) {
+			return null;
+		}
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(d);
+		cal.set(Calendar.HOUR_OF_DAY, 0);            // set hour to midnight
+		cal.set(Calendar.MINUTE, 0);                 // set minute in hour
+		cal.set(Calendar.SECOND, 0);                 // set second in minute
+		cal.set(Calendar.MILLISECOND, 0);            // set millis in second
+
+		return cal.getTime();
 	}
 }

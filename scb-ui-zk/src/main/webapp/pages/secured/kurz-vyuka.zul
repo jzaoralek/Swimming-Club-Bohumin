@@ -73,16 +73,16 @@
 				         
 				        <template name="model">
 				            <listitem>
-				            	<listcell label="@load(each.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" onDoubleClick="@command('lessonDetailCmd', item=each)" />
-				            	<listcell label="@load(each.lessonDate) @converter(vm.dateConverter)" onDoubleClick="@command('lessonDetailCmd', item=each)" />
-				                <listcell onDoubleClick="@command('lessonDetailCmd', item=each)" >
+				            	<listcell label="@load(each.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" height="50px" />
+				            	<listcell label="@load(each.lessonDate) @converter(vm.dateConverter)" />
+				                <listcell>
 				                	<label value="@load(each.timeFrom) @converter(vm.timeConverter)" /> - 
 				                	<label value="@load(each.timeTo) @converter(vm.timeConverter)" />
 				                </listcell>              	
-				                <listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" tooltiptext="${c:l('txt.ui.common.yes')}" visible="${each.uuid ne null}" onDoubleClick="@command('lessonDetailCmd', item=each)" />
-                				<listcell visible="${each.uuid eq null}" onDoubleClick="@command('lessonDetailCmd', item=each)" />
+				                <listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" tooltiptext="${c:l('txt.ui.common.yes')}" visible="${each.uuid ne null}" />
+                				<listcell visible="${each.uuid eq null}" />
 				                <listcell>
-				                	<button iconSclass="z-icon-pencil" onClick="@command('lessonDetailCmd', item=each)" hflex="min" width="20px" />
+				                	<button iconSclass="z-icon-pencil" onClick="@command('lessonDetailCmd', item=each)" hflex="min" width="20px" visible="@load(!each.inFuture)" />
 				                </listcell>
 				            </listitem>
 				        </template>

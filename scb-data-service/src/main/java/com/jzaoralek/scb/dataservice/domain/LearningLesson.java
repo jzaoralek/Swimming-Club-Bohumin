@@ -1,9 +1,12 @@
 package com.jzaoralek.scb.dataservice.domain;
 
 import java.sql.Time;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import com.jzaoralek.scb.dataservice.utils.DateUtils;
 
 public class LearningLesson implements IdentEntity {
 
@@ -86,6 +89,14 @@ public class LearningLesson implements IdentEntity {
 	}
 	public void setParticipantList(List<CourseParticipant> participantList) {
 		this.participantList = participantList;
+	}
+	
+	/**
+	 * Datum lekce v budoucnu.
+	 * @return
+	 */
+	public boolean isInFuture() {
+		return DateUtils.normalizeToDay(this.lessonDate).after(DateUtils.normalizeToDay(Calendar.getInstance().getTime()));
 	}
 
 	@Override
