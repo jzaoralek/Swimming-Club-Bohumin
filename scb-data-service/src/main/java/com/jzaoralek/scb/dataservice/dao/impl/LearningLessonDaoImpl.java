@@ -2,6 +2,9 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +21,8 @@ import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.LearningLessonDao;
 import com.jzaoralek.scb.dataservice.dao.LessonDao;
+import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
 
 @Repository
@@ -27,6 +32,21 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 
 	private static final String SELECT_BY_LESSON = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid = :" + LESSON_UUID_PARAM;
 	private static final String SELECT_BY_COURSE = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+")";
+
+	private static final String SELECT_BY_COURSE_WITH_PARTICIPANTS =
+			" SELECT ls.uuid, ls.lesson_date, ls.time_from, ls.time_to, ls.description, ls.modif_at, ls.modif_by, ls.lesson_uuid "
+			+ ", cp.uuid \"COURSE_PARTICIPANT_UUID\"  "
+			+ ", c.firstname, c.surname "
+			+ "FROM learning_lesson ls "
+			+ ", participant_learning_lesson pls "
+			+ ", course_participant cp "
+			+ ", contact c "
+			+ "WHERE lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+") "
+			+ "AND ls.uuid = pls.learning_lesson_uuid "
+			+ "AND cp.uuid = pls.course_participant_uuid "
+			+ "AND cp.contact_uuid = c.uuid "
+			+ "ORDER BY lesson_date, time_from ";
+
 	private static final String SELECT_BY_UUID = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE uuid = :" + UUID_PARAM;
 	private static final String INSERT = "INSERT INTO learning_lesson "
 			+ "(uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid) "
@@ -59,6 +79,52 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 	public List<LearningLesson> getByCourse(UUID courseUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
 		return namedJdbcTemplate.query(SELECT_BY_COURSE, paramMap, new LearningLessonRowMapper(courseParticipantDao, lessonDao, false));
+	}
+
+	@Override
+	public List<LearningLesson> getByCourseWithFilledParticipantList(UUID courseUuid) {
+		List<LearningLesson> flatStructure = getByCourseWithFlatParticipantList(courseUuid);
+		if (CollectionUtils.isEmpty(flatStructure)) {
+			return Collections.EMPTY_LIST;
+		}
+		List<LearningLesson> ret = new ArrayList<LearningLesson>();
+		LearningLesson lessonInList = null;
+		for (LearningLesson item : flatStructure) {
+			lessonInList = getItemFromList(item, ret);
+			if (lessonInList != null) {
+				lessonInList.getParticipantList().addAll(item.getParticipantList());
+			} else {
+				ret.add(item);
+			}
+		}
+
+		return ret;
+	}
+
+	private LearningLesson getItemFromList(LearningLesson item, List<LearningLesson> list) {
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		for (LearningLesson lessonItem : list) {
+			if (lessonItem.getUuid().toString().equals(item.getUuid().toString())) {
+				return lessonItem;
+			}
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * Vraci flat strukturu seznamu learning lesson vzdy s jednim ucastnikem v seznamu.
+	 * Potreba seskupit a ucastniky vlozit do listu pro kazdou polozku
+	 * @param courseUuid
+	 * @return
+	 */
+	private List<LearningLesson> getByCourseWithFlatParticipantList(UUID courseUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_WITH_PARTICIPANTS, paramMap, new LearningLessonWithParticRowMapper(lessonDao));
 	}
 
 	@Override
@@ -140,6 +206,38 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			if (this.detail) {
 				ret.setParticipantList(courseParticipantDao.getByLearningLessonUuid(ret.getUuid()));
 			}
+
+			return ret;
+		}
+	}
+
+	public static final class LearningLessonWithParticRowMapper implements RowMapper<LearningLesson> {
+
+		private final LessonDao lessonDao;
+
+		public LearningLessonWithParticRowMapper(LessonDao lessonDao) {
+			this.lessonDao = lessonDao;
+		}
+
+		@Override
+		public LearningLesson mapRow(ResultSet rs, int rowNum) throws SQLException {
+			LearningLesson ret = new LearningLesson();
+			fetchIdentEntity(rs, ret);
+			ret.setDescription(rs.getString("description"));
+			ret.setLessonDate(transDate(rs.getDate("lesson_date")));
+			ret.setTimeFrom(rs.getTime("time_from"));
+			ret.setTimeTo(rs.getTime("time_to"));
+			UUID lessonUuid = UUID.fromString(rs.getString("lesson_uuid"));
+			ret.setLesson(lessonDao.getByUuid(lessonUuid));
+
+			CourseParticipant coursePartic = new CourseParticipant();
+			coursePartic.setUuid(UUID.fromString(rs.getString("COURSE_PARTICIPANT_UUID")));
+			Contact contact = new Contact();
+			contact.setFirstname(rs.getString("firstname"));
+			contact.setSurname(rs.getString("surname"));
+			coursePartic.setContact(contact);
+
+			ret.setParticipantList(Arrays.asList(coursePartic));
 
 			return ret;
 		}

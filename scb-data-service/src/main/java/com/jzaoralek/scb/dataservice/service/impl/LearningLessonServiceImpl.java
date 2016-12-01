@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.LearningLessonDao;
+import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
@@ -20,6 +23,9 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 
 	@Autowired
 	private LearningLessonDao learningLessonDao;
+
+	@Autowired
+	private CourseParticipantDao courseParticipantDao;
 
 	@Override
 	public List<LearningLesson> getByLesson(UUID lessonUuid) {
@@ -64,5 +70,18 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 			LOG.debug("Deleting lesson: " + lesson);
 		}
 		learningLessonDao.delete(lesson);
+	}
+
+	@Override
+	public void buildCourseStatistics(Course course) {
+		List<LearningLesson> learningLessonList = learningLessonDao.getByCourse(course.getUuid());
+		List<CourseParticipant> courseParticipantList = courseParticipantDao.getByCourseUuid(course.getUuid());
+		for (LearningLesson learninLesson : learningLessonList) {
+			courseParticipantDao.getByLearningLessonUuid(learninLesson.getUuid());
+			for (CourseParticipant courseParticipant : courseParticipantList) {
+
+			}
+		}
+
 	}
 }
