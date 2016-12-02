@@ -21,6 +21,25 @@ public class CourseParticipant implements IdentEntity {
 	private String healthInfo;
 	private List<Result> resultList;
 	private List<Course> courseList;
+	/*
+	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
+	 */
+	private boolean lessonAttendance;
+
+	public CourseParticipant(CourseParticipant courseParticipant) {
+		super();
+		this.uuid = courseParticipant.uuid;
+		this.modifBy = courseParticipant.modifBy;
+		this.modifAt = courseParticipant.modifAt;
+		this.contact = courseParticipant.contact;
+		this.birthdate = courseParticipant.birthdate;
+		this.personalNo = courseParticipant.personalNo;
+		this.healthInsurance = courseParticipant.healthInsurance;
+		this.healthInfo = courseParticipant.healthInfo;
+		this.resultList = courseParticipant.resultList;
+		this.courseList = courseParticipant.courseList;
+		this.lessonAttendance = courseParticipant.lessonAttendance;
+	}
 
 	public CourseParticipant() {
 		this.contact = new Contact();
@@ -98,6 +117,14 @@ public class CourseParticipant implements IdentEntity {
 
 	public boolean inCourse() {
 		return !CollectionUtils.isEmpty(this.courseList);
+	}
+	
+	public boolean isLessonAttendance() {
+		return lessonAttendance;
+	}
+
+	public void setLessonAttendance(boolean lessonAttendance) {
+		this.lessonAttendance = lessonAttendance;
 	}
 
 	public String getInCourseInfo() {

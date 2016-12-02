@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -7,12 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.LearningLessonDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
+import com.jzaoralek.scb.dataservice.domain.LearningLessonStats;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 
@@ -73,15 +76,40 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 	}
 
 	@Override
-	public void buildCourseStatistics(Course course) {
-		List<LearningLesson> learningLessonList = learningLessonDao.getByCourse(course.getUuid());
+	public List<LearningLessonStats> buildCourseStatistics(Course course) {
+		List<LearningLessonStats> ret = new ArrayList<LearningLessonStats>();
+		// oducene vyucovaci hodiny s ucastniky na hodine
+		List<LearningLesson> learningLessonList = learningLessonDao.getByCourseWithFilledParticipantList(course.getUuid());
+		// vsichni ucastnici kurzu
 		List<CourseParticipant> courseParticipantList = courseParticipantDao.getByCourseUuid(course.getUuid());
+		// prochazet oducene vyucovaci hodiny a v nich ucastniky porovnat se vsemi ucastniky kurzu
+		List<CourseParticipant> courseParticAttendaceList = null;
+		CourseParticipant courseParticAttendace = null;
 		for (LearningLesson learninLesson : learningLessonList) {
-			courseParticipantDao.getByLearningLessonUuid(learninLesson.getUuid());
+			// sestavit seznam ucastniku s ucasti na hodine
+			courseParticAttendaceList = new ArrayList<CourseParticipant>();
 			for (CourseParticipant courseParticipant : courseParticipantList) {
-
+				// pro kazdeho ucastnika kurzu zjistit zda-li ma ucast na hodine
+				courseParticAttendace = new CourseParticipant(courseParticipant);
+				courseParticAttendace.setLessonAttendance(isCourseParticipantInList(courseParticipant, learninLesson.getParticipantList()));
+				courseParticAttendaceList.add(courseParticAttendace);
+			}
+			ret.add(new LearningLessonStats(learninLesson, courseParticAttendaceList));
+		}
+		
+		return ret;
+	}
+	
+	private boolean isCourseParticipantInList(CourseParticipant participant, List<CourseParticipant> courseParticList) {
+		if (CollectionUtils.isEmpty(courseParticList) || participant == null) {
+			return false;
+		}
+		for (CourseParticipant courseParticItem : courseParticList) {
+			if (participant.getUuid().toString().equals(courseParticItem.getUuid().toString())) {
+				return true;
 			}
 		}
-
+		
+		return false;
 	}
 }

@@ -24,6 +24,7 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
+import com.jzaoralek.scb.dataservice.domain.LearningLessonStats;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
@@ -71,7 +72,9 @@ public class CourseLearningLessonsVM extends BaseVM {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		this.monthSelected = cal;
 		buildLessonList(this.monthSelected);
-
+		
+		List<LearningLessonStats> learningLessonStatsList = learningLessonService.buildCourseStatistics(this.course);
+		
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.LEARNING_LESSON_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
 			@Override

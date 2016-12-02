@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
@@ -37,15 +38,11 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			" SELECT ls.uuid, ls.lesson_date, ls.time_from, ls.time_to, ls.description, ls.modif_at, ls.modif_by, ls.lesson_uuid "
 			+ ", cp.uuid \"COURSE_PARTICIPANT_UUID\"  "
 			+ ", c.firstname, c.surname "
-			+ "FROM learning_lesson ls "
-			+ ", participant_learning_lesson pls "
-			+ ", course_participant cp "
-			+ ", contact c "
+			+ "FROM learning_lesson ls LEFT JOIN participant_learning_lesson pls ON (ls.uuid = pls.learning_lesson_uuid) "
+			+ "LEFT JOIN course_participant cp ON (pls.course_participant_uuid = cp.uuid) "
+			+ "LEFT JOIN contact c ON (cp.contact_uuid = c.uuid) "
 			+ "WHERE lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+") "
-			+ "AND ls.uuid = pls.learning_lesson_uuid "
-			+ "AND cp.uuid = pls.course_participant_uuid "
-			+ "AND cp.contact_uuid = c.uuid "
-			+ "ORDER BY lesson_date, time_from ";
+			+ "ORDER BY lesson_date, time_from; ";
 
 	private static final String SELECT_BY_UUID = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE uuid = :" + UUID_PARAM;
 	private static final String INSERT = "INSERT INTO learning_lesson "
@@ -230,14 +227,17 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			UUID lessonUuid = UUID.fromString(rs.getString("lesson_uuid"));
 			ret.setLesson(lessonDao.getByUuid(lessonUuid));
 
-			CourseParticipant coursePartic = new CourseParticipant();
-			coursePartic.setUuid(UUID.fromString(rs.getString("COURSE_PARTICIPANT_UUID")));
-			Contact contact = new Contact();
-			contact.setFirstname(rs.getString("firstname"));
-			contact.setSurname(rs.getString("surname"));
-			coursePartic.setContact(contact);
-
-			ret.setParticipantList(Arrays.asList(coursePartic));
+			String courseParticUuid = rs.getString("COURSE_PARTICIPANT_UUID");
+			if (StringUtils.hasText(courseParticUuid)) {
+				CourseParticipant coursePartic = new CourseParticipant();
+				coursePartic.setUuid(UUID.fromString(courseParticUuid));
+				Contact contact = new Contact();
+				contact.setFirstname(rs.getString("firstname"));
+				contact.setSurname(rs.getString("surname"));
+				coursePartic.setContact(contact);
+				
+				ret.setParticipantList(Arrays.asList(coursePartic));				
+			}
 
 			return ret;
 		}

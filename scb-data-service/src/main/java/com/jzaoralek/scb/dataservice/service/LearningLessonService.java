@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
+import com.jzaoralek.scb.dataservice.domain.LearningLessonStats;
 
 public interface LearningLessonService {
 
@@ -13,5 +14,10 @@ public interface LearningLessonService {
 	LearningLesson getByUUID(UUID uuid);
 	LearningLesson store(LearningLesson lesson);
 	void delete(LearningLesson lesson);
-	void buildCourseStatistics(Course course);
+	/**
+	 * Cilem sestavit list lekci, u kazde list participantu s boolean attendance.
+	 * @param course
+	 * @return
+	 */
+	List<LearningLessonStats> buildCourseStatistics(Course course);
 }
