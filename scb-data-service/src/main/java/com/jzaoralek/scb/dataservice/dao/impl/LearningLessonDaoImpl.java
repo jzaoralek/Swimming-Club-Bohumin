@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -86,13 +88,23 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 		}
 		List<LearningLesson> ret = new ArrayList<LearningLesson>();
 		LearningLesson lessonInList = null;
+		Map<UUID,List<CourseParticipant>> lessonMap = new HashMap<>();
 		for (LearningLesson item : flatStructure) {
+			if (!CollectionUtils.isEmpty(item.getParticipantList())) {
+				if (lessonMap.containsKey(item.getUuid())) {
+					lessonMap.get(item.getUuid()).addAll(new ArrayList<CourseParticipant>(item.getParticipantList()));
+				} else {
+					lessonMap.put(item.getUuid(), new ArrayList<CourseParticipant>(item.getParticipantList()));
+				}				
+			}
+			/*
 			lessonInList = getItemFromList(item, ret);
 			if (lessonInList != null) {
 				lessonInList.getParticipantList().addAll(item.getParticipantList());
 			} else {
 				ret.add(item);
 			}
+			*/
 		}
 
 		return ret;

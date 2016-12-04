@@ -16,6 +16,7 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
 import com.jzaoralek.scb.dataservice.domain.LearningLessonStats;
+import com.jzaoralek.scb.dataservice.domain.LearningLessonStatsWrapper;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 
@@ -76,8 +77,8 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 	}
 
 	@Override
-	public List<LearningLessonStats> buildCourseStatistics(Course course) {
-		List<LearningLessonStats> ret = new ArrayList<LearningLessonStats>();
+	public LearningLessonStatsWrapper buildCourseStatistics(Course course) {
+		List<LearningLessonStats> learnLessonsStatsList = new ArrayList<LearningLessonStats>();
 		// oducene vyucovaci hodiny s ucastniky na hodine
 		List<LearningLesson> learningLessonList = learningLessonDao.getByCourseWithFilledParticipantList(course.getUuid());
 		// vsichni ucastnici kurzu
@@ -94,10 +95,10 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 				courseParticAttendace.setLessonAttendance(isCourseParticipantInList(courseParticipant, learninLesson.getParticipantList()));
 				courseParticAttendaceList.add(courseParticAttendace);
 			}
-			ret.add(new LearningLessonStats(learninLesson, courseParticAttendaceList));
+			learnLessonsStatsList.add(new LearningLessonStats(learninLesson, courseParticAttendaceList));
 		}
 		
-		return ret;
+		return new LearningLessonStatsWrapper(courseParticipantList, learnLessonsStatsList);
 	}
 	
 	private boolean isCourseParticipantInList(CourseParticipant participant, List<CourseParticipant> courseParticList) {

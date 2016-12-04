@@ -32,61 +32,113 @@
 		<hlayout spacing="0">
 			<vbox hflex="1" />
 				<!-- Formular -->
-				<vbox hflex="20" pack="center" sclass="vbox-content" >	    
-					<listbox model="@load(vm.learningLessonList)"
-						id="courseList"
-						hflex="1"
-						style="margin-bottom: 20px;"
-						emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-						class="listbox" >
-				        <auxhead>
-				            <auxheader class="header" colspan="5" >
-				            	<hbox hflex="1" height="42px" align="center" >
-					            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-				            			<hbox vflex="1" align="center">
-				            				<button onClick="@command('previousMonthCmd')" 
-				            					tooltiptext="${c:l('txt.ui.common.previousMonth')}" 
-				            					sclass="btn-warning" 
-				            					disabled="@load(vm.prevMonthBtnDisabled)"
-				            					iconSclass="z-icon-arrow-left" />
-				            				<vbox width="120px" align="center">
-					            				<label id="lblActualMonth" value="@load(vm.monthSelectedLabel)" />
-				            				</vbox>
-				            				<button onClick="@command('nextMonthCmd')" 
-				            					tooltiptext="${c:l('txt.ui.common.nextMonth')}" 
-				            					sclass="btn-warning"
-				            					disabled="@load(vm.nextMonthBtnDisabled)" 
-				            					iconSclass="z-icon-arrow-right"/>
-				            			</hbox>
-				            		</vbox>
-								</hbox>
-				            </auxheader>
-				        </auxhead>
-				        
-				        <listhead>
-				        	<listheader label="${c:l('txt.ui.common.dayOfWeek')}" align="left" sort="auto(lesson.dayOfWeek)" />
-				        	<listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(lessonDate)" />
-							<listheader label="${c:l('txt.ui.common.time')}" align="left" />
-				            <listheader label="${c:l('txt.ui.common.lessonProcessed')}" align="center" />
-				            <listheader width="50px" align="center" />
-				        </listhead>
-				         
-				        <template name="model">
-				            <listitem>
-				            	<listcell label="@load(each.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" height="50px" />
-				            	<listcell label="@load(each.lessonDate) @converter(vm.dateConverter)" />
-				                <listcell>
-				                	<label value="@load(each.timeFrom) @converter(vm.timeConverter)" /> - 
-				                	<label value="@load(each.timeTo) @converter(vm.timeConverter)" />
-				                </listcell>              	
-				                <listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" tooltiptext="${c:l('txt.ui.common.yes')}" visible="${each.uuid ne null}" />
-                				<listcell visible="${each.uuid eq null}" />
-				                <listcell>
-				                	<button iconSclass="z-icon-pencil" onClick="@command('lessonDetailCmd', item=each)" hflex="min" width="20px" visible="@load(!each.inFuture)" />
-				                </listcell>
-				            </listitem>
-				        </template>
-				    </listbox>
+				<vbox hflex="20" pack="center" sclass="vbox-content" >
+					<tabbox id="tb" hflex="1">
+					    <tabs id="tabs">
+					        <tab id="lessonAttendance" label="${c:l('txt.ui.common.lessons')}" />
+					        <tab id="lessonAttendanceStats" label="${c:l('txt.ui.common.attendance')}" onClick="@command('loadLessonStatsCmd')"  />
+					    </tabs>
+					    <tabpanels>
+					    	<tabpanel>
+					    		<listbox model="@load(vm.learningLessonList)"
+									id="courseList"
+									hflex="1"
+									style="margin-bottom: 20px;"
+									emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+									class="listbox" >
+							        <auxhead>
+							            <auxheader class="header" colspan="5" >
+							            	<hbox hflex="1" height="42px" align="center" >
+								            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+							            			<hbox vflex="1" align="center">
+							            				<button onClick="@command('previousMonthCmd')" 
+							            					tooltiptext="${c:l('txt.ui.common.previousMonth')}" 
+							            					sclass="btn-warning" 
+							            					disabled="@load(vm.prevMonthBtnDisabled)"
+							            					iconSclass="z-icon-arrow-left" />
+							            				<vbox width="120px" align="center">
+								            				<label id="lblActualMonth" value="@load(vm.monthSelectedLabel)" />
+							            				</vbox>
+							            				<button onClick="@command('nextMonthCmd')" 
+							            					tooltiptext="${c:l('txt.ui.common.nextMonth')}" 
+							            					sclass="btn-warning"
+							            					disabled="@load(vm.nextMonthBtnDisabled)" 
+							            					iconSclass="z-icon-arrow-right"/>
+							            			</hbox>
+							            		</vbox>
+											</hbox>
+							            </auxheader>
+							        </auxhead>
+							        
+							        <listhead>
+							        	<listheader label="${c:l('txt.ui.common.dayOfWeek')}" align="left" sort="auto(lesson.dayOfWeek)" />
+							        	<listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(lessonDate)" />
+										<listheader label="${c:l('txt.ui.common.time')}" align="left" />
+							            <listheader label="${c:l('txt.ui.common.lessonProcessed')}" align="center" />
+							            <listheader width="50px" align="center" />
+							        </listhead>
+							         
+							        <template name="model">
+							            <listitem>
+							            	<listcell label="@load(each.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" height="50px" />
+							            	<listcell label="@load(each.lessonDate) @converter(vm.dateConverter)" />
+							                <listcell>
+							                	<label value="@load(each.timeFrom) @converter(vm.timeConverter)" /> - 
+							                	<label value="@load(each.timeTo) @converter(vm.timeConverter)" />
+							                </listcell>              	
+							                <listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" tooltiptext="${c:l('txt.ui.common.yes')}" visible="${each.uuid ne null}" />
+			                				<listcell visible="${each.uuid eq null}" />
+							                <listcell>
+							                	<button iconSclass="z-icon-pencil" onClick="@command('lessonDetailCmd', item=each)" hflex="min" width="20px" visible="@load(!each.inFuture)" />
+							                </listcell>
+							            </listitem>
+							        </template>
+							    </listbox>
+					    	</tabpanel>
+					    	<tabpanel>
+					    		<grid sclass="grid-spreadsheet" height="100%" width="100%"
+						            model="@load(vm.lessonStats.learnLessonsStatsList)">
+						            <frozen style="background: #DFDED8" columns="3">
+						                <div style="padding: 0 10px;" />
+						            </frozen>
+						            <columns>
+						                <column align="left" sclass="header" width="60px" />
+						                <column align="center" sclass="header" width="80px" />
+						                <column align="center" sclass="header last" width="80px" />
+						                <column align="center" style="white-space: normal;" width="80px"
+						                    forEach="${vm.lessonStats.getParticipantCompleteNameArr()}"
+						                    label="${each}" />
+						            </columns>
+						            <template name="model">
+						                <row>
+						                	<cell sclass="years" >
+						                		<label value="@load(each.learningLesson.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" />
+						                    </cell>
+						                    <cell sclass="season">
+						                        <label value="@load(each.learningLesson.lessonDate) @converter(vm.dateConverter)" />
+						                    </cell>
+						                    <cell sclass="month last">
+						                        <label value="@load(each.learningLesson.timeFrom) @converter(vm.timeConverter)" /> - 
+						                		<label value="@load(each.learningLesson.timeTo) @converter(vm.timeConverter)" />
+						                    </cell>
+						                    <label forEach="${each.courseParticipantList}" value="${each.lessonAttendance ? 'Ano' : 'Ne'}"
+						                    	style="${each.lessonAttendance ? 'color:green;' : 'color:red;'}" />
+						                	<!--						 
+						                    <intbox forEach="${$composer.days}"
+						                        format="#,###" constraint="no empty" width="55px"
+						                        inplace="true"
+						                        value="${each.days[forEachStatus.index] }"
+						                        style="${each.days[forEachStatus.index] lt 0 ? 'color:red;text-align:right' : 'color:#373842;text-align:right'}"
+						                        if="${each.numberOfDays gt forEachStatus.index}" />
+						                    -->
+						                </row>
+						            </template>
+						 
+						        </grid>
+					    		
+					    	</tabpanel>
+						</tabpanels>
+					</tabbox>
 				</vbox>
 			<vbox hflex="1" />
 		</hlayout>

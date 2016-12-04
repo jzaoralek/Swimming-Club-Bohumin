@@ -23,6 +23,19 @@ public class LearningLesson implements IdentEntity {
 	public LearningLesson() {
 	}
 
+	public LearningLesson(LearningLesson learningLesson) {
+		super();
+		this.uuid = learningLesson.uuid;
+		this.modifBy = learningLesson.modifBy;
+		this.modifAt = learningLesson.modifAt;
+		this.lessonDate = learningLesson.lessonDate;
+		this.timeFrom = learningLesson.timeFrom;
+		this.timeTo = learningLesson.timeTo;
+		this.description = learningLesson.description;
+		this.lesson = learningLesson.lesson;
+		this.participantList = learningLesson.participantList;
+	}
+
 	public LearningLesson(Lesson lesson, Date date) {
 		this.setLesson(lesson);
 		this.setTimeFrom(lesson.getTimeFrom());

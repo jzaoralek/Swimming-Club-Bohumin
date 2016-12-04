@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
 import com.jzaoralek.scb.dataservice.domain.LearningLessonStats;
+import com.jzaoralek.scb.dataservice.domain.LearningLessonStatsWrapper;
 
 public interface LearningLessonService {
 
@@ -19,5 +20,5 @@ public interface LearningLessonService {
 	 * @param course
 	 * @return
 	 */
-	List<LearningLessonStats> buildCourseStatistics(Course course);
+	LearningLessonStatsWrapper buildCourseStatistics(Course course);
 }

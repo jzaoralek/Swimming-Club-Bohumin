@@ -24,7 +24,7 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
-import com.jzaoralek.scb.dataservice.domain.LearningLessonStats;
+import com.jzaoralek.scb.dataservice.domain.LearningLessonStatsWrapper;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
@@ -51,7 +51,9 @@ public class CourseLearningLessonsVM extends BaseVM {
 	private boolean prevMonthBtnDisabled;
 	private boolean nextMonthBtnDisabled;
 	private String monthSelectedLabel;
+	private LearningLessonStatsWrapper lessonStats;
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) final String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
 		if (!StringUtils.hasText(uuid)) {
@@ -73,7 +75,8 @@ public class CourseLearningLessonsVM extends BaseVM {
 		this.monthSelected = cal;
 		buildLessonList(this.monthSelected);
 		
-		List<LearningLessonStats> learningLessonStatsList = learningLessonService.buildCourseStatistics(this.course);
+		// statistika dochazky
+		this.lessonStats = learningLessonService.buildCourseStatistics(this.course);
 		
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.LEARNING_LESSON_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
@@ -119,6 +122,13 @@ public class CourseLearningLessonsVM extends BaseVM {
 	public void lessonDetailCmd(@BindingParam(WebConstants.ITEM_PARAM) LearningLesson item) {
 		 EventQueueHelper.publish(ScbEventQueues.LEARNING_LESSON_QUEUE, ScbEvent.LEARNIN_LESSON_DETAIL_DATA_EVENT, null, item);
 		 WebUtils.openModal("/pages/secured/learning-lesson-window.zul");
+	}
+	
+	@NotifyChange("lessonStats")
+	@Command
+	public void loadLessonStatsCmd() {
+		// statistika dochazky
+		this.lessonStats = learningLessonService.buildCourseStatistics(this.course);
 	}
 
 	/**
@@ -200,5 +210,9 @@ public class CourseLearningLessonsVM extends BaseVM {
 
 	public String getMonthSelectedLabel() {
 		return monthSelectedLabel;
+	}
+	
+	public LearningLessonStatsWrapper getLessonStats() {
+		return lessonStats;
 	}
 }
