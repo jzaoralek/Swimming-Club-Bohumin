@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.domain;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.util.CollectionUtils;
@@ -39,9 +40,39 @@ public class LearningLessonStatsWrapper {
 		}
 		String[] ret = new String[this.courseParticipantList.size()];
 		for (int i = 0; i < this.courseParticipantList.size(); i++) {
-			ret[i] = this.courseParticipantList.get(i).getContact().getCompleteName();
+			// nazev a statistika dochazka
+			ret[i] = this.courseParticipantList.get(i).getContact().getCompleteName() + "\n" + particAttendance(this.courseParticipantList.get(i).getUuid()) +"%";
 		}
 		return ret;
+	}
+	
+	/**
+	 * Statistika dochazka.
+	 * Pocet learnLessonsStatsList, projit learnLessonsStatsList, vyhledat ucastnika a zjistit pocet lekci s ucasti
+	 * @param particUuid
+	 * @return
+	 */
+	private int particAttendance(UUID particUuid) {
+		if (CollectionUtils.isEmpty(this.learnLessonsStatsList) || this.learnLessonsStatsList.size() == 0) {
+			return 0;
+		}
+		int attendance = 0;
+		for (LearningLessonStats learnLessonStatsItem : this.learnLessonsStatsList) {
+			for (CourseParticipant participantItem : learnLessonStatsItem.getCourseParticipantList()) {
+				if (participantItem.getUuid().toString().equals(particUuid.toString())) {
+					if (participantItem.isLessonAttendance()) {
+						attendance++;
+					}
+				}
+			}
+		}
+		
+		if (attendance == 0) {
+			return 0;
+		}
+		
+		float ret = (attendance * 100.0f) / this.learnLessonsStatsList.size();
+		return Math.round(ret);
 	}
 
 	@Override

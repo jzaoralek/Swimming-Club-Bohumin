@@ -96,22 +96,28 @@
 							    </listbox>
 					    	</tabpanel>
 					    	<tabpanel>
-					    		<grid sclass="grid-spreadsheet" height="100%" width="100%"
+					    		<style src="/resources/css/spreadsheet_grid.css" />
+					    		<grid sclass="grid-spreadsheet" height="100%" hflex="1" style="border: none"
 						            model="@load(vm.lessonStats.learnLessonsStatsList)">
 						            <frozen style="background: #DFDED8" columns="3">
 						                <div style="padding: 0 10px;" />
 						            </frozen>
 						            <columns>
-						                <column align="left" sclass="header" width="60px" />
+						                <column align="center" sclass="header" width="60px" />
 						                <column align="center" sclass="header" width="80px" />
 						                <column align="center" sclass="header last" width="80px" />
-						                <column align="center" style="white-space: normal;" width="80px"
+						                <column align="center" sclass="header last" style="white-space: normal;" width="80px"
 						                    forEach="${vm.lessonStats.getParticipantCompleteNameArr()}"
 						                    label="${each}" />
 						            </columns>
 						            <template name="model">
 						                <row>
+						                	<!--
 						                	<cell sclass="years" >
+						                		<label value="@load(each.learningLesson.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" />
+						                    </cell>
+						                    -->
+						                	<cell sclass="season" >
 						                		<label value="@load(each.learningLesson.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" />
 						                    </cell>
 						                    <cell sclass="season">

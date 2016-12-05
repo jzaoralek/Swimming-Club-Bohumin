@@ -5,9 +5,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -87,7 +90,6 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			return Collections.EMPTY_LIST;
 		}
 		List<LearningLesson> ret = new ArrayList<LearningLesson>();
-		LearningLesson lessonInList = null;
 		Map<UUID,List<CourseParticipant>> lessonMap = new HashMap<>();
 		for (LearningLesson item : flatStructure) {
 			if (!CollectionUtils.isEmpty(item.getParticipantList())) {
@@ -96,33 +98,37 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 				} else {
 					lessonMap.put(item.getUuid(), new ArrayList<CourseParticipant>(item.getParticipantList()));
 				}				
-			}
-			/*
-			lessonInList = getItemFromList(item, ret);
-			if (lessonInList != null) {
-				lessonInList.getParticipantList().addAll(item.getParticipantList());
 			} else {
+				// pridat lekce, kde nebyl ani jeden ucastnik
 				ret.add(item);
 			}
-			*/
+			
 		}
-
+		
+		LearningLesson lesson = null;
+		for (Entry<UUID, List<CourseParticipant>> entry : lessonMap.entrySet()) {
+			lesson = getItemFromList(entry.getKey(), flatStructure);
+			lesson.setParticipantList(entry.getValue());
+			ret.add(lesson);
+		}
+		
+		Collections.sort(ret, LearningLesson.LESSON_DATE_TIME_COMPARATOR);
+		
 		return ret;
 	}
 
-	private LearningLesson getItemFromList(LearningLesson item, List<LearningLesson> list) {
+	private LearningLesson getItemFromList(UUID uuid, List<LearningLesson> list) {
 		if (CollectionUtils.isEmpty(list)) {
 			return null;
 		}
 
 		for (LearningLesson lessonItem : list) {
-			if (lessonItem.getUuid().toString().equals(item.getUuid().toString())) {
+			if (lessonItem.getUuid().toString().equals(uuid.toString())) {
 				return lessonItem;
 			}
 		}
 
 		return null;
-
 	}
 
 	/**

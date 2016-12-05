@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.domain;
 
 import java.sql.Time;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -10,6 +11,18 @@ import com.jzaoralek.scb.dataservice.utils.DateUtils;
 
 public class LearningLesson implements IdentEntity {
 
+	public static final Comparator<LearningLesson> LESSON_DATE_TIME_COMPARATOR = new Comparator<LearningLesson>() {
+		@Override
+		public int compare(LearningLesson o1, LearningLesson o2) {
+			int c = o1.lessonDate.compareTo(o2.lessonDate);
+			if (c == 0) {
+				c = o1.timeFrom.compareTo(o2.timeFrom);
+			}
+			
+			return c;
+		}
+	};
+	
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
