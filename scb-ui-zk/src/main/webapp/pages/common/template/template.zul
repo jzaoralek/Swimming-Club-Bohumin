@@ -6,7 +6,11 @@
 		<!-- cut/hide the vertical borders in the grid rows -->
 		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
 		
-		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
+		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}
+		
+		.z-tabpanel {
+		    padding: 0px 0px;
+		}		
 	</style>
 	
 	<borderlayout sclass="content-wrapper" >

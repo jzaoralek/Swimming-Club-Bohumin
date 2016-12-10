@@ -1,5 +1,7 @@
 package com.jzaoralek.scb.dataservice.domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,19 +31,19 @@ public class LearningLessonStatsWrapper {
 	public List<LearningLessonStats> getLearnLessonsStatsList() {
 		return learnLessonsStatsList;
 	}
-	
+
 	/**
-	 * Vraci jmena ucastniku kurzu.
+	 * Vraci jmena a statistiku pro kazdeho ucastnika.
 	 * @return
 	 */
-	public String[] getParticipantCompleteNameArr() {
+	public List<LearningLessonParticipateStats> getParticipantStatsList() {
 		if (CollectionUtils.isEmpty(this.courseParticipantList)) {
-			return ArrayUtils.EMPTY_STRING_ARRAY;
+			return Collections.emptyList();
 		}
-		String[] ret = new String[this.courseParticipantList.size()];
-		for (int i = 0; i < this.courseParticipantList.size(); i++) {
+		List<LearningLessonParticipateStats> ret = new ArrayList<>();
+		for (CourseParticipant partic : this.courseParticipantList) {
 			// nazev a statistika dochazka
-			ret[i] = this.courseParticipantList.get(i).getContact().getCompleteName() + "\n" + particAttendance(this.courseParticipantList.get(i).getUuid()) +"%";
+			ret.add(new LearningLessonParticipateStats(partic.getContact().getCompleteName(), particAttendance(partic.getUuid())));			
 		}
 		return ret;
 	}

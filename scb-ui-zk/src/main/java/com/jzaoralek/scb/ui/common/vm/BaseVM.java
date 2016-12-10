@@ -124,6 +124,10 @@ public class BaseVM {
 		return Converters.getIntervaltomillsconverter();
 	}
 
+	public Converter getMonthConverter() {
+		return Converters.getMonthConverter();
+	}
+	
 	public Boolean isBackButtonVisible() {
 		return StringUtils.hasText(this.returnToPage);
 	}

@@ -8,7 +8,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -87,7 +89,7 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 	public List<LearningLesson> getByCourseWithFilledParticipantList(UUID courseUuid) {
 		List<LearningLesson> flatStructure = getByCourseWithFlatParticipantList(courseUuid);
 		if (CollectionUtils.isEmpty(flatStructure)) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		List<LearningLesson> ret = new ArrayList<LearningLesson>();
 		Map<UUID,List<CourseParticipant>> lessonMap = new HashMap<>();
@@ -113,6 +115,25 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 		}
 		
 		Collections.sort(ret, LearningLesson.LESSON_DATE_TIME_COMPARATOR);
+		
+		// TODO: prevest na linkedList, u kazde lekce zjistit jestli je první v mesici
+		// pokud je prvni v kolekci - ano
+		// nacist predchozi a zjistit mesic, pokud jiny nez u plozky - ano
+		
+		LearningLesson learningLesson = null;
+		LearningLesson learningLessonPrev = null;
+		for (ListIterator<LearningLesson> iterator = ret.listIterator(); iterator.hasNext();) {
+			if (!iterator.hasPrevious()) {
+				iterator.next().setFirstInMonth(true);
+			} else {
+				learningLessonPrev = iterator.previous();
+				iterator.next();
+				learningLesson = iterator.next();
+				if (learningLesson.getLessonDate().getMonth() != learningLessonPrev.getLessonDate().getMonth()) {
+					learningLesson.setFirstInMonth(true);
+				}							
+			}
+		}
 		
 		return ret;
 	}

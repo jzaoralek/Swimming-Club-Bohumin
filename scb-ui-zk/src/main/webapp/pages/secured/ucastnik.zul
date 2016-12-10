@@ -356,9 +356,9 @@
 										
 								        <listhead>
 								            <listheader label="${c:l('txt.ui.common.style')}" sort="auto(style.name)" align="left" />
-								            <listheader label="${c:l('txt.ui.common.distance')}" sort="auto(distance)" align="left" />
-								            <listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(resultDate)" />
-								            <listheader label="${c:l('txt.ui.common.resultTime')}" sort="auto(resultTime)" align="left"  />
+								            <listheader label="${c:l('txt.ui.common.distance')}" sort="auto(distance)" hflex="min" align="left" />
+								            <listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(resultDate)" hflex="min" />
+								            <listheader label="${c:l('txt.ui.common.resultTime')}" sort="auto(resultTime)" align="right"  />
 								            <listheader width="50px" align="center" />
 								        </listhead>
 								         

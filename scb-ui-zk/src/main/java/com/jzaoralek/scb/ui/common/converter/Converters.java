@@ -10,6 +10,7 @@ public final class Converters {
 	private static final EnumLabelConverter enumLabelConverter = new EnumLabelConverter();
 	private static final TimeSecondConverter timeSecondConverter = new TimeSecondConverter();
 	private static final IntervalToMillsConverter intervalToMillsConverter = new IntervalToMillsConverter();
+	private static final MonthConverter monthConverter = new MonthConverter();
 
 	public static DateConverter getDateconverter() {
 		return dateConverter;
@@ -33,5 +34,9 @@ public final class Converters {
 
 	public static IntervalToMillsConverter getIntervaltomillsconverter() {
 		return intervalToMillsConverter;
+	}
+	
+	public static MonthConverter getMonthConverter() {
+		return monthConverter;
 	}
 }

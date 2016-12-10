@@ -187,7 +187,6 @@ public class CourseListVM extends BaseVM {
 				data.put(String.valueOf(i+1),
 						new Object[] { item.getName(),
 								item.getDescription(),
-								item.getYearFrom() + ConfigurationServiceImpl.COURSE_YEAR_DELIMITER + item.getYearTo(),
 								item.getParticipantListCount(),
 								item.getLessonListCount()});
 			}

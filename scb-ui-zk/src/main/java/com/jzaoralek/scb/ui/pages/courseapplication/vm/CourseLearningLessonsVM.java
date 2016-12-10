@@ -16,6 +16,7 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
@@ -29,6 +30,7 @@ import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -36,6 +38,11 @@ import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class CourseLearningLessonsVM extends BaseVM {
+	
+	private enum CourseLearnLessonTab {
+		LESSONS,
+		ATTENDANCE;
+	}
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -52,10 +59,13 @@ public class CourseLearningLessonsVM extends BaseVM {
 	private boolean nextMonthBtnDisabled;
 	private String monthSelectedLabel;
 	private LearningLessonStatsWrapper lessonStats;
+	private CourseLearnLessonTab tabSelected;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
-	public void init(@QueryParam(WebConstants.UUID_PARAM) final String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
+	public void init(@QueryParam(WebConstants.UUID_PARAM) final String uuid
+			, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage
+			, @QueryParam(WebConstants.TAB_PARAM) String tabSelected) {
 		if (!StringUtils.hasText(uuid)) {
 			throw new IllegalArgumentException("uuid is null");
 		}
@@ -66,17 +76,21 @@ public class CourseLearningLessonsVM extends BaseVM {
 
 		this.course = course;
 		this.pageHeadline = Labels.getLabel("txt.ui.heading.learningCourse", new Object[]{this.course.getName()});
-
 		setReturnPage(fromPage);
 
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		cal.set(Calendar.DAY_OF_MONTH, 1);
-		this.monthSelected = cal;
-		buildLessonList(this.monthSelected);
-		
-		// statistika dochazky
-		this.lessonStats = learningLessonService.buildCourseStatistics(this.course);
+		if (StringUtils.isEmpty(tabSelected) || CourseLearnLessonTab.valueOf(tabSelected) == CourseLearnLessonTab.LESSONS) {
+			// lekce
+			this.tabSelected = CourseLearnLessonTab.LESSONS;
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			this.monthSelected = cal;
+			buildLessonList(this.monthSelected);			
+		} else if (CourseLearnLessonTab.valueOf(tabSelected) == CourseLearnLessonTab.ATTENDANCE) {
+			// statistika dochazky
+			this.tabSelected = CourseLearnLessonTab.ATTENDANCE;
+			this.lessonStats = learningLessonService.buildCourseStatistics(this.course);			
+		}
 		
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.LEARNING_LESSON_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
@@ -84,7 +98,6 @@ public class CourseLearningLessonsVM extends BaseVM {
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.RELOAD_LEARNIN_LESSON_LIST_DATA_EVENT.name())) {
 					realoadLessonList((LearningLesson)event.getData());
-					//BindUtils.postGlobalCommand(null, null, "realoadLessonListGcmd", null);
 				}
 			}
 		});
@@ -124,11 +137,14 @@ public class CourseLearningLessonsVM extends BaseVM {
 		 WebUtils.openModal("/pages/secured/learning-lesson-window.zul");
 	}
 	
-	@NotifyChange("lessonStats")
 	@Command
-	public void loadLessonStatsCmd() {
-		// statistika dochazky
-		this.lessonStats = learningLessonService.buildCourseStatistics(this.course);
+	public void redirectToTab(@BindingParam(WebConstants.TAB_PARAM) String tab) {
+		if (!StringUtils.hasText(tab)) {
+			throw new IllegalArgumentException("tab is null");
+		}
+		
+		CourseLearnLessonTab tabSelected = CourseLearnLessonTab.valueOf(tab);
+		Executions.sendRedirect("/pages/secured/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+this.course.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST + "&" + WebConstants.TAB_PARAM + "=" + tabSelected);
 	}
 
 	/**
@@ -190,6 +206,10 @@ public class CourseLearningLessonsVM extends BaseVM {
 		}
 
 		return null;
+	}
+	
+	public CourseLearnLessonTab getTabSelected() {
+		return tabSelected;
 	}
 
 	public Course getCourse() {

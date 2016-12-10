@@ -27,6 +27,7 @@ public final class WebConstants {
 	public static final String ATTACHMENT_PARAM = "attachment";
 	public static final String ITEM_PARAM = "item";
 	public static final String CHECKED_PARAM = "checked";
+	public static final String TAB_PARAM = "tab";
 
 	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 

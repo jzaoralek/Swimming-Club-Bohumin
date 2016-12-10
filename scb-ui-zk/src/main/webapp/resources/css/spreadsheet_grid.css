@@ -14,6 +14,7 @@ td.years , td.season, td.month {
 }
 td.years {
 	background: #085d8a !important;
+	border: none !important;
 	color: white;
 }
 .years .z-label {
@@ -21,11 +22,11 @@ td.years {
 }
 td.season {
 	background: #F2DFBA !important;
-	border: none !important;
+	/* border: none !important; */
 }
 td.month {
 	background: #CADBA4 !important;
-	border: none !important;
+	/* border: none !important; */
 	font-style: italic;
 }
 .tooltip {

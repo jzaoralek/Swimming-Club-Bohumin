@@ -35,8 +35,14 @@
 				<vbox hflex="20" pack="center" sclass="vbox-content" >
 					<tabbox id="tb" hflex="1">
 					    <tabs id="tabs">
-					        <tab id="lessonAttendance" label="${c:l('txt.ui.common.lessons')}" />
-					        <tab id="lessonAttendanceStats" label="${c:l('txt.ui.common.attendance')}" onClick="@command('loadLessonStatsCmd')"  />
+					        <tab id="lessonAttendance" 
+					        	label="${c:l('txt.ui.common.lessons')}"
+					        	selected="@load(vm.tabSelected eq 'LESSONS')"
+					        	onSelect="@command('redirectToTab', tab='LESSONS')" />
+					        <tab id="lessonAttendanceStats" 
+					        	label="${c:l('txt.ui.common.attendance')}" 
+					        	selected="@load(vm.tabSelected eq 'ATTENDANCE')"
+					        	onSelect="@command('redirectToTab', tab='ATTENDANCE')"  />
 					    </tabs>
 					    <tabpanels>
 					    	<tabpanel>
@@ -97,26 +103,38 @@
 					    	</tabpanel>
 					    	<tabpanel>
 					    		<style src="/resources/css/spreadsheet_grid.css" />
-					    		<grid sclass="grid-spreadsheet" height="100%" hflex="1" style="border: none"
+					    		<grid sclass="grid-spreadsheet" height="480px" hflex="1" style="border: none; overflow:scroll;"
 						            model="@load(vm.lessonStats.learnLessonsStatsList)">
-						            <frozen style="background: #DFDED8" columns="3">
-						                <div style="padding: 0 10px;" />
-						            </frozen>
+<!-- 						            <frozen style="background: #DFDED8" columns="4"> -->
+<!-- 						                <div style="padding: 0 10px;" /> -->
+<!-- 						            </frozen> -->
 						            <columns>
+						            	<column align="left" sclass="header" width="80px" />
 						                <column align="center" sclass="header" width="60px" />
 						                <column align="center" sclass="header" width="80px" />
 						                <column align="center" sclass="header last" width="80px" />
-						                <column align="center" sclass="header last" style="white-space: normal;" width="80px"
-						                    forEach="${vm.lessonStats.getParticipantCompleteNameArr()}"
-						                    label="${each}" />
+						                <column align="center" sclass="header last" style="white-space: normal;" width="80px" 
+						                	forEach="${vm.lessonStats.getParticipantStatsList()}" >
+						                    <vbox vflex="1" align="center" >
+						                    	<hbox height="40px" align="start" pack="center" >
+						                    		<vbox align="center">
+								                    	<label value="${each.particName}" style="font-weight: bold;cursor: default;" />
+						                    		</vbox>
+						                    	</hbox>
+						                    	<hbox vflex="1" >
+							                    	<label value="${each.particAttendance} %" 
+							                    		tooltiptext="${c:l('txt.ui.common.lessonAttendance')}" 
+							                    		style="cursor: default;" />
+						                    	</hbox>
+						                    </vbox>
+						                </column>
 						            </columns>
 						            <template name="model">
-						                <row>
-						                	<!--
-						                	<cell sclass="years" >
-						                		<label value="@load(each.learningLesson.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" />
+						                <row hflex="1">
+						                	<cell sclass="years" style="margin: 10px;" >
+						                		<label value="@load(each.learningLesson.lessonDate) @converter(vm.monthConverter)"
+						                			visible="@load(each.learningLesson.firstInMonth)" />
 						                    </cell>
-						                    -->
 						                	<cell sclass="season" >
 						                		<label value="@load(each.learningLesson.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" />
 						                    </cell>
@@ -129,19 +147,9 @@
 						                    </cell>
 						                    <label forEach="${each.courseParticipantList}" value="${each.lessonAttendance ? 'Ano' : 'Ne'}"
 						                    	style="${each.lessonAttendance ? 'color:green;' : 'color:red;'}" />
-						                	<!--						 
-						                    <intbox forEach="${$composer.days}"
-						                        format="#,###" constraint="no empty" width="55px"
-						                        inplace="true"
-						                        value="${each.days[forEachStatus.index] }"
-						                        style="${each.days[forEachStatus.index] lt 0 ? 'color:red;text-align:right' : 'color:#373842;text-align:right'}"
-						                        if="${each.numberOfDays gt forEachStatus.index}" />
-						                    -->
 						                </row>
 						            </template>
-						 
 						        </grid>
-					    		
 					    	</tabpanel>
 						</tabpanels>
 					</tabbox>

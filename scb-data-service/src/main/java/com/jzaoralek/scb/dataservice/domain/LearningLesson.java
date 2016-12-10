@@ -32,6 +32,7 @@ public class LearningLesson implements IdentEntity {
 	private String description;
 	private Lesson lesson;
 	private List<CourseParticipant> participantList;
+	private boolean firstInMonth;
 
 	public LearningLesson() {
 	}
@@ -115,6 +116,12 @@ public class LearningLesson implements IdentEntity {
 	}
 	public void setParticipantList(List<CourseParticipant> participantList) {
 		this.participantList = participantList;
+	}
+	public boolean isFirstInMonth() {
+		return firstInMonth;
+	}
+	public void setFirstInMonth(boolean firstInMonth) {
+		this.firstInMonth = firstInMonth;
 	}
 	
 	/**
