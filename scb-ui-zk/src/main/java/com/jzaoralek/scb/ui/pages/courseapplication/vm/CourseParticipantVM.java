@@ -26,6 +26,7 @@ import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.Result;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CodeListService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
@@ -44,7 +45,7 @@ public class CourseParticipantVM extends BaseVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseParticipantVM.class);
 
-	private static final String RESULT_DETAIL_WINDOW = "/pages/secured/result-detail-window.zul";
+	private static final String RESULT_DETAIL_WINDOW = "/pages/secured/TRAINER/result-detail-window.zul";
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -172,6 +173,10 @@ public class CourseParticipantVM extends BaseVM {
 		}
 		this.swimStyleListitemList.add(0, new Listitem(Labels.getLabel("txt.ui.common.all"), null));
 		this.swimStyleListitemSelected = this.swimStyleListitemList.get(0);
+	}
+	
+	public boolean isItemReadOnly() {
+		return isLoggedUserInRole(ScbUserRole.TRAINER.name());
 	}
 
 	public CourseApplication getParticipant() {

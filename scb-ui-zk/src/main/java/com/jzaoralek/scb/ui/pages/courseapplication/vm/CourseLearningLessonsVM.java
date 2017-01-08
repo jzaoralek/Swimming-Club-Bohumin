@@ -134,7 +134,7 @@ public class CourseLearningLessonsVM extends BaseVM {
 	@Command
 	public void lessonDetailCmd(@BindingParam(WebConstants.ITEM_PARAM) LearningLesson item) {
 		 EventQueueHelper.publish(ScbEventQueues.LEARNING_LESSON_QUEUE, ScbEvent.LEARNIN_LESSON_DETAIL_DATA_EVENT, null, item);
-		 WebUtils.openModal("/pages/secured/learning-lesson-window.zul");
+		 WebUtils.openModal("/pages/secured/TRAINER/learning-lesson-window.zul");
 	}
 	
 	@Command
@@ -144,7 +144,7 @@ public class CourseLearningLessonsVM extends BaseVM {
 		}
 		
 		CourseLearnLessonTab tabSelected = CourseLearnLessonTab.valueOf(tab);
-		Executions.sendRedirect("/pages/secured/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+this.course.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST + "&" + WebConstants.TAB_PARAM + "=" + tabSelected);
+		Executions.sendRedirect("/pages/secured/TRAINER/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+this.course.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST + "&" + WebConstants.TAB_PARAM + "=" + tabSelected);
 	}
 
 	/**

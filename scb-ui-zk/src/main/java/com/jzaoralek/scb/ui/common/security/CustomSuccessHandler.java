@@ -50,7 +50,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if (isDba(roles)) {
             url = "/db";
         } else if (isAdmin(roles)) {
-            url = "/pages/secured/seznam-kurzu.zul";
+            url = "/pages/secured/TRAINER/seznam-kurzu.zul";
+        } else if (isTrainer(roles)) {
+            url = "/pages/secured/TRAINER/seznam-kurzu.zul";
         } else if (isUser(roles)) {
             url = "/user";
         } else {
@@ -67,6 +69,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         return false;
     }
 
+    private static boolean isTrainer(List<String> roles) {
+        if (roles.contains("ROLE_TRAINER")) {
+            return true;
+        }
+        return false;
+    }
+    
     private static boolean isAdmin(List<String> roles) {
         if (roles.contains("ROLE_ADMIN")) {
             return true;

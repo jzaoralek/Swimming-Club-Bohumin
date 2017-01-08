@@ -31,6 +31,10 @@
 		<value>6LfSJCgTAAAAAANWtytYVqIlrXhv-BeJ-CokaRs7</value>
 	</library-property>
 	
+	<listener>
+        <listener-class>com.jzaoralek.scb.ui.monitoring.performance.PerformanceMonitor</listener-class>
+    </listener>
+    
 	<!-- labels -->
 	<system-config>
 		<label-location>/WEB-INF/labels/scb-labels.properties</label-location>

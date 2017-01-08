@@ -28,6 +28,7 @@ import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
@@ -82,10 +83,14 @@ public class CourseListVM extends BaseVM {
 
 	@Command
     public void detailCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
-		Executions.sendRedirect("/pages/secured/kurz.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 	}
 
 	@Command
@@ -93,7 +98,7 @@ public class CourseListVM extends BaseVM {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
-		Executions.sendRedirect("/pages/secured/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+		Executions.sendRedirect("/pages/secured/TRAINER/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 	}
 
 	@NotifyChange("*")
@@ -148,7 +153,7 @@ public class CourseListVM extends BaseVM {
 
 	@Command
 	public void newItemCmd() {
-		Executions.sendRedirect("/pages/secured/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 	}
 
 	public void loadData() {

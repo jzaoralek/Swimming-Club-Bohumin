@@ -17,6 +17,7 @@ import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.converter.Converters;
@@ -186,6 +187,18 @@ public class BaseVM {
 		return pageHeadline;
 	}
 
+    public Boolean isUserLogged() {
+    	return SecurityUtils.isUserLogged();
+    }
+
+    public Boolean userInRole(String role) {
+    	return SecurityUtils.userInRole(role);
+    }
+
+    public Boolean isLoggedUserInRole(String role) {
+    	return isUserLogged() && userInRole(role);
+    }
+    
 	/**
 	 * Kontrola povoleni podavani prihlasek.
 	 * @return

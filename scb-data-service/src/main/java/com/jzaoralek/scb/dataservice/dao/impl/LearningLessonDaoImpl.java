@@ -5,10 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -37,12 +34,13 @@ import com.jzaoralek.scb.dataservice.domain.LearningLesson;
 public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLessonDao {
 
 	private static final String LESSON_DATE_PARAM = "LESSON_DATE";
+	private static final String ADDITIONAL_COLUMN_INT_PARAM = "ADDITIONAL_COLUMN_INT";
 
-	private static final String SELECT_BY_LESSON = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid = :" + LESSON_UUID_PARAM;
-	private static final String SELECT_BY_COURSE = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+")";
+	private static final String SELECT_BY_LESSON = "SELECT uuid, lesson_date, time_from, time_to, description, additional_column_int, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid = :" + LESSON_UUID_PARAM;
+	private static final String SELECT_BY_COURSE = "SELECT uuid, lesson_date, time_from, time_to, description, additional_column_int, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+")";
 
 	private static final String SELECT_BY_COURSE_WITH_PARTICIPANTS =
-			" SELECT ls.uuid, ls.lesson_date, ls.time_from, ls.time_to, ls.description, ls.modif_at, ls.modif_by, ls.lesson_uuid "
+			" SELECT ls.uuid, ls.lesson_date, ls.time_from, ls.time_to, ls.description, ls.additional_column_int, ls.modif_at, ls.modif_by, ls.lesson_uuid "
 			+ ", cp.uuid \"COURSE_PARTICIPANT_UUID\"  "
 			+ ", c.firstname, c.surname "
 			+ "FROM learning_lesson ls LEFT JOIN participant_learning_lesson pls ON (ls.uuid = pls.learning_lesson_uuid) "
@@ -51,13 +49,13 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			+ "WHERE lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+") "
 			+ "ORDER BY lesson_date, time_from; ";
 
-	private static final String SELECT_BY_UUID = "SELECT uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE uuid = :" + UUID_PARAM;
+	private static final String SELECT_BY_UUID = "SELECT uuid, lesson_date, time_from, time_to, description, additional_column_int, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE uuid = :" + UUID_PARAM;
 	private static final String INSERT = "INSERT INTO learning_lesson "
-			+ "(uuid, lesson_date, time_from, time_to, description, modif_at, modif_by, lesson_uuid) "
-			+ "VALUES (:"+UUID_PARAM+", :"+LESSON_DATE_PARAM+", :"+TIME_FROM_PARAM+", :"+TIME_TO_PARAM+", :"+DESCRIPTION_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+LESSON_UUID_PARAM+")";
+			+ "(uuid, lesson_date, time_from, time_to, description, additional_column_int, modif_at, modif_by, lesson_uuid) "
+			+ "VALUES (:"+UUID_PARAM+", :"+LESSON_DATE_PARAM+", :"+TIME_FROM_PARAM+", :"+TIME_TO_PARAM+", :"+DESCRIPTION_PARAM+", :"+ADDITIONAL_COLUMN_INT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+LESSON_UUID_PARAM+")";
 
 	private static final String UPDATE = "UPDATE learning_lesson "
-			+ "SET lesson_date = :"+LESSON_DATE_PARAM+", time_from = :"+TIME_FROM_PARAM+", time_to = :"+TIME_TO_PARAM+", description = :"+DESCRIPTION_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", lesson_uuid = :"+LESSON_UUID_PARAM+" "
+			+ "SET lesson_date = :"+LESSON_DATE_PARAM+", time_from = :"+TIME_FROM_PARAM+", time_to = :"+TIME_TO_PARAM+", description = :"+DESCRIPTION_PARAM+", additional_column_int = :"+ADDITIONAL_COLUMN_INT_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", lesson_uuid = :"+LESSON_UUID_PARAM+" "
 			+ "WHERE uuid = :"+UUID_PARAM;
 
 	private static final String DELETE = "DELETE FROM learning_lesson WHERE uuid = :"+UUID_PARAM;
@@ -181,6 +179,7 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 		paramMap.addValue(TIME_FROM_PARAM, lesson.getTimeFrom());
 		paramMap.addValue(TIME_TO_PARAM, lesson.getTimeTo());
 		paramMap.addValue(DESCRIPTION_PARAM, lesson.getDescription());
+		paramMap.addValue(ADDITIONAL_COLUMN_INT_PARAM, lesson.getAdditionalColumnInt());
 		paramMap.addValue(LESSON_UUID_PARAM, lesson.getLesson().getUuid().toString());
 
 		namedJdbcTemplate.update(INSERT, paramMap);
@@ -198,6 +197,7 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 		paramMap.addValue(TIME_FROM_PARAM, lesson.getTimeFrom());
 		paramMap.addValue(TIME_TO_PARAM, lesson.getTimeTo());
 		paramMap.addValue(DESCRIPTION_PARAM, lesson.getDescription());
+		paramMap.addValue(ADDITIONAL_COLUMN_INT_PARAM, lesson.getAdditionalColumnInt());
 		paramMap.addValue(LESSON_UUID_PARAM, lesson.getLesson().getUuid().toString());
 
 		namedJdbcTemplate.update(UPDATE, paramMap);
@@ -233,6 +233,7 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			LearningLesson ret = new LearningLesson();
 			fetchIdentEntity(rs, ret);
 			ret.setDescription(rs.getString("description"));
+			ret.setAdditionalColumnInt(rs.getInt("additional_column_int"));
 			ret.setLessonDate(transDate(rs.getDate("lesson_date")));
 			ret.setTimeFrom(rs.getTime("time_from"));
 			ret.setTimeTo(rs.getTime("time_to"));
@@ -260,6 +261,7 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			LearningLesson ret = new LearningLesson();
 			fetchIdentEntity(rs, ret);
 			ret.setDescription(rs.getString("description"));
+			ret.setAdditionalColumnInt(rs.getInt("additional_column_int"));
 			ret.setLessonDate(transDate(rs.getDate("lesson_date")));
 			ret.setTimeFrom(rs.getTime("time_from"));
 			ret.setTimeTo(rs.getTime("time_to"));
