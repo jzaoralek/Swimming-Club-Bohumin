@@ -17,8 +17,9 @@ public interface LearningLessonService {
 	void delete(LearningLesson lesson);
 	/**
 	 * Cilem sestavit list lekci, u kazde list participantu s boolean attendance.
-	 * @param course
+	 * @param courseUuid
+	 * @param participantUuid
 	 * @return
 	 */
-	LearningLessonStatsWrapper buildCourseStatistics(Course course);
+	LearningLessonStatsWrapper buildCourseStatistics(UUID courseUuid, UUID participantUuid);
 }

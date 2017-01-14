@@ -37,7 +37,7 @@ public class BaseVM {
 	@WireVariable
 	protected ConfigurationService configurationService;
 
-	private String returnToPage;
+	protected String returnToPage;
 
 	public String getDateFormat() {
 		return WebConstants.DATE_FORMAT;

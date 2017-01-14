@@ -89,7 +89,7 @@ public class CourseLearningLessonsVM extends BaseVM {
 		} else if (CourseLearnLessonTab.valueOf(tabSelected) == CourseLearnLessonTab.ATTENDANCE) {
 			// statistika dochazky
 			this.tabSelected = CourseLearnLessonTab.ATTENDANCE;
-			this.lessonStats = learningLessonService.buildCourseStatistics(this.course);			
+			this.lessonStats = learningLessonService.buildCourseStatistics(this.course.getUuid(), null);			
 		}
 		
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.LEARNING_LESSON_QUEUE.name() , EventQueues.DESKTOP, true);

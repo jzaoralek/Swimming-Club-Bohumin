@@ -2,6 +2,7 @@
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
+<?component name="lesson-stats" macroURI="/pages/common/component/lesson-stats.zul"?>
 
 <zk>
 	<borderlayout self="@{define(mainContent)}" hflex="1" 
@@ -38,16 +39,17 @@
 					<!-- Formular -->
 					<vbox hflex="20" pack="center" align="center" sclass="vbox-content" >
 						
-						<tabbox id="tb" >
+						<tabbox id="tb" hflex="1"  >
 						    <tabs id="tabs">
 						        <tab id="courseParticipant" label="${c:l('txt.ui.common.participant')}" />
 						        <tab id="courseParticipantRepresentative" label="${c:l('txt.ui.common.representative')}" />
 						        <tab id="courseParticipantResult" label="${c:l('txt.ui.common.results')}" />
+						        <tab id="lessonAttendanceStats" label="${c:l('txt.ui.common.attendance')}" selected="@load(vm.attendanceTabSelected)" />
 						    </tabs>
 						    <tabpanels>
 						    	<tabpanel>
 						    		<!-- Ucastnik -->
-									<grid hflex="1" sclass="form-grid" >
+									<grid hflex="1" sclass="form-grid" style="border: none;" >
 										<columns>
 							                <column align="center" hflex="1" />
 							            </columns>
@@ -170,10 +172,18 @@
 											</row>
 										</rows>
 									</grid>
+									<hbox style="margin-bottom: 10px;">
+										<vbox>
+											<button label="Uložit"
+												onClick="@command('submit')" 
+												visible="@load(!vm.isItemReadOnly())"
+												iconSclass="z-icon-check" />
+										</vbox>
+									</hbox>
 						    	</tabpanel>
 						    	<tabpanel>
 						    		<!-- Zakonny zastupce -->
-									<grid hflex="1" sclass="form-grid" >
+									<grid hflex="1" sclass="form-grid" style="border: none;">
 										<columns>
 							                <column align="center" hflex="1" />
 							            </columns>
@@ -307,10 +317,18 @@
 											</row>
 										</rows>
 									</grid>
+									<hbox style="margin-bottom: 10px;">
+										<vbox>
+											<button label="Uložit"
+												onClick="@command('submit')" 
+												visible="@load(!vm.isItemReadOnly())"
+												iconSclass="z-icon-check" />
+										</vbox>
+									</hbox>
 						    	</tabpanel>
 						    	<tabpanel>
 						    		<!-- Vysledky -->
-						    		<hbox pack="start">
+						    		<hbox pack="start" style="margin-top: 10px;">
 						    			<label value="${c:l('txt.ui.common.style')}: "/>
 						    			<listbox selectedItem="@bind(vm.swimStyleListitemSelected)"
 											onSelect="@command('loadResultsByStyleCmd')"
@@ -391,17 +409,26 @@
 								        </template>
 								    </listbox>
 						    	</tabpanel>
+						    	<tabpanel>
+						    		<!-- Dochazka -->
+						    		<hbox pack="start" visible="@init(vm.courseListStatsVisible)">
+						    			<hbox pack="center" align="center" style="margin-top: 10px;margin-bottom: 10px;">
+							    			<label value="${c:l('txt.ui.common.course')}: " style="margin-right: 5px;"/>
+							    			<listbox selectedItem="@bind(vm.courseListitemSelected)"
+												onSelect="@command('loadLessonStatsByCourseCmd')"
+												mold="select"
+												model="@load(vm.courseItemList)"
+												height="25px" >
+												<template name="model">
+													<listitem label="${each.label}" value="${each.value}" />
+												</template>
+											</listbox>
+						    			</hbox>
+						    		</hbox>		
+						    		<lesson-stats lessonStats="${vm.lessonStats}" participantMode="true" />
+						    	</tabpanel>
 						    </tabpanels>
 					    </tabbox>
-					    
-						<hbox style="margin-top: 20px;">
-							<vbox>
-								<button label="Uložit"
-									onClick="@command('submit')" 
-									visible="@load(!vm.isItemReadOnly())"
-									iconSclass="z-icon-check" />
-							</vbox>
-						</hbox>
 					</vbox>
 											    
 					<script type="text/javascript">

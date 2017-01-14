@@ -77,12 +77,18 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 	}
 
 	@Override
-	public LearningLessonStatsWrapper buildCourseStatistics(Course course) {
+	public LearningLessonStatsWrapper buildCourseStatistics(UUID courseUuid, UUID participantUuid) {
 		List<LearningLessonStats> learnLessonsStatsList = new ArrayList<LearningLessonStats>();
 		// oducene vyucovaci hodiny s ucastniky na hodine
-		List<LearningLesson> learningLessonList = learningLessonDao.getByCourseWithFilledParticipantList(course.getUuid());
-		// vsichni ucastnici kurzu
-		List<CourseParticipant> courseParticipantList = courseParticipantDao.getByCourseUuid(course.getUuid());
+		List<LearningLesson> learningLessonList = learningLessonDao.getByCourseWithFilledParticipantList(courseUuid);
+		List<CourseParticipant> courseParticipantList = new ArrayList<CourseParticipant>();
+		if (participantUuid == null) {
+			// vsichni ucastnici kurzu
+			courseParticipantList.addAll(courseParticipantDao.getByCourseUuid(courseUuid));			
+		} else {
+			// jeden ucastnik
+			courseParticipantList.add(courseParticipantDao.getByUuid(participantUuid, false));			
+		}
 		// prochazet oducene vyucovaci hodiny a v nich ucastniky porovnat se vsemi ucastniky kurzu
 		List<CourseParticipant> courseParticAttendaceList = null;
 		CourseParticipant courseParticAttendace = null;
@@ -93,7 +99,8 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 				// pro kazdeho ucastnika kurzu zjistit zda-li ma ucast na hodine
 				courseParticAttendace = new CourseParticipant(courseParticipant);
 				courseParticAttendace.setLessonAttendance(isCourseParticipantInList(courseParticipant, learninLesson.getParticipantList()));
-				courseParticAttendaceList.add(courseParticAttendace);
+				courseParticAttendaceList.add(courseParticAttendace);					
+				
 			}
 			learnLessonsStatsList.add(new LearningLessonStats(learninLesson, courseParticAttendaceList));
 		}

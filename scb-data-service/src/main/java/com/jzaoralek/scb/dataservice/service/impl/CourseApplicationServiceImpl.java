@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
+import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.ResultDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
@@ -49,6 +50,9 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
 
+	@Autowired
+	private CourseDao courseDao;
+	
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public List<CourseApplication> getAll(int yearFrom, int yearTo) {
@@ -61,6 +65,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		CourseApplication courseApplication = courseApplicationDao.getByUuid(uuid, true);
 		if (courseApplication.getCourseParticipant() != null) {
 			courseApplication.getCourseParticipant().setResultList(resultDao.getByCourseParticipant(courseApplication.getCourseParticipant().getUuid()));
+			courseApplication.getCourseParticipant().setCourseList(courseDao.getByCourseParticipantUuid(courseApplication.getCourseParticipant().getUuid()));
 		}
 		return courseApplication;
 	}
