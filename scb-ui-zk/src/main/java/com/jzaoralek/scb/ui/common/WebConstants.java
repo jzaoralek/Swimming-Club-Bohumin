@@ -28,6 +28,7 @@ public final class WebConstants {
 	public static final String ITEM_PARAM = "item";
 	public static final String CHECKED_PARAM = "checked";
 	public static final String TAB_PARAM = "tab";
+	public static final String COURSE_UUID_PARAM = "courseUuid";
 
 	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 
@@ -35,5 +36,5 @@ public final class WebConstants {
 	public static final String SECOND_MILISECOND_DELIM = ",";
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-	public static final String SECURED_PAGE_URL = "/pages/secured";
+	public static final String SECURED_PAGE_URL = "/pages/secured/ADMIN";
 }

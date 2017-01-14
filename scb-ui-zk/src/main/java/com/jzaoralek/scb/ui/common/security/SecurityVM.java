@@ -43,18 +43,6 @@ public class SecurityVM extends BaseVM {
 		return SecurityUtils.getLoggedUserCompleteName();
 	}
 
-    public Boolean isUserLogged() {
-    	return SecurityUtils.isUserLogged();
-    }
-
-    public Boolean userInRole(String role) {
-    	return SecurityUtils.userInRole(role);
-    }
-
-    public Boolean isLoggedUserInRole(String role) {
-    	return isUserLogged() && userInRole(role);
-    }
-
     public Boolean getLoginFailure() {
 		return this.loginFailure;
 	}

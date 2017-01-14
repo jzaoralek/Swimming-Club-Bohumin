@@ -3,7 +3,7 @@
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
-
+<?component name="lesson-stats" macroURI="/pages/common/component/lesson-stats.zul"?>
 
 <zk>
 	<div self="@{define(mainContent)}" hflex="1" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseLearningLessonsVM')"
@@ -102,54 +102,7 @@
 							    </listbox>
 					    	</tabpanel>
 					    	<tabpanel>
-					    		<style src="/resources/css/spreadsheet_grid.css" />
-					    		<grid sclass="grid-spreadsheet" height="480px" hflex="1" style="border: none; overflow:scroll;"
-						            model="@load(vm.lessonStats.learnLessonsStatsList)">
-<!-- 						            <frozen style="background: #DFDED8" columns="4"> -->
-<!-- 						                <div style="padding: 0 10px;" /> -->
-<!-- 						            </frozen> -->
-						            <columns>
-						            	<column align="left" sclass="header" width="80px" />
-						                <column align="center" sclass="header" width="60px" />
-						                <column align="center" sclass="header" width="80px" />
-						                <column align="center" sclass="header last" width="80px" />
-						                <column align="center" sclass="header last" style="white-space: normal;" width="80px" 
-						                	forEach="${vm.lessonStats.getParticipantStatsList()}" >
-						                    <vbox vflex="1" align="center" >
-						                    	<hbox height="40px" align="start" pack="center" >
-						                    		<vbox align="center">
-								                    	<label value="${each.particName}" style="font-weight: bold;cursor: default;" />
-						                    		</vbox>
-						                    	</hbox>
-						                    	<hbox vflex="1" >
-							                    	<label value="${each.particAttendance} %" 
-							                    		tooltiptext="${c:l('txt.ui.common.lessonAttendance')}" 
-							                    		style="cursor: default;" />
-						                    	</hbox>
-						                    </vbox>
-						                </column>
-						            </columns>
-						            <template name="model">
-						                <row hflex="1">
-						                	<cell sclass="years" style="margin: 10px;" >
-						                		<label value="@load(each.learningLesson.lessonDate) @converter(vm.monthConverter)"
-						                			visible="@load(each.learningLesson.firstInMonth)" />
-						                    </cell>
-						                	<cell sclass="season" >
-						                		<label value="@load(each.learningLesson.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" />
-						                    </cell>
-						                    <cell sclass="season">
-						                        <label value="@load(each.learningLesson.lessonDate) @converter(vm.dateConverter)" />
-						                    </cell>
-						                    <cell sclass="month last">
-						                        <label value="@load(each.learningLesson.timeFrom) @converter(vm.timeConverter)" /> - 
-						                		<label value="@load(each.learningLesson.timeTo) @converter(vm.timeConverter)" />
-						                    </cell>
-						                    <label forEach="${each.courseParticipantList}" value="${each.lessonAttendance ? 'Ano' : 'Ne'}"
-						                    	style="${each.lessonAttendance ? 'color:green;' : 'color:red;'}" />
-						                </row>
-						            </template>
-						        </grid>
+					    		<lesson-stats lessonStats="${vm.lessonStats}" participantMode="false" />
 					    	</tabpanel>
 						</tabpanels>
 					</tabbox>

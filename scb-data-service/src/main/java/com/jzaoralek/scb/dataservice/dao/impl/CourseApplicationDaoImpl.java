@@ -138,7 +138,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			"AND cp.uuid IN (SELECT ccp.course_participant_uuid FROM course_course_participant ccp WHERE ccp.course_uuid = :"+COURSE_UUID_PARAM+") " +
 			"order by ca.modif_at desc ";
 
-	private static final String SELECT_ASSIGNED_TO_COURSE = "select " +
+	private static final String SELECT_ASSIGNED_TO_COURSE = "select distinct" +
 			" con_part.firstname " +
 			", con_part.surname " +
 			", cp.uuid \"participant_uuid\" " +

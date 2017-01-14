@@ -5,7 +5,8 @@
 
 	<http auto-config="true">
 		<intercept-url pattern="/" access="permitAll" />
-		<intercept-url pattern="/pages/secured/**" access="hasRole('ADMIN')" />
+		<intercept-url pattern="/pages/secured/ADMIN/**" access="hasRole('ADMIN')" />
+		<intercept-url pattern="/pages/secured/TRAINER/**" access="hasAnyRole('ADMIN', 'TRAINER')" />
 		<form-login login-page="/pages/common/login.zul"
 			login-processing-url="/login"
 			username-parameter="username"

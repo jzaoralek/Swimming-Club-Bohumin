@@ -53,7 +53,7 @@
 				id="menu_applicationToClubList"
 				iconSclass="z-icon-files-o" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/seznam-prihlasek.zul" >
+				href="/pages/secured/ADMIN/seznam-prihlasek.zul" >
 			</menuitem>
 			
 			<!-- Seznam kurzu -->
@@ -61,8 +61,8 @@
 				label="${c:l('txt.ui.menu.courses')}" 
 				id="menu_courseList"
 				iconSclass="z-icon-list-alt" 
-				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/seznam-kurzu.zul" >
+				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))"
+				href="/pages/secured/TRAINER/seznam-kurzu.zul" >
 			</menuitem>
 			
 			<!-- Seznam ucastniku -->
@@ -70,8 +70,8 @@
 				label="${c:l('txt.ui.common.participants')}" 
 				id="menu_courseParticipantList"
 				iconSclass="z-icon-child" 
-				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/seznam-ucastniku.zul" >
+				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))"
+				href="/pages/secured/TRAINER/seznam-ucastniku.zul" >
 			</menuitem>
 			
 			<!-- Seznam uzivatelu -->
@@ -80,7 +80,7 @@
 				id="menu_userList"
 				iconSclass="z-icon-users" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/seznam-uzivatelu.zul" >
+				href="/pages/secured/ADMIN/seznam-uzivatelu.zul" >
 			</menuitem>
 			
 			<!-- Nastaveni -->
@@ -89,7 +89,7 @@
 				id="menu_configuration"
 				iconSclass="z-icon-cog" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/configuration.zul" >
+				href="/pages/secured/ADMIN/configuration.zul" >
 			</menuitem>
 			
 		</menubar>

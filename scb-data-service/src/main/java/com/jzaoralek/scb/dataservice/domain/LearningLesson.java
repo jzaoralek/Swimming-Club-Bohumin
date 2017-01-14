@@ -31,6 +31,7 @@ public class LearningLesson implements IdentEntity {
 	private Time timeTo;
 	private String description;
 	private Lesson lesson;
+	private Integer additionalColumnInt;
 	private List<CourseParticipant> participantList;
 	private boolean firstInMonth;
 
@@ -47,6 +48,7 @@ public class LearningLesson implements IdentEntity {
 		this.timeTo = learningLesson.timeTo;
 		this.description = learningLesson.description;
 		this.lesson = learningLesson.lesson;
+		this.additionalColumnInt = learningLesson.additionalColumnInt;
 		this.participantList = learningLesson.participantList;
 	}
 
@@ -123,6 +125,13 @@ public class LearningLesson implements IdentEntity {
 	public void setFirstInMonth(boolean firstInMonth) {
 		this.firstInMonth = firstInMonth;
 	}
+	public Integer getAdditionalColumnInt() {
+		return additionalColumnInt;
+	}
+
+	public void setAdditionalColumnInt(Integer additionalColumnInt) {
+		this.additionalColumnInt = additionalColumnInt;
+	}
 	
 	/**
 	 * Datum lekce v budoucnu.
@@ -136,6 +145,7 @@ public class LearningLesson implements IdentEntity {
 	public String toString() {
 		return "LearningLesson [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", lessonDate="
 				+ lessonDate + ", timeFrom=" + timeFrom + ", timeTo=" + timeTo + ", description=" + description
-				+ ", lesson=" + lesson + ", participantList=" + participantList + "]";
+				+ ", lesson=" + lesson + ", additionalColumnInt=" + additionalColumnInt + ", participantList="
+				+ participantList + ", firstInMonth=" + firstInMonth + "]";
 	}
 }

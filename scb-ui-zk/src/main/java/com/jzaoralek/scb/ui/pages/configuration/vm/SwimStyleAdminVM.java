@@ -34,7 +34,7 @@ public class SwimStyleAdminVM extends BaseVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SwimStyleAdminVM.class);
 
-	private static final String CODE_LIST_ITEM_WINDOW= "/pages/secured/codelist-item-window.zul";
+	private static final String CODE_LIST_ITEM_WINDOW= "/pages/secured/ADMIN/codelist-item-window.zul";
 
 	@WireVariable
 	private CodeListService codeListService;

@@ -6,7 +6,8 @@ import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 
 public enum SecuredUserProfileType implements GrantedAuthority {
 	USER("USER"),
-	ADMIN("ADMIN");
+	ADMIN("ADMIN"),
+	TRAINER("TRAINER");
 
 	String userProfileType;
 
@@ -31,6 +32,7 @@ public enum SecuredUserProfileType implements GrantedAuthority {
 		switch (role) {
 			case ADMIN: return SecuredUserProfileType.ADMIN;
 			case USER: return SecuredUserProfileType.USER;
+			case TRAINER: return SecuredUserProfileType.TRAINER;
 			default: throw new IllegalArgumentException("Unsupported ScbUserRole: " + role);
 		}
 	}

@@ -69,7 +69,6 @@
 											<listbox selectedItem="@bind(vm.roleSelected)" 
 												model="@load(vm.roleList)"
 												sclass="form-input-text"
-												disabled="true"
 												mold="select" >
 												<template name="model">
 									               	<listitem label="@bind(each.label)" value="@bind(each)"/>

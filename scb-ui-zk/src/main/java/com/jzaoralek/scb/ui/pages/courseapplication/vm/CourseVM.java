@@ -168,13 +168,13 @@ public class CourseVM extends BaseVM {
 	@Command
 	public void addCourseParticipantsFromApplicationCmd() {
 		 EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_APPLICATION_DATA_EVENT, null, this.course);
-		 WebUtils.openModal("/pages/secured/participant-to-course-window.zul");
+		 WebUtils.openModal("/pages/secured/ADMIN/participant-to-course-window.zul");
 	}
 
 	@Command
 	public void addCourseParticipantsFromCourseCmd() {
 		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_COURSE_DATA_EVENT, null, this.course);
-		WebUtils.openModal("/pages/secured/participant-to-course-window.zul");
+		WebUtils.openModal("/pages/secured/ADMIN/participant-to-course-window.zul");
 	}
 
 	@Command
@@ -182,13 +182,13 @@ public class CourseVM extends BaseVM {
 		Lesson lesson = new Lesson();
 		lesson.setCourseUuid(this.course.getUuid());
 		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.LESSON_NEW_DATA_EVENT, null, lesson);
-		WebUtils.openModal("/pages/secured/lesson-to-course-window.zul");
+		WebUtils.openModal("/pages/secured/ADMIN/lesson-to-course-window.zul");
 	}
 
 	@Command
 	public void detailCmd(@BindingParam("lesson") final Lesson lesson) {
 		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.LESSON_DETAIL_DATA_EVENT, null, lesson);
-		WebUtils.openModal("/pages/secured/lesson-to-course-window.zul");
+		WebUtils.openModal("/pages/secured/ADMIN/lesson-to-course-window.zul");
 	}
 
 	public Course getCourse() {
