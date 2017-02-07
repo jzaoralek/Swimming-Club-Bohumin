@@ -26,7 +26,7 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 	private static final String HOUSE_NUMBER_PARAM = "house_number";
 	private static final String CITY_PARAM = "city";
 	private static final String ZIPCODE_PARAM = "zip_code";
-	private static final String EMAUL1_PARAM = "email1";
+	private static final String EMAIL1_PARAM = "email1";
 	private static final String EMAIL2_PARAM = "email2";
 	private static final String PHONE1_PARAM = "phone1";
 	private static final String PHONE2_PARAM = "phone2";
@@ -34,10 +34,11 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 	private static final String INSERT = " INSERT INTO contact " +
 		" (uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, email1, email2, phone1, phone2, modif_at, modif_by) " +
 		" VALUES " +
-		" (:"+UUID_PARAM+", :"+FIRSTNAME_PARAM+", :"+SURNAME_PARAM+", :"+STREET_PARAM+", :"+LAND_REGISTRY_NUMBER_PARAM+", :"+HOUSE_NUMBER_PARAM+", :"+CITY_PARAM+", :"+ZIPCODE_PARAM+", :"+EMAUL1_PARAM+", :"+EMAIL2_PARAM+", :"+PHONE1_PARAM+", :"+PHONE2_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+") ";
+		" (:"+UUID_PARAM+", :"+FIRSTNAME_PARAM+", :"+SURNAME_PARAM+", :"+STREET_PARAM+", :"+LAND_REGISTRY_NUMBER_PARAM+", :"+HOUSE_NUMBER_PARAM+", :"+CITY_PARAM+", :"+ZIPCODE_PARAM+", :"+EMAIL1_PARAM+", :"+EMAIL2_PARAM+", :"+PHONE1_PARAM+", :"+PHONE2_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+") ";
 	private static final String SELECT_BY_UUID = "SELECT uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, email1, email2, phone1, phone2, modif_at, modif_by from contact WHERE uuid = :" + UUID_PARAM;
+	private static final String SELECT_BY_EMAIL_COUNT = "SELECT count(*) FROM contact WHERE email1 = "+EMAIL1_PARAM;
 	private static final String DELETE = "DELETE FROM contact where uuid = :" + UUID_PARAM;
-	private static final String UPDATE = "UPDATE contact SET firstname=:"+FIRSTNAME_PARAM+", surname=:"+SURNAME_PARAM+", street=:"+STREET_PARAM+", land_registry_number=:"+LAND_REGISTRY_NUMBER_PARAM+", house_number=:"+HOUSE_NUMBER_PARAM+", city=:"+CITY_PARAM+", zip_code=:"+ZIPCODE_PARAM+", email1=:"+EMAUL1_PARAM+", email2=:"+EMAIL2_PARAM+", phone1=:"+PHONE1_PARAM+", phone2=:"+PHONE2_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE = "UPDATE contact SET firstname=:"+FIRSTNAME_PARAM+", surname=:"+SURNAME_PARAM+", street=:"+STREET_PARAM+", land_registry_number=:"+LAND_REGISTRY_NUMBER_PARAM+", house_number=:"+HOUSE_NUMBER_PARAM+", city=:"+CITY_PARAM+", zip_code=:"+ZIPCODE_PARAM+", email1=:"+EMAIL1_PARAM+", email2=:"+EMAIL2_PARAM+", phone1=:"+PHONE1_PARAM+", phone2=:"+PHONE2_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 	@Autowired
 	public ContactDaoImpl(DataSource ds) {
@@ -53,6 +54,12 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 			return null;
 		}
 	}
+	
+	@Override
+	public boolean existsByEmail(String email) {
+		Long emailCount = namedJdbcTemplate.queryForObject(SELECT_BY_EMAIL_COUNT, new MapSqlParameterSource().addValue(EMAIL1_PARAM, email), Long.class);
+		return emailCount > 0;
+	}
 
 	@Override
 	public void insert(Contact contact) {
@@ -65,7 +72,7 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 		paramMap.addValue(HOUSE_NUMBER_PARAM, contact.getHouseNumber());
 		paramMap.addValue(CITY_PARAM, contact.getCity());
 		paramMap.addValue(ZIPCODE_PARAM, contact.getZipCode());
-		paramMap.addValue(EMAUL1_PARAM, contact.getEmail1());
+		paramMap.addValue(EMAIL1_PARAM, contact.getEmail1());
 		paramMap.addValue(EMAIL2_PARAM, contact.getEmail2());
 		paramMap.addValue(PHONE1_PARAM, contact.getPhone1());
 		paramMap.addValue(PHONE2_PARAM, contact.getPhone2());
@@ -85,7 +92,7 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 		paramMap.addValue(HOUSE_NUMBER_PARAM, contact.getHouseNumber());
 		paramMap.addValue(CITY_PARAM, contact.getCity());
 		paramMap.addValue(ZIPCODE_PARAM, contact.getZipCode());
-		paramMap.addValue(EMAUL1_PARAM, contact.getEmail1());
+		paramMap.addValue(EMAIL1_PARAM, contact.getEmail1());
 		paramMap.addValue(EMAIL2_PARAM, contact.getEmail2());
 		paramMap.addValue(PHONE1_PARAM, contact.getPhone1());
 		paramMap.addValue(PHONE2_PARAM, contact.getPhone2());

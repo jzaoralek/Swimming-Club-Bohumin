@@ -81,4 +81,9 @@ public class ContactDaoTest extends BaseTestCase {
 		Contact item = contactDao.getByUuid(ITEM_UUID);
 		Assert.assertNull(item);
 	}
+	
+	@Test
+	public void testExistsByUEmail() {
+		Assert.assertEquals(true, contactDao.existsByEmail(CONTACT_EMAIL1));
+	}
 }
