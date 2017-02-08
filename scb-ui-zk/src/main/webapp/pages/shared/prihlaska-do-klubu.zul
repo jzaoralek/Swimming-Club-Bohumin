@@ -81,7 +81,7 @@
 											<label value="${c:l('txt.ui.common.email')} / ${c:l('txt.ui.common.Username')}"/>
 											<label value="" />
 											<hbox hflex="1">
-												<textbox id="representativeEmail1" readonly="@load(!vm.editMode)"
+												<textbox id="representativeEmail1" readonly="@load(vm.itemReadOnly or !vm.editMode)"
 													value="@bind(fx.application.courseParticRepresentative.contact.email1) @validator(vm.emailValidator, notNull=true)"
 													maxlength="@load(vm.getEmailMaxlength())"
 													placeholder="*"

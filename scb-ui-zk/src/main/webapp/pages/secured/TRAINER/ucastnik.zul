@@ -191,6 +191,30 @@
 											<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
 												<cell sclass="form-grid-cell" >
 													<vbox hflex="1">
+														<label value="${c:l('txt.ui.common.email')} / ${c:l('txt.ui.common.Username')}"/>
+														<hbox hflex="1">
+															<textbox id="representativeEmail1"
+																value="@bind(fx.participant.courseParticRepresentative.contact.email1) @validator(vm.emailValidator, notNull=true)"
+																maxlength="@load(vm.getEmailMaxlength())"
+																placeholder="*"
+																sclass="form-input-text"
+																tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+																readonly="true"
+																tabindex="11"
+																hflex="1" />
+														</hbox>
+														<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+															<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
+																	<label value="@bind(vmsgs[representativeEmail1])" />
+																</span>	
+														</hbox>
+													</vbox>
+												</cell>
+											</row>
+											
+											<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 30px;" >
+												<cell sclass="form-grid-cell" >
+													<vbox hflex="1">
 														<label value="${c:l('txt.ui.common.firstname')}"/>
 														<textbox id="representativeFirstname"
 															value="@bind(fx.participant.courseParticRepresentative.contact.firstname) @validator(vm.notNullValidator)" 
@@ -267,30 +291,6 @@
 															hflex="1" />
 														<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 															
-														</hbox>
-													</vbox>
-												</cell>
-											</row>
-											
-											<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 30px;" >
-												<cell sclass="form-grid-cell" >
-													<vbox hflex="1">
-														<label value="${c:l('txt.ui.common.email')} 1"/>
-														<hbox hflex="1">
-															<textbox id="representativeEmail1"
-																value="@bind(fx.participant.courseParticRepresentative.contact.email1) @validator(vm.emailValidator, notNull=true)"
-																maxlength="@load(vm.getEmailMaxlength())"
-																placeholder="*"
-																sclass="form-input-text"
-																tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-																readonly="@load(vm.isItemReadOnly())"
-																tabindex="11"
-																hflex="1" />
-														</hbox>
-														<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-															<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
-																	<label value="@bind(vmsgs[representativeEmail1])" />
-																</span>	
 														</hbox>
 													</vbox>
 												</cell>

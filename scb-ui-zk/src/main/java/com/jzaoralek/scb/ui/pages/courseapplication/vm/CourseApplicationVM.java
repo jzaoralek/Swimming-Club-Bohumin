@@ -22,6 +22,7 @@ import org.zkoss.zul.Messagebox;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
@@ -56,9 +57,6 @@ public class CourseApplicationVM extends BaseVM {
 
 	@WireVariable
 	private ScbUserService scbUserService;
-	
-	@WireVariable
-	private MailService mailService;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -111,6 +109,10 @@ public class CourseApplicationVM extends BaseVM {
 					WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.agreementWithHealtAndDataInfo"));
 					return;
 				}
+				
+				// zjistit zda-li pred zalozenim objednavky uz uzivatel v aplikaci existoval
+				ScbUser scbUserBeforeApplicationSave = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
+				
 				courseApplicationService.store(application);
 				//WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationSend"));
 				this.editMode = false;
@@ -118,6 +120,12 @@ public class CourseApplicationVM extends BaseVM {
 				this.showNotification = true;
 
 				sendMail();
+				
+				// pokud se jedna o noveho uzivatele poslat mail o pristupu do aplikace
+				if (scbUserBeforeApplicationSave == null) {
+					ScbUser user = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
+					sendMailToNewUser(user);
+				}
 			}
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught for application: " + this.application);
@@ -160,6 +168,14 @@ public class CourseApplicationVM extends BaseVM {
 			    }
 			});
 		}
+	}
+	
+	/**
+	 * Udaj muze menit pouze prihlaseny user nebo neprihlaseny uzivatel.
+	 * @return
+	 */
+	public boolean isItemReadOnly() {
+		return isLoggedUserInRole(ScbUserRole.TRAINER.name()) || isLoggedUserInRole(ScbUserRole.ADMIN.name());
 	}
 
     public void sendMail() {
