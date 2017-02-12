@@ -1,0 +1,85 @@
+<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.common.participants')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+
+<zk>
+	<div self="@{define(mainContent)}" hflex="1" >
+		
+		<div sclass="breadcrumb" visible="false">
+			<span sclass="home-icon z-icon-home"/>
+	    	<a label="${c:l('txt.ui.menu.dashboard')}" href="/"/>
+			<label value="${c:l('txt.ui.menu.application')}"/>
+		</div>
+		
+		<hlayout spacing="0" visible="false">
+			<vbox hflex="1" />
+			
+			<vbox hflex="20" pack="center">
+				<headline label="${c:l('txt.ui.common.participants')}" menuSelected="menu_userCourseParticipantList" />
+			</vbox>
+			
+			<vbox hflex="1" />
+		</hlayout>
+		
+		<hlayout spacing="0">
+		
+			<vbox hflex="1" />
+			
+			<vbox hflex="20" pack="center" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseparticipant.vm.CourseParticipantListVM')">
+				
+				<listbox model="@load(vm.courseParticipantList)"
+					id="courseParticipantList"
+					hflex="1"
+					style="margin-top: 20px;"
+					mold="paging"
+					pageSize="10"
+					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+					class="listbox" >
+			        <auxhead>
+			            <auxheader class="header" colspan="5" >
+			            	<hbox hflex="1" height="42px" align="center" >
+				            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+			            			<hbox>
+				            			<vbox>
+				            				<label value="${c:l('txt.ui.common.participants')}" />
+										</vbox>
+			            			</hbox>
+			            		</vbox>
+							</hbox>
+			            </auxheader>
+			        </auxhead>
+					
+			        <listhead>
+			            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(contact.surname)" align="left" />
+			            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(birthdate)" align="left" />
+			            <listheader label="${c:l('txt.ui.common.birthNumber')}" sort="auto(personalNo)" align="left" />
+			            <listheader label="${c:l('txt.ui.common.healthInsurance')}" sort="auto(healthInsurance)" align="left" />
+			            <listheader width="270px" align="right" />
+			        </listhead>
+			         
+			        <template name="model">
+			            <listitem>
+			                <listcell label="${each.contact.completeName}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="@load(each.birthdate) @converter(vm.dateConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.personalNo}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.healthInsurance}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell>
+			                	<button label="@load(vm.newCourseApplicationButtonText)" 
+			                		tooltiptext="@load(vm.newCourseApplicationButtonTooltipText)"
+									sclass="btn-warning" iconSclass="z-icon-file-text"
+									onClick="@command('createNewCourseApplicationCmd', uuid=each.uuid)"
+									visible="@load(vm.newCourseApplicationAllowed(each))" />
+			                	<button tooltiptext="${c:l('txt.ui.common.detail')}"
+			                		iconSclass="z-icon-pencil" hflex="min" width="20px"
+			                		onClick="@command('detailCmd', uuid=each.uuid)" />
+			                </listcell>
+			            </listitem>
+			        </template>
+			    </listbox>
+			</vbox>
+			
+			<vbox hflex="1" />
+			
+		</hlayout>
+	</div>
+</zk>

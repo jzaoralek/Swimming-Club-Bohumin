@@ -143,6 +143,11 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	}
 
 	@Override
+	public List<CourseApplication> getByCourseParticipantUuid(UUID courseParticipantUuid) {
+		return courseApplicationDao.getByCourseParticipantUuid(courseParticipantUuid);
+	}
+	
+	@Override
 	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
 		return courseApplicationDao.getAssignedToCourse(yearFrom, yearTo);
 	}
@@ -180,7 +185,8 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 	}
 
-	private void storeCourseParticipant(CourseParticipant courseParticipant) {
+	@Override
+	public void storeCourseParticipant(CourseParticipant courseParticipant) {
 		if (courseParticipant == null) {
 			throw new IllegalArgumentException("courseParticipant is null");
 		}

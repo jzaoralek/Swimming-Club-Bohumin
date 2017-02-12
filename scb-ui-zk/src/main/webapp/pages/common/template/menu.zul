@@ -65,13 +65,31 @@
 				href="/pages/secured/TRAINER/seznam-kurzu.zul" >
 			</menuitem>
 			
-			<!-- Seznam ucastniku -->
+			<!-- Seznam ucastniku - ADMIN/TRAINER -->
 			<menuitem style="text-align: center; width: 100px;"
 				label="${c:l('txt.ui.common.participants')}" 
 				id="menu_courseParticipantList"
 				iconSclass="z-icon-child" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))"
 				href="/pages/secured/TRAINER/seznam-ucastniku.zul" >
+			</menuitem>
+			
+			<!-- Seznam ucastniku - USER -->
+			<menuitem style="text-align: center; width: 100px;"
+				label="${c:l('txt.ui.common.participants')}" 
+				id="menu_userCourseParticipantList"
+				iconSclass="z-icon-child" 
+				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))"
+				href="/pages/secured/USER/seznam-ucastniku.zul" >
+			</menuitem>
+			
+			<!-- Uzivatel -->
+			<menuitem style="text-align: center; width: 100px;"
+				label="${c:l('txt.ui.menu.user')}" 
+				id="menu_participantRepresentative"
+				iconSclass="z-icon-user" 
+				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))"
+				href="/pages/secured/USER/uzivatel.zul" >
 			</menuitem>
 			
 			<!-- Seznam uzivatelu -->

@@ -61,6 +61,7 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 
 	protected static final DayOfWeek DAY_OF_WEEK = DayOfWeek.MONDAY;
 	protected static final UUID COURSE_UUID = UUID.randomUUID();
+	protected static final UUID USER_UUID = UUID.randomUUID();
 
 	protected void fillIdentEntity(IdentEntity identEntity) {
 		if (identEntity == null) {
@@ -150,6 +151,7 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 		ret.setContact(buildContact());
 		ret.setHealthInfo(PARTIC_HEALTH_INFO);
 		ret.setPersonalNo(PARTIC_PERSONAL_NO);
+		ret.setRepresentativeUuid(USER_UUID);
 		return ret;
 	}
 

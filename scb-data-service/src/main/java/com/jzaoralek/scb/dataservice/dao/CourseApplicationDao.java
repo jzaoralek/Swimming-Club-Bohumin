@@ -11,6 +11,7 @@ public interface CourseApplicationDao {
 	List<CourseApplication> getNotInCourse(UUID courseUuid, int yearFrom, int yearTo);
 	List<CourseApplication> getInCourse(UUID courseUuid, int yearFrom, int yearTo);
 	List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo);
+	List<CourseApplication> getByCourseParticipantUuid(UUID courseParticipantUuid);
 	CourseApplication getByUuid(UUID uuid, boolean deep);
 	void insert(CourseApplication courseApplication);
 	void update(CourseApplication courseApplication);

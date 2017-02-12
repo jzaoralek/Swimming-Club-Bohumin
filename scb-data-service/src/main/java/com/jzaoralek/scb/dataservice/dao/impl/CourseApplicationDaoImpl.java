@@ -52,6 +52,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_part.land_registry_number " +
 					", con_part.house_number " +
 					", con_part.zip_code " +
+					", ca.year_from " +
+					", ca.year_to " +
 					"from  " +
 					"course_application ca " +
 					", course_participant cp " +
@@ -67,6 +69,41 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
 					"order by ca.modif_at desc ";
 
+	private static final String SELECT_BY_COURSE_PARTICIPANT_UUID = "select " +
+			" con_part.firstname " +
+			", con_part.surname " +
+			", cp.uuid \"participant_uuid\" " +
+			", cp.birthdate " +
+			", cp.personal_number " +
+			", con_repr.firstname \"representative_firstname\" " +
+			", con_repr.surname \"representative_surname\" " +
+			", con_repr.phone1 " +
+			", con_repr.email1 " +
+			", ca.uuid " +
+			", ca.modif_at " +
+			", ca.modif_by " +
+			", ca.payed " +
+			", con_part.city " +
+			", con_part.street " +
+			", con_part.land_registry_number " +
+			", con_part.house_number " +
+			", con_part.zip_code " +
+			", ca.year_from " +
+			", ca.year_to " +
+			"from  " +
+			"course_application ca " +
+			", course_participant cp " +
+			", contact con_part " +
+			", contact con_repr " +
+			", user usr " +
+			"where " +
+			"ca.course_participant_uuid = cp.uuid " +
+			"and cp.contact_uuid = con_part.uuid " +
+			"and ca.user_uuid = usr.uuid " +
+			"and usr.contact_uuid = con_repr.uuid " +
+			"AND ca.course_participant_uuid = :"+COURSE_PARTICIPANT_UUID_PARAM+" " +
+			"order by ca.modif_at desc ";
+	
 	private static final String SELECT_NOT_IN_COURSE = "select " +
 					" con_part.firstname " +
 					", con_part.surname " +
@@ -86,6 +123,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_part.land_registry_number " +
 					", con_part.house_number " +
 					", con_part.zip_code " +
+					", ca.year_from " +
+					", ca.year_to " +
 					"from  " +
 					"course_application ca " +
 					", course_participant cp " +
@@ -121,6 +160,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.land_registry_number " +
 			", con_part.house_number " +
 			", con_part.zip_code " +
+			", ca.year_from " +
+			", ca.year_to " +
 			"from  " +
 			"course_application ca " +
 			", course_participant cp " +
@@ -156,6 +197,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.land_registry_number " +
 			", con_part.house_number " +
 			", con_part.zip_code " +
+			", ca.year_from " +
+			", ca.year_to " +
 			"from  " +
 			"course_application ca " +
 			", course_participant cp " +
@@ -255,6 +298,12 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
 		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
 	}
+	
+	@Override
+	public List<CourseApplication> getByCourseParticipantUuid(UUID courseParticipantUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_PARTICIPANT_UUID_PARAM, courseParticipantUuid.toString());
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_PARTICIPANT_UUID, paramMap, new CourseApplicationRowMapper(courseDao));
+	}
 
 	@Override
 	public CourseApplication getByUuid(UUID uuid, boolean deep) {
@@ -277,7 +326,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		public CourseApplication mapRow(ResultSet rs, int rowNum) throws SQLException {
 			CourseApplication ret = new CourseApplication();
 			fetchIdentEntity(rs, ret);
-
+			
+			ret.setYearFrom(rs.getInt("year_from"));
+			ret.setYearTo(rs.getInt("year_to"));
+			
 			CourseParticipant courseParticipant = new CourseParticipant();
 			courseParticipant.setUuid(UUID.fromString(rs.getString("participant_uuid")));
 			courseParticipant.setBirthdate(rs.getDate("birthdate"));

@@ -15,6 +15,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -23,6 +24,7 @@ import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.converter.Converters;
+import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.ManifestSolver;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.validator.Validators;
@@ -193,7 +195,57 @@ public class BaseVM {
 		String year = configurationService.getCourseApplicationYear();
 		return Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
 	}
+	
+	protected Attachment buildCourseApplicationAttachment(CourseApplication courseApplication, byte[] byteArray) {
+		if (courseApplication == null) {
+			throw new IllegalArgumentException("courseApplication is null");
+		}
+		if (byteArray == null) {
+			throw new IllegalArgumentException("byteArray is null");
+		}
+		StringBuilder fileName = new StringBuilder();
+		fileName.append("prihlaska_do_klubu");
+		fileName.append("_" + courseApplication.getCourseParticRepresentative().getContact().getEmail1());
+		fileName.append(".pdf");
 
+		// create attachment for FileDownloadServlet
+		Attachment attachment = new Attachment();
+		attachment.setByteArray(byteArray);
+		attachment.setContentType("application/pdf");
+		attachment.setName(fileName.toString());
+		return attachment;
+	}
+
+	public void sendMail(Attachment attachment, CourseApplication courseApplication) {
+		StringBuilder mailToRepresentativeSb = new StringBuilder();
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text1"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
+
+		byte[] byteArray = JasperUtil.getReport(courseApplication, this.pageHeadline);
+		attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
+
+		// mail to course participant representative
+		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), byteArray, attachment.getName().toLowerCase());
+
+		StringBuilder mailToClupSb = new StringBuilder();
+		String courseApplicationYear = configurationService.getCourseApplicationYear();
+		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text0", new Object[] {courseApplicationYear}));
+		mailToClupSb.append(System.getProperty("line.separator"));
+		String participantInfo = courseApplication.getCourseParticipant().getContact().getFirstname() + " " + courseApplication.getCourseParticipant().getContact().getSurname() + ", " + getDateConverter().coerceToUi(courseApplication.getCourseParticipant().getBirthdate(), null, null);
+		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text1", new Object[] {participantInfo}));
+		mailToClupSb.append(System.getProperty("line.separator"));
+		String representativeInfo = courseApplication.getCourseParticRepresentative().getContact().getFirstname() + " " + courseApplication.getCourseParticRepresentative().getContact().getSurname() + ", " + courseApplication.getCourseParticRepresentative().getContact().getEmail1() + ", " + courseApplication.getCourseParticRepresentative().getContact().getPhone1();
+		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
+
+		// mail to club
+		mailService.sendMail(Labels.getLabel("txt.ui.organization.email"), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
+	}
+	
 	protected Boolean isSecuredPage() {
 		return WebUtils.getCurrentUrl().contains(WebConstants.SECURED_PAGE_URL);
 	}

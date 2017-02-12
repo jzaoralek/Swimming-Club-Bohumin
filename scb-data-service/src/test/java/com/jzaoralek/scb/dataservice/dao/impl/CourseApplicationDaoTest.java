@@ -14,6 +14,7 @@ import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 
 
 public class CourseApplicationDaoTest extends BaseTestCase {
@@ -30,6 +31,7 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
 
+	private UUID COURSE_PARTICIPANT_UUID;
 
 	private CourseApplication item;
 
@@ -37,7 +39,9 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	public void setUp() {
 		item = new CourseApplication();
 		fillIdentEntity(item);
-		item.setCourseParticipant(buildCourseParticipantUUIDGenerated());
+		CourseParticipant courseParticipant = buildCourseParticipantUUIDGenerated();
+		COURSE_PARTICIPANT_UUID = courseParticipant.getUuid();
+		item.setCourseParticipant(courseParticipant);
 		item.setCourseParticRepresentative(buildScbUser());
 		item.setYearFrom(YEAR_FROM);
 		item.setYearTo(YEAR_TO);
@@ -73,6 +77,11 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	@Test
 	public void testGetAssignedToCourse() {
 		assertList(courseApplicationDao.getAssignedToCourse(YEAR_FROM, YEAR_TO), 0, ITEM_UUID);
+	}
+	
+	@Test
+	public void testGetByCourseParticipantUuid() {
+		assertList(courseApplicationDao.getByCourseParticipantUuid(COURSE_PARTICIPANT_UUID), 1, item.getUuid());
 	}
 
 	@Test

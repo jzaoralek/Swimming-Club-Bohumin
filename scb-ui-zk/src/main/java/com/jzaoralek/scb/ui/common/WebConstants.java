@@ -29,7 +29,8 @@ public final class WebConstants {
 	public static final String CHECKED_PARAM = "checked";
 	public static final String TAB_PARAM = "tab";
 	public static final String COURSE_UUID_PARAM = "courseUuid";
-
+	public static final String COURSE_APPLICATION_PARAM = "courseApplication";
+	
 	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 
 	public static final String MINUTE_SECOND_DELIM = ":";
