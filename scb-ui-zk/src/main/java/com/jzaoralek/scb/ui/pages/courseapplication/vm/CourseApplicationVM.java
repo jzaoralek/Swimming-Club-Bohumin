@@ -14,9 +14,6 @@ import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
 
@@ -25,15 +22,9 @@ import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
-import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
-import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
-import com.jzaoralek.scb.ui.common.vm.Attachment;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class CourseApplicationVM extends BaseVM {
@@ -50,7 +41,6 @@ public class CourseApplicationVM extends BaseVM {
 	private String errotText;
 	private String pageHeadline;
 	private String captcha;
-	private Attachment attachment;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -119,7 +109,7 @@ public class CourseApplicationVM extends BaseVM {
 				this.confirmText = Labels.getLabel("msg.ui.info.applicationSend");
 				this.showNotification = true;
 
-				sendMail(this.attachment, this.application);
+				sendMail(this.application, this.pageHeadline);
 				
 				// pokud se jedna o noveho uzivatele poslat mail o pristupu do aplikace
 				if (scbUserBeforeApplicationSave == null) {
@@ -136,11 +126,6 @@ public class CourseApplicationVM extends BaseVM {
 		}
     }
 
-	@Command
-	public void downloadCmd() {
-		WebUtils.downloadAttachment(attachment);
-	}
-	
 	/**
 	 * Kontroluje pouziti emailu jako defaultniho prihlasovaciho jmena, pokud je jiz evidovano, nabidne predvyplneni hodnot zakonneho zastupce.
 	 * @param email

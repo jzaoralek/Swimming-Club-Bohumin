@@ -6,12 +6,15 @@ import java.util.UUID;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
+import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
@@ -42,7 +45,9 @@ public class CourseParticipantListVM extends BaseVM {
 	private Pair<Integer, Integer> yearFromTo;
 	private String newCourseApplicationButtonTooltipText;
 	private String newCourseApplicationButtonText;
+	private String newCourseParticipantButtonText;
 	private boolean courseApplicationAllowed;
+	private CourseParticipant newCourseParticipant;
 
 	@Init
 	public void init() {
@@ -51,6 +56,9 @@ public class CourseParticipantListVM extends BaseVM {
 		this.courseApplicationAllowed = configurationService.isCourseApplicationsAllowed();
 		this.newCourseApplicationButtonTooltipText = buildNewCourseApplicationButtonTooltipText();
 		this.newCourseApplicationButtonText = buildNewCourseApplicationButtonText();
+		this.newCourseParticipantButtonText = buildNewCourseParticipantButtonText();
+		this.newCourseParticipant = new CourseParticipant();
+		this.pageHeadline = getNewCourseApplicationTitle();
 	}
 	
 	@Command
@@ -63,9 +71,22 @@ public class CourseParticipantListVM extends BaseVM {
 		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
 	}
 	
+	@NotifyChange("*")
 	@Command
     public void createNewCourseApplicationCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
 		CourseParticipant courseParticipant = courseService.getCourseParticipantByUuid(uuid);
+		createNewCourseApplication(courseParticipant);
+	}
+	
+	@NotifyChange("*")
+	@Command
+	public void submit(@BindingParam("popup") Popup popup) {
+		createNewCourseApplication(this.newCourseParticipant);
+		this.newCourseParticipant = new CourseParticipant();
+		popup.close();
+	}
+	
+	private void createNewCourseApplication(CourseParticipant courseParticipant) {
 		CourseApplication courseApplication = new CourseApplication();
 		courseApplication.setCourseParticipant(courseParticipant);
 		courseApplication.setCourseParticRepresentative(SecurityUtils.getLoggedUser());
@@ -79,9 +100,10 @@ public class CourseParticipantListVM extends BaseVM {
 		try {
 			courseApplicationService.store(courseApplication);
 			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationSend"));
+			this.courseParticipantList = courseService.getCourseParticListByRepresentativeUuid(SecurityUtils.getLoggedUser().getUuid());
 			byte[] byteArray = JasperUtil.getReport(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplication.getYearFrom()}));
-			Attachment attachment = buildCourseApplicationAttachment(courseApplication, byteArray);			
-			sendMail(attachment, courseApplication);
+			this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);			
+			sendMail(courseApplication, this.pageHeadline);
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught for application: " + courseApplication);
 			WebUtils.showNotificationError(e.getMessage());
@@ -112,6 +134,10 @@ public class CourseParticipantListVM extends BaseVM {
 		return Labels.getLabel("txt.ui.menu.application") + " - " + String.valueOf(this.yearFromTo.getValue0()) + "/" + String.valueOf(this.yearFromTo.getValue1());
 	}
 	
+	private String buildNewCourseParticipantButtonText() {
+		return Labels.getLabel("txt.ui.common.newCourseParticipant") + " - " + String.valueOf(this.yearFromTo.getValue0()) + "/" + String.valueOf(this.yearFromTo.getValue1());
+	}
+	
 	public List<CourseParticipant> getCourseParticipantList() {
 		return courseParticipantList;
 	}
@@ -122,5 +148,17 @@ public class CourseParticipantListVM extends BaseVM {
 	
 	public String getNewCourseApplicationButtonText() {
 		return newCourseApplicationButtonText;
+	}
+	
+	public String getNewCourseParticipantButtonText() {
+		return newCourseParticipantButtonText;
+	}
+	
+	public CourseParticipant getNewCourseParticipant() {
+		return newCourseParticipant;
+	}
+
+	public void setNewCourseParticipant(CourseParticipant newCourseParticipant) {
+		this.newCourseParticipant = newCourseParticipant;
 	}
 }

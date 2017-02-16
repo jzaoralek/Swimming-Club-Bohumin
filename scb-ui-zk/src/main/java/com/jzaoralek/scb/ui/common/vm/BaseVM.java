@@ -34,6 +34,7 @@ public class BaseVM {
 	private final String appVersion = ManifestSolver.getMainAttributeValue("Application-version");
 	protected String pageHeadline;
 
+	protected Attachment attachment;
 	private final List<Boolean> booleanListItem = Arrays.asList(null, Boolean.TRUE, Boolean.FALSE);
 	private final List<Listitem> roleList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(ScbUserRole.class));
 	private final List<Listitem> roleListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(ScbUserRole.class));
@@ -216,7 +217,7 @@ public class BaseVM {
 		return attachment;
 	}
 
-	public void sendMail(Attachment attachment, CourseApplication courseApplication) {
+	public void sendMail(CourseApplication courseApplication, String headline) {
 		StringBuilder mailToRepresentativeSb = new StringBuilder();
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
@@ -226,11 +227,11 @@ public class BaseVM {
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
 
-		byte[] byteArray = JasperUtil.getReport(courseApplication, this.pageHeadline);
-		attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
+		byte[] byteArray = JasperUtil.getReport(courseApplication, headline);
+		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
 
 		// mail to course participant representative
-		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), byteArray, attachment.getName().toLowerCase());
+		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), byteArray,this.attachment.getName().toLowerCase());
 
 		StringBuilder mailToClupSb = new StringBuilder();
 		String courseApplicationYear = configurationService.getCourseApplicationYear();
@@ -244,6 +245,11 @@ public class BaseVM {
 
 		// mail to club
 		mailService.sendMail(Labels.getLabel("txt.ui.organization.email"), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
+	}
+	
+	@Command
+	public void downloadCmd() {
+		WebUtils.downloadAttachment(this.attachment);
 	}
 	
 	protected Boolean isSecuredPage() {

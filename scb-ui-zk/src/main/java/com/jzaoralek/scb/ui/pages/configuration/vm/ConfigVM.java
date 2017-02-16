@@ -20,7 +20,8 @@ public class ConfigVM extends BaseVM {
 	@Init
 	public void init() {
 		this.configList = configurationService.getAll();
-		this.courseYearList = configurationService.getCourseYearFromActualYearList();
+		//configurationService.getCourseYearFromActualYearList();
+		this.courseYearList = configurationService.getCourseYearList();
 	}
 
 	@NotifyChange("configList")
