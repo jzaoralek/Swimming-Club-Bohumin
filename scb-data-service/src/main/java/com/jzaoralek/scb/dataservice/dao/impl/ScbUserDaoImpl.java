@@ -30,10 +30,9 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 	private static final String CONTACT_PARAM = "contact_uuid";
 
 	private static final String INSERT = "INSERT INTO user " +
-	"(uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by) " +
-	"VALUES (:"+UUID_PARAM+", :"+USERNAME_PARAM+", :"+PASSWORD_PARAM+", :"+PASSWORD_GENERATED_PARAM+", :"+ROLE_PARAM+", :"+CONTACT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
-	// TODO: odebrat podminku pro vyber podle role
-	private static final String SELECT_ALL ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE role IN ('ADMIN','TRAINER') ORDER BY username";
+			"(uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by) " +
+			"VALUES (:"+UUID_PARAM+", :"+USERNAME_PARAM+", :"+PASSWORD_PARAM+", :"+PASSWORD_GENERATED_PARAM+", :"+ROLE_PARAM+", :"+CONTACT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
+	private static final String SELECT_ALL ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user ORDER BY username";
 	private static final String SELECT_BY_UUID ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE uuid=:" + UUID_PARAM;
 	private static final String SELECT_BY_USERNAME ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE username=:" + USERNAME_PARAM;
 	private static final String DELETE = "DELETE FROM user where uuid = :" + UUID_PARAM;
