@@ -14,7 +14,10 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -29,10 +32,13 @@ import com.jzaoralek.scb.dataservice.dao.LessonDao;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
+import com.jzaoralek.scb.dataservice.service.impl.CourseApplicationServiceImpl;
 
 @Repository
 public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLessonDao {
 
+	private static final Logger LOG = LoggerFactory.getLogger(LearningLessonDaoImpl.class);
+	
 	private static final String LESSON_DATE_PARAM = "LESSON_DATE";
 	private static final String ADDITIONAL_COLUMN_INT_PARAM = "ADDITIONAL_COLUMN_INT";
 
@@ -157,8 +163,16 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 	 * @return
 	 */
 	private List<LearningLesson> getByCourseWithFlatParticipantList(UUID courseUuid) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_COURSE_WITH_PARTICIPANTS, paramMap, new LearningLessonWithParticRowMapper(lessonDao));
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
+			//namedJdbcTemplate.update("SET SQL_BIG_SELECTS=1 ", paramMap);
+			//namedJdbcTemplate.update("SET MAX_JOIN_SIZE=100 ", paramMap);
+			return namedJdbcTemplate.query(SELECT_BY_COURSE_WITH_PARTICIPANTS, paramMap, new LearningLessonWithParticRowMapper(lessonDao));
+		} catch (Exception e) {
+			LOG.error("Unexpected exception during select: " + SELECT_BY_COURSE_WITH_PARTICIPANTS, e);
+			e.printStackTrace();
+		}
+		return new ArrayList<LearningLesson>();
 	}
 
 	@Override
