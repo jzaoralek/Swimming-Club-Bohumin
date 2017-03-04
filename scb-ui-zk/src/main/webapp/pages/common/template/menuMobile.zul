@@ -1,26 +1,50 @@
 <zk>
 	<menubar id="menubar" orient="vertical" autodrop="true" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
+		<!-- Dashboard -->
 		<menuitem label="Home" 
 			href="/" visible="@load(!vm.isUserLogged())" />
+		
+		<!-- Prihlaska -->
 		<menuitem label="${c:l('txt.ui.menu.application')}" 
 			href="/pages/public/prihlaska-do-klubu.zul" 
 			visible="@load(!vm.isUserLogged())" />
+		
+		<!-- Seznam prihlasek -->
 		<menuitem label="${c:l('txt.ui.menu.applications')}" 
 			href="/pages/secured/ADMIN/seznam-prihlasek.zul" 
 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+		
+		<!-- Seznam kurzu -->
 		<menuitem label="${c:l('txt.ui.menu.courses')}" 
 			href="/pages/secured/TRAINER/seznam-kurzu.zul" 
-			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+			visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))" />
+		
+		<!-- Seznam ucastniku - ADMIN/TRAINER -->
 		<menuitem label="${c:l('txt.ui.common.participants')}" 
 			href="/pages/secured/TRAINER/seznam-ucastniku.zul" 
-			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+			visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))" />
+		
+		<!-- Seznam ucastniku - USER -->
+		<menuitem label="${c:l('txt.ui.common.participants')}" 
+			href="/pages/secured/USER/seznam-ucastniku.zul" 
+			visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))" />
+		
+		<!-- Uzivatel - USER -->
+		<menuitem label="${c:l('txt.ui.menu.user')}" 
+			href="/pages/secured/USER/uzivatel.zul" 
+			visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))" />
+		
+		<!-- Seznam uzivatelu -->
 		<menuitem label="${c:l('txt.ui.menu.users')}" 
 			href="/pages/secured/ADMIN/seznam-uzivatelu.zul" 
 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+		
+		<!-- Nastaveni -->
 		<menuitem label="${c:l('txt.ui.menu.configuration')}" 
 			href="/pages/secured/ADMIN/configuration.zul" 
 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
+		
 		<menu label="Hardware" visible="false">
 			<menupopup>
 				<menu label="Mainboard">

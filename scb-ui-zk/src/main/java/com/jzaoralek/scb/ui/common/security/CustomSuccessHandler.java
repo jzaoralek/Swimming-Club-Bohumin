@@ -54,7 +54,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         } else if (isTrainer(roles)) {
             url = "/pages/secured/TRAINER/seznam-kurzu.zul";
         } else if (isUser(roles)) {
-            url = "/user";
+            url = "/pages/secured/USER/seznam-ucastniku.zul";
         } else {
             url = "/accessDenied";
         }

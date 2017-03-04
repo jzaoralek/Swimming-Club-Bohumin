@@ -18,6 +18,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.dataservice.service.LessonService;
 
 @Service("courseService")
 public class CourseServiceImpl extends BaseAbstractService implements CourseService {
@@ -29,6 +30,9 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
+	
+	@Autowired
+	private LessonService lessonService;
 
 
 	@Override
@@ -66,6 +70,11 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		return courseParticipantDao.getByCourseUuid(courseUuid);
 	}
 
+	@Override
+	public List<CourseParticipant> getCourseParticListByRepresentativeUuid(UUID representativeUserUuid) {
+		return courseParticipantDao.getByUserUuid(representativeUserUuid);
+	}
+	
 	@Override
 	public Course store(Course course) throws ScbValidationException {
 		if (course == null) {
@@ -124,6 +133,20 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	@Override
 	public void deleteParticipantFromCourse(UUID participantUuid, UUID courseUuid) {
 		courseParticipantDao.deleteParticipantFromCourse(participantUuid, courseUuid);
+	}
+	
+	@Override
+	public CourseParticipant getCourseParticipantByUuid(UUID uuid) {
+		return courseParticipantDao.getByUuid(uuid, true);
+	}
+	
+	@Override
+	public List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid) {
+		List<Course> ret = courseDao.getByCourseParticipantUuid(courseParticipantUuid);
+		for (Course item : ret) {
+			item.setLessonList(lessonService.getByCourse(item.getUuid()));
+		}
+		return ret;
 	}
 
 	private boolean containInList(CourseParticipant participant, List<CourseParticipant> courseParticipantList) {

@@ -21,6 +21,8 @@ public class CourseParticipant implements IdentEntity {
 	private String healthInfo;
 	private List<Result> resultList;
 	private List<Course> courseList;
+	private UUID representativeUuid;
+
 	/*
 	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
 	 */
@@ -39,6 +41,7 @@ public class CourseParticipant implements IdentEntity {
 		this.resultList = courseParticipant.resultList;
 		this.courseList = courseParticipant.courseList;
 		this.lessonAttendance = courseParticipant.lessonAttendance;
+		this.representativeUuid = courseParticipant.representativeUuid;
 	}
 
 	public CourseParticipant() {
@@ -125,6 +128,14 @@ public class CourseParticipant implements IdentEntity {
 
 	public void setLessonAttendance(boolean lessonAttendance) {
 		this.lessonAttendance = lessonAttendance;
+	}
+	
+	public UUID getRepresentativeUuid() {
+		return representativeUuid;
+	}
+
+	public void setRepresentativeUuid(UUID representativeUuid) {
+		this.representativeUuid = representativeUuid;
 	}
 
 	public String getInCourseInfo() {

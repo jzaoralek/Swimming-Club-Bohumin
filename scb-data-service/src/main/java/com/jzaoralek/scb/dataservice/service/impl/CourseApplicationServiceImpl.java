@@ -82,6 +82,10 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 
 		// zastupce
 		storeCourseParticRepresentative(courseApplication.getCourseParticRepresentative());
+		
+		// ucastnik update representativeUuid
+		courseApplication.getCourseParticipant().setRepresentativeUuid(courseApplication.getCourseParticRepresentative().getUuid());
+		courseParticipantDao.update(courseApplication.getCourseParticipant());
 
 		// prihlaska
 		boolean insert = courseApplication.getUuid() == null;
@@ -139,6 +143,11 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	}
 
 	@Override
+	public List<CourseApplication> getByCourseParticipantUuid(UUID courseParticipantUuid) {
+		return courseApplicationDao.getByCourseParticipantUuid(courseParticipantUuid);
+	}
+	
+	@Override
 	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
 		return courseApplicationDao.getAssignedToCourse(yearFrom, yearTo);
 	}
@@ -146,6 +155,13 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	private void storeCourseParticRepresentative(ScbUser courseParticRepresentative) {
 		if (courseParticRepresentative == null) {
 			throw new IllegalArgumentException("courseParticRepresentative is null");
+		}
+		
+		// nacist podle username, pokud existuje, nastavit uuid, provede se jen update
+		ScbUser userDb = scbUserDao.getByUsername(courseParticRepresentative.getContact().getEmail1());
+		if (userDb != null) {
+			courseParticRepresentative.setUuid(userDb.getUuid());
+			courseParticRepresentative.getContact().setUuid(userDb.getContact().getUuid());
 		}
 
 		// kontakt zastupce
@@ -169,7 +185,8 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 	}
 
-	private void storeCourseParticipant(CourseParticipant courseParticipant) {
+	@Override
+	public void storeCourseParticipant(CourseParticipant courseParticipant) {
 		if (courseParticipant == null) {
 			throw new IllegalArgumentException("courseParticipant is null");
 		}

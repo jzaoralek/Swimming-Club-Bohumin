@@ -35,6 +35,7 @@ CREATE TABLE course_participant(
   personal_number varchar(12),
 	health_insurance varchar(240),
 	health_info varchar(524),
+	user_uuid varchar(36) REFERENCES user(uuid),
 	contact_uuid varchar(36) REFERENCES contact(uuid),
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
@@ -43,7 +44,7 @@ CREATE TABLE course_participant(
 
 CREATE TABLE user(
 	uuid varchar(36),
-	username VARCHAR(100) NOT NULL,
+	username VARCHAR(100) NOT NULL UNIQUE,
 	password VARCHAR(100) NOT NULL,
 	password_generated ENUM('0','1') NOT NULL,
 	role ENUM('USER','ADMIN','TRAINER') NOT NULL,

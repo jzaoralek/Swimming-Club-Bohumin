@@ -5,22 +5,26 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.zkoss.bind.BindUtils;
+import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.Messagebox;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
-import com.jzaoralek.scb.dataservice.service.MailService;
+import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
-import com.jzaoralek.scb.ui.common.vm.Attachment;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class CourseApplicationVM extends BaseVM {
@@ -37,14 +41,14 @@ public class CourseApplicationVM extends BaseVM {
 	private String errotText;
 	private String pageHeadline;
 	private String captcha;
-	private Attachment attachment;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
 
 	@WireVariable
-	private MailService mailService;
+	private ScbUserService scbUserService;
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
 		// kontrola zda-li prihlasky povolene
@@ -95,13 +99,23 @@ public class CourseApplicationVM extends BaseVM {
 					WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.agreementWithHealtAndDataInfo"));
 					return;
 				}
+				
+				// zjistit zda-li pred zalozenim objednavky uz uzivatel v aplikaci existoval
+				ScbUser scbUserBeforeApplicationSave = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
+				
 				courseApplicationService.store(application);
 				//WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationSend"));
 				this.editMode = false;
 				this.confirmText = Labels.getLabel("msg.ui.info.applicationSend");
 				this.showNotification = true;
 
-				sendMail();
+				sendMail(this.application, this.pageHeadline);
+				
+				// pokud se jedna o noveho uzivatele poslat mail o pristupu do aplikace
+				if (scbUserBeforeApplicationSave == null) {
+					ScbUser user = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
+					sendMailToNewUser(user);
+				}
 			}
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught for application: " + this.application);
@@ -112,52 +126,41 @@ public class CourseApplicationVM extends BaseVM {
 		}
     }
 
+	/**
+	 * Kontroluje pouziti emailu jako defaultniho prihlasovaciho jmena, pokud je jiz evidovano, nabidne predvyplneni hodnot zakonneho zastupce.
+	 * @param email
+	 * @param fx
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@NotifyChange("*")
 	@Command
-	public void downloadCmd() {
-//		Executions.sendRedirect(FileDownloadServlet.URL);
-//		Filedownload.save(this.applicationFile, JasperUtil.REPORT_MIME, "prihlaska.pdf");
-		WebUtils.downloadAttachment(attachment);
+	public void validateUniqueUsernameCmd(@BindingParam("email") String email, @BindingParam("fx") final CourseApplicationVM fx) {
+		// pokud existuje uzivatel se stejnym username jako je zadany email, zobrazit upozorneni, pokud uzivatel potvrdi, 
+		// predvyplnit udaje a po ulozeni provest jen update udaju zastupce
+		final ScbUser scbUser = scbUserService.getByUsername(email);
+		if (scbUser != null) {
+			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists",new Object[] {email, scbUser.getContact().getCompleteName()});
+			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.YES | Messagebox.NO, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
+			    public void onEvent(Event evt) throws InterruptedException {
+			        if (evt.getName().equals("onYes")) {
+			            // predvyplnit udaje zastupce, automaticky se diky vypplnenemu uuid bude provadet update
+			        	fx.getApplication().setCourseParticRepresentative(scbUser);
+			        } else {
+			        	// vymazat email
+			        	fx.getApplication().getCourseParticRepresentative().getContact().setEmail1("");
+			        }
+			        BindUtils.postNotifyChange(null, null, fx, "*");
+			    }
+			});
+		}
 	}
-
-    public void sendMail() {
-		StringBuilder mailToRepresentativeSb = new StringBuilder();
-		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text1"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
-
-		byte[] byteArray = JasperUtil.getReport(this.application, this.pageHeadline);
-
-		StringBuilder fileName = new StringBuilder();
-		fileName.append("prihlaska_do_klubu");
-		fileName.append("_" + this.application.getCourseParticRepresentative().getContact().getEmail1());
-		fileName.append(".pdf");
-
-		// create attachment for FileDownloadServlet
-		Attachment attachment = new Attachment();
-		attachment.setByteArray(byteArray);
-		attachment.setContentType("application/pdf");
-		attachment.setName(fileName.toString());
-		this.attachment = attachment;
-
-		// mail to course participant representative
-		mailService.sendMail(this.application.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), byteArray, fileName.toString().toLowerCase());
-
-		StringBuilder mailToClupSb = new StringBuilder();
-		String courseApplicationYear = configurationService.getCourseApplicationYear();
-		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text0", new Object[] {courseApplicationYear}));
-		mailToClupSb.append(System.getProperty("line.separator"));
-		String participantInfo = this.application.getCourseParticipant().getContact().getFirstname() + " " + this.application.getCourseParticipant().getContact().getSurname() + ", " + getDateConverter().coerceToUi(this.application.getCourseParticipant().getBirthdate(), null, null);
-		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text1", new Object[] {participantInfo}));
-		mailToClupSb.append(System.getProperty("line.separator"));
-		String representativeInfo = this.application.getCourseParticRepresentative().getContact().getFirstname() + " " + this.application.getCourseParticRepresentative().getContact().getSurname() + ", " + this.application.getCourseParticRepresentative().getContact().getEmail1() + ", " + this.application.getCourseParticRepresentative().getContact().getPhone1();
-		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
-
-		// mail to club
-		mailService.sendMail(Labels.getLabel("txt.ui.organization.email"), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
+	
+	/**
+	 * Udaj muze menit pouze prihlaseny user nebo neprihlaseny uzivatel.
+	 * @return
+	 */
+	public boolean isItemReadOnly() {
+		return isLoggedUserInRole(ScbUserRole.TRAINER.name()) || isLoggedUserInRole(ScbUserRole.ADMIN.name());
 	}
 
 	private void initItem(CourseApplication courseApplication) {

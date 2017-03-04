@@ -15,12 +15,16 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
+import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.converter.Converters;
+import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.ManifestSolver;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.validator.Validators;
@@ -30,12 +34,16 @@ public class BaseVM {
 	private final String appVersion = ManifestSolver.getMainAttributeValue("Application-version");
 	protected String pageHeadline;
 
+	protected Attachment attachment;
 	private final List<Boolean> booleanListItem = Arrays.asList(null, Boolean.TRUE, Boolean.FALSE);
 	private final List<Listitem> roleList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(ScbUserRole.class));
 	private final List<Listitem> roleListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(ScbUserRole.class));
 
 	@WireVariable
 	protected ConfigurationService configurationService;
+	
+	@WireVariable
+	protected MailService mailService;
 
 	protected String returnToPage;
 
@@ -140,6 +148,46 @@ public class BaseVM {
 		}
 	}
 
+	protected void sendMailToNewUser(ScbUser user) {
+		StringBuilder mailToUser = new StringBuilder();
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text0"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text1"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text2", new Object[] {user.getUsername()}));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text3", new Object[] {user.getPassword()}));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		
+		// pro roli USER souhrn funkcionalit aplikace
+		if (user.getRole() == ScbUserRole.USER) {
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text0"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text1"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text2"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text3"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text4"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text5"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text6"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text7"));			
+		}
+		
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text4"));
+		
+		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin"), mailToUser.toString(), null, null);
+	}
+	
 	public List<Boolean> getBooleanListItem() {
 		return booleanListItem;
 	}
@@ -170,7 +218,62 @@ public class BaseVM {
 		String year = configurationService.getCourseApplicationYear();
 		return Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
 	}
+	
+	protected Attachment buildCourseApplicationAttachment(CourseApplication courseApplication, byte[] byteArray) {
+		if (courseApplication == null) {
+			throw new IllegalArgumentException("courseApplication is null");
+		}
+		if (byteArray == null) {
+			throw new IllegalArgumentException("byteArray is null");
+		}
+		StringBuilder fileName = new StringBuilder();
+		fileName.append("prihlaska_do_klubu");
+		fileName.append("_" + courseApplication.getCourseParticRepresentative().getContact().getEmail1());
+		fileName.append(".pdf");
 
+		// create attachment for FileDownloadServlet
+		Attachment attachment = new Attachment();
+		attachment.setByteArray(byteArray);
+		attachment.setContentType("application/pdf");
+		attachment.setName(fileName.toString());
+		return attachment;
+	}
+
+	public void sendMail(CourseApplication courseApplication, String headline) {
+		StringBuilder mailToRepresentativeSb = new StringBuilder();
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text1"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
+
+		byte[] byteArray = JasperUtil.getReport(courseApplication, headline);
+		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
+
+		// mail to course participant representative
+		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), byteArray,this.attachment.getName().toLowerCase());
+
+		StringBuilder mailToClupSb = new StringBuilder();
+		String courseApplicationYear = configurationService.getCourseApplicationYear();
+		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text0", new Object[] {courseApplicationYear}));
+		mailToClupSb.append(System.getProperty("line.separator"));
+		String participantInfo = courseApplication.getCourseParticipant().getContact().getFirstname() + " " + courseApplication.getCourseParticipant().getContact().getSurname() + ", " + getDateConverter().coerceToUi(courseApplication.getCourseParticipant().getBirthdate(), null, null);
+		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text1", new Object[] {participantInfo}));
+		mailToClupSb.append(System.getProperty("line.separator"));
+		String representativeInfo = courseApplication.getCourseParticRepresentative().getContact().getFirstname() + " " + courseApplication.getCourseParticRepresentative().getContact().getSurname() + ", " + courseApplication.getCourseParticRepresentative().getContact().getEmail1() + ", " + courseApplication.getCourseParticRepresentative().getContact().getPhone1();
+		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
+
+		// mail to club
+		mailService.sendMail(Labels.getLabel("txt.ui.organization.email"), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
+	}
+	
+	@Command
+	public void downloadCmd() {
+		WebUtils.downloadAttachment(this.attachment);
+	}
+	
 	protected Boolean isSecuredPage() {
 		return WebUtils.getCurrentUrl().contains(WebConstants.SECURED_PAGE_URL);
 	}

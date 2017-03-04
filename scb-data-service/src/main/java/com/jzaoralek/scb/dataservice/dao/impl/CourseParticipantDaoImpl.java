@@ -32,20 +32,24 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	private static final String LEARNING_LESSON_UUID_PARAM = "learning_lesson_uuid";
 
 	private static final String INSERT = "INSERT INTO course_participant " +
-			"(uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by) " +
-			" VALUES (:"+UUID_PARAM+", :"+BIRTHDATE_PARAM+", :"+PERSONAL_NUMBER_PARAM+", :"+HEALTH_INSURANCE+", :"+CONTACT_PARAM+", :"+HEALTH_INFO_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
-	private static final String SELECT_BY_UUID = "SELECT uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by FROM course_participant WHERE uuid= :"+UUID_PARAM;
+			"(uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by, user_uuid) " +
+			" VALUES (:"+UUID_PARAM+", :"+BIRTHDATE_PARAM+", :"+PERSONAL_NUMBER_PARAM+", :"+HEALTH_INSURANCE+", :"+CONTACT_PARAM+", :"+HEALTH_INFO_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+USER_UUID_PARAM+")";
+	private static final String SELECT_BY_UUID = "SELECT uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by, user_uuid FROM course_participant WHERE uuid= :"+UUID_PARAM;
 
-	private static final String SELECT_BY_COURSE_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by FROM course_participant cp, course_course_participant ccp, contact c "
+	private static final String SELECT_BY_COURSE_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid FROM course_participant cp, course_course_participant ccp, contact c "
 			+ "WHERE cp.uuid = ccp.course_participant_uuid "
 			+ "AND cp.contact_uuid = c.uuid "
 			+ "AND ccp.course_uuid = :"+COURSE_UUID_PARAM+" "
 			+ "ORDER BY c.surname ";
 
-	private static final String SELECT_BY_LEARNING_LESSON_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by FROM course_participant cp, participant_learning_lesson cpl "
+	private static final String SELECT_BY_LEARNING_LESSON_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid FROM course_participant cp, participant_learning_lesson cpl "
 			+ "WHERE cp.uuid = cpl.course_participant_uuid "
 			+ "AND cpl.learning_lesson_uuid = :" + LEARNING_LESSON_UUID_PARAM;
-
+	
+	private static final String SELECT_BY_USERID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid  "
+			+ " FROM course_participant cp , contact c "
+			+ " WHERE cp.contact_uuid = c.uuid AND cp.user_uuid=:" + USER_UUID_PARAM;
+	
 	private static final String INSERT_PARTIC_LEARNING_LESSON = "INSERT INTO participant_learning_lesson (course_participant_uuid, learning_lesson_uuid) VALUES (:"+COURSE_PARTICIPANT_UUID_PARAM+", :"+LEARNING_LESSON_UUID_PARAM+")";
 	private static final String DELETE_ALL_FROM_LEARNING_LESSON = "DELETE FROM participant_learning_lesson WHERE learning_lesson_uuid = :"+LEARNING_LESSON_UUID_PARAM;
 
@@ -57,7 +61,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			" VALUES (:"+UUID_PARAM+", :"+COURSE_PARTICIPANT_UUID_PARAM+", :"+COURSE_UUID_PARAM+")";
 
 	private static final String DELETE = "DELETE FROM course_participant where uuid = :" + UUID_PARAM;
-	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + ", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + ", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", user_uuid=:"+USER_UUID_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 
 	@Autowired
@@ -87,6 +91,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		paramMap.addValue(HEALTH_INSURANCE, courseParticipant.getHealthInsurance());
 		paramMap.addValue(CONTACT_PARAM, courseParticipant.getContact() != null ? courseParticipant.getContact().getUuid().toString() : null);
 		paramMap.addValue(HEALTH_INFO_PARAM, courseParticipant.getHealthInfo());
+		paramMap.addValue(USER_UUID_PARAM, courseParticipant.getRepresentativeUuid() != null ? courseParticipant.getRepresentativeUuid().toString() : null);
 		namedJdbcTemplate.update(INSERT, paramMap);
 	}
 
@@ -99,6 +104,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		paramMap.addValue(HEALTH_INSURANCE, courseParticipant.getHealthInsurance());
 		paramMap.addValue(CONTACT_PARAM, courseParticipant.getContact() != null ? courseParticipant.getContact().getUuid().toString() : null);
 		paramMap.addValue(HEALTH_INFO_PARAM, courseParticipant.getHealthInfo());
+		paramMap.addValue(USER_UUID_PARAM, courseParticipant.getRepresentativeUuid() != null ? courseParticipant.getRepresentativeUuid().toString() : null);
 		namedJdbcTemplate.update(UPDATE, paramMap);
 	}
 
@@ -142,6 +148,12 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(LEARNING_LESSON_UUID_PARAM, learningLessonUuid.toString());
 		return namedJdbcTemplate.query(SELECT_BY_LEARNING_LESSON_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
 	}
+	
+	@Override
+	public List<CourseParticipant> getByUserUuid(UUID userUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(USER_UUID_PARAM, userUuid.toString());
+		return namedJdbcTemplate.query(SELECT_BY_USERID, paramMap, new CourseParticipantRowMapper(contactDao));
+	}
 
 	@Override
 	public void insertToLearningLesson(UUID learningLessonUuid, List<CourseParticipant> participantList) {
@@ -183,6 +195,8 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 				ret.setContact(contactDao.getByUuid(contactUuid));
 			}
 
+			ret.setRepresentativeUuid(rs.getString("user_uuid") != null ? UUID.fromString(rs.getString("user_uuid")) : null);
+			
 			return ret;
 		}
 	}

@@ -39,6 +39,11 @@ public class ScbUserServiceImpl extends BaseAbstractService implements ScbUserSe
 	public ScbUser getByUuid(UUID uuid) {
 		return scbUserDao.getByUuid(uuid);
 	}
+	
+	@Override
+	public ScbUser getByUsername(String username) {
+		return scbUserDao.getByUsername(username);
+	}
 
 	@Override
 	public ScbUser store(ScbUser user) throws ScbValidationException {

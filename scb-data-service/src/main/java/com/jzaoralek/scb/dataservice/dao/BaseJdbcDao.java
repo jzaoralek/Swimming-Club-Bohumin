@@ -25,6 +25,7 @@ public abstract class BaseJdbcDao {
 	protected static final String TIME_FROM_PARAM = "TIME_FROM";
 	protected static final String TIME_TO_PARAM = "TIME_TO";
 	protected static final String DESCRIPTION_PARAM = "description";
+	protected static final String USER_UUID_PARAM = "USER_UUID";
 
 	protected final JdbcTemplate jdbcTemplate;
 	protected final NamedParameterJdbcTemplate namedJdbcTemplate;

@@ -29,9 +29,6 @@ public class UserVM extends BaseVM {
 	@WireVariable
 	private ScbUserService scbUserService;
 
-	@WireVariable
-	private MailService mailService;
-
 	private ScbUser user;
 	private String pageHeadline;
 	private boolean updateMode;
@@ -76,24 +73,6 @@ public class UserVM extends BaseVM {
 			LOG.warn("ScbValidationException caught during storing user: " + this.user, e);
 			WebUtils.showNotificationError(e.getMessage());
 		}
-	}
-
-	private void sendMailToNewUser(ScbUser user) {
-		StringBuilder mailToUser = new StringBuilder();
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text0"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text1"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text2", new Object[] {user.getUsername()}));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text3", new Object[] {user.getPassword()}));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text4"));
-
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin"), mailToUser.toString(), null, null);
 	}
 
 	public ScbUser getUser() {

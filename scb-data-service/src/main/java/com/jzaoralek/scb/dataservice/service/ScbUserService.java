@@ -14,4 +14,5 @@ public interface ScbUserService {
 	ScbUser getByUuid(UUID uuid);
 	ScbUser store(ScbUser user) throws ScbValidationException;
 	void delete(UUID uuid) throws ScbValidationException;
+	ScbUser getByUsername(String username);
 }

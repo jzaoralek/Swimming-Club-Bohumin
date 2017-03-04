@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseTestCase;
+import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 
@@ -19,6 +20,9 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
 
+	@Autowired
+	private ContactDao contactDao;
+	
 	private CourseParticipant item;
 
 	@Before
@@ -26,6 +30,7 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 		item = buildCourseParticipant();
 
 		courseParticipantDao.insert(item);
+		contactDao.insert(item.getContact());
 	}
 
 	@Test
@@ -47,6 +52,11 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 		assertList(courseParticipantDao.getByLearningLessonUuid(UUID.randomUUID()), 0, null);
 	}
 
+	@Test
+	public void testGetByUserUuid() {
+		assertList(courseParticipantDao.getByUserUuid(USER_UUID), 1, item.getUuid());
+	}
+	
 	@Test
 	public void testDeleteParticipantFromCourse() {
 		courseParticipantDao.deleteParticipantFromCourse(UUID.randomUUID(), ITEM_UUID);

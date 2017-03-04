@@ -12,6 +12,14 @@ public interface CourseService {
 	List<Course> getAll(int yearFrom, int yearTo);
 	List<Course> getAllExceptCourse(UUID courseUuid);
 	List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid);
+	List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid);
+	/**
+	 * Get all participants for participant representative.
+	 * @param userUuid
+	 * @return
+	 */
+	List<CourseParticipant> getCourseParticListByRepresentativeUuid(UUID representativeUserUuid);
+	CourseParticipant getCourseParticipantByUuid(UUID uuid);
 	Course getByUuid(UUID uuid);
 	Course store(Course course) throws ScbValidationException;
 	void delete(UUID uuid) throws ScbValidationException;

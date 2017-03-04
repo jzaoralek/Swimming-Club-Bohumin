@@ -3246,6 +3246,9 @@ a.z-tab-content{
 	padding-right: 0px;
 }
 
+.listbox-odd-row {
+	background: #f8f8f8;
+}
 
 
 
