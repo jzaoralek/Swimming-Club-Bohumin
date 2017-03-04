@@ -161,8 +161,30 @@ public class BaseVM {
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text3", new Object[] {user.getPassword()}));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		
+		// pro roli USER souhrn funkcionalit aplikace
+		if (user.getRole() == ScbUserRole.USER) {
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text0"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text1"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text2"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text3"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text4"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text5"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text6"));
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text7"));			
+		}
+		
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text4"));
-
+		
 		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin"), mailToUser.toString(), null, null);
 	}
 	
