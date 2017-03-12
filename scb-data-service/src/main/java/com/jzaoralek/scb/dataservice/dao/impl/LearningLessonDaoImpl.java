@@ -49,7 +49,8 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			" SELECT ls.uuid, ls.lesson_date, ls.time_from, ls.time_to, ls.description, ls.additional_column_int, ls.modif_at, ls.modif_by, ls.lesson_uuid "
 			+ ", cp.uuid \"COURSE_PARTICIPANT_UUID\"  "
 			+ ", c.firstname, c.surname "
-			+ "FROM learning_lesson ls LEFT JOIN participant_learning_lesson pls ON (ls.uuid = pls.learning_lesson_uuid) "
+			+ "FROM participant_learning_lesson pls "
+			+ "LEFT JOIN learning_lesson ls ON (ls.uuid = pls.learning_lesson_uuid) "
 			+ "LEFT JOIN course_participant cp ON (pls.course_participant_uuid = cp.uuid) "
 			+ "LEFT JOIN contact c ON (cp.contact_uuid = c.uuid) "
 			+ "WHERE lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+") "
@@ -164,9 +165,7 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 	 */
 	private List<LearningLesson> getByCourseWithFlatParticipantList(UUID courseUuid) {
 		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
-			//namedJdbcTemplate.update("SET SQL_BIG_SELECTS=1 ", paramMap);
-			//namedJdbcTemplate.update("SET MAX_JOIN_SIZE=100 ", paramMap);
+			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());			
 			return namedJdbcTemplate.query(SELECT_BY_COURSE_WITH_PARTICIPANTS, paramMap, new LearningLessonWithParticRowMapper(lessonDao));
 		} catch (Exception e) {
 			LOG.error("Unexpected exception during select: " + SELECT_BY_COURSE_WITH_PARTICIPANTS, e);
