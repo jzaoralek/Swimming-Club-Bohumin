@@ -174,8 +174,7 @@ public class UserListVM extends BaseVM {
 		}
 		
 		for (ScbUser user : this.userList) {
-			System.out.println("Send mail to: " + user.getContact().getEmail1());
-//			sendMailToNewUser(user);
+			sendMailToNewUser(user);
 		}
 		
 		WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
