@@ -176,10 +176,12 @@ public class BaseVM {
 			mailToUser.append(WebConstants.LINE_SEPARATOR);
 			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text5"));
 			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text6"));
-			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text7"));			
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text6"));		
 		}
+		
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUser.text7"));
 		
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);

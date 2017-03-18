@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -163,6 +165,20 @@ public class UserListVM extends BaseVM {
 	@NotifyChange("userList")
 	public void filterDomCmd() {
 		this.userList = filter.getUserListFiltered(this.userListBase);
+	}
+	
+	@Command
+	public void sendNewUserMailToAllUser() {
+		if (CollectionUtils.isEmpty(this.userList)) {
+			return;
+		}
+		
+		for (ScbUser user : this.userList) {
+			System.out.println("Send mail to: " + user.getContact().getEmail1());
+//			sendMailToNewUser(user);
+		}
+		
+		WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
 	}
 
 	public Boolean canDelete(UUID userUuid) {
