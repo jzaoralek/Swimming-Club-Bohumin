@@ -41,7 +41,7 @@
 			            		</vbox>
 			            		<vbox hflex="1" vflex="1" align="end" pack="center" >
 			            			<hbox>
-			            				<button label="Mail novým uživatelům" sclass="btn-warning" onClick="@command('sendNewUserMailToAllUser')" />
+			            				<button label="Mail novým uživatelům" sclass="btn-warning" visible="@load(vm.allowSendMailToUsers)" onClick="@command('sendNewUserMailToAllUser')" />
 			            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=userList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
 		            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
 									</hbox>

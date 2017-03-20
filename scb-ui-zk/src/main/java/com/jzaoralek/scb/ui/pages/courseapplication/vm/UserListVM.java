@@ -17,6 +17,7 @@ import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -63,13 +64,14 @@ public class UserListVM extends BaseVM {
 	private List<ScbUser> userListBase;
 	private UUID loggedUserUuid;
 	private final UserFilter filter = new UserFilter();
+	private boolean allowSendMailToUsers;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Init
-	public void init() {
+	public void init(@QueryParam("allowSendMailToUsers") String allowSendMailToUsers) {
 		loadData();
 		this.loggedUserUuid = SecurityUtils.getLoggedUser().getUuid();
-
+		this.allowSendMailToUsers = StringUtils.hasText(allowSendMailToUsers) && "1".equals(allowSendMailToUsers);
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.USER_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
 			@Override
@@ -243,6 +245,10 @@ public class UserListVM extends BaseVM {
 
 	public UserFilter getFilter() {
 		return filter;
+	}
+	
+	public boolean isAllowSendMailToUsers() {
+		return allowSendMailToUsers;
 	}
 
 	public static class UserFilter {

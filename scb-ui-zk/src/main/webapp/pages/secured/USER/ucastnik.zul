@@ -43,7 +43,7 @@
 						        <tab id="courseParticipant" label="${c:l('txt.ui.common.dataBasic')}" />
 						        <tab id="courseApplications" label="${c:l('txt.ui.menu.applications')}" />
 						        <tab id="courses" label="${c:l('txt.ui.menu.courses')}" />
-						        <tab id="courseParticipantResult" label="${c:l('txt.ui.common.results')}" />
+						        <tab id="courseParticipantResult" visible="false" label="${c:l('txt.ui.common.results')}" />
 						    </tabs>
 						    <tabpanels>
 						    	<tabpanel>
@@ -278,7 +278,7 @@
 								    </listbox>
 						    	</tabpanel>
 						    	
-						    	<tabpanel hflex="1" fulfill="courseParticipantResult.onSelect">
+						    	<tabpanel hflex="1" visible="false" fulfill="courseParticipantResult.onSelect">
 						    		<!-- Vysledky -->
 						    		<hbox pack="start" style="margin-top: 10px;">
 						    			<label value="${c:l('txt.ui.common.style')}: "/>

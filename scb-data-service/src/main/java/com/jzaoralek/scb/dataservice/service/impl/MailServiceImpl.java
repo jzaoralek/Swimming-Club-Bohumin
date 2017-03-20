@@ -69,11 +69,11 @@ public class MailServiceImpl implements MailService {
           // Set To: header field of the header.
           message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
           // Set Subject: header field
-          message.setSubject(subject);
+          message.setSubject(subject, "UTF-8");
           // Now set the actual message
-          BodyPart messageBodyPart = new MimeBodyPart();
+          MimeBodyPart messageBodyPart = new MimeBodyPart();
           // Now set the actual message
-          messageBodyPart.setText(text);
+          messageBodyPart.setText(text, "UTF-8");
 
           Multipart multipart = new MimeMultipart();
           // Set text message part
