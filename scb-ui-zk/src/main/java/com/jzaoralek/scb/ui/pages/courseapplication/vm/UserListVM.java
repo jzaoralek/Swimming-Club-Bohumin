@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,12 +10,14 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -61,13 +64,14 @@ public class UserListVM extends BaseVM {
 	private List<ScbUser> userListBase;
 	private UUID loggedUserUuid;
 	private final UserFilter filter = new UserFilter();
+	private boolean allowSendMailToUsers;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Init
-	public void init() {
+	public void init(@QueryParam("allowSendMailToUsers") String allowSendMailToUsers) {
 		loadData();
 		this.loggedUserUuid = SecurityUtils.getLoggedUser().getUuid();
-
+		this.allowSendMailToUsers = StringUtils.hasText(allowSendMailToUsers) && "1".equals(allowSendMailToUsers);
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.USER_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
 			@Override
@@ -164,6 +168,19 @@ public class UserListVM extends BaseVM {
 	public void filterDomCmd() {
 		this.userList = filter.getUserListFiltered(this.userListBase);
 	}
+	
+	@Command
+	public void sendNewUserMailToAllUser() {
+		if (CollectionUtils.isEmpty(this.userList)) {
+			return;
+		}
+		
+		for (ScbUser user : this.userList) {
+			sendMailToNewUser(user);
+		}
+		
+		WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
+	}
 
 	public Boolean canDelete(UUID userUuid) {
 		return !userUuid.toString().equals(this.loggedUserUuid.toString());
@@ -228,6 +245,10 @@ public class UserListVM extends BaseVM {
 
 	public UserFilter getFilter() {
 		return filter;
+	}
+	
+	public boolean isAllowSendMailToUsers() {
+		return allowSendMailToUsers;
 	}
 
 	public static class UserFilter {
