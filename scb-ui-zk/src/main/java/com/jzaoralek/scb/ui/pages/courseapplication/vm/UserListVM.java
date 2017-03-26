@@ -192,24 +192,6 @@ public class UserListVM extends BaseVM {
 		BindUtils.postNotifyChange(null, null, this, "userList");
 	}
 
-	private void sendMailWithResetpassword(ScbUser user) {
-		StringBuilder mailToUser = new StringBuilder();
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text0"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text1"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text2", new Object[] {user.getUsername()}));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text3", new Object[] {user.getPassword()}));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text4"));
-
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, null);
-	}
-
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
 		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
 

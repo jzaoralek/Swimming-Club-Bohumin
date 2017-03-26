@@ -18,7 +18,7 @@ public final class Validators {
 	private static final CaptchaValidator captchaValidator = new CaptchaValidator();
 	private static final TimeIntervalValidator timeIntervalValidator = new TimeIntervalValidator();
 	private static final PasswordValidator passwordValidator = new PasswordValidator();
-
+	
 	public static Validator getEmailValidator() {
 		return emailValidator;
 	}

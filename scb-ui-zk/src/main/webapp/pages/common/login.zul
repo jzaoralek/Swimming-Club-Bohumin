@@ -68,15 +68,21 @@
 										</td>
 									</tr>
 									<tr>
-										<td colspan="2" align="right" style="padding: 10px;">
+										<td colspan="2" align="right" style="padding: 10px 10px 5px 0px;">
 											<input id="btnSubmit" type="submit" class="z-button" value="${c:l('txt.ui.common.ToLogin')}" />
+										</td>
+										<td>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="2" align="right" style="padding-bottom: 10px;padding-right: 10px;">
+											<a href="${pageContext.request.contextPath}/pages/public/zapomenute-heslo.zul">${c:l('txt.ui.common.forgottenPassword')}<a/>
 										</td>
 										<td>
 										</td>
 									</tr>
 								</table>
 							</form>
-							
 							<script>
 								function validateForm() {
 									var usernameValid = validateUsername();

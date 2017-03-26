@@ -9,6 +9,8 @@ import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.Init;
+import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -20,6 +22,7 @@ import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
+import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -27,6 +30,7 @@ import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.ManifestSolver;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.validator.ExistingUsernameValidator;
 import com.jzaoralek.scb.ui.common.validator.Validators;
 
 public class BaseVM {
@@ -43,9 +47,19 @@ public class BaseVM {
 	protected ConfigurationService configurationService;
 	
 	@WireVariable
+	private ScbUserService scbUserService;
+	
+	@WireVariable
 	protected MailService mailService;
 
 	protected String returnToPage;
+	
+	private ExistingUsernameValidator existingUsernameValidator;
+	
+	@Init
+	public void init() {
+		this.existingUsernameValidator = new ExistingUsernameValidator(scbUserService);
+	}
 
 	public String getDateFormat() {
 		return WebConstants.DATE_FORMAT;
@@ -109,6 +123,10 @@ public class BaseVM {
 		return Validators.getPasswordvalidator();
 	}
 
+	public Validator getExistingusernameValidator() {
+		return this.existingUsernameValidator;
+	}
+	
 	public Converter<String, Date, Component> getDateConverter() {
 		return Converters.getDateconverter();
 	}
@@ -215,6 +233,7 @@ public class BaseVM {
 
 		return null;
 	}
+	
 
 	public String getNewCourseApplicationTitle() {
 		String year = configurationService.getCourseApplicationYear();
@@ -269,6 +288,24 @@ public class BaseVM {
 
 		// mail to club
 		mailService.sendMail(Labels.getLabel("txt.ui.organization.email"), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
+	}
+	
+	protected void sendMailWithResetpassword(ScbUser user) {
+		StringBuilder mailToUser = new StringBuilder();
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text0"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text1"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text2", new Object[] {user.getUsername()}));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text3", new Object[] {user.getPassword()}));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text4"));
+
+		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, null);
 	}
 	
 	@Command
