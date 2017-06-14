@@ -208,6 +208,42 @@ public class BaseVM {
 		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin"), mailToUser.toString(), null, null);
 	}
 	
+	protected void sendEndOfSeasonMailToUser(ScbUser user) {
+		StringBuilder mailToUser = new StringBuilder();
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text0"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text1"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text2"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text3"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text4"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text5"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text6"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text7"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text8"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text9"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text10"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text11"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text12"));
+		
+		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.endOfSeason.subject"), mailToUser.toString(), null, null);
+	}
+	
 	public List<Boolean> getBooleanListItem() {
 		return booleanListItem;
 	}

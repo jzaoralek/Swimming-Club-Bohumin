@@ -181,6 +181,19 @@ public class UserListVM extends BaseVM {
 		
 		WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
 	}
+	
+	@Command
+	public void sendEndOfSeasonMailToUserCmd() {
+		if (CollectionUtils.isEmpty(this.userList)) {
+			return;
+		}
+		
+		for (ScbUser user : this.userList) {
+			sendEndOfSeasonMailToUser(user);
+		}
+		
+		WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
+	}
 
 	public Boolean canDelete(UUID userUuid) {
 		return !userUuid.toString().equals(this.loggedUserUuid.toString());
