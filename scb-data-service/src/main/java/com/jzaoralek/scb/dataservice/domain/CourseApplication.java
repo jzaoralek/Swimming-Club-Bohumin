@@ -17,6 +17,8 @@ public class CourseApplication implements IdentEntity {
 	private boolean payed;
 	private CourseParticipant courseParticipant;
 	private ScbUser courseParticRepresentative;
+	// current participant from previous year
+	private boolean currentParticipant;
 
 	public CourseApplication() {
 		this.courseParticipant = new CourseParticipant();
@@ -77,6 +79,12 @@ public class CourseApplication implements IdentEntity {
 	public void setCourseParticRepresentative(ScbUser courseParticRepresentative) {
 		this.courseParticRepresentative = courseParticRepresentative;
 	}
+	public boolean isCurrentParticipant() {
+		return currentParticipant;
+	}
+	public void setCurrentParticipant(boolean currentParticipant) {
+		this.currentParticipant = currentParticipant;
+	}
 	public void fillYearFromTo(String value) {
 		if (!StringUtils.hasText(value)) {
 			return;
@@ -93,6 +101,7 @@ public class CourseApplication implements IdentEntity {
 	public String toString() {
 		return "CourseApplication [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", yearFrom="
 				+ yearFrom + ", yearTo=" + yearTo + ", payed=" + payed + ", courseParticipant=" + courseParticipant
-				+ ", courseParticRepresentative=" + courseParticRepresentative + "]";
-	}
+				+ ", courseParticRepresentative=" + courseParticRepresentative + ", currentParticipant="
+				+ currentParticipant + "]";
+	}	
 }

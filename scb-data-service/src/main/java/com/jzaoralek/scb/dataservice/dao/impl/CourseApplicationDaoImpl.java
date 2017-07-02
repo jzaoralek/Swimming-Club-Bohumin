@@ -43,6 +43,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_repr.surname \"representative_surname\" " +
 					", con_repr.phone1 " +
 					", con_repr.email1 " +
+					", con_repr.phone2 " +
+					", con_repr.email2 " +
 					", ca.uuid " +
 					", ca.modif_at " +
 					", ca.modif_by " +
@@ -54,6 +56,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_part.zip_code " +
 					", ca.year_from " +
 					", ca.year_to " +
+					", (select count(*) " +
+					"		from course_application cain " +
+					"		where cain.course_participant_uuid = ca.course_participant_uuid " +
+					"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
 					"from  " +
 					"course_application ca " +
 					", course_participant cp " +
@@ -79,6 +85,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +
 			", con_repr.email1 " +
+			", con_repr.phone2 " +
+			", con_repr.email2 " +
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
@@ -90,6 +98,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.zip_code " +
 			", ca.year_from " +
 			", ca.year_to " +
+			", (select count(*) " +
+			"		from course_application cain " +
+			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
+			"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
 			"from  " +
 			"course_application ca " +
 			", course_participant cp " +
@@ -114,6 +126,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_repr.surname \"representative_surname\" " +
 					", con_repr.phone1 " +
 					", con_repr.email1 " +
+					", con_repr.phone2 " +
+					", con_repr.email2 " +
 					", ca.uuid " +
 					", ca.modif_at " +
 					", ca.modif_by " +
@@ -125,6 +139,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_part.zip_code " +
 					", ca.year_from " +
 					", ca.year_to " +
+					", (select count(*) " +
+					"		from course_application cain " +
+					"		where cain.course_participant_uuid = ca.course_participant_uuid " +
+					"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
 					"from  " +
 					"course_application ca " +
 					", course_participant cp " +
@@ -151,6 +169,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +
 			", con_repr.email1 " +
+			", con_repr.phone2 " +
+			", con_repr.email2 " +
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
@@ -162,6 +182,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.zip_code " +
 			", ca.year_from " +
 			", ca.year_to " +
+			", (select count(*) " +
+			"		from course_application cain " +
+			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
+			"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
 			"from  " +
 			"course_application ca " +
 			", course_participant cp " +
@@ -188,6 +212,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +
 			", con_repr.email1 " +
+			", con_repr.phone2 " +
+			", con_repr.email2 " +
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
@@ -199,6 +225,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.zip_code " +
 			", ca.year_from " +
 			", ca.year_to " +
+			", (select count(*) " +
+			"		from course_application cain " +
+			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
+			"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
 			"from  " +
 			"course_application ca " +
 			", course_participant cp " +
@@ -354,12 +384,15 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticRepresentativeContact.setSurname(rs.getString("representative_surname"));
 			courseParticRepresentativeContact.setPhone1(rs.getString("phone1"));
 			courseParticRepresentativeContact.setEmail1(rs.getString("email1"));
+			courseParticRepresentativeContact.setPhone2(rs.getString("phone2"));
+			courseParticRepresentativeContact.setEmail2(rs.getString("email2"));
 			courseParticRepresentative.setContact(courseParticRepresentativeContact);
 
 			ret.setCourseParticRepresentative(courseParticRepresentative);
 
 			ret.setPayed(rs.getInt("payed") == 1);
-
+			ret.setCurrentParticipant(rs.getInt("current_participant") == 1);
+			
 			return ret;
 		}
 	}

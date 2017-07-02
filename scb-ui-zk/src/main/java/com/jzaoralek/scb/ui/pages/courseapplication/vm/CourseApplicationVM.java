@@ -140,15 +140,23 @@ public class CourseApplicationVM extends BaseVM {
 		final ScbUser scbUser = scbUserService.getByUsername(email);
 		if (scbUser != null) {
 			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists",new Object[] {email, scbUser.getContact().getCompleteName()});
-			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.YES | Messagebox.NO, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
+//			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.YES | Messagebox.NO, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
+//			    public void onEvent(Event evt) throws InterruptedException {
+//			        if (evt.getName().equals("onYes")) {
+//			            // predvyplnit udaje zastupce, automaticky se diky vypplnenemu uuid bude provadet update
+//			        	fx.getApplication().setCourseParticRepresentative(scbUser);
+//			        } else {
+//			        	// vymazat email
+//			        	fx.getApplication().getCourseParticRepresentative().getContact().setEmail1("");
+//			        }
+//			        BindUtils.postNotifyChange(null, null, fx, "*");
+//			    }
+//			});
+			
+			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.OK, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
 			    public void onEvent(Event evt) throws InterruptedException {
-			        if (evt.getName().equals("onYes")) {
-			            // predvyplnit udaje zastupce, automaticky se diky vypplnenemu uuid bude provadet update
-			        	fx.getApplication().setCourseParticRepresentative(scbUser);
-			        } else {
-			        	// vymazat email
-			        	fx.getApplication().getCourseParticRepresentative().getContact().setEmail1("");
-			        }
+			        // vymazat email
+			        fx.getApplication().getCourseParticRepresentative().getContact().setEmail1("");
 			        BindUtils.postNotifyChange(null, null, fx, "*");
 			    }
 			});
