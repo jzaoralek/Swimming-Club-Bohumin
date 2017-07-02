@@ -189,11 +189,16 @@ public class CourseApplicationListVM extends BaseVM {
 
 		// header
 		Listhead lh = listbox.getListhead();
-		Object[] headerArray = new Object[lh.getChildren().size() + 1];
+		Object[] headerArray = new Object[lh.getChildren().size() + 2];
 		for (int i = 0; i < lh.getChildren().size(); i++) {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
-		headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.residence");
+		
+		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone") + " 2";
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email") + " 2";			
+			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.residence");
+		}
 		data.put("0", headerArray);
 
 		// rows
@@ -212,17 +217,21 @@ public class CourseApplicationListVM extends BaseVM {
 								item.getCourseParticRepresentative().getContact().getEmail1(),
 								dateFormat.format(item.getModifAt()),
 								item.getCourseParticipant().getInCourseInfo(),
+								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
+								item.getCourseParticRepresentative().getContact().getPhone2(),
+								item.getCourseParticRepresentative().getContact().getEmail2(),
 								item.getCourseParticipant().getContact().buildResidence()});
 				} else {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
-								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
-								item.getCourseParticRepresentative().getContact().getCompleteName(),
-								item.getCourseParticRepresentative().getContact().getPhone1(),
-								item.getCourseParticRepresentative().getContact().getEmail1(),
+//								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
+//								item.getCourseParticRepresentative().getContact().getCompleteName(),
+//								item.getCourseParticRepresentative().getContact().getPhone1(),
+//								item.getCourseParticRepresentative().getContact().getEmail1(),
 								item.getCourseParticipant().getInCourseInfo(),
 								item.isPayed() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
-								item.getCourseParticipant().getContact().buildResidence()});
+//								item.getCourseParticipant().getContact().buildResidence()
+								});
 				}
 			}
 		}
@@ -290,9 +299,10 @@ public class CourseApplicationListVM extends BaseVM {
 		private String courseLc;
 		private Boolean inCourse;
 		private Boolean payed;
+		private Boolean newParticipant;
 
-		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean inCourseIn, boolean payedIn, boolean emptyMatch) {
-			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null && inCourse == null && payed == null) {
+		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean inCourseIn, boolean payedIn, boolean newParticipantIn, boolean emptyMatch) {
+			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null && inCourse == null && payed == null && newParticipant == null) {
 				return emptyMatch;
 			}
 			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
@@ -325,6 +335,10 @@ public class CourseApplicationListVM extends BaseVM {
 			if (payed != null && (payed != payedIn)) {
 				return false;
 			}
+			if (newParticipant != null && (newParticipant != newParticipantIn)) {
+				return false;
+			}
+			
 			return true;
 		}
 
@@ -344,6 +358,7 @@ public class CourseApplicationListVM extends BaseVM {
 						, item.getCourseParticipant().getInCourseInfo()
 						, item.getCourseParticipant().inCourse()
 						, item.isPayed()
+						, !item.isCurrentParticipant()
 						, true)) {
 					ret.add(item);
 				}
@@ -437,6 +452,14 @@ public class CourseApplicationListVM extends BaseVM {
 		public void setPayed(Boolean payed) {
 			this.payed = payed;
 		}
+		
+		public Boolean getNewParticipant() {
+			return newParticipant;
+		}
+
+		public void setNewParticipant(Boolean newParticipant) {
+			this.newParticipant = newParticipant;
+		}
 
 		public void setEmptyValues() {
 			code = null;
@@ -453,6 +476,7 @@ public class CourseApplicationListVM extends BaseVM {
 			courseLc = null;
 			inCourse = null;
 			payed = null;
+			newParticipant = null;
 		}
 	}
 }
