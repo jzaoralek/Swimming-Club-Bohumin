@@ -364,7 +364,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipant.setUuid(UUID.fromString(rs.getString("participant_uuid")));
 			courseParticipant.setBirthdate(rs.getDate("birthdate"));
 			courseParticipant.setPersonalNo(rs.getString("personal_number"));
-			courseParticipant.setCourseList(courseDao.getByCourseParticipantUuid(courseParticipant.getUuid()));
+			courseParticipant.setCourseList(courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), ret.getYearFrom(), ret.getYearTo()));
 
 			Contact courseParticipantContact = new Contact();
 			courseParticipantContact.setFirstname(rs.getString("firstname"));

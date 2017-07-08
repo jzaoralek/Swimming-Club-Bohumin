@@ -12,7 +12,7 @@ public interface CourseService {
 	List<Course> getAll(int yearFrom, int yearTo);
 	List<Course> getAllExceptCourse(UUID courseUuid);
 	List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid);
-	List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid);
+	List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid, int yearFrom, int yearTo);
 	/**
 	 * Get all participants for participant representative.
 	 * @param userUuid

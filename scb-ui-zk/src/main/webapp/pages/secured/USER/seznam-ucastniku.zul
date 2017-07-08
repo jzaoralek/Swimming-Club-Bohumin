@@ -93,6 +93,27 @@
 			            </columns>
 						<rows style="background: white;" >
 							<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
+								<cell sclass="form-grid-cell">
+									<vbox hflex="1">
+										<label value="${c:l('txt.ui.common.birthNumber')}"/>
+										<textbox id="particBirthNumber"
+											value="@bind(fx.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
+		                            		maxlength="@load(vm.getBirthNumberMaxlength())"
+		                            		placeholder="*"
+		                            		sclass="form-input-text"
+		                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+		                            		onChange="@command('validateUniquePersonalNumberCmd', personal_number=self.value, fx=fx)"
+		                            		tabindex="1"
+		                            		hflex="1" />
+										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
+												<label value="@bind(vmsgs[particBirthNumber])" />
+											</span>
+										</hbox>
+									</vbox>
+								</cell>
+							</row>
+							<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
 								<cell sclass="form-grid-cell" >
 									<vbox hflex="1">
 										<label value="${c:l('txt.ui.common.firstname')}"/>
@@ -102,7 +123,7 @@
 											placeholder="*"
 											sclass="form-input-text"
 											tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-											tabindex="1"
+											tabindex="2"
 											hflex="1" />
 										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 											<span sclass="alert alert-danger" visible="@load(not empty vmsgs[particFirstname])" >
@@ -122,7 +143,7 @@
 											placeholder="*"
 											sclass="form-input-text"
 											tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-											tabindex="2"
+											tabindex="3"
 											hflex="1" />
 										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particSurname])" >
@@ -142,31 +163,11 @@
 		                            		maxlength="@load(vm.getDateMaxlength())"
 		                            		placeholder="*"
 		                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-		                            		tabindex="3" />
+		                            		tabindex="4" />
 										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
 													<label value="@bind(vmsgs[particBirthdate])" />
 												</span>
-										</hbox>
-									</vbox>
-								</cell>
-							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
-								<cell sclass="form-grid-cell">
-									<vbox hflex="1">
-										<label value="${c:l('txt.ui.common.birthNumber')}"/>
-										<textbox id="particBirthNumber"
-											value="@bind(fx.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
-		                            		maxlength="@load(vm.getBirthNumberMaxlength())"
-		                            		placeholder="*"
-		                            		sclass="form-input-text"
-		                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-		                            		tabindex="4"
-		                            		hflex="1" />
-										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
-												<label value="@bind(vmsgs[particBirthNumber])" />
-											</span>
 										</hbox>
 									</vbox>
 								</cell>

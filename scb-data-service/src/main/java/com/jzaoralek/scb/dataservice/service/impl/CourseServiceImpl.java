@@ -141,8 +141,8 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 	
 	@Override
-	public List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid) {
-		List<Course> ret = courseDao.getByCourseParticipantUuid(courseParticipantUuid);
+	public List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid, int yearFrom, int yearTo) {
+		List<Course> ret = courseDao.getByCourseParticipantUuid(courseParticipantUuid, yearFrom, yearTo);
 		for (Course item : ret) {
 			item.setLessonList(lessonService.getByCourse(item.getUuid()));
 		}

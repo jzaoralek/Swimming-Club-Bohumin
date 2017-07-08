@@ -50,6 +50,10 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			+ " FROM course_participant cp , contact c "
 			+ " WHERE cp.contact_uuid = c.uuid AND cp.user_uuid=:" + USER_UUID_PARAM;
 	
+	private static final String SELECT_BY_PERSONAL_NUMBER = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid  "
+			+ " FROM course_participant cp "
+			+ " WHERE cp.personal_number=:" + PERSONAL_NUMBER_PARAM;
+	
 	private static final String INSERT_PARTIC_LEARNING_LESSON = "INSERT INTO participant_learning_lesson (course_participant_uuid, learning_lesson_uuid) VALUES (:"+COURSE_PARTICIPANT_UUID_PARAM+", :"+LEARNING_LESSON_UUID_PARAM+")";
 	private static final String DELETE_ALL_FROM_LEARNING_LESSON = "DELETE FROM participant_learning_lesson WHERE learning_lesson_uuid = :"+LEARNING_LESSON_UUID_PARAM;
 
@@ -80,6 +84,13 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
+	}
+	
+	@Override
+	public boolean existsByPersonalNumber(String personalNumber) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(PERSONAL_NUMBER_PARAM, personalNumber);
+		List<CourseParticipant> courseParticipantList = namedJdbcTemplate.query(SELECT_BY_PERSONAL_NUMBER, paramMap, new CourseParticipantRowMapper(contactDao));
+		return !courseParticipantList.isEmpty();
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 public interface CourseParticipantDao {
 
 	CourseParticipant getByUuid(UUID uuid, boolean deep);
+	boolean existsByPersonalNumber(String personalNumber);
 	List<CourseParticipant> getByCourseUuid(UUID courseUuid);
 	List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid);
 	List<CourseParticipant> getByUserUuid(UUID userUuid);

@@ -6,13 +6,16 @@ import java.util.UUID;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
@@ -82,6 +85,33 @@ public class CourseParticipantListVM extends BaseVM {
 		this.newCourseParticipant = new CourseParticipant();
 		popup.close();
 	}
+	
+	/**
+	 * Kontroluje pouziti emailu jako defaultniho prihlasovaciho jmena, pokud je jiz evidovano, nabidne predvyplneni hodnot zakonneho zastupce.
+	 * @param personalNumber
+	 * @param fx
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@NotifyChange("*")
+	@Command
+	public void validateUniquePersonalNumberCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") final CourseParticipant fx) {
+		// pokud existuje ucastnik se stejnym rodnym cislem jako je zadane rodne cislo, zobrazit upozorneni a nepovolit vyplnit.
+//		fx.setPersonalNo(personalNumber);
+		this.newCourseParticipant.setPersonalNo(personalNumber);
+		if (courseApplicationService.existsByPersonalNumber(personalNumber)) {
+			String question = Labels.getLabel("msg.ui.quest.participantPersonalNoExists2",new Object[] {personalNumber});			
+			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.OK, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
+			    public void onEvent(Event evt) throws InterruptedException {
+			        // vymazat rodne cislo
+			    	fx.setPersonalNo("");
+			        BindUtils.postNotifyChange(null, null, fx, "*");
+			    }
+			});
+		} else {
+			BindUtils.postNotifyChange(null, null, this, "*");
+		}
+	}
+	
 	
 	private void createNewCourseApplication(CourseParticipant courseParticipant) {
 		CourseApplication courseApplication = new CourseApplication();

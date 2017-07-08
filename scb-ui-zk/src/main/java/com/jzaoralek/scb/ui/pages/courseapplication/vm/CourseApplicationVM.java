@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
@@ -135,28 +136,36 @@ public class CourseApplicationVM extends BaseVM {
 	@NotifyChange("*")
 	@Command
 	public void validateUniqueUsernameCmd(@BindingParam("email") String email, @BindingParam("fx") final CourseApplicationVM fx) {
-		// pokud existuje uzivatel se stejnym username jako je zadany email, zobrazit upozorneni, pokud uzivatel potvrdi, 
-		// predvyplnit udaje a po ulozeni provest jen update udaju zastupce
+		// pokud existuje uzivatel se stejnym username jako je zadany email, zobrazit upozorneni a nepovolit vyplnit
 		final ScbUser scbUser = scbUserService.getByUsername(email);
 		if (scbUser != null) {
-			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists",new Object[] {email, scbUser.getContact().getCompleteName()});
-//			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.YES | Messagebox.NO, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
-//			    public void onEvent(Event evt) throws InterruptedException {
-//			        if (evt.getName().equals("onYes")) {
-//			            // predvyplnit udaje zastupce, automaticky se diky vypplnenemu uuid bude provadet update
-//			        	fx.getApplication().setCourseParticRepresentative(scbUser);
-//			        } else {
-//			        	// vymazat email
-//			        	fx.getApplication().getCourseParticRepresentative().getContact().setEmail1("");
-//			        }
-//			        BindUtils.postNotifyChange(null, null, fx, "*");
-//			    }
-//			});
-			
+			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists",new Object[] {email, scbUser.getContact().getCompleteName()});			
 			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.OK, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
 			    public void onEvent(Event evt) throws InterruptedException {
 			        // vymazat email
 			        fx.getApplication().getCourseParticRepresentative().getContact().setEmail1("");
+			        BindUtils.postNotifyChange(null, null, fx, "*");
+			    }
+			});
+		}
+	}
+	
+	/**
+	 * Kontroluje pouziti emailu jako defaultniho prihlasovaciho jmena, pokud je jiz evidovano, nabidne predvyplneni hodnot zakonneho zastupce.
+	 * @param personalNumber
+	 * @param fx
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@NotifyChange("*")
+	@Command
+	public void validateUniquePersonalNumberCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") final CourseApplicationVM fx) {
+		// pokud existuje ucastnik se stejnym rodnym cislem jako je zadane rodne cislo, zobrazit upozorneni a nepovolit vyplnit.
+		if (courseApplicationService.existsByPersonalNumber(personalNumber)) {
+			String question = Labels.getLabel("msg.ui.quest.participantPersonalNoExists",new Object[] {personalNumber});			
+			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.OK, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
+			    public void onEvent(Event evt) throws InterruptedException {
+			        // vymazat rodne cislo
+			        fx.getApplication().getCourseParticipant().setPersonalNo("");
 			        BindUtils.postNotifyChange(null, null, fx, "*");
 			    }
 			});

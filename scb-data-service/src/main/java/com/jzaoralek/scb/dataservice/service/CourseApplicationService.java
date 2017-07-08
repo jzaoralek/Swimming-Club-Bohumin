@@ -14,6 +14,7 @@ public interface CourseApplicationService {
 	List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo);
 	List<CourseApplication> getByCourseParticipantUuid(UUID courseParticipantUuid);
 	CourseApplication getByUuid(UUID uuid);
+	boolean existsByPersonalNumber(String personalNumber);
 	void storeCourseParticipant(CourseParticipant courseParticipant);
 	CourseApplication store(CourseApplication courseApplication) throws ScbValidationException;
 	void updatePayed(UUID uuid, boolean payed) throws ScbValidationException;
