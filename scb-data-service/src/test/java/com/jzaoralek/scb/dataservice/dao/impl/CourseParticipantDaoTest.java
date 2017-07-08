@@ -41,6 +41,12 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 		Assert.assertEquals(PARTIC_HEALTH_INFO, itemFromDb.getHealthInfo());
 		Assert.assertEquals(PARTIC_PERSONAL_NO, itemFromDb.getPersonalNo());
 	}
+	
+	@Test
+	public void testExistsByPersonalNumber() {
+		boolean courseParticipant = courseParticipantDao.existsByPersonalNumber(PARTIC_PERSONAL_NO);
+		Assert.assertTrue(courseParticipant);
+	}
 
 	@Test
 	public void testGetByCourseUuid() {

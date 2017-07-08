@@ -93,7 +93,7 @@ public class CourseParticipantDetailVM extends BaseVM {
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
 
-		List<Course> courseListAll = courseService.getByCourseParticipantUuid(this.courseParticipant.getUuid());
+		List<Course> courseListAll = courseService.getByCourseParticipantUuid(this.courseParticipant.getUuid(), yearFrom, yearTo);
 		this.courseList = new ArrayList<>();
 		for (Course item : courseListAll) {
 			if (item.getYearFrom() == yearFrom && item.getYearTo() == yearTo) {

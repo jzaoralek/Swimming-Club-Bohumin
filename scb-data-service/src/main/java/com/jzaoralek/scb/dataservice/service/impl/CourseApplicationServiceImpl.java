@@ -65,9 +65,14 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		CourseApplication courseApplication = courseApplicationDao.getByUuid(uuid, true);
 		if (courseApplication.getCourseParticipant() != null) {
 			courseApplication.getCourseParticipant().setResultList(resultDao.getByCourseParticipant(courseApplication.getCourseParticipant().getUuid()));
-			courseApplication.getCourseParticipant().setCourseList(courseDao.getByCourseParticipantUuid(courseApplication.getCourseParticipant().getUuid()));
+			courseApplication.getCourseParticipant().setCourseList(courseDao.getByCourseParticipantUuid(courseApplication.getCourseParticipant().getUuid(), courseApplication.getYearFrom(), courseApplication.getYearTo()));
 		}
 		return courseApplication;
+	}
+	
+	@Override
+	public boolean existsByPersonalNumber(String personalNumber) {
+		return courseParticipantDao.existsByPersonalNumber(personalNumber);
 	}
 
 	@Override

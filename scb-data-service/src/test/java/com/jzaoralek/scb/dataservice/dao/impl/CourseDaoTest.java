@@ -56,7 +56,7 @@ public class CourseDaoTest extends BaseTestCase {
 
 	@Test
 	public void testGetByCourseParticipantUuid() {
-		assertList(courseDao.getByCourseParticipantUuid(UUID.randomUUID()), 0 , null);
+		assertList(courseDao.getByCourseParticipantUuid(UUID.randomUUID(), YEAR_FROM, YEAR_TO), 0 , null);
 	}
 
 	@Test
