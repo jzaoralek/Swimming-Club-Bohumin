@@ -8,6 +8,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 public interface CourseApplicationDao {
 
 	List<CourseApplication> getAll(int yearFrom, int yearTo);
+	List<CourseApplication> getUnregisteredToCurrYear(int yearFromPrev, int yearToPrev);
 	List<CourseApplication> getNotInCourse(UUID courseUuid, int yearFrom, int yearTo);
 	List<CourseApplication> getInCourse(UUID courseUuid, int yearFrom, int yearTo);
 	List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo);

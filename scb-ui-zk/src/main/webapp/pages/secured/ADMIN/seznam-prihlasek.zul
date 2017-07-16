@@ -45,6 +45,21 @@
 										</vbox>
 			            			</hbox>
 			            		</vbox>
+			            		<vbox vflex="1" pack="center" align="center" width="250px" sclass="header-div" >
+			            			<!-- Neprihlaseni z predchoziho rocniku -->
+			            			<hbox vflex="1" pack="center" align="center">
+			            				<label value="@load(vm.unregToCurrYearLabel)" 
+			            					style="vertical-align:middle; display:inline-block; margin-right: 5px;" />
+				            			<checkbox id="unregToCurrYearCheck" checked="@bind(vm.unregToCurrYear)" 
+				            				onCheck="@command('loadUnregisteredCurrYearCmd')"
+				            				style="vertical-align:middle; margin-right: 10px;" />
+				            			<button tooltiptext="${c:l('txt.ui.common.sendWarnMail')}" 
+				            				iconSclass="z-icon-paper-plane" 
+				            				visible="@load(vm.unregToCurrYear)"
+				            				onClick="@command('sendnMailToUnregisteredFromPrevSeasonCmd')"
+				            				sclass="btn-warning"  />			            			
+			            			</hbox>
+			            		</vbox>
 			            		<vbox hflex="1" vflex="1" align="end" pack="center" sclass="header-div" >
 			            			<hbox vflex="1" pack="center" align="center">
 			            				<label value="${c:l('txt.ui.common.year')}:" style="margin-right: 5px;"/>

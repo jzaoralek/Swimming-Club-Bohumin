@@ -60,6 +60,11 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	}
 
 	@Override
+	public List<CourseApplication> getUnregisteredToCurrYear(int yearFromPrev, int yearToPrev) {
+		return courseApplicationDao.getUnregisteredToCurrYear(yearFromPrev, yearToPrev);
+	}
+	
+	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public CourseApplication getByUuid(UUID uuid) {
 		CourseApplication courseApplication = courseApplicationDao.getByUuid(uuid, true);

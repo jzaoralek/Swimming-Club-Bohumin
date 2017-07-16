@@ -75,6 +75,57 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
 					"order by ca.modif_at desc ";
 
+	private static final String SELECT_UNREGISTERED_TO_CURRENT_YEAR = "select " +
+			" con_part.firstname " +
+			", con_part.surname " +
+			", cp.uuid \"participant_uuid\" " +
+			", cp.birthdate " +
+			", cp.personal_number " +
+			", con_repr.firstname \"representative_firstname\" " +
+			", con_repr.surname \"representative_surname\" " +
+			", con_repr.phone1 " +
+			", con_repr.email1 " +
+			", con_repr.phone2 " +
+			", con_repr.email2 " +
+			", ca.uuid " +
+			", ca.modif_at " +
+			", ca.modif_by " +
+			", ca.payed " +
+			", con_part.city " +
+			", con_part.street " +
+			", con_part.land_registry_number " +
+			", con_part.house_number " +
+			", con_part.zip_code " +
+			", ca.year_from " +
+			", ca.year_to " +
+			", (select count(*) " +
+			"		from course_application cain " +
+			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
+			"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
+			"from  " +
+			"course_application ca " +
+			", course_participant cp " +
+			", contact con_part " +
+			", contact con_repr " +
+			", user usr " +
+			"where " +
+			"ca.course_participant_uuid = cp.uuid " +
+			"and cp.contact_uuid = con_part.uuid " +
+			"and ca.user_uuid = usr.uuid " +
+			"and usr.contact_uuid = con_repr.uuid " +
+			"AND ca.year_from = :"+YEAR_FROM_PARAM+"-1 " +
+			"AND ca.year_to = :"+YEAR_TO_PARAM+ "-1 " +
+			"AND cp.uuid NOT IN ( " +
+			"		SELECT cp.uuid " +
+			"		FROM  " +
+			"			course_participant cp " +
+			"			, course_application ca " +
+			"		WHERE  " +
+			"			cp.uuid = ca.course_participant_uuid " +
+			"			AND ca.year_from = :"+YEAR_FROM_PARAM+" " +
+			"			AND ca.year_to = :"+YEAR_TO_PARAM+") " +
+			"order by ca.modif_at desc ";
+	
 	private static final String SELECT_BY_COURSE_PARTICIPANT_UUID = "select " +
 			" con_part.firstname " +
 			", con_part.surname " +
@@ -309,6 +360,12 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	public List<CourseApplication> getAll(int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
 		return namedJdbcTemplate.query(SELECT_ALL, paramMap, new CourseApplicationRowMapper(courseDao));
+	}
+	
+	@Override
+	public List<CourseApplication> getUnregisteredToCurrYear(int yearFromPrev, int yearToPrev) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFromPrev).addValue(YEAR_TO_PARAM, yearToPrev);
+		return namedJdbcTemplate.query(SELECT_UNREGISTERED_TO_CURRENT_YEAR, paramMap, new CourseApplicationRowMapper(courseDao));
 	}
 
 	@Override

@@ -62,6 +62,15 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	public void testGetAll() {
 		assertList(courseApplicationDao.getAll(YEAR_FROM, YEAR_TO), 1, ITEM_UUID);
 	}
+	
+	@Test
+	public void testGetUnregisteredToCurrYear() {
+		courseApplicationDao.delete(item);
+		item.setYearFrom(YEAR_FROM + 1);
+		item.setYearTo(YEAR_TO + 1);
+		courseApplicationDao.insert(item);
+		assertList(courseApplicationDao.getUnregisteredToCurrYear(YEAR_FROM, YEAR_TO), 0, ITEM_UUID);
+	}
 
 
 	@Test

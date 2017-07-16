@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -30,6 +31,7 @@ import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
@@ -62,6 +64,8 @@ public class CourseApplicationListVM extends BaseVM {
 	private List<String> courseYearList;
 	private String courseYearSelected;
 	private PageMode pageMode;
+	private boolean unregToCurrYear;
+	private String unregToCurrYearLabel;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -159,6 +163,12 @@ public class CourseApplicationListVM extends BaseVM {
 	public void courseYearChangeCmd() {
 		loadData();
 	}
+	
+	@NotifyChange("*")
+	@Command
+	public void loadUnregisteredCurrYearCmd() {
+		loadData();
+	}
 
 	@NotifyChange("*")
 	@Command
@@ -180,6 +190,46 @@ public class CourseApplicationListVM extends BaseVM {
 			WebUtils.showNotificationError(e.getMessage());
 		}
 
+	}
+	
+	@Command
+	public void sendnMailToUnregisteredFromPrevSeasonCmd() {
+		if (CollectionUtils.isEmpty(this.courseApplicationList)) {
+			return;
+		}
+		final List<CourseApplication> courseApplicationList = this.courseApplicationList;
+		final String courseYearSelected = this.courseYearSelected;
+		final Object[] msgParams = new Object[] {this.courseApplicationList.size()};
+		MessageBoxUtils.showDefaultConfirmDialog(
+			"msg.ui.quest.sendMailToUnregisteredParticipant",
+			"msg.ui.title.sendMail",
+			new SzpEventListener() {
+				@Override
+				public void onOkEvent() {
+					StringBuilder mailToUser = null;
+					for (CourseApplication courseApplication : courseApplicationList) {
+						mailToUser = new StringBuilder();
+						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text0"));
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text1", new Object[] {courseApplication.getCourseParticipant().getContact().getCompleteName(), courseYearSelected}));
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text2"));
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text3"));
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text4"));
+						
+						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null, null);
+						WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
+					}
+				}
+			},
+			msgParams
+		);
+		
 	}
 
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
@@ -239,6 +289,7 @@ public class CourseApplicationListVM extends BaseVM {
 		return data;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void loadData() {
 		if (!StringUtils.hasText(this.courseYearSelected)) {
 			return;
@@ -247,11 +298,19 @@ public class CourseApplicationListVM extends BaseVM {
 		if (years.length < 2) {
 			return;
 		}
-		int yearFrom = Integer.valueOf(years[0]);
-		int yearTo = Integer.valueOf(years[1]);
+		int yearFrom = Integer.parseInt(years[0]);
+		int yearTo = Integer.parseInt(years[1]);
+		
+		// txt.ui.common.unregisteredNextSeason
+		this.unregToCurrYearLabel = Labels.getLabel("txt.ui.common.unregisteredFrom")+" "+String.valueOf(yearFrom-1)+"/"+String.valueOf(yearTo-1);
 
-		this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getAll(yearFrom, yearTo) : courseApplicationService.getAssignedToCourse(yearFrom, yearTo);
+		if (this.unregToCurrYear) {
+			this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getUnregisteredToCurrYear(yearFrom, yearTo) : Collections.EMPTY_LIST;
+		} else {
+			this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getAll(yearFrom, yearTo) : courseApplicationService.getAssignedToCourse(yearFrom, yearTo);
+		}
 		this.courseApplicationListBase = this.courseApplicationList;
+		
 		BindUtils.postNotifyChange(null, null, this, "courseApplicationList");
 	}
 
@@ -277,6 +336,18 @@ public class CourseApplicationListVM extends BaseVM {
 
 	public void setCourseYearSelected(String courseYearSelected) {
 		this.courseYearSelected = courseYearSelected;
+	}
+	
+	public boolean isUnregToCurrYear() {
+		return unregToCurrYear;
+	}
+
+	public void setUnregToCurrYear(boolean unregToCurrYear) {
+		this.unregToCurrYear = unregToCurrYear;
+	}
+	
+	public String getUnregToCurrYearLabel() {
+		return unregToCurrYearLabel;
 	}
 
 	public static class CourseApplicationFilter {
