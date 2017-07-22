@@ -45,6 +45,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_repr.email1 " +
 					", con_repr.phone2 " +
 					", con_repr.email2 " +
+					", usr.uuid  \"representative_uuid\" " +
 					", ca.uuid " +
 					", ca.modif_at " +
 					", ca.modif_by " +
@@ -87,6 +88,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_repr.email1 " +
 			", con_repr.phone2 " +
 			", con_repr.email2 " +
+			", usr.uuid  \"representative_uuid\" " +
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
@@ -138,6 +140,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_repr.email1 " +
 			", con_repr.phone2 " +
 			", con_repr.email2 " +
+			", usr.uuid  \"representative_uuid\" " +
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
@@ -179,6 +182,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_repr.email1 " +
 					", con_repr.phone2 " +
 					", con_repr.email2 " +
+					", usr.uuid  \"representative_uuid\" " +
 					", ca.uuid " +
 					", ca.modif_at " +
 					", ca.modif_by " +
@@ -222,6 +226,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_repr.email1 " +
 			", con_repr.phone2 " +
 			", con_repr.email2 " +
+			", usr.uuid  \"representative_uuid\" " +
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
@@ -265,6 +270,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_repr.email1 " +
 			", con_repr.phone2 " +
 			", con_repr.email2 " +
+			", usr.uuid  \"representative_uuid\" " +
 			", ca.uuid " +
 			", ca.modif_at " +
 			", ca.modif_by " +
@@ -444,6 +450,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticRepresentativeContact.setPhone2(rs.getString("phone2"));
 			courseParticRepresentativeContact.setEmail2(rs.getString("email2"));
 			courseParticRepresentative.setContact(courseParticRepresentativeContact);
+			courseParticRepresentative.setUuid(UUID.fromString(rs.getString("representative_uuid")));
 
 			ret.setCourseParticRepresentative(courseParticRepresentative);
 

@@ -214,7 +214,8 @@ public class CourseApplicationListVM extends BaseVM {
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text1", new Object[] {courseApplication.getCourseParticipant().getContact().getCompleteName(), courseYearSelected}));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
-						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text2"));
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text2", new Object[] {courseApplication.getCourseParticipant().getUuid(), courseApplication.getCourseParticRepresentative().getUuid()}));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text3"));

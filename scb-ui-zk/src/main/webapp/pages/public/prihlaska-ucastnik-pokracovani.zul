@@ -33,7 +33,7 @@
 								<label value="@load(vm.message)"/>
 							</caption>
 						</window>
-						<window closable="false" border="normal" sclass="alert alert-warn" visible="@load(vm.showWarnMessage)">
+						<window closable="false" border="normal" sclass="alert alert-danger" visible="@load(vm.showWarnMessage)">
 							<caption iconSclass="z-icon-exclamation">
 								<label value="@load(vm.message)"/>
 							</caption>
@@ -43,12 +43,7 @@
 								<label value="${c:l('msg.ui.error.invalidRequest')}"/>
 							</caption>
 						</window>
-<!-- 						<button label="${c:l('txt.ui.common.ToDownloadApplication')}" onClick="@command('downloadCmd')" iconSclass="z-icon-download" visible="@load(vm.confirmText ne null)" /> -->
-<!-- 						<window closable="false" border="normal" sclass="alert alert-danger" visible="@load(vm.errotText ne null)" > -->
-<!-- 							<caption iconSclass="z-icon-exclamation"> -->
-<!-- 								<label value="@load(vm.errotText)"/> -->
-<!-- 							</caption> -->
-<!-- 						</window> -->
+						<button label="${c:l('txt.ui.common.ToDownloadApplication')}" onClick="@command('downloadCmd')" iconSclass="z-icon-download" visible="@load(vm.showSuccessMessage)" />
 					</vbox>
 		
 					<vbox hflex="1" />

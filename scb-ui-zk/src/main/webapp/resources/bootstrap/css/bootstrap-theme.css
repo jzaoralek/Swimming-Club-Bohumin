@@ -290,7 +290,7 @@
   background-image: -moz-linear-gradient(top, #d9edf7 0%, #b9def0 100%);
   background-image: linear-gradient(to bottom, #d9edf7 0%, #b9def0 100%);
   background-repeat: repeat-x;
-  border-color: #9acfea;
+  border-color: red;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd9edf7', endColorstr='#ffb9def0', GradientType=0);
 }
 
