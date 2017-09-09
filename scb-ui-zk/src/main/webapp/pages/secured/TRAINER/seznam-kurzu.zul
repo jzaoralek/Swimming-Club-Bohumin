@@ -84,8 +84,8 @@
 			        <listhead>
 			            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" />
-			            <listheader label="${c:l('txt.ui.common.participantCount')}" sort="auto(participantListCount)" align="left"  />
-			            <listheader label="${c:l('txt.ui.common.lessonPerWeekCount')}" sort="auto(lessonListCount)" align="left"  />
+			            <listheader label="${c:l('txt.ui.common.participantCount')}" sort="auto(participantListCount)" align="center" hflex="min"  />
+			            <listheader label="${c:l('txt.ui.common.lessonPerWeekCount')}" sort="auto(lessonListCount)" align="center" hflex="min" />
 			            <listheader width="140px" align="center" />
 			        </listhead>
 			         
