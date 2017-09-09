@@ -54,6 +54,7 @@
 										maxlength="@load(vm.getNameMaxlength())"
 										placeholder="*"
 										focus="true"
+										style="height: 30px;"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 										tabindex="1"
 										hflex="1" />
@@ -70,6 +71,7 @@
 									<textbox id="courseDescription"
 										value="@bind(fx.course.description)"
 										maxlength="@load(vm.getDescriptionMaxlength())"
+										style="height: 30px;"
 										tabindex="2"
 										hflex="1" />
 									<vbox hflex="2" style="height: 30px">
