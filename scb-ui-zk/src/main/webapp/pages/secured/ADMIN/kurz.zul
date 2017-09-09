@@ -42,48 +42,46 @@
 				
 				<grid hflex="1" >
 					<columns>
-		                <column width="100px" align="right" />
-		                <column />
+		                <column align="left" hflex="1" />
 		            </columns>
 					<rows >
-						<row style="padding: 10px; border: none;">
-							<label value="${c:l('txt.ui.common.name')}"/>
-							<cell >
-								<hbox hflex="1" align="center">
+						<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
+							<cell sclass="form-grid-cell" >
+								<vbox hflex="1">
+									<label value="${c:l('txt.ui.common.name')}"/>
 									<textbox id="courseName"
 										value="@bind(fx.course.name) @validator(vm.notNullValidator)"
 										maxlength="@load(vm.getNameMaxlength())"
 										placeholder="*"
+										focus="true"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 										tabindex="1"
-										hflex="3" />
-									<vbox hflex="2" style="margin-left: 10px;">
-										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[courseName])" >
-											<label value="@bind(vmsgs[courseName])" />
-										</span>
-									</vbox>
-								</hbox>
+										hflex="1" />
+									<hbox hflex="1" align="end" pack="end" style="height: 30px">
+										<validMsg vmsg="${vmsgs}" elem="${courseName}" />
+									</hbox>
+								</vbox>
 							</cell>
 						</row>
-						<row style="padding: 10px; border: none;">
-							<label value="${c:l('txt.ui.common.description')}"/>
-							<cell>
-								<hbox hflex="1">
+						<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+							<cell sclass="form-grid-cell" >
+								<vbox hflex="1">
+									<label value="${c:l('txt.ui.common.description')}"/>
 									<textbox id="courseDescription"
 										value="@bind(fx.course.description)"
 										maxlength="@load(vm.getDescriptionMaxlength())"
 										tabindex="2"
-										hflex="3" />
-									<vbox hflex="2" style="margin-left: 10px;">
+										hflex="1" />
+									<vbox hflex="2" style="height: 30px">
 										
 									</vbox>
-								</hbox>
+								</vbox>
 							</cell>
 						</row>
-						<row style="padding: 10px; border: none;">
-							<label value="${c:l('txt.ui.common.year')}"/>
-							<cell>
-								<hbox hflex="1">
+						<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+							<cell sclass="form-grid-cell" >
+								<vbox hflex="1">
+									<label value="${c:l('txt.ui.common.year')}"/>
 									<listbox id="courseYear" 
 										selectedItem="@bind(vm.courseYearSelected)" 
 										model="@load(vm.courseYearList)"
@@ -98,7 +96,7 @@
 											<label value="@bind(vmsgs[courseYear])" />
 										</span>
 									</vbox>
-								</hbox>
+								</vbox>
 							</cell>
 						</row>
 					</rows>
