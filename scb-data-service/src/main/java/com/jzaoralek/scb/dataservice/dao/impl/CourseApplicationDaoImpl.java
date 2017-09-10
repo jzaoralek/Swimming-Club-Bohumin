@@ -12,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
@@ -282,6 +283,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.zip_code " +
 			", ca.year_from " +
 			", ca.year_to " +
+			", ccp.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
 			", (select count(*) " +
 			"		from course_application cain " +
 			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
@@ -365,37 +367,37 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	@Override
 	public List<CourseApplication> getAll(int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_ALL, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_ALL, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 	
 	@Override
 	public List<CourseApplication> getUnregisteredToCurrYear(int yearFromPrev, int yearToPrev) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFromPrev).addValue(YEAR_TO_PARAM, yearToPrev);
-		return namedJdbcTemplate.query(SELECT_UNREGISTERED_TO_CURRENT_YEAR, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_UNREGISTERED_TO_CURRENT_YEAR, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 
 	@Override
 	public List<CourseApplication> getNotInCourse(UUID courseUuid, int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_NOT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_NOT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 
 	@Override
 	public List<CourseApplication> getInCourse(UUID courseUuid, int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 
 	@Override
 	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE, paramMap, new CourseApplicationRowMapper(courseDao, true));
 	}
 	
 	@Override
 	public List<CourseApplication> getByCourseParticipantUuid(UUID courseParticipantUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_PARTICIPANT_UUID_PARAM, courseParticipantUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_COURSE_PARTICIPANT_UUID, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_PARTICIPANT_UUID, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 
 	@Override
@@ -410,9 +412,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	public static final class CourseApplicationRowMapper implements RowMapper<CourseApplication> {
 		private CourseDao courseDao;
+		private boolean extended;
 
-		public CourseApplicationRowMapper(CourseDao courseDao) {
+		public CourseApplicationRowMapper(CourseDao courseDao, boolean extended) {
 			this.courseDao = courseDao;
+			this.extended = extended;
 		}
 
 		@Override
@@ -428,6 +432,12 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipant.setBirthdate(rs.getDate("birthdate"));
 			courseParticipant.setPersonalNo(rs.getString("personal_number"));
 			courseParticipant.setCourseList(courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), ret.getYearFrom(), ret.getYearTo()));
+			if (this.extended) {
+				String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
+				if (StringUtils.hasText(courseCourseParticipantUuid)) {
+					courseParticipant.setCourseCourseParticipantUuid(UUID.fromString(courseCourseParticipantUuid)); 
+				}				
+			}
 
 			Contact courseParticipantContact = new Contact();
 			courseParticipantContact.setFirstname(rs.getString("firstname"));
