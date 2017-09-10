@@ -37,7 +37,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			" VALUES (:"+UUID_PARAM+", :"+BIRTHDATE_PARAM+", :"+PERSONAL_NUMBER_PARAM+", :"+HEALTH_INSURANCE+", :"+CONTACT_PARAM+", :"+HEALTH_INFO_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+USER_UUID_PARAM+")";
 	private static final String SELECT_BY_UUID = "SELECT uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by, user_uuid FROM course_participant WHERE uuid= :"+UUID_PARAM;
 
-	private static final String SELECT_BY_COURSE_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid, ccp.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" FROM course_participant cp, course_course_participant ccp, contact c "
+	private static final String SELECT_BY_COURSE_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid FROM course_participant cp, course_course_participant ccp, contact c "
 			+ "WHERE cp.uuid = ccp.course_participant_uuid "
 			+ "AND cp.contact_uuid = c.uuid "
 			+ "AND ccp.course_uuid = :"+COURSE_UUID_PARAM+" "
@@ -81,7 +81,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	public CourseParticipant getByUuid(UUID uuid, boolean deep) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
 		try {
-			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new CourseParticipantRowMapper(contactDao, false));
+			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
@@ -90,7 +90,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	@Override
 	public boolean existsByPersonalNumber(String personalNumber) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(PERSONAL_NUMBER_PARAM, personalNumber);
-		List<CourseParticipant> courseParticipantList = namedJdbcTemplate.query(SELECT_BY_PERSONAL_NUMBER, paramMap, new CourseParticipantRowMapper(contactDao, false));
+		List<CourseParticipant> courseParticipantList = namedJdbcTemplate.query(SELECT_BY_PERSONAL_NUMBER, paramMap, new CourseParticipantRowMapper(contactDao));
 		return !courseParticipantList.isEmpty();
 	}
 
@@ -152,19 +152,19 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	@Override
 	public List<CourseParticipant> getByCourseUuid(UUID courseUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_COURSE_UUID, paramMap, new CourseParticipantRowMapper(contactDao, true));
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
 	}
 
 	@Override
 	public List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(LEARNING_LESSON_UUID_PARAM, learningLessonUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_LEARNING_LESSON_UUID, paramMap, new CourseParticipantRowMapper(contactDao, false));
+		return namedJdbcTemplate.query(SELECT_BY_LEARNING_LESSON_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
 	}
 	
 	@Override
 	public List<CourseParticipant> getByUserUuid(UUID userUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(USER_UUID_PARAM, userUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_USERID, paramMap, new CourseParticipantRowMapper(contactDao, false));
+		return namedJdbcTemplate.query(SELECT_BY_USERID, paramMap, new CourseParticipantRowMapper(contactDao));
 	}
 
 	@Override
@@ -188,12 +188,9 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	public static final class CourseParticipantRowMapper implements RowMapper<CourseParticipant> {
 		private ContactDao contactDao;
-		// additional columns which are not included in all selects
-		private boolean extended;
 
-		public CourseParticipantRowMapper(ContactDao contactDao, boolean extended) {
+		public CourseParticipantRowMapper(ContactDao contactDao) {
 			this.contactDao = contactDao;
-			this.extended = extended;
 		}
 
 		@Override
@@ -204,12 +201,6 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			ret.setPersonalNo(rs.getString("personal_number"));
 			ret.setHealthInsurance(rs.getString("health_insurance"));
 			ret.setHealthInfo(rs.getString("health_info"));
-			if (extended) {
-				String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
-				if (StringUtils.hasText(courseCourseParticipantUuid)) {
-					ret.setCourseCourseParticipantUuid(UUID.fromString(courseCourseParticipantUuid));				
-				}				
-			}
 
 			UUID contactUuid = rs.getString("contact_uuid") != null ? UUID.fromString(rs.getString("contact_uuid")) : null;
 			if (contactUuid != null) {
