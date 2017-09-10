@@ -71,6 +71,8 @@ CREATE TABLE course(
 	description VARCHAR(240),
 	year_from YEAR,
 	year_to YEAR,
+	price_semester_1 INT NOT NULL,
+	price_semester_2 INT NOT NULL,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
@@ -145,4 +147,15 @@ CREATE TABLE participant_learning_lesson(
 	course_participant_uuid varchar(36) REFERENCES course_participant(uuid),
 	learning_lesson_uuid varchar(36) REFERENCES learning_lesson(uuid),
 	PRIMARY KEY (course_participant_uuid, learning_lesson_uuid)
+);
+
+CREATE TABLE payment(
+	uuid varchar(36),
+	amount INT,
+	type ENUM('CASH','BANK_TRANS','DONATE','OTHER') NOT NULL,
+	description VARCHAR(100),
+	modif_at TIMESTAMP NOT NULL,
+	modif_by varchar(36) NOT NULL,
+	course_course_participant_uuid varchar(36) REFERENCES course_course_participant(uuid),
+	PRIMARY KEY (uuid)
 );

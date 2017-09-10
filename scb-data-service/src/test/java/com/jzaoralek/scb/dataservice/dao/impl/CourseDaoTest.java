@@ -15,6 +15,8 @@ public class CourseDaoTest extends BaseTestCase {
 
 	private static final String NAME = "name";
 	private static final String DESCRIPTION = "description";
+	private static final Long PRICE_SEMESTER_1 = 2000L;
+	private static final Long PRICE_SEMESTER_2 = 3000L;
 
 	@Autowired
 	private CourseDao courseDao;
@@ -29,6 +31,8 @@ public class CourseDaoTest extends BaseTestCase {
 		item.setName(NAME);
 		item.setYearFrom(YEAR_FROM);
 		item.setYearTo(YEAR_TO);
+		item.setPriceSemester1(PRICE_SEMESTER_1);
+		item.setPriceSemester2(PRICE_SEMESTER_2);
 
 		courseDao.insert(item);
 	}
