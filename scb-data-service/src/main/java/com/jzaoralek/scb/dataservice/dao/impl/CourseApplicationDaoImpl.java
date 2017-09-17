@@ -295,6 +295,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", contact con_repr " +
 			", user usr " +
 			", course_course_participant ccp " +
+			", course c " +
 			"where " +
 			"ca.course_participant_uuid = cp.uuid " +
 			"and cp.contact_uuid = con_part.uuid " +
@@ -303,6 +304,9 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			"AND ca.year_from = :"+YEAR_FROM_PARAM+" " +
 			"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
 			"AND cp.uuid = ccp.course_participant_uuid " +
+			"AND c.uuid = ccp.course_uuid " +
+			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
+			"AND c.year_to = :"+YEAR_TO_PARAM+ " " +
 			"order by con_part.surname ";
 
 	private static final String SELECT_BY_UUID = "select uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by, payed from course_application where uuid=:" + UUID_PARAM;
