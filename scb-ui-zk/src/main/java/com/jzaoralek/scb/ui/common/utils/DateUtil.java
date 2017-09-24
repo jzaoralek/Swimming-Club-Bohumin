@@ -452,4 +452,30 @@ public class DateUtil {
 		}
 		return false;
 	}
+	
+	/**
+	 * Return first day of first semester.
+	 * @param year
+	 * @return
+	 */
+	public static Date getFirstDayOfFirstSemester(Integer year) {
+		if (year == null) {
+			throw new IllegalArgumentException("year is null");
+		}
+		Calendar calendar = new GregorianCalendar(year,8,1);
+		return calendar.getTime();
+	}
+	
+	/**
+	 * Return last day of second semester.
+	 * @param year
+	 * @return
+	 */
+	public static Date getLastDayOfSecondSemester(Integer year) {
+		if (year == null) {
+			throw new IllegalArgumentException("year is null");
+		}
+		Calendar calendar = new GregorianCalendar(year,7,31);
+		return calendar.getTime();
+	}
 }

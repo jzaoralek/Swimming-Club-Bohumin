@@ -148,6 +148,7 @@
 			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourseApplication_${each.uuid}, position=after_end" />
 			                	<menupopup id="menuCourseApplication_${each.uuid}" >
 									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
+									<menuitem label="${c:l('txt.ui.common.Payments')}" onClick="@command('paymentsCmd', item=each)" />
 						       	</menupopup>
 			                </listcell>
 			            </listitem>

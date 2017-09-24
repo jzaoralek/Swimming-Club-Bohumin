@@ -6,7 +6,8 @@ CREATE TABLE payment(
 	amount INT,
 	type ENUM('CASH','BANK_TRANS','DONATE','OTHER') NOT NULL,
 	description VARCHAR(100),
-	modif_at TIMESTAMP NOT NULL,
+	payment_date TIMESTAMP default CURRENT_TIMESTAMP NOT NULL,
+	modif_at TIMESTAMP default CURRENT_TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	course_course_participant_uuid varchar(36) REFERENCES course_course_participant(uuid),
 	PRIMARY KEY (uuid)

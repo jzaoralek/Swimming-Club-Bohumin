@@ -1,5 +1,7 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -18,6 +20,7 @@ public class PaymentDaoImplTest extends BaseTestCase {
 	private static final String DESCRIPTION = "description";
 	private static final Long AMOUNT = 2200L;
 	private static final UUID COURSE_COURSE_PARTICIPANT_UUID = UUID.randomUUID();
+	private static final Date PAYMENT_DATE = Calendar.getInstance().getTime();
 	
 	@Autowired
 	private PaymentDao paymentDao;
@@ -29,6 +32,7 @@ public class PaymentDaoImplTest extends BaseTestCase {
 		item = new Payment();
 		fillIdentEntity(item);
 		item.setDescription(DESCRIPTION);
+		item.setPaymentDate(PAYMENT_DATE);
 		item.setAmount(AMOUNT);
 		item.setType(TYPE);
 		item.setCourseCourseParticipantUuid(COURSE_COURSE_PARTICIPANT_UUID);
@@ -49,7 +53,7 @@ public class PaymentDaoImplTest extends BaseTestCase {
 
 	@Test
 	public void testGetByCourseCourseParticipantUuid() {
-		assertList(paymentDao.getByCourseCourseParticipantUuid(COURSE_COURSE_PARTICIPANT_UUID), 1 , ITEM_UUID);
+		assertList(paymentDao.getByCourseCourseParticipantUuid(COURSE_COURSE_PARTICIPANT_UUID, getYesterday(), getTomorrow()), 1 , ITEM_UUID);
 	}
 
 	@Test
@@ -76,5 +80,17 @@ public class PaymentDaoImplTest extends BaseTestCase {
 	public void testDelete() {
 		paymentDao.delete(item);
 		Assert.assertNull(paymentDao.getByUuid(ITEM_UUID));
+	}
+	
+	private Date getYesterday() {
+	    final Calendar cal = Calendar.getInstance();
+	    cal.add(Calendar.DATE, -1);
+	    return cal.getTime();
+	}
+	
+	private Date getTomorrow() {
+	    final Calendar cal = Calendar.getInstance();
+	    cal.add(Calendar.DATE, 1);
+	    return cal.getTime();
 	}
 }

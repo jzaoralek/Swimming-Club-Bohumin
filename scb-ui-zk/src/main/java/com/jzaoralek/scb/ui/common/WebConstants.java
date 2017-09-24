@@ -22,6 +22,7 @@ public final class WebConstants {
 	public static final String WEB_TIME_SECONDS_PATTERN = "mm:ss.ms";
 
 	public static final String UUID_PARAM = "uuid";
+	public static final String COURSE_COURSE_PARTIC_UUID_PARAM = "courseCourseParticUuid";
 	public static final String MODE_PARAM = "mode";
 	public static final String FROM_PAGE_PARAM = "fromPage";
 	public static final String ATTACHMENT_PARAM = "attachment";
@@ -32,6 +33,9 @@ public final class WebConstants {
 	public static final String COURSE_APPLICATION_PARAM = "courseApplication";
 	public static final String COURSE_PARTICIPANT_UUID_PARAM = "courseParticipant";
 	public static final String COURSE_PARTICIPANT_REPRESENTATIVE_UUID_PARAM = "courseParticRepresentative";
+	
+	public static final String YEAR_FROM_PARAM = "yearFrom";
+	public static final String YEAR_TO_PARAM = "yearTo";
 	
 	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 

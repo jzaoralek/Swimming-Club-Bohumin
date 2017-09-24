@@ -16,6 +16,7 @@ public class Payment implements IdentEntity {
 	private String modifBy;
 	private Date modifAt;
 	private Long amount;
+	private Date paymentDate;
 	private String description;
 	private PaymentType type;
 	private UUID courseCourseParticipantUuid;
@@ -50,6 +51,12 @@ public class Payment implements IdentEntity {
 	public void setAmount(Long amount) {
 		this.amount = amount;
 	}
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
+	}
 	public String getDescription() {
 		return description;
 	}
@@ -72,7 +79,7 @@ public class Payment implements IdentEntity {
 	@Override
 	public String toString() {
 		return "Payment [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", amount=" + amount
-				+ ", description=" + description + ", type=" + type + ", courseCourseParticipantUuid="
-				+ courseCourseParticipantUuid + "]";
+				+ ", paymentDate=" + paymentDate + ", description=" + description + ", type=" + type
+				+ ", courseCourseParticipantUuid=" + courseCourseParticipantUuid + "]";
 	}
 }

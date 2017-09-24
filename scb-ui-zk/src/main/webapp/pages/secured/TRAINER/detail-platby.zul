@@ -1,0 +1,119 @@
+<?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
+<window id="modalWindow"
+	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseparticipant.vm.PaymentDetailVM')"
+	validationMessages="@id('vmsgs')"
+	form="@id('fx') @load(vm) @save(vm, before='submitCmd')"
+	title="@init(vm.pageHeadline)" 
+	border="normal" 
+    width="430px"
+    position="center,center" 
+    closable="true">
+    
+    <style>
+		<!-- cut/hide the vertical borders in the grid rows -->
+		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
+		
+		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
+	</style>
+	
+    <vbox align="center" >
+    	<grid hflex="1" sclass="form-grid" >
+			<columns>
+                <column align="center" hflex="1"/>
+            </columns>
+			<rows style="background: white;" >
+				<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
+					<cell sclass="form-grid-cell" >
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.date')}"/>
+							<datebox id="paymentDate"
+								value="@bind(fx.payment.paymentDate) @validator(vm.notNullObjectValidator)"
+                           		format="@load(vm.dateFormat)" 
+                           		maxlength="@load(vm.getDateMaxlength())"
+                           		placeholder="*"
+                           		hflex="1"
+                           		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+                           		tabindex="1"
+                           		focus="true" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[paymentDate])" >
+									<label value="@bind(vmsgs[paymentDate])" />
+								</span>
+							</hbox>
+						</vbox>
+					</cell>		
+				</row>
+				
+				<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+					<cell sclass="form-grid-cell" >
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.Type')}"/>
+							<listbox id="paymentType" 
+								selectedItem="@bind(fx.paymentType) @validator(vm.notNullObjectValidator)" 
+								model="@load(vm.paymentTypeList)"
+								sclass="form-input-text"
+								tabindex="2"
+								hflex="1"
+								mold="select" >
+								<template name="model">
+					               	<listitem label="@bind(each.label)" value="@bind(each)"/>
+					               </template>
+							</listbox>
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<validMsg vmsg="${vmsgs}" elem="${paymentType}" />
+							</hbox>
+						</vbox>
+					</cell>		
+				</row>
+				
+				<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+					<cell sclass="form-grid-cell" >
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.Amount')}"/>
+							<intbox id="amount" 
+								value="@bind(fx.payment.amount) @validator(vm.notNullObjectValidator)"
+								maxlength="11"
+								placeholder="*"
+								sclass="form-input-text"
+								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+								tabindex="3"
+								hflex="1" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[amount])" >
+									<label value="@bind(vmsgs[amount])" />
+								</span>
+							</hbox>
+						</vbox>
+					</cell>		
+				</row>
+				
+				<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+					<cell sclass="form-grid-cell" >
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.description')}"/>
+							<textbox id="description" 
+								value="@bind(fx.payment.description)"
+								multiline="true"
+								rows="3"
+								tabindex="4"
+								hflex="1" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[description])" >
+									<label value="@bind(vmsgs[description])" />
+								</span>
+							</hbox>
+						</vbox>
+					</cell>		
+				</row>
+			</rows>
+		</grid>
+		
+		<button label="OK"
+			onClick="@command('submitCmd', window=modalWindow)"
+			sclass="btn-success"
+			tabindex="4"
+			style="margin-top: 10px"
+			iconSclass="z-icon-check"  />
+	    
+    </vbox>
+</window>

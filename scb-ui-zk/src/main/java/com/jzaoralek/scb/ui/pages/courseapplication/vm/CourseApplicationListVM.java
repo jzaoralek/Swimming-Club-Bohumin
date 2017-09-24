@@ -137,6 +137,22 @@ public class CourseApplicationListVM extends BaseVM {
 		WebPages fromPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_LIST : WebPages.PARTICIPANT_LIST;
 		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
 	}
+	
+	@Command
+    public void paymentsCmd(@BindingParam(WebConstants.ITEM_PARAM) final CourseApplication item) {
+		if (item ==  null) {
+			throw new IllegalArgumentException("CourseApplication is null");
+		}
+		
+		String[] years = this.courseYearSelected.split(ConfigurationServiceImpl.COURSE_YEAR_DELIMITER);
+		if (years.length < 2) {
+			return;
+		}
+		int yearFrom = Integer.parseInt(years[0]);
+		int yearTo = Integer.parseInt(years[1]);
+		
+		Executions.sendRedirect(WebPages.PAYMENT_LIST.getUrl() + "?"+WebConstants.COURSE_COURSE_PARTIC_UUID_PARAM+"="+item.getCourseParticipant().getCourseCourseParticipantUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST + "&" + WebConstants.YEAR_FROM_PARAM + "=" + yearFrom  + "&" + WebConstants.YEAR_TO_PARAM + "=" + yearTo);
+	}
 
 	@Command
 	@NotifyChange("courseApplicationList")
