@@ -103,7 +103,7 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 			ret.setDescription(rs.getString("description"));
 			ret.setType(PaymentType.valueOf(rs.getString("type")));
 			ret.setCourseCourseParticipantUuid(UUID.fromString(rs.getString("course_course_participant_uuid")));
-			ret.setPaymentDate(rs.getTimestamp("payment_date"));
+			ret.setPaymentDate(transDate(rs.getTimestamp("payment_date")));
 			
 			return ret;
 		}

@@ -9,12 +9,12 @@ import java.util.UUID;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Payment;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -22,6 +22,8 @@ import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class PaymentDetailVM extends BaseVM {
+
+	private final List<Listitem> paymentTypeList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(PaymentType.class));;
 
 	@WireVariable
 	private PaymentService paymentService;
@@ -31,7 +33,7 @@ public class PaymentDetailVM extends BaseVM {
 
 	@Init
 	public void init() {
-		// TODO, predat caalbact v argumentu
+		// TODO, predat callback v argumentu
 		UUID paymentUuid = (UUID) WebUtils.getArg(WebConstants.UUID_PARAM);
 		
 		boolean newMode = (paymentUuid == null);
@@ -43,7 +45,22 @@ public class PaymentDetailVM extends BaseVM {
 			this.payment.setCourseCourseParticipantUuid(courseCourseParticipantUuid);
 		} else {
 			this.payment = paymentService.getByUuid(paymentUuid);
+			this.paymentType = getPaymentTypeListItem(this.payment.getType());
 		}
+	}
+	
+	private Listitem getPaymentTypeListItem(PaymentType role) {
+		if (role == null) {
+			return null;
+		}
+
+		for (Listitem item : this.paymentTypeList) {
+			if (item.getValue() == role) {
+				return item;
+			}
+		}
+
+		return null;
 	}
 	
 	@Command
@@ -51,10 +68,6 @@ public class PaymentDetailVM extends BaseVM {
 		this.payment.setType((PaymentType)this.paymentType.getValue());
 		paymentService.insert(this.payment);
 		window.detach();
-	}
-	
-	public List<Listitem> getPaymentTypeList() {
-		return WebUtils.getMessageItemsFromEnum(EnumSet.allOf(PaymentType.class));
 	}
 	
 	public Payment getPayment() {
@@ -71,5 +84,9 @@ public class PaymentDetailVM extends BaseVM {
 
 	public void setPaymentType(Listitem paymentType) {
 		this.paymentType = paymentType;
+	}
+	
+	public List<Listitem> getPaymentTypeList() {
+		return paymentTypeList;
 	}
 }
