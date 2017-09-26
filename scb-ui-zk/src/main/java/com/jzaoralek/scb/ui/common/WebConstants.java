@@ -33,6 +33,7 @@ public final class WebConstants {
 	public static final String COURSE_APPLICATION_PARAM = "courseApplication";
 	public static final String COURSE_PARTICIPANT_UUID_PARAM = "courseParticipant";
 	public static final String COURSE_PARTICIPANT_REPRESENTATIVE_UUID_PARAM = "courseParticRepresentative";
+	public static final String CALLBACK_PARAM = "callback";
 	
 	public static final String YEAR_FROM_PARAM = "yearFrom";
 	public static final String YEAR_TO_PARAM = "yearTo";

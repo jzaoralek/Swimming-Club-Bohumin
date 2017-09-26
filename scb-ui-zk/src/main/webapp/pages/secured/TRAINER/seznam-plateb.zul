@@ -94,7 +94,12 @@
 			                <listcell label="@load(each.type) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="${each.amount} ${c:l('txt.ui.common.CZK')}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell>
-			                	<button label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
+<!-- 			                	<button label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" /> -->
+								<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuPayment_${each.uuid}, position=after_end" />
+			                	<menupopup id="menuPayment_${each.uuid}" >
+									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
+									<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)" />
+						       	</menupopup>
 			                </listcell>
 			            </listitem>
 			        </template>

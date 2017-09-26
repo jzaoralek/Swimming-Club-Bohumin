@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
@@ -18,7 +19,10 @@ import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class PaymentDetailVM extends BaseVM {
@@ -66,7 +70,9 @@ public class PaymentDetailVM extends BaseVM {
 	@Command
 	public void submitCmd(@BindingParam("window") Window window) {
 		this.payment.setType((PaymentType)this.paymentType.getValue());
-		paymentService.insert(this.payment);
+		paymentService.store(this.payment);
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
+		EventQueueHelper.publish(ScbEventQueues.PAYMENT_QUEUE, ScbEvent.RELOAD_PAYMENT_DATA_EVENT, null, null);
 		window.detach();
 	}
 	
