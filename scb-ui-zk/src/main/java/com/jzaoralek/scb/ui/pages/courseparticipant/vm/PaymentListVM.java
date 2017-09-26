@@ -50,6 +50,7 @@ public class PaymentListVM extends BaseVM {
 		this.paymentList = paymentService.getByCourseCourseParticipantUuid(UUID.fromString(courseCoourseParticUuid)
 				, DateUtil.getFirstDayOfFirstSemester(Integer.valueOf(yearFrom))
 				, DateUtil.getLastDayOfSecondSemester(Integer.valueOf(yearTo)));
+		// TODO: odstranit vstupni argumenty yearFrom a yearTo
 		// TODO: nacist ucastnka a kurz na zaklade courseCoourseParticUuid a doplnit do labelu
 		this.pageHeadline = Labels.getLabel("txt.ui.common.ParticipantPayments", new String[]{"ucastnik", "kurz"});
 		this.courseCoourseParticUuid = UUID.fromString(courseCoourseParticUuid);
