@@ -21,7 +21,14 @@ public interface CourseService {
 	List<CourseParticipant> getCourseParticListByRepresentativeUuid(UUID representativeUserUuid);
 	CourseParticipant getCourseParticipantByUuid(UUID uuid);
 	Course getByUuid(UUID uuid);
+	Course getPlainByUuid(UUID uuid);
 	Course store(Course course) throws ScbValidationException;
+	/**
+	 * Return course participant with one course.
+	 * @param courseCourseParticUuid
+	 * @return
+	 */
+	CourseParticipant getCourseParticInOneCourse(UUID courseCourseParticUuid);
 	void delete(UUID uuid) throws ScbValidationException;
 	void storeCourseParticipants(List<CourseParticipant> newCourseParticipantList, UUID courseUuid) throws ScbValidationException;
 	void deleteParticipantFromCourse(UUID participantUuid, UUID courseUuid);

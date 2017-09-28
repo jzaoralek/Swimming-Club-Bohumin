@@ -15,8 +15,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
+import com.jzaoralek.scb.dataservice.dao.CourseDao;
+import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.PaymentDao;
 import com.jzaoralek.scb.dataservice.domain.Payment;
+import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
 
 @Repository
@@ -24,20 +27,30 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 
 	private static final String AMOUNT_PARAM = "AMOUNT";
 	private static final String TYPE_PARAM = "TYPE";
-	private static final String COURSE_COURSE_PARTIC_UUID_PARAM = "COURSE_COURSE_PARTIC_UUID_PARAM";
+	
+	private static final String COURSE_PARTIC_UUID_PARAM = "COURSE_PARTIC_UUID_PARAM";
+	private static final String COURSE_UUID_PARAM = "COURSE_UUID_PARAM";
+	
 	private static final String PAYMENT_DATE_PARAM = "payment_date";
 	private static final String DATE_FROM_PARAM = "DATE_FROM";
 	private static final String DATE_TO_PARAM = "DATE_TO";
+	private static final String PROCESS_TYPE_PARAM = "PROCESS_TYPE";
 	
 	private static final String INSERT = "INSERT INTO payment " +
-			"(uuid, amount, type, description, modif_at, modif_by, course_course_participant_uuid, payment_date) " +
-			"VALUES (:"+UUID_PARAM+", :"+AMOUNT_PARAM+", :"+TYPE_PARAM+", :"+DESCRIPTION_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+COURSE_COURSE_PARTIC_UUID_PARAM+", :"+PAYMENT_DATE_PARAM+")";
-	private static final String UPDATE = "UPDATE payment SET amount = :"+AMOUNT_PARAM+", type = :"+TYPE_PARAM+", description = :"+DESCRIPTION_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", course_course_participant_uuid = :"+COURSE_COURSE_PARTIC_UUID_PARAM+", payment_date = :"+PAYMENT_DATE_PARAM+" WHERE uuid=:"+UUID_PARAM;
+			"(uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type) " +
+			"VALUES (:"+UUID_PARAM+", :"+AMOUNT_PARAM+", :"+TYPE_PARAM+", :"+DESCRIPTION_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+COURSE_PARTIC_UUID_PARAM+", :"+COURSE_UUID_PARAM+", :"+PAYMENT_DATE_PARAM+", :"+PROCESS_TYPE_PARAM+")";
+	private static final String UPDATE = "UPDATE payment SET amount = :"+AMOUNT_PARAM+", type = :"+TYPE_PARAM+", description = :"+DESCRIPTION_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM+", course_uuid = :"+COURSE_UUID_PARAM+", payment_date = :"+PAYMENT_DATE_PARAM+", process_type = :"+PROCESS_TYPE_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String DELETE = "DELETE FROM payment where uuid = :" + UUID_PARAM;
-	private static final String SELECT_BY_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_course_participant_uuid, payment_date FROM payment WHERE uuid=:" + UUID_PARAM;
-	private static final String SELECT_BY_COURSE_COURSE_PARTICIPANT_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_course_participant_uuid, payment_date "
-			+ "FROM payment WHERE course_course_participant_uuid=:" + UUID_PARAM + " AND payment_date BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM +
+	private static final String SELECT_BY_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type FROM payment WHERE uuid=:" + UUID_PARAM;
+	private static final String SELECT_BY_COURSE_COURSE_PARTICIPANT_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type "
+			+ "FROM payment WHERE course_participant_uuid=:" + COURSE_PARTIC_UUID_PARAM + " AND course_uuid=:" + COURSE_UUID_PARAM + " AND payment_date BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM +
 			" ORDER BY payment_date desc";
+	
+	@Autowired
+	private CourseDao courseDao;
+	
+	@Autowired
+	private CourseParticipantDao courseParticipantDao;
 	
 	@Autowired
 	public PaymentDaoImpl(DataSource ds) {
@@ -48,18 +61,20 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 	public Payment getByUuid(UUID uuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
 		try {
-			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new PaymentRowMapper());
+			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new PaymentRowMapper(courseDao, courseParticipantDao));
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
 
 	@Override
-	public List<Payment> getByCourseCourseParticipantUuid(UUID courseCourseParticipantUuid, Date from, Date to) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, courseCourseParticipantUuid.toString());
+	public List<Payment> getByCourseCourseParticipantUuid(UUID courseCourseParticipantUuid, UUID courseUuid, Date from, Date to) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource()
+				.addValue(COURSE_PARTIC_UUID_PARAM, courseCourseParticipantUuid.toString())
+				.addValue(COURSE_UUID_PARAM, courseUuid.toString());
 		paramMap.addValue(DATE_FROM_PARAM, from);
 		paramMap.addValue(DATE_TO_PARAM, to);
-		return namedJdbcTemplate.query(SELECT_BY_COURSE_COURSE_PARTICIPANT_UUID, paramMap, new PaymentRowMapper());
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_COURSE_PARTICIPANT_UUID, paramMap, new PaymentRowMapper(courseDao, courseParticipantDao));
 	}
 
 	@Override
@@ -68,9 +83,11 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 		fillIdentEntity(payment, paramMap);
 		paramMap.addValue(AMOUNT_PARAM, payment.getAmount());
 		paramMap.addValue(TYPE_PARAM, payment.getType().name());
+		paramMap.addValue(PROCESS_TYPE_PARAM, payment.getProcessType().name());
 		paramMap.addValue(DESCRIPTION_PARAM, payment.getDescription());
 		paramMap.addValue(PAYMENT_DATE_PARAM, payment.getPaymentDate());
-		paramMap.addValue(COURSE_COURSE_PARTIC_UUID_PARAM, payment.getCourseCourseParticipantUuid().toString());
+		paramMap.addValue(COURSE_PARTIC_UUID_PARAM, payment.getCourseParticipant().getUuid().toString());
+		paramMap.addValue(COURSE_UUID_PARAM, payment.getCourse().getUuid().toString());
 		
 		namedJdbcTemplate.update(INSERT, paramMap);
 	}
@@ -81,9 +98,11 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 		fillIdentEntity(payment, paramMap);
 		paramMap.addValue(AMOUNT_PARAM, payment.getAmount());
 		paramMap.addValue(TYPE_PARAM, payment.getType().name());
+		paramMap.addValue(PROCESS_TYPE_PARAM, payment.getProcessType().name());
 		paramMap.addValue(DESCRIPTION_PARAM, payment.getDescription());
 		paramMap.addValue(PAYMENT_DATE_PARAM, payment.getPaymentDate());
-		paramMap.addValue(COURSE_COURSE_PARTIC_UUID_PARAM, payment.getCourseCourseParticipantUuid().toString());
+		paramMap.addValue(COURSE_PARTIC_UUID_PARAM, payment.getCourseParticipant().getUuid().toString());
+		paramMap.addValue(COURSE_UUID_PARAM, payment.getCourse().getUuid().toString());
 		
 		namedJdbcTemplate.update(UPDATE, paramMap);
 	}
@@ -95,6 +114,14 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 	
 	public static final class PaymentRowMapper implements RowMapper<Payment> {
 
+		private CourseDao courseDao;
+		private CourseParticipantDao courseParticipantDao;
+		
+		public PaymentRowMapper(CourseDao courseDao, CourseParticipantDao courseParticipantDao) {
+			this.courseDao = courseDao;
+			this.courseParticipantDao = courseParticipantDao;
+		}
+		
 		@Override
 		public Payment mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Payment ret = new Payment();
@@ -102,8 +129,17 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 			ret.setAmount(rs.getLong("amount"));
 			ret.setDescription(rs.getString("description"));
 			ret.setType(PaymentType.valueOf(rs.getString("type")));
-			ret.setCourseCourseParticipantUuid(UUID.fromString(rs.getString("course_course_participant_uuid")));
+			UUID courseParticipantUuid = UUID.fromString(rs.getString("course_participant_uuid"));
+			if (courseParticipantUuid != null) {
+				ret.setCourseParticipant(courseParticipantDao.getByUuid(courseParticipantUuid, false));
+			}
+			UUID courseUuid = UUID.fromString(rs.getString("course_uuid"));
+			if (courseUuid != null) {
+				ret.setCourse(courseDao.getPlainByUuid(courseUuid));
+			}
+			
 			ret.setPaymentDate(transDate(rs.getTimestamp("payment_date")));
+			ret.setProcessType(PaymentProcessType.valueOf(rs.getString("process_type")));
 			
 			return ret;
 		}

@@ -283,7 +283,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.zip_code " +
 			", ca.year_from " +
 			", ca.year_to " +
-			", ccp.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
+			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
 			", (select count(*) " +
 			"		from course_application cain " +
 			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
@@ -439,7 +439,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			if (this.extended) {
 				String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
 				if (StringUtils.hasText(courseCourseParticipantUuid)) {
-					courseParticipant.setCourseCourseParticipantUuid(UUID.fromString(courseCourseParticipantUuid)); 
+					courseParticipant.setCourseUuid(UUID.fromString(courseCourseParticipantUuid)); 
 				}				
 			}
 

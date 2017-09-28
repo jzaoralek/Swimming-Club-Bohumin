@@ -30,7 +30,10 @@ public final class WebConstants {
 	public static final String CHECKED_PARAM = "checked";
 	public static final String TAB_PARAM = "tab";
 	public static final String COURSE_UUID_PARAM = "courseUuid";
+	public static final String COURSE_PARTIC_UUID_PARAM = "courseParticUuid";
 	public static final String COURSE_APPLICATION_PARAM = "courseApplication";
+	public static final String COURSE_PARTIC_PARAM = "coursePartic";
+	public static final String COURSE_PARAM = "course";
 	public static final String COURSE_PARTICIPANT_UUID_PARAM = "courseParticipant";
 	public static final String COURSE_PARTICIPANT_REPRESENTATIVE_UUID_PARAM = "courseParticRepresentative";
 	public static final String CALLBACK_PARAM = "callback";

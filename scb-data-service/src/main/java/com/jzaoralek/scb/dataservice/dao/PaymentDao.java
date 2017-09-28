@@ -9,7 +9,7 @@ import com.jzaoralek.scb.dataservice.domain.Payment;
 public interface PaymentDao {
 	
 	Payment getByUuid(UUID uuid);
-	List<Payment> getByCourseCourseParticipantUuid(UUID courseCourseParticipantUuid, Date from, Date to);
+	List<Payment> getByCourseCourseParticipantUuid(UUID courseCourseParticipantUuid, UUID courseUuid, Date from, Date to);
 	void insert(Payment course);
 	void update(Payment course);
 	void delete(Payment course);

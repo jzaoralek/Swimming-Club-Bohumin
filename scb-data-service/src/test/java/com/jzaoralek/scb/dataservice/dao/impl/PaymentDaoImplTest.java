@@ -11,21 +11,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jzaoralek.scb.dataservice.dao.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.PaymentDao;
+import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Payment;
+import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
 
 public class PaymentDaoImplTest extends BaseTestCase {
 
 	private static final PaymentType TYPE = PaymentType.CASH;
+	private static final PaymentProcessType PROCESS_TYPE = PaymentProcessType.MANUAL;
 	private static final String DESCRIPTION = "description";
 	private static final Long AMOUNT = 2200L;
-	private static final UUID COURSE_COURSE_PARTICIPANT_UUID = UUID.randomUUID();
+	private static final UUID COURSE_PARTICIPANT_UUID = UUID.randomUUID();
+	private static final UUID COURSE_UUID = UUID.randomUUID();
 	private static final Date PAYMENT_DATE = Calendar.getInstance().getTime();
 	
 	@Autowired
 	private PaymentDao paymentDao;
 
 	private Payment item;
+	private CourseParticipant coursePartic;
+	private Course course;
 	
 	@Before
 	public void setUp() {
@@ -35,7 +42,15 @@ public class PaymentDaoImplTest extends BaseTestCase {
 		item.setPaymentDate(PAYMENT_DATE);
 		item.setAmount(AMOUNT);
 		item.setType(TYPE);
-		item.setCourseCourseParticipantUuid(COURSE_COURSE_PARTICIPANT_UUID);
+		item.setProcessType(PROCESS_TYPE);
+		
+		this.coursePartic = new CourseParticipant();
+		this.coursePartic.setUuid(COURSE_PARTICIPANT_UUID);
+		item.setCourseParticipant(this.coursePartic);
+		
+		this.course = new Course();
+		this.course.setUuid(COURSE_UUID);
+		item.setCourse(this.course);
 
 		paymentDao.insert(item);
 	}
@@ -48,12 +63,13 @@ public class PaymentDaoImplTest extends BaseTestCase {
 		Assert.assertTrue(AMOUNT.equals(item.getAmount()));
 		Assert.assertTrue(DESCRIPTION.equals(item.getDescription()));
 		Assert.assertTrue(TYPE == item.getType());
-		Assert.assertTrue(COURSE_COURSE_PARTICIPANT_UUID.toString().equals(item.getCourseCourseParticipantUuid().toString()));
+		Assert.assertTrue(PROCESS_TYPE == item.getProcessType());
+//		Assert.assertTrue(COURSE_PARTICIPANT_UUID.toString().equals(item.getCourseParticipant().getUuid().toString()));
 	}
 
 	@Test
 	public void testGetByCourseCourseParticipantUuid() {
-		assertList(paymentDao.getByCourseCourseParticipantUuid(COURSE_COURSE_PARTICIPANT_UUID, getYesterday(), getTomorrow()), 1 , ITEM_UUID);
+		assertList(paymentDao.getByCourseCourseParticipantUuid(COURSE_PARTICIPANT_UUID, COURSE_UUID, getYesterday(), getTomorrow()), 1 , ITEM_UUID);
 	}
 
 	@Test
@@ -63,7 +79,9 @@ public class PaymentDaoImplTest extends BaseTestCase {
 		Long AMOUNT_UPDATED = 2600L;
 		item.setAmount(AMOUNT_UPDATED);
 		item.setType(TYPE);
-		item.setCourseCourseParticipantUuid(COURSE_COURSE_PARTICIPANT_UUID);
+		Assert.assertTrue(PROCESS_TYPE == item.getProcessType());
+		item.setCourseParticipant(this.coursePartic);
+		item.setCourse(this.course);
 
 		paymentDao.update(item);
 
@@ -73,7 +91,8 @@ public class PaymentDaoImplTest extends BaseTestCase {
 		Assert.assertTrue(DESCRIPTION_UPDATED.equals(itemUpdated.getDescription()));
 		Assert.assertTrue(AMOUNT_UPDATED.equals(item.getAmount()));
 		Assert.assertTrue(TYPE == item.getType());
-		Assert.assertTrue(COURSE_COURSE_PARTICIPANT_UUID.toString().equals(item.getCourseCourseParticipantUuid().toString()));
+		Assert.assertTrue(PROCESS_TYPE == item.getProcessType());
+//		Assert.assertTrue(COURSE_PARTICIPANT_UUID.toString().equals(item.getCourseParticipant().toString()));
 	}
 
 	@Test

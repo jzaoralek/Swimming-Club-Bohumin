@@ -14,15 +14,17 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
+import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Payment;
-import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
+import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class PaymentDetailVM extends BaseVM {
@@ -34,19 +36,23 @@ public class PaymentDetailVM extends BaseVM {
 	
 	private Payment payment;
 	private Listitem paymentType;
+	
 
 	@Init
 	public void init() {
-		// TODO, predat callback v argumentu
 		UUID paymentUuid = (UUID) WebUtils.getArg(WebConstants.UUID_PARAM);
-		
 		boolean newMode = (paymentUuid == null);
 		if (newMode) {
-			UUID courseCourseParticipantUuid = (UUID) WebUtils.getArg(WebConstants.COURSE_COURSE_PARTIC_UUID_PARAM);
-			Objects.requireNonNull(courseCourseParticipantUuid, "courseCourseParticipantUuid");
+			CourseParticipant courseParticipant = (CourseParticipant) WebUtils.getArg(WebConstants.COURSE_PARTIC_PARAM);
+			Course course = (Course) WebUtils.getArg(WebConstants.COURSE_PARAM);
+			Objects.requireNonNull(courseParticipant, "courseParticipant");
+			Objects.requireNonNull(course, "course");
+			
 			this.payment = new Payment();
+			this.payment.setProcessType(PaymentProcessType.MANUAL);
 			this.payment.setPaymentDate(Calendar.getInstance().getTime());
-			this.payment.setCourseCourseParticipantUuid(courseCourseParticipantUuid);
+			this.payment.setCourseParticipant(courseParticipant);
+			this.payment.setCourse(course);
 		} else {
 			this.payment = paymentService.getByUuid(paymentUuid);
 			this.paymentType = getPaymentTypeListItem(this.payment.getType());

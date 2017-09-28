@@ -22,7 +22,7 @@ public class CourseParticipant implements IdentEntity {
 	private List<Result> resultList;
 	private List<Course> courseList;
 	private UUID representativeUuid;
-	private UUID courseCourseParticipantUuid;
+	private UUID courseUuid;
 
 	/*
 	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
@@ -43,7 +43,7 @@ public class CourseParticipant implements IdentEntity {
 		this.courseList = courseParticipant.courseList;
 		this.lessonAttendance = courseParticipant.lessonAttendance;
 		this.representativeUuid = courseParticipant.representativeUuid;
-		this.courseCourseParticipantUuid = courseParticipant.courseCourseParticipantUuid;
+		this.courseUuid = courseParticipant.courseUuid;
 	}
 
 	public CourseParticipant() {
@@ -140,12 +140,12 @@ public class CourseParticipant implements IdentEntity {
 		this.representativeUuid = representativeUuid;
 	}
 
-	public UUID getCourseCourseParticipantUuid() {
-		return courseCourseParticipantUuid;
+	public UUID getCourseUuid() {
+		return courseUuid;
 	}
 
-	public void setCourseCourseParticipantUuid(UUID courseCourseParticipantUuid) {
-		this.courseCourseParticipantUuid = courseCourseParticipantUuid;
+	public void setCourseUuid(UUID courseUuid) {
+		this.courseUuid = courseUuid;
 	}
 	
 	public String getInCourseInfo() {
@@ -169,6 +169,6 @@ public class CourseParticipant implements IdentEntity {
 				+ contact + ", birthdate=" + birthdate + ", personalNo=" + personalNo + ", healthInsurance="
 				+ healthInsurance + ", healthInfo=" + healthInfo + ", resultList=" + resultList + ", courseList="
 				+ courseList + ", representativeUuid=" + representativeUuid + ", courseCourseParticipantUuid="
-				+ courseCourseParticipantUuid + ", lessonAttendance=" + lessonAttendance + "]";
+				+ courseUuid + ", lessonAttendance=" + lessonAttendance + "]";
 	}
 }

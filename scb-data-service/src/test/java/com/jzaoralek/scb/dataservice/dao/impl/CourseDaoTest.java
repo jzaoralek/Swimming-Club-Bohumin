@@ -59,6 +59,17 @@ public class CourseDaoTest extends BaseTestCase {
 	}
 
 	@Test
+	public void testGetPlainByUuid() {
+		Course item = courseDao.getPlainByUuid(ITEM_UUID);
+		Assert.assertNotNull(item);
+		Assert.assertTrue(ITEM_UUID.toString().equals(item.getUuid().toString()));
+		Assert.assertTrue(YEAR_FROM == item.getYearFrom());
+		Assert.assertTrue(YEAR_TO == item.getYearTo());
+		Assert.assertTrue(NAME.equals(item.getName()));
+		Assert.assertTrue(DESCRIPTION.equals(item.getDescription()));
+	}
+	
+	@Test
 	public void testGetByCourseParticipantUuid() {
 		assertList(courseDao.getByCourseParticipantUuid(UUID.randomUUID(), YEAR_FROM, YEAR_TO), 0 , null);
 	}

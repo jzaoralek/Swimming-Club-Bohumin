@@ -143,15 +143,7 @@ public class CourseApplicationListVM extends BaseVM {
 		if (item ==  null) {
 			throw new IllegalArgumentException("CourseApplication is null");
 		}
-		
-		String[] years = this.courseYearSelected.split(ConfigurationServiceImpl.COURSE_YEAR_DELIMITER);
-		if (years.length < 2) {
-			return;
-		}
-		int yearFrom = Integer.parseInt(years[0]);
-		int yearTo = Integer.parseInt(years[1]);
-		
-		Executions.sendRedirect(WebPages.PAYMENT_LIST.getUrl() + "?"+WebConstants.COURSE_COURSE_PARTIC_UUID_PARAM+"="+item.getCourseParticipant().getCourseCourseParticipantUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST + "&" + WebConstants.YEAR_FROM_PARAM + "=" + yearFrom  + "&" + WebConstants.YEAR_TO_PARAM + "=" + yearTo);
+		Executions.sendRedirect(WebPages.PAYMENT_LIST.getUrl() + "?"+WebConstants.COURSE_PARTIC_UUID_PARAM+"="+item.getCourseParticipant().getUuid().toString() + "&" +WebConstants.COURSE_UUID_PARAM+"="+item.getCourseParticipant().getCourseUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST);
 	}
 
 	@Command

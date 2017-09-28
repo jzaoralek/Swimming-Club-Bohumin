@@ -64,6 +64,11 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	public Course getByUuid(UUID uuid) {
 		return courseDao.getByUuid(uuid);
 	}
+	
+	@Override
+	public Course getPlainByUuid(UUID uuid) {
+		return courseDao.getPlainByUuid(uuid);
+	}
 
 	@Override
 	public List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid) {
@@ -73,6 +78,11 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	@Override
 	public List<CourseParticipant> getCourseParticListByRepresentativeUuid(UUID representativeUserUuid) {
 		return courseParticipantDao.getByUserUuid(representativeUserUuid);
+	}
+	
+	@Override
+	public CourseParticipant getCourseParticInOneCourse(UUID courseCourseParticUuid) {
+		return courseParticipantDao.getCourseParticInOneCourse(courseCourseParticUuid);
 	}
 	
 	@Override

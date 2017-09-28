@@ -43,6 +43,11 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 	}
 	
 	@Test
+	public void testgetCourseParticInOneCourse() {
+		courseParticipantDao.getCourseParticInOneCourse(ITEM_UUID);
+	}
+	
+	@Test
 	public void testExistsByPersonalNumber() {
 		boolean courseParticipant = courseParticipantDao.existsByPersonalNumber(PARTIC_PERSONAL_NO);
 		Assert.assertTrue(courseParticipant);

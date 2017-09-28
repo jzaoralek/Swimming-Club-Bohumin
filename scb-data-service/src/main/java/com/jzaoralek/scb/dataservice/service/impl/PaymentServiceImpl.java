@@ -26,7 +26,7 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 	private PaymentDao paymentDao;
 	
 	@Override
-	public List<Payment> getByCourseCourseParticipantUuid(UUID courseCourseParticipantUuid, Date from, Date to) {
+	public List<Payment> getByCourseCourseParticipantUuid(UUID courseParticipantUuid, UUID courseUuid, Date from, Date to) {
 		Date dateFrom = from;
 		Date dateTo = to;
 		
@@ -37,7 +37,7 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			dateTo = DataServiceConstants.DEFAULT_DATE_TO;
 		}
 		
-		return paymentDao.getByCourseCourseParticipantUuid(courseCourseParticipantUuid, dateFrom, dateTo);
+		return paymentDao.getByCourseCourseParticipantUuid(courseParticipantUuid, courseUuid, dateFrom, dateTo);
 	}
 
 	@Override

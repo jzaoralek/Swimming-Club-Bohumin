@@ -12,6 +12,11 @@ public class Payment implements IdentEntity {
 		OTHER;
 	}
 	
+	public enum PaymentProcessType {
+		AUTOMATIC,
+		MANUAL;
+	}
+	
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
@@ -19,7 +24,9 @@ public class Payment implements IdentEntity {
 	private Date paymentDate;
 	private String description;
 	private PaymentType type;
-	private UUID courseCourseParticipantUuid;
+	private Course course;
+	private CourseParticipant courseParticipant;
+	private PaymentProcessType processType;
 	
 	@Override
 	public UUID getUuid() {
@@ -69,17 +76,29 @@ public class Payment implements IdentEntity {
 	public void setType(PaymentType type) {
 		this.type = type;
 	}
-	public UUID getCourseCourseParticipantUuid() {
-		return courseCourseParticipantUuid;
+	public PaymentProcessType getProcessType() {
+		return processType;
 	}
-	public void setCourseCourseParticipantUuid(UUID courseCourseParticipantUuid) {
-		this.courseCourseParticipantUuid = courseCourseParticipantUuid;
+	public void setProcessType(PaymentProcessType processType) {
+		this.processType = processType;
+	}
+	public Course getCourse() {
+		return course;
+	}
+	public void setCourse(Course course) {
+		this.course = course;
+	}
+	public CourseParticipant getCourseParticipant() {
+		return courseParticipant;
+	}
+	public void setCourseParticipant(CourseParticipant courseParticipant) {
+		this.courseParticipant = courseParticipant;
 	}
 	
 	@Override
 	public String toString() {
 		return "Payment [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", amount=" + amount
-				+ ", paymentDate=" + paymentDate + ", description=" + description + ", type=" + type
-				+ ", courseCourseParticipantUuid=" + courseCourseParticipantUuid + "]";
+				+ ", paymentDate=" + paymentDate + ", description=" + description + ", type=" + type + ", course="
+				+ course + ", courseParticipant=" + courseParticipant + ", processType=" + processType + "]";
 	}
 }

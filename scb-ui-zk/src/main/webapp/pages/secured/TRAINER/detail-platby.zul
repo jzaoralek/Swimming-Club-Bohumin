@@ -105,6 +105,20 @@
 						</vbox>
 					</cell>		
 				</row>
+				
+				<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+					<cell sclass="form-grid-cell" >
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.Processed')}"/>
+							<textbox id="processType" value="@init(vm.payment.processType) @converter(vm.enumLabelConverter)"
+								readonly="true"
+								hflex="1" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+							</hbox>
+						</vbox>
+					</cell>		
+				</row>
+				
 			</rows>
 		</grid>
 		
