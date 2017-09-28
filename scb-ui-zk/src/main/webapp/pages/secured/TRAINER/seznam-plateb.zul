@@ -105,11 +105,27 @@
 			    </listbox>
 			    
 			    <vlayout>
-				    <label value="@load(vm.paymentSum)" />
-				    <label value="@load(vm.course.priceSemester1)" />
-				    <label value="@load(vm.course.priceSemester2)" />
+				    <hbox align="center" vflex="1">
+				    	<hbox style="margin-right: 5px;" align="center" vflex="1">
+					    	<label value="${c:l('txt.ui.common.PayedSum')} " style="font-size: 18px;" />
+					    	<label value="@load(vm.coursePaymentVO.paymentSum)" style="font-size: 18px; font-weight: bold;" />
+					    	<label value="${c:l('txt.ui.common.CZK')}" style="font-size: 18px; font-weight: bold;"/>
+				    	</hbox>
+				    	
+				    	<hbox align="center" vflex="1" >
+					    	<a iconSclass="z-icon-exclamation-circle" style="font-size: 20px; color: red;" visible="@load(vm.coursePaymentVO.state eq 'NO_PAYMENT')" />
+						    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" visible="@load(vm.coursePaymentVO.state eq 'SEMESTER_FIRST_PARTLY')"/>
+						    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" visible="@load(vm.coursePaymentVO.state eq 'SEMESTER_FIRST_PAYED' or vm.coursePaymentVO.state eq 'SEMESTER_SECOND_PARTLY' or vm.coursePaymentVO.state eq 'SEMESTER_SECOND_PAYED')" />
+						    
+						    <a iconSclass="z-icon-exclamation-circle" style="font-size: 20px; color: red;" visible="@load(vm.coursePaymentVO.state eq 'SEMESTER_FIRST_PAYED')" />
+						    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" visible="@load(vm.coursePaymentVO.state eq 'SEMESTER_SECOND_PARTLY')"/>
+						    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" visible="@load(vm.coursePaymentVO.state eq 'SEMESTER_SECOND_PAYED')" />
+				    	</hbox>
+				    </hbox>
+				    <label value="@load(vm.coursePaymentVO.priceFirstSemester)" />
+				    <label value="@load(vm.coursePaymentVO.priceSecondSemester)" />
+				    <label value="@load(vm.coursePaymentVO.state) @converter(vm.enumLabelConverter)" />
 			    </vlayout>
-			    
 			</vbox>
 			
 			<vbox hflex="1" />

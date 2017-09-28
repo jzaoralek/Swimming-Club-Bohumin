@@ -25,15 +25,16 @@ import org.zkoss.zul.Listheader;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
@@ -54,9 +55,10 @@ public class PaymentListVM extends BaseVM {
 	private List<Payment> paymentList;
 	private UUID courseParticUuid;
 	private UUID courseUuid;
-	private long paymentSum;
 	private Course course;
 	private CourseParticipant coursePartic;
+	private long paymentSum;
+	private CoursePaymentVO coursePaymentVO;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -117,8 +119,6 @@ public class PaymentListVM extends BaseVM {
 				},
 				msgParams
 			);
-		
-		
 	}
 	
 	@Command
@@ -152,7 +152,14 @@ public class PaymentListVM extends BaseVM {
 			}
 		}
 		this.paymentSum = paymentSum;
+		if (this.coursePaymentVO == null) {
+			this.coursePaymentVO = new CoursePaymentVO(this.paymentSum, course.getPriceSemester1(), course.getPriceSemester2());			
+		} else {
+			this.coursePaymentVO.rebuildCoursePaymentState(this.paymentSum);
+		}
+		
 		BindUtils.postNotifyChange(null, null, this, "paymentSum");
+		BindUtils.postNotifyChange(null, null, this, "coursePaymentVO");
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -194,5 +201,9 @@ public class PaymentListVM extends BaseVM {
 	
 	public Course getCourse() {
 		return course;
+	}
+	
+	public CoursePaymentVO getCoursePaymentVO() {
+		return coursePaymentVO;
 	}
 }
