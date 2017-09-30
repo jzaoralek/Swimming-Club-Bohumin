@@ -106,16 +106,18 @@
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
-							<listbox selectedItem="@bind(vm.filter.payed)"
+							<listbox selectedItem="@bind(vm.filter.coursePaymentState)" 
+								model="@load(vm.coursePaymentStateListWithEmptyItem)"
 								onSelect="@command('filterDomCmd')"
-								mold="select"
+								sclass="form-input-text"
 								hflex="1"
-								model="@load(vm.booleanListItem)"
-								height="25px" >
+								height="24px"
+								mold="select" >
 								<template name="model">
-									<listitem label="${each ? 'Ano' : (each eq null ? '' : 'Ne')}" value="${each}" />
-								</template>
+					               	<listitem label="@bind(each.label)" value="@bind(each)"/>
+					               </template>
 							</listbox>
+							
 						</auxheader>
 						<auxheader class="filter">
 						</auxheader>
@@ -139,14 +141,105 @@
 <!-- 			                <listcell label="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" /> -->
 <!-- 			                <listcell label="${each.courseParticRepresentative.contact.phone1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" /> -->
 <!-- 			                <listcell label="${each.courseParticRepresentative.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" /> -->
-			                <listcell label="${each.courseParticipant.getInCourseInfo()}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
-			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
-		            			<checkbox checked="@load(each.payed)"
-		            				onCheck="@command('updatePayedCmd', checked=self.checked, uuid=each.uuid)" />
+			                <listcell label="${each.courseParticipant.courseName}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+<!-- 		            			<checkbox checked="@load(each.payed)" onCheck="@command('updatePayedCmd', checked=self.checked, uuid=each.uuid)" /> -->
+									<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+										visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'NO_PAYMENT')"
+										popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
+								    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
+								    	visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PARTLY')"
+								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
+								    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
+								    	visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PAYED')"
+								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
+								    <popup id="paymentSumPopup_${each.uuid}_${each.courseParticipant.courseUuid}">
+								    	<vbox style="margin: 5px;">
+<!-- 									    	<hbox visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PARTLY')"> -->
+<!-- 										    	<label value="@load(each.courseParticipant.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)" /> -->
+<!-- 									    		<label value="${c:l('txt.ui.common.ToPay')}" style="white-space: nowrap;" /> -->
+<!-- 									    		<label value="@load(each.courseParticipant.coursePaymentVO.toPaySum)" /> -->
+<!-- 									    		<label value=" ${c:l('txt.ui.common.CZK')}" /> -->
+<!-- 									    	</hbox> -->
+									    	<grid hflex="min">
+												<auxhead>
+													<auxheader class="header" colspan="3" >
+														<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+															<label value="${c:l('txt.ui.common.Summary')}" />
+														</vbox>
+													</auxheader>
+												</auxhead>
+												<columns>
+													<column />
+													<column align="right"/>
+													<column align="right"/>
+												</columns>
+												<rows>
+													<row>
+														<label value="${c:l('txt.ui.common.Semester1')}" style="white-space: nowrap;" />
+														<cell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateFirstSemester) @converter(vm.enumLabelConverter)">
+															<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+																visible="@load(each.courseParticipant.coursePaymentVO.stateFirstSemester eq 'NO_PAYMENT')" />
+														    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
+														    	visible="@load(each.courseParticipant.coursePaymentVO.stateFirstSemester eq 'PARTLY')" />
+														    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
+														    	visible="@load(each.courseParticipant.coursePaymentVO.stateFirstSemester eq 'PAYED')"/>
+														</cell>
+														<cell>
+															<label value="@load(each.courseParticipant.coursePaymentVO.payedFirstSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" /> 
+															/ <label value="@load(each.courseParticipant.coursePaymentVO.priceFirstSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" />
+														</cell>
+													</row>
+													<row>
+														<label value="${c:l('txt.ui.common.Semester2')}" style="white-space: nowrap;" />
+														<cell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateSecondSemester) @converter(vm.enumLabelConverter)">
+															<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+																visible="@load(each.courseParticipant.coursePaymentVO.stateSecondSemester eq 'NO_PAYMENT')" />
+														    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
+														    	visible="@load(each.courseParticipant.coursePaymentVO.stateSecondSemester eq 'PARTLY')" />
+														    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
+														    	visible="@load(each.courseParticipant.coursePaymentVO.stateSecondSemester eq 'PAYED')"/>
+														</cell>
+														<cell>
+															<label value="@load(each.courseParticipant.coursePaymentVO.payedSecondSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" /> 
+															/ <label value="@load(each.courseParticipant.coursePaymentVO.priceSecondSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" />
+														</cell>
+													</row>
+													<row>
+														<label value="${c:l('txt.ui.common.Overpayed')}" />
+														<cell>
+															<a iconSclass="z-icon-exclamation" style="font-size: 20px; color: red;" visible="@load(each.courseParticipant.coursePaymentVO.overpayed)" />
+														</cell>
+														<cell>
+															<label value="@load(each.courseParticipant.coursePaymentVO.getOverpayed())" /> <label value=" ${c:l('txt.ui.common.CZK')}" />
+														</cell>
+													</row>
+													<row style="background: #e4e6e9;">
+														<label value="${c:l('txt.ui.common.Sum')}" style="font-weight: bold;" />
+														<cell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)">
+															<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+																visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'NO_PAYMENT')" />
+														    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
+														    	visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PARTLY')" />
+														    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
+														    	visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PAYED')"/>
+														</cell>
+														<cell>
+															<label value="@load(each.courseParticipant.coursePaymentVO.paymentSum)" style="font-weight: bold;" />
+													    	<label value=" ${c:l('txt.ui.common.CZK')}" style="font-weight: bold;"/>
+													    	<label value=" / " style="font-weight: bold;" /> 
+													    	<label value="@load(each.courseParticipant.coursePaymentVO.totalPrice)" style="font-weight: bold;" /> <label value=" ${c:l('txt.ui.common.CZK')}" style="font-weight: bold;" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+									    	
+								    	</vbox>
+								    </popup>
 		            		</listcell>		                	
 			                <listcell>
-			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourseApplication_${each.uuid}, position=after_end" />
-			                	<menupopup id="menuCourseApplication_${each.uuid}" >
+			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourseApplication_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
+			                	<menupopup id="menuCourseApplication_${each.uuid}_${each.courseParticipant.courseUuid}" >
 									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
 									<menuitem label="${c:l('txt.ui.common.Payments')}" onClick="@command('paymentsCmd', item=each)" />
 						       	</menupopup>

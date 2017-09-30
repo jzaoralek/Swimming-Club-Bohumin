@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +30,11 @@ import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
+import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
-import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
+import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO.CoursePaymentState;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
@@ -66,6 +69,7 @@ public class CourseApplicationListVM extends BaseVM {
 	private PageMode pageMode;
 	private boolean unregToCurrYear;
 	private String unregToCurrYearLabel;
+	private final List<Listitem> coursePaymentStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(CoursePaymentState.class));
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -178,27 +182,26 @@ public class CourseApplicationListVM extends BaseVM {
 		loadData();
 	}
 
-	@NotifyChange("*")
-	@Command
-	public void updatePayedCmd(@BindingParam(WebConstants.CHECKED_PARAM) final Boolean checked
-			, @BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
-		if (checked == null) {
-			throw new IllegalArgumentException("checked is null");
-		}
-		if (uuid == null) {
-			throw new IllegalArgumentException("uuid is null");
-		}
-
-		try {
-			courseApplicationService.updatePayed(uuid, checked);
-			EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT, null, null);
-			//WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationDeleted", msgParams));
-		} catch (ScbValidationException e) {
-			LOG.warn("ScbValidationException caught for application with uuid: " + uuid);
-			WebUtils.showNotificationError(e.getMessage());
-		}
-
-	}
+//	@NotifyChange("*")
+//	@Command
+//	public void updatePayedCmd(@BindingParam(WebConstants.CHECKED_PARAM) final Boolean checked
+//			, @BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
+//		if (checked == null) {
+//			throw new IllegalArgumentException("checked is null");
+//		}
+//		if (uuid == null) {
+//			throw new IllegalArgumentException("uuid is null");
+//		}
+//
+//		try {
+//			courseApplicationService.updatePayed(uuid, checked);
+//			EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT, null, null);
+//		} catch (ScbValidationException e) {
+//			LOG.warn("ScbValidationException caught for application with uuid: " + uuid);
+//			WebUtils.showNotificationError(e.getMessage());
+//		}
+//
+//	}
 	
 	@Command
 	public void sendnMailToUnregisteredFromPrevSeasonCmd() {
@@ -241,6 +244,7 @@ public class CourseApplicationListVM extends BaseVM {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
 		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
 
@@ -288,7 +292,7 @@ public class CourseApplicationListVM extends BaseVM {
 //								item.getCourseParticRepresentative().getContact().getPhone1(),
 //								item.getCourseParticRepresentative().getContact().getEmail1(),
 								item.getCourseParticipant().getInCourseInfo(),
-								item.isPayed() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
+								item.getCourseParticipant().getCoursePaymentVO() != null ? getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null) : null
 //								item.getCourseParticipant().getContact().buildResidence()
 								});
 				}
@@ -358,6 +362,10 @@ public class CourseApplicationListVM extends BaseVM {
 	public String getUnregToCurrYearLabel() {
 		return unregToCurrYearLabel;
 	}
+	
+	public List<Listitem> getCoursePaymentStateListWithEmptyItem() {
+		return coursePaymentStateListWithEmptyItem;
+	}
 
 	public static class CourseApplicationFilter {
 		private DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_PATTERN);
@@ -378,11 +386,11 @@ public class CourseApplicationListVM extends BaseVM {
 		private String course;
 		private String courseLc;
 		private Boolean inCourse;
-		private Boolean payed;
+		private Listitem coursePaymentState;
 		private Boolean newParticipant;
 
-		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean inCourseIn, boolean payedIn, boolean newParticipantIn, boolean emptyMatch) {
-			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null && inCourse == null && payed == null && newParticipant == null) {
+		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean inCourseIn, CoursePaymentState coursePaymentStateIn, boolean newParticipantIn, boolean emptyMatch) {
+			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null && inCourse == null && coursePaymentState == null && newParticipant == null) {
 				return emptyMatch;
 			}
 			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
@@ -411,10 +419,11 @@ public class CourseApplicationListVM extends BaseVM {
 			}
 			if (inCourse != null && (inCourse != inCourseIn)) {
 				return false;
-			}
-			if (payed != null && (payed != payedIn)) {
+			}			
+			if (coursePaymentState != null && coursePaymentState.getValue() != null && ((CoursePaymentState)coursePaymentState.getValue()) != coursePaymentStateIn) {
 				return false;
 			}
+			
 			if (newParticipant != null && (newParticipant != newParticipantIn)) {
 				return false;
 			}
@@ -437,7 +446,7 @@ public class CourseApplicationListVM extends BaseVM {
 						, dateTimeFormat.format(item.getModifAt())
 						, item.getCourseParticipant().getInCourseInfo()
 						, item.getCourseParticipant().inCourse()
-						, item.isPayed()
+						, (item.getCourseParticipant().getCoursePaymentVO() != null) ? item.getCourseParticipant().getCoursePaymentVO().getStateTotal() : null
 						, !item.isCurrentParticipant()
 						, true)) {
 					ret.add(item);
@@ -525,12 +534,12 @@ public class CourseApplicationListVM extends BaseVM {
 			this.inCourse = inCourse;
 		}
 
-		public Boolean getPayed() {
-			return payed;
+		public Listitem getCoursePaymentState() {
+			return coursePaymentState;
 		}
 
-		public void setPayed(Boolean payed) {
-			this.payed = payed;
+		public void setCoursePaymentState(Listitem roleItem) {
+			this.coursePaymentState = roleItem;
 		}
 		
 		public Boolean getNewParticipant() {
@@ -555,7 +564,7 @@ public class CourseApplicationListVM extends BaseVM {
 			course = null;
 			courseLc = null;
 			inCourse = null;
-			payed = null;
+			coursePaymentState = null;
 			newParticipant = null;
 		}
 	}

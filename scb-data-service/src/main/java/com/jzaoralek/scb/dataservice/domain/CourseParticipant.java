@@ -23,6 +23,8 @@ public class CourseParticipant implements IdentEntity {
 	private List<Course> courseList;
 	private UUID representativeUuid;
 	private UUID courseUuid;
+	private String courseName;
+	private CoursePaymentVO coursePaymentVO;
 
 	/*
 	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
@@ -44,6 +46,8 @@ public class CourseParticipant implements IdentEntity {
 		this.lessonAttendance = courseParticipant.lessonAttendance;
 		this.representativeUuid = courseParticipant.representativeUuid;
 		this.courseUuid = courseParticipant.courseUuid;
+		this.courseName = courseParticipant.courseName;
+		this.coursePaymentVO = courseParticipant.coursePaymentVO;
 	}
 
 	public CourseParticipant() {
@@ -148,6 +152,22 @@ public class CourseParticipant implements IdentEntity {
 		this.courseUuid = courseUuid;
 	}
 	
+	public String getCourseName() {
+		return courseName;
+	}
+
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+
+	public CoursePaymentVO getCoursePaymentVO() {
+		return coursePaymentVO;
+	}
+
+	public void setCoursePaymentVO(CoursePaymentVO coursePaymentVO) {
+		this.coursePaymentVO = coursePaymentVO;
+	}
+	
 	public String getInCourseInfo() {
 		String ret = null;
 		String DELIMITER = ", ";
@@ -168,7 +188,8 @@ public class CourseParticipant implements IdentEntity {
 		return "CourseParticipant [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", contact="
 				+ contact + ", birthdate=" + birthdate + ", personalNo=" + personalNo + ", healthInsurance="
 				+ healthInsurance + ", healthInfo=" + healthInfo + ", resultList=" + resultList + ", courseList="
-				+ courseList + ", representativeUuid=" + representativeUuid + ", courseCourseParticipantUuid="
-				+ courseUuid + ", lessonAttendance=" + lessonAttendance + "]";
+				+ courseList + ", representativeUuid=" + representativeUuid + ", courseUuid=" + courseUuid
+				+ ", courseName=" + courseName + ", coursePaymentVO=" + coursePaymentVO + ", lessonAttendance="
+				+ lessonAttendance + "]";
 	}
 }

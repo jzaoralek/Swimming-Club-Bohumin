@@ -22,6 +22,7 @@ import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 
 @Repository
@@ -284,6 +285,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", ca.year_from " +
 			", ca.year_to " +
 			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
+			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
+			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\" " +
+			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +			
+			", (select sum(amount) from payment where payment.course_participant_uuid = cp.uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\"" +
 			", (select count(*) " +
 			"		from course_application cain " +
 			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
@@ -438,9 +443,18 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipant.setCourseList(courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), ret.getYearFrom(), ret.getYearTo()));
 			if (this.extended) {
 				String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
+				String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");				
 				if (StringUtils.hasText(courseCourseParticipantUuid)) {
 					courseParticipant.setCourseUuid(UUID.fromString(courseCourseParticipantUuid)); 
-				}				
+				}
+				if (StringUtils.hasText(courseNameCourseParticipantUuid)) {
+					courseParticipant.setCourseName(courseNameCourseParticipantUuid); 
+				}
+				// payment sum
+				long paymentSum = rs.getLong("PAYMENT_SUM");
+				long priceSemester1 = rs.getLong("COURSE_PRICE_SEMESTER_1");
+				long priceSemester2 = rs.getLong("COURSE_PRICE_SEMESTER_2");
+				courseParticipant.setCoursePaymentVO(new CoursePaymentVO(paymentSum, priceSemester1, priceSemester2));
 			}
 
 			Contact courseParticipantContact = new Contact();
