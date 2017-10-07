@@ -32,18 +32,19 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	private LessonDao lessonDao;
 
 	private static final String NAME_PARAM = "NAME";
-	private static final String DESCRIPTION_PARAM = "DESCRIPTION";
-
+	private static final String PRICE_SEMESTER_1_PARAM = "PRICE_SEMESTER_1";
+	private static final String PRICE_SEMESTER_2_PARAM = "PRICE_SEMESTER_2";
+	
 	private static final String INSERT = "INSERT INTO course " +
-			"(uuid, name, description, year_from, year_to, modif_at, modif_by) " +
-			"VALUES (:"+UUID_PARAM+", :"+NAME_PARAM+", :"+DESCRIPTION_PARAM+", :"+YEAR_FROM_PARAM+",:"+YEAR_TO_PARAM+",:"+MODIF_AT_PARAM+",:"+MODIF_BY_PARAM+")";
+			"(uuid, name, description, year_from, year_to, modif_at, modif_by, price_semester_1, price_semester_2) " +
+			"VALUES (:"+UUID_PARAM+", :"+NAME_PARAM+", :"+DESCRIPTION_PARAM+", :"+YEAR_FROM_PARAM+", :"+YEAR_TO_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+PRICE_SEMESTER_1_PARAM+", :"+PRICE_SEMESTER_2_PARAM+")";
 
-	private static final String UPDATE = "UPDATE course SET uuid = :"+UUID_PARAM+" , name = :"+NAME_PARAM+", description = :"+DESCRIPTION_PARAM+", year_from = :"+YEAR_FROM_PARAM+", year_to = :"+YEAR_TO_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE = "UPDATE course SET uuid = :"+UUID_PARAM+" , name = :"+NAME_PARAM+", description = :"+DESCRIPTION_PARAM+", year_from = :"+YEAR_FROM_PARAM+", year_to = :"+YEAR_TO_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", price_semester_1 = :"+PRICE_SEMESTER_1_PARAM+", price_semester_2 = :"+PRICE_SEMESTER_2_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course where uuid = :" + UUID_PARAM;
-	private static final String SELECT_ALL = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course WHERE year_from = :"+YEAR_FROM_PARAM+" AND year_to = :"+YEAR_TO_PARAM;
-	private static final String SELECT_ALL_EXCEPT_COURSE = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course where uuid != :"+COURSE_UUID_PARAM;
-	private static final String SELECT_BY_UUID = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by FROM course WHERE uuid=:" + UUID_PARAM;
-	private static final String SELECT_BY_COURSE_PARTICIPANT = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by FROM course_course_participant ccp, course c WHERE ccp.course_uuid = c.uuid AND ccp.course_participant_uuid = :" + UUID_PARAM + " AND c.year_from = :"+YEAR_FROM_PARAM+" AND c.year_to = :"+YEAR_TO_PARAM;;
+	private static final String SELECT_ALL = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by, price_semester_1, price_semester_2 FROM course WHERE year_from = :"+YEAR_FROM_PARAM+" AND year_to = :"+YEAR_TO_PARAM;
+	private static final String SELECT_ALL_EXCEPT_COURSE = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by, price_semester_1, price_semester_2 FROM course where uuid != :"+COURSE_UUID_PARAM;
+	private static final String SELECT_BY_UUID = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by, price_semester_1, price_semester_2 FROM course WHERE uuid=:" + UUID_PARAM;
+	private static final String SELECT_BY_COURSE_PARTICIPANT = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by, c.price_semester_1, c.price_semester_2 FROM course_course_participant ccp, course c WHERE ccp.course_uuid = c.uuid AND ccp.course_participant_uuid = :" + UUID_PARAM + " AND c.year_from = :"+YEAR_FROM_PARAM+" AND c.year_to = :"+YEAR_TO_PARAM;
 
 	@Autowired
 	public CourseDaoImpl(DataSource ds) {
@@ -73,6 +74,16 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	}
 
 	@Override
+	public Course getPlainByUuid(UUID uuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
+		try {
+			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new SimpleCourseRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+	
+	@Override
 	public List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid, int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, courseParticipantUuid.toString()).addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
 		return namedJdbcTemplate.query(SELECT_BY_COURSE_PARTICIPANT, paramMap, new SimpleCourseRowMapper());
@@ -92,7 +103,9 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 		paramMap.addValue(YEAR_TO_PARAM, course.getYearTo());
 		paramMap.addValue(NAME_PARAM, course.getName());
 		paramMap.addValue(DESCRIPTION_PARAM, course.getDescription());
-
+		paramMap.addValue(PRICE_SEMESTER_1_PARAM, course.getPriceSemester1());
+		paramMap.addValue(PRICE_SEMESTER_2_PARAM, course.getPriceSemester2());
+		
 		namedJdbcTemplate.update(INSERT, paramMap);
 	}
 
@@ -104,6 +117,8 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 		paramMap.addValue(YEAR_TO_PARAM, course.getYearTo());
 		paramMap.addValue(NAME_PARAM, course.getName());
 		paramMap.addValue(DESCRIPTION_PARAM, course.getDescription());
+		paramMap.addValue(PRICE_SEMESTER_1_PARAM, course.getPriceSemester1());
+		paramMap.addValue(PRICE_SEMESTER_2_PARAM, course.getPriceSemester2());
 
 		courseParticipantDao.deleteAllFromCourse(course.getUuid());
 		if (!CollectionUtils.isEmpty(course.getParticipantList())) {
@@ -124,6 +139,8 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			ret.setYearTo(rs.getInt("year_to"));
 			ret.setDescription(rs.getString("description"));
 			ret.setName(rs.getString("name"));
+			ret.setPriceSemester1(rs.getLong("price_semester_1"));
+			ret.setPriceSemester2(rs.getLong("price_semester_2"));
 
 			return ret;
 		}
@@ -146,6 +163,8 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			ret.setYearTo(rs.getInt("year_to"));
 			ret.setDescription(rs.getString("description"));
 			ret.setName(rs.getString("name"));
+			ret.setPriceSemester1(rs.getLong("price_semester_1"));
+			ret.setPriceSemester2(rs.getLong("price_semester_2"));
 			ret.setLessonList(lessonDao.getByCourse(ret.getUuid()));
 			Collections.sort(ret.getLessonList(), Lesson.DAY_OF_WEEK_COMP);
 			ret.setParticipantList(courseParticipantDao.getByCourseUuid(ret.getUuid()));

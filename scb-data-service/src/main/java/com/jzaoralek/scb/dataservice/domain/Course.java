@@ -18,6 +18,8 @@ public class Course implements IdentEntity {
 	private String description;
 	private int yearFrom;
 	private int yearTo;
+	private Long priceSemester1;
+	private Long priceSemester2;
 	private List<CourseParticipant> participantList;
 	private List<Lesson> lessonList;
 
@@ -69,6 +71,18 @@ public class Course implements IdentEntity {
 	public void setYearTo(int yearTo) {
 		this.yearTo = yearTo;
 	}
+	public Long getPriceSemester1() {
+		return priceSemester1;
+	}
+	public void setPriceSemester1(Long priceSemester1) {
+		this.priceSemester1 = priceSemester1;
+	}
+	public Long getPriceSemester2() {
+		return priceSemester2;
+	}
+	public void setPriceSemester2(Long priceSemester2) {
+		this.priceSemester2 = priceSemester2;
+	}
 	public List<CourseParticipant> getParticipantList() {
 		return participantList;
 	}
@@ -109,11 +123,12 @@ public class Course implements IdentEntity {
 		this.yearFrom = Integer.valueOf(years[0]);
 		this.yearTo = Integer.valueOf(years[1]);
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Course [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", name=" + name
-				+ ", description=" + description + ", yearFrom=" + yearFrom + ", yearTo=" + yearTo
-				+ ", participantList=" + participantList + ", lessonList=" + lessonList + "]";
+				+ ", description=" + description + ", yearFrom=" + yearFrom + ", yearTo=" + yearTo + ", priceSemester1="
+				+ priceSemester1 + ", priceSemester2=" + priceSemester2 + ", participantList=" + participantList
+				+ ", lessonList=" + lessonList + "]";
 	}
 }

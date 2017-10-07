@@ -12,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
@@ -21,6 +22,7 @@ import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 
 @Repository
@@ -282,6 +284,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.zip_code " +
 			", ca.year_from " +
 			", ca.year_to " +
+			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
+			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
+			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\" " +
+			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +			
+			", (select sum(amount) from payment where payment.course_participant_uuid = cp.uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\"" +
 			", (select count(*) " +
 			"		from course_application cain " +
 			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
@@ -369,37 +376,37 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	@Override
 	public List<CourseApplication> getAll(int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_ALL, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_ALL, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 	
 	@Override
 	public List<CourseApplication> getUnregisteredToCurrYear(int yearFromPrev, int yearToPrev) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFromPrev).addValue(YEAR_TO_PARAM, yearToPrev);
-		return namedJdbcTemplate.query(SELECT_UNREGISTERED_TO_CURRENT_YEAR, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_UNREGISTERED_TO_CURRENT_YEAR, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 
 	@Override
 	public List<CourseApplication> getNotInCourse(UUID courseUuid, int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_NOT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_NOT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 
 	@Override
 	public List<CourseApplication> getInCourse(UUID courseUuid, int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString()).addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_IN_COURSE, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 
 	@Override
 	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE, paramMap, new CourseApplicationRowMapper(courseDao, true));
 	}
 	
 	@Override
 	public List<CourseApplication> getByCourseParticipantUuid(UUID courseParticipantUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_PARTICIPANT_UUID_PARAM, courseParticipantUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_COURSE_PARTICIPANT_UUID, paramMap, new CourseApplicationRowMapper(courseDao));
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_PARTICIPANT_UUID, paramMap, new CourseApplicationRowMapper(courseDao, false));
 	}
 
 	@Override
@@ -414,9 +421,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	public static final class CourseApplicationRowMapper implements RowMapper<CourseApplication> {
 		private CourseDao courseDao;
+		private boolean extended;
 
-		public CourseApplicationRowMapper(CourseDao courseDao) {
+		public CourseApplicationRowMapper(CourseDao courseDao, boolean extended) {
 			this.courseDao = courseDao;
+			this.extended = extended;
 		}
 
 		@Override
@@ -432,6 +441,21 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipant.setBirthdate(rs.getDate("birthdate"));
 			courseParticipant.setPersonalNo(rs.getString("personal_number"));
 			courseParticipant.setCourseList(courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), ret.getYearFrom(), ret.getYearTo()));
+			if (this.extended) {
+				String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
+				String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");				
+				if (StringUtils.hasText(courseCourseParticipantUuid)) {
+					courseParticipant.setCourseUuid(UUID.fromString(courseCourseParticipantUuid)); 
+				}
+				if (StringUtils.hasText(courseNameCourseParticipantUuid)) {
+					courseParticipant.setCourseName(courseNameCourseParticipantUuid); 
+				}
+				// payment sum
+				long paymentSum = rs.getLong("PAYMENT_SUM");
+				long priceSemester1 = rs.getLong("COURSE_PRICE_SEMESTER_1");
+				long priceSemester2 = rs.getLong("COURSE_PRICE_SEMESTER_2");
+				courseParticipant.setCoursePaymentVO(new CoursePaymentVO(paymentSum, priceSemester1, priceSemester2));
+			}
 
 			Contact courseParticipantContact = new Contact();
 			courseParticipantContact.setFirstname(rs.getString("firstname"));
