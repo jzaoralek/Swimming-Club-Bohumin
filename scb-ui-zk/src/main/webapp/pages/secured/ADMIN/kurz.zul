@@ -82,23 +82,60 @@
 						</row>
 						<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
 							<cell sclass="form-grid-cell" >
-								<vbox hflex="1">
-									<label value="${c:l('txt.ui.common.year')}"/>
-									<listbox id="courseYear" 
-										selectedItem="@bind(vm.courseYearSelected)" 
-										model="@load(vm.courseYearList)"
-										mold="select"
-										disabled="@load(vm.updateMode)"
-										height="25px"
-										tabindex="2"  >
-									</listbox>
-									
-									<vbox hflex="2" style="margin-left: 10px;">
-										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[courseYear])" >
-											<label value="@bind(vmsgs[courseYear])" />
-										</span>
+								<hbox hflex="1">
+									<vbox hflex="1">
+										<label value="${c:l('txt.ui.common.year')}"/>
+										<listbox id="courseYear" 
+											selectedItem="@bind(vm.courseYearSelected)" 
+											model="@load(vm.courseYearList)"
+											mold="select"
+											disabled="@load(vm.updateMode)"
+											height="25px"
+											tabindex="2"  >
+										</listbox>
+										
+										<vbox hflex="2" style="margin-left: 10px;">
+											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[courseYear])" >
+												<label value="@bind(vmsgs[courseYear])" />
+											</span>
+										</vbox>
 									</vbox>
-								</vbox>
+									<vbox hflex="1">
+										<label value="${c:l('txt.ui.common.priceSemester1')}"/>
+										<hbox align="center">
+											<intbox id="coursePriceSemester1"
+												value="@bind(fx.course.priceSemester1) @validator(vm.notNullObjectValidator)"
+												placeholder="*"
+												focus="true"
+												style="height: 30px;"
+												width="75px"
+												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+												tabindex="1"/>
+											<label value="${c:l('txt.ui.common.CZK')}" style="margin-left: 2px"/>
+										</hbox>
+										<hbox width="75px" align="end" pack="end" style="height: 30px">
+											<validMsg vmsg="${vmsgs}" elem="${coursePriceSemester1}" />
+										</hbox>
+									</vbox>
+									<vbox hflex="1">
+										<label value="${c:l('txt.ui.common.priceSemester2')}"/>
+										<hbox align="center">
+											<intbox id="coursePriceSemester2"
+												value="@bind(fx.course.priceSemester2) @validator(vm.notNullObjectValidator)"
+												placeholder="*"
+												focus="true"
+												style="height: 30px;"
+												width="75px"
+												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+												tabindex="1" />
+											<label value="${c:l('txt.ui.common.CZK')}" style="margin-left: 2px" />
+										</hbox>
+										<hbox width="75px" align="end" pack="end" style="height: 30px">
+											<validMsg vmsg="${vmsgs}" elem="${coursePriceSemester2}" />
+										</hbox>
+									</vbox>
+								</hbox>
+								
 							</cell>
 						</row>
 					</rows>

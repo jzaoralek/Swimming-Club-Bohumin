@@ -8,6 +8,12 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 public interface CourseParticipantDao {
 
 	CourseParticipant getByUuid(UUID uuid, boolean deep);
+	/**
+	 * Return course participant with one course.
+	 * @param courseCourseParticUuid
+	 * @return
+	 */
+	CourseParticipant getCourseParticInOneCourse(UUID courseCourseParticUuid);
 	boolean existsByPersonalNumber(String personalNumber);
 	List<CourseParticipant> getByCourseUuid(UUID courseUuid);
 	List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid);

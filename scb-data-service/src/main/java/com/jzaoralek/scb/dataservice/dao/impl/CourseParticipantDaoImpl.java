@@ -2,20 +2,24 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import javax.sql.DataSource;
 
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
+import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 
@@ -66,11 +70,14 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	private static final String DELETE = "DELETE FROM course_participant where uuid = :" + UUID_PARAM;
 	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + ", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", user_uuid=:"+USER_UUID_PARAM+" WHERE uuid=:"+UUID_PARAM;
-
+	private static final String SELECT_COURSE_COURSE_PARTIC_BY_UUID = "select uuid, course_participant_uuid, course_uuid from course_course_participant where uuid = :"+UUID_PARAM;
 
 	@Autowired
 	private ContactDao contactDao;
 
+	@Autowired
+	private CourseDao courseDao;
+	
 	@Autowired
 	public CourseParticipantDaoImpl(DataSource ds) {
 		super(ds);
@@ -81,6 +88,19 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
 		try {
 			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public CourseParticipant getCourseParticInOneCourse(UUID courseCourseParticUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, courseCourseParticUuid.toString());
+		try {
+			Pair<UUID, UUID> courseParticCoursePair = namedJdbcTemplate.queryForObject(SELECT_COURSE_COURSE_PARTIC_BY_UUID, paramMap, new CourseCourseParticiRowMapper());
+			CourseParticipant coursePartic = getByUuid(courseParticCoursePair.getValue0(), false);
+			coursePartic.setCourseList(Arrays.asList(courseDao.getPlainByUuid(courseParticCoursePair.getValue1())));
+			return coursePartic;
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
@@ -209,6 +229,17 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			ret.setRepresentativeUuid(rs.getString("user_uuid") != null ? UUID.fromString(rs.getString("user_uuid")) : null);
 			
 			return ret;
+		}
+	}
+	
+	public static final class CourseCourseParticiRowMapper implements RowMapper<Pair<UUID, UUID>> {
+
+		@Override
+		public Pair<UUID, UUID> mapRow(ResultSet rs, int rowNum) throws SQLException {
+			UUID courseParticUuid = UUID.fromString(rs.getString("course_participant_uuid"));
+			UUID courseUuid = UUID.fromString(rs.getString("course_uuid"));
+			
+			return new Pair<>(courseParticUuid, courseUuid);
 		}
 	}
 }

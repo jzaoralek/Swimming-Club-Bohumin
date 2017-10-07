@@ -82,8 +82,8 @@
 					</auxhead>
 					
 			        <listhead>
-			            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" />
-			            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" />
+			            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
+			            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" hflex="2" />
 			            <listheader label="${c:l('txt.ui.common.participantCount')}" sort="auto(participantListCount)" align="center" hflex="min"  />
 			            <listheader label="${c:l('txt.ui.common.lessonPerWeekCount')}" sort="auto(lessonListCount)" align="center" hflex="min" />
 			            <listheader width="140px" align="center" />
@@ -99,9 +99,9 @@
 			                	<button label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
 			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
 			                	<menupopup id="menuCourse_${each.uuid}" >
-									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" visible="vm.isLoggedUserInRole('ADMIN')" />
+									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" visible="${vm.isLoggedUserInRole('ADMIN')}" />
 									<menuitem label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
-									<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)" visible="vm.isLoggedUserInRole('ADMIN')"  />
+									<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)" visible="${vm.isLoggedUserInRole('ADMIN')}"  />
 						       	</menupopup>
 			                </listcell>
 			            </listitem>

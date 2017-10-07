@@ -3,6 +3,7 @@ package com.jzaoralek.scb.ui.common.utils;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -60,6 +61,39 @@ public final class WebUtils {
 		window.doModal();
 	}
 
+	// ==========================================================================
+	// Popups
+	// ==========================================================================
+	/**
+	 * Otevre popup s predanim parametru do VM popupu.
+	 *
+	 * @param page
+	 *            Nazev stranky (ZUL soubor)
+	 * @param windowName
+	 *            Nadpis okna
+	 * @param args
+	 *            Seznam predavanych parametru. V modalnim okne lze argumenty nacist metodou WebHelper.getArg(argName)
+	 */
+	public static void openModal(String page, String windowName, Map<String, Object> args) {
+		if (!StringUtils.hasText(page)) {
+			throw new IllegalArgumentException("URL stranky je null");
+		}
+		Window window = (Window) Executions.createComponents(page, null, args);
+		window.doModal();
+		if (StringUtils.hasText(windowName)) {
+			window.setTitle(windowName);
+		}
+	}
+
+	/**
+	 *
+	 * @param argName
+	 * @return
+	 */
+	public static Object getArg(String argName) {
+		return Executions.getCurrent().getArg().get(argName);
+	}
+	
 	/**
 	 * Metoda pro ziskani listu objektu SelectItem z enum objektu.
 	 *
