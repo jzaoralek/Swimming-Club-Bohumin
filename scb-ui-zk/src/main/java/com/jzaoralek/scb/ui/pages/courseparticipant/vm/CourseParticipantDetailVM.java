@@ -1,14 +1,12 @@
 package com.jzaoralek.scb.ui.pages.courseparticipant.vm;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
@@ -24,24 +22,22 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
-import com.jzaoralek.scb.dataservice.domain.Lesson.DayOfWeek;
 import com.jzaoralek.scb.dataservice.service.CodeListService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
-import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.Attachment;
-import com.jzaoralek.scb.ui.common.vm.BaseVM;
+import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseParticipantVM;
 
 /**
  * Detail ucastnika zobrazeneho prihlasenym zakonnym zastupcem.
  *
  */
-public class CourseParticipantDetailVM extends BaseVM {
+public class CourseParticipantDetailVM extends BaseContextVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseParticipantVM.class);
 
@@ -58,14 +54,11 @@ public class CourseParticipantDetailVM extends BaseVM {
 	private List<Listitem> swimStyleListitemList;
 	private Listitem swimStyleListitemSelected;
 	private List<Course> courseList;
-	private List<String> courseYearList;
-	private String courseYearSelected;
 	private List<CourseApplication> courseApplicationList;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
-		this.courseYearList = configurationService.getCourseYearList();
-		this.courseYearSelected = configurationService.getCourseApplicationYear();
+		initYearContext();
 		if (StringUtils.hasText(uuid)) {
 			UUID courseParticipantUuid = UUID.fromString(uuid);
 			this.courseParticipant = courseService.getCourseParticipantByUuid(courseParticipantUuid);
@@ -76,20 +69,13 @@ public class CourseParticipantDetailVM extends BaseVM {
 		fillSwimStyleItemList();
 	}
 	
-	@NotifyChange("courseList")
-	@Command
-	public void courseYearChangeCmd() {
+	protected void courseYearChangeCmdCore() {
 		loadCourseListData();
 	}
 	
 	public void loadCourseListData() {
-		if (!StringUtils.hasText(this.courseYearSelected)) {
-			return;
-		}
-		String[] years = this.courseYearSelected.split(ConfigurationServiceImpl.COURSE_YEAR_DELIMITER);
-		if (years.length < 2) {
-			return;
-		}
+		String[] years = getYearsFromContext();
+		
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
 
@@ -176,22 +162,6 @@ public class CourseParticipantDetailVM extends BaseVM {
 	
 	public List<Course> getCourseList() {
 		return courseList;
-	}
-	
-	public List<String> getCourseYearList() {
-		return courseYearList;
-	}
-
-	public void setCourseYearList(List<String> courseYearList) {
-		this.courseYearList = courseYearList;
-	}
-
-	public String getCourseYearSelected() {
-		return courseYearSelected;
-	}
-
-	public void setCourseYearSelected(String courseYearSelected) {
-		this.courseYearSelected = courseYearSelected;
 	}
 	
 	public List<CourseApplication> getCourseApplicationList() {
