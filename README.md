@@ -10,7 +10,7 @@ Used technologies
 - Jasper Reports
 - Maven
 - MySql
-- JeTTy (locale), Tomcat(prod)
+- JeTTy (dev), Tomcat(prod)
 - Jenkins
 - Git, Gitflow, GitHub
 
