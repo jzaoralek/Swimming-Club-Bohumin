@@ -40,6 +40,7 @@ public final class WebConstants {
 	
 	public static final String YEAR_FROM_PARAM = "yearFrom";
 	public static final String YEAR_TO_PARAM = "yearTo";
+	public static final String YEAR_SELECTED_PARAM = "yearSelected";
 	
 	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 

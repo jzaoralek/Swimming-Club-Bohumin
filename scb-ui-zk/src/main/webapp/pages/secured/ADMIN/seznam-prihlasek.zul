@@ -36,7 +36,7 @@
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 					class="listbox" >
 			        <auxhead>
-			            <auxheader class="header" colspan="10" >
+			            <auxheader class="header" colspan="7" >
 			            	<hbox hflex="1" height="42px" align="center" >
 				            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
 			            			<hbox>
@@ -62,17 +62,8 @@
 			            		</vbox>
 			            		<vbox hflex="1" vflex="1" align="end" pack="center" sclass="header-div" >
 			            			<hbox vflex="1" pack="center" align="center">
-			            				<label value="${c:l('txt.ui.common.year')}:" style="margin-right: 5px;"/>
-			            				<listbox id="courseYear" 
-			            					selectedItem="@bind(vm.courseYearSelected)" 
-											onSelect="@command('courseYearChangeCmd')"
-											model="@load(vm.courseYearList)"
-											mold="select"
-											height="25px" >
-											<template name="model">
-			            						<listitem label="${each}" value="${each}" />
-			            					</template>
-										</listbox>
+			            				<!-- Rocnik -->
+			            				<include src="/pages/common/component/context-year.zul"/>
 			            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=courseApplicationList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
 		            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
 									</hbox>
@@ -95,30 +86,30 @@
 								value="@bind(vm.filter.birthDate)"
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
-						<auxheader class="filter">
-							<textbox hflex="1" 
-								instant="true"
-								value="@bind(vm.filter.birthNo)"
-								onChange="@command('filterDomCmd')" />
-						</auxheader>
+<!-- 						<auxheader class="filter"> -->
+<!-- 							<textbox hflex="1"  -->
+<!-- 								instant="true" -->
+<!-- 								value="@bind(vm.filter.birthNo)" -->
+<!-- 								onChange="@command('filterDomCmd')" /> -->
+<!-- 						</auxheader> -->
 						<auxheader class="filter">
 							<textbox hflex="1" 
 								instant="true"
 								value="@bind(vm.filter.courseParticRepresentative)"
 								onChange="@command('filterDomCmd')" />
 						</auxheader>
-						<auxheader class="filter">
-							<textbox hflex="1" 
-								instant="true"
-								value="@bind(vm.filter.phone)"
-								onChange="@command('filterDomCmd')" />
-						</auxheader>
-						<auxheader class="filter">
-							<textbox hflex="1" 
-								instant="true"
-								value="@bind(vm.filter.email)"
-								onChange="@command('filterDomCmd')" />
-						</auxheader>
+<!-- 						<auxheader class="filter"> -->
+<!-- 							<textbox hflex="1"  -->
+<!-- 								instant="true" -->
+<!-- 								value="@bind(vm.filter.phone)" -->
+<!-- 								onChange="@command('filterDomCmd')" /> -->
+<!-- 						</auxheader> -->
+<!-- 						<auxheader class="filter"> -->
+<!-- 							<textbox hflex="1"  -->
+<!-- 								instant="true" -->
+<!-- 								value="@bind(vm.filter.email)" -->
+<!-- 								onChange="@command('filterDomCmd')" /> -->
+<!-- 						</auxheader> -->
 						<auxheader class="filter">
 							<textbox hflex="1" 
 								instant="true"
@@ -157,10 +148,10 @@
 			        <listhead >
 			            <listheader label="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" sort="auto(courseParticipant.contact.surname)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(courseParticipant.birthdate)" align="left" hflex="min" />
-			            <listheader label="${c:l('txt.ui.common.birthNumber')}" align="left" sort="auto(courseParticipant.personalNo)" hflex="min" />
+<!-- 			            <listheader label="${c:l('txt.ui.common.birthNumber')}" align="left" sort="auto(courseParticipant.personalNo)" hflex="min" /> -->
 			            <listheader label="${c:l('txt.ui.common.representative')}" sort="auto(courseParticRepresentative.contact.surname)"  align="left" />
-			            <listheader label="${c:l('txt.ui.common.phone')}" sort="auto(courseParticRepresentative.contact.phone1)" align="left" />
-			            <listheader label="${c:l('txt.ui.common.email')}" sort="auto(courseParticRepresentative.contact.email1)" align="left" />
+<!-- 			            <listheader label="${c:l('txt.ui.common.phone')}" sort="auto(courseParticRepresentative.contact.phone1)" align="left" /> -->
+<!-- 			            <listheader label="${c:l('txt.ui.common.email')}" sort="auto(courseParticRepresentative.contact.email1)" align="left" /> -->
 			            <listheader label="${c:l('txt.ui.common.createdAt')}" sort="auto(modifAt)" align="left" hflex="min" />
 			            <listheader label="${c:l('txt.ui.common.inCourse')}" align="center" width="57px" />
 			            <listheader label="${c:l('txt.ui.common.new2')}" align="center" width="57px" />
@@ -171,10 +162,49 @@
 			            <listitem>
 			                <listcell label="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="@load(each.courseParticipant.birthdate) @converter(vm.dateConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
-			                <listcell label="${each.courseParticipant.personalNo}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
-			                <listcell label="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
-			                <listcell label="${each.courseParticRepresentative.contact.phone1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
-			                <listcell label="${each.courseParticRepresentative.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+<!-- 			                <listcell label="${each.courseParticipant.personalNo}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" /> -->
+			                <listcell label="" onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+			                	<hbox hflex="1" vflex="1" align="center">
+				                	<hbox hflex="1">
+				                		<vbox hflex="1">
+						                	<label value="${each.courseParticRepresentative.contact.surname} ${each.courseParticRepresentative.contact.firstname}" />
+				                		</vbox>
+				                		<vbox width="30px" align="center" >
+				                			<!-- Kontakt popup -->
+						                	<a iconSclass="z-icon-info-circle" popup="contactPopup_${each.uuid}, position=after_end" style="font-size: large; margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.contact')}" />
+						                	<popup id="contactPopup_${each.uuid}">
+										    	<vbox style="margin: 5px;">
+										    		<grid hflex="min" vflex="min">
+														<auxhead>
+															<auxheader class="header" colspan="3" >
+																<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+																	<label value="${c:l('txt.ui.common.contact')}" />
+																</vbox>
+															</auxheader>
+														</auxhead>
+														<columns>
+															<column />
+															<column align="left"/>
+														</columns>
+														<rows>
+															<row>
+																<label value="${c:l('txt.ui.common.phone')}"/>
+																<label value="${each.courseParticRepresentative.contact.phone1}"/>
+															</row>
+															<row>
+																<label value="${c:l('txt.ui.common.email')}"/>
+																<label value="${each.courseParticRepresentative.contact.email1}"/>
+															</row>
+														</rows>
+													</grid>
+										    	</vbox>
+										    </popup>
+				                		</vbox>
+				                	</hbox>
+			                	</hbox>
+			                </listcell>
+<!-- 			                <listcell label="${each.courseParticRepresentative.contact.phone1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" /> -->
+<!-- 			                <listcell label="${each.courseParticRepresentative.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" /> -->
 			                <listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />			                	
 		            		<listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.getInCourseInfo()}" />
                 			<listcell visible="${!each.courseParticipant.inCourse()}" />

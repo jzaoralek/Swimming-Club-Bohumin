@@ -41,16 +41,15 @@ import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-public class CourseListVM extends BaseVM {
+public class CourseListVM extends BaseContextVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseListVM.class);
 
 	private List<Course> courseList;
 	private List<Course> courseListBase;
-	private List<String> courseYearList;
-	private String courseYearSelected;
 	private final CourseApplicationFilter filter = new CourseApplicationFilter();
 
 	@WireVariable
@@ -59,9 +58,8 @@ public class CourseListVM extends BaseVM {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init() {
-		this.courseYearList = configurationService.getCourseYearList();
-		this.courseYearSelected = configurationService.getCourseApplicationYear();
-
+		initYearContext();
+		
 		loadData();
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
@@ -139,9 +137,7 @@ public class CourseListVM extends BaseVM {
 		);
 	}
 
-	@NotifyChange("*")
-	@Command
-	public void courseYearChangeCmd() {
+	protected void courseYearChangeCmdCore() {
 		loadData();
 	}
 
@@ -157,13 +153,8 @@ public class CourseListVM extends BaseVM {
 	}
 
 	public void loadData() {
-		if (!StringUtils.hasText(this.courseYearSelected)) {
-			return;
-		}
-		String[] years = this.courseYearSelected.split(ConfigurationServiceImpl.COURSE_YEAR_DELIMITER);
-		if (years.length < 2) {
-			return;
-		}
+		String[] years = getYearsFromContext();
+		
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
 
@@ -206,18 +197,6 @@ public class CourseListVM extends BaseVM {
 
 	public CourseApplicationFilter getFilter() {
 		return filter;
-	}
-
-	public String getCourseYearSelected() {
-		return courseYearSelected;
-	}
-
-	public void setCourseYearSelected(String courseYearSelected) {
-		this.courseYearSelected = courseYearSelected;
-	}
-
-	public List<String> getCourseYearList() {
-		return courseYearList;
 	}
 
 	public static class CourseApplicationFilter {

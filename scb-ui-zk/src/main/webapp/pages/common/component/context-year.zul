@@ -1,0 +1,15 @@
+<zk>
+	<hbox>
+		<label value="${c:l('txt.ui.common.year')}:" style="margin-right: 5px;"/>
+        <listbox id="courseYear" 
+        	selectedItem="@bind(vm.courseYearSelected)" 
+			onSelect="@command('courseYearChangeCmd')"
+			model="@load(vm.courseYearList)"
+			mold="select"
+			height="25px" >
+			<template name="model">
+           		<listitem label="${each}" value="${each}" />
+			</template>
+		</listbox>
+	</hbox>
+</zk>

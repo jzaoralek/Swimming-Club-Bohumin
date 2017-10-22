@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
@@ -69,5 +70,10 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 		}
 
 		return payment;
+	}
+
+	@Override
+	public void processPayments() {
+		System.out.println("Method executed at every 5 seconds. Current time is :: "+ new Date());	
 	}
 }

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Filedownload;
@@ -44,6 +45,30 @@ public final class WebUtils {
 
 	public static HttpServletRequest getRequest() {
 		return (HttpServletRequest)Executions.getCurrent().getNativeRequest();
+	}
+	
+	public static void setSessAtribute(String atr, Object obj) {
+		Execution exec = Executions.getCurrent();
+		if (exec == null || exec.getSession() == null) {
+			return;
+		}
+		exec.getSession().setAttribute(atr, obj);
+	}
+	
+	public static Object getSessAtribute(String atr) {
+		Execution exec = Executions.getCurrent();
+		if (exec == null || exec.getSession() == null) {
+			return null;
+		}
+		return exec.getSession().getAttribute(atr);
+	}
+
+	public static void removeSessAtribute(String atr) {
+		Execution exec = Executions.getCurrent();
+		if (exec == null || exec.getSession() == null) {
+			return;
+		}
+		exec.getSession().removeAttribute(atr);
 	}
 
 	public static void downloadAttachment(Attachment attachment) {

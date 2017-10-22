@@ -12,4 +12,5 @@ public interface PaymentService {
 	List<Payment> getByCourseCourseParticipantUuid(UUID courseParticipantUuid, UUID courseUuid, Date from, Date to);
 	Payment store(Payment payment);
 	void delete(Payment payment);
+	void processPayments();
 }

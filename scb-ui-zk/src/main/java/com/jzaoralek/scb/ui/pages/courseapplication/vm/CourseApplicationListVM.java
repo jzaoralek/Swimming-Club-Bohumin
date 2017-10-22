@@ -33,11 +33,9 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
-import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO.CoursePaymentState;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
-import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
@@ -47,9 +45,9 @@ import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
-import com.jzaoralek.scb.ui.common.vm.BaseVM;
+import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 
-public class CourseApplicationListVM extends BaseVM {
+public class CourseApplicationListVM extends BaseContextVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseApplicationListVM.class);
 
@@ -64,8 +62,6 @@ public class CourseApplicationListVM extends BaseVM {
 	private List<CourseApplication> courseApplicationList;
 	private List<CourseApplication> courseApplicationListBase;
 	private CourseApplicationFilter filter = new CourseApplicationFilter();
-	private List<String> courseYearList;
-	private String courseYearSelected;
 	private PageMode pageMode;
 	private boolean unregToCurrYear;
 	private String unregToCurrYearLabel;
@@ -74,8 +70,7 @@ public class CourseApplicationListVM extends BaseVM {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init() {
-		this.courseYearList = configurationService.getCourseYearList();
-		this.courseYearSelected = configurationService.getCourseApplicationYear();
+		initYearContext();
 
 		setPageMode();
 		loadData();
@@ -170,9 +165,7 @@ public class CourseApplicationListVM extends BaseVM {
 		filter.setEmptyValues();
 	}
 
-	@NotifyChange("*")
-	@Command
-	public void courseYearChangeCmd() {
+	protected void courseYearChangeCmdCore() {
 		loadData();
 	}
 	
@@ -209,7 +202,7 @@ public class CourseApplicationListVM extends BaseVM {
 			return;
 		}
 		final List<CourseApplication> courseApplicationList = this.courseApplicationList;
-		final String courseYearSelected = this.courseYearSelected;
+		final String courseYearSelected = getCourseYearSelected();
 		final Object[] msgParams = new Object[] {this.courseApplicationList.size()};
 		MessageBoxUtils.showDefaultConfirmDialog(
 			"msg.ui.quest.sendMailToUnregisteredParticipant",
@@ -287,13 +280,8 @@ public class CourseApplicationListVM extends BaseVM {
 				} else {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
-//								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
-//								item.getCourseParticRepresentative().getContact().getCompleteName(),
-//								item.getCourseParticRepresentative().getContact().getPhone1(),
-//								item.getCourseParticRepresentative().getContact().getEmail1(),
 								item.getCourseParticipant().getInCourseInfo(),
 								item.getCourseParticipant().getCoursePaymentVO() != null ? getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null) : null
-//								item.getCourseParticipant().getContact().buildResidence()
 								});
 				}
 			}
@@ -304,17 +292,11 @@ public class CourseApplicationListVM extends BaseVM {
 
 	@SuppressWarnings("unchecked")
 	public void loadData() {
-		if (!StringUtils.hasText(this.courseYearSelected)) {
-			return;
-		}
-		String[] years = this.courseYearSelected.split(ConfigurationServiceImpl.COURSE_YEAR_DELIMITER);
-		if (years.length < 2) {
-			return;
-		}
+		String[] years = getYearsFromContext();
+		
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
 		
-		// txt.ui.common.unregisteredNextSeason
 		this.unregToCurrYearLabel = Labels.getLabel("txt.ui.common.unregisteredFrom")+" "+String.valueOf(yearFrom-1)+"/"+String.valueOf(yearTo-1);
 
 		if (this.unregToCurrYear) {
@@ -339,18 +321,6 @@ public class CourseApplicationListVM extends BaseVM {
 		this.filter = filter;
 	}
 
-	public List<String> getCourseYearList() {
-		return courseYearList;
-	}
-
-	public String getCourseYearSelected() {
-		return courseYearSelected;
-	}
-
-	public void setCourseYearSelected(String courseYearSelected) {
-		this.courseYearSelected = courseYearSelected;
-	}
-	
 	public boolean isUnregToCurrYear() {
 		return unregToCurrYear;
 	}
