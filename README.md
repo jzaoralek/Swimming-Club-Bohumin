@@ -4,7 +4,7 @@ Web Application for Swimming Club Bohumin clients and trainers.
 
 Used technologies
 - Spring framework, Spring MVC
-- ZK Framework (initial phase)
+- ZK Framework
 - AspectJ
 - slf4j
 - Jasper Reports
