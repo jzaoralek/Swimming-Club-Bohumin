@@ -2,6 +2,8 @@ package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +22,6 @@ public class BankPaymentServiceTest extends BaseTestCase {
 		Calendar datumOd = new GregorianCalendar(2017,9,28);
 		Calendar datumDo = new GregorianCalendar(2017,10,28);
 		AccountStatement transactions = bankPaymentService.transactions(datumOd, datumDo);
-		System.out.println(transactions.getTransactions().size());
+		Assert.assertNotNull(transactions);
 	}
 }
