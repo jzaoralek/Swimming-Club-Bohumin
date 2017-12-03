@@ -7,6 +7,15 @@
         <dependent-module archiveName="scb-data-service-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/scb-data-service/scb-data-service">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="fio-client-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/fio-client/fio-client">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="webtools-rest-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/webtools-rest/webtools-rest">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="webtools-logging-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/webtools-logging/webtools-logging">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="scb-ui-zk"/>
         <property name="java-output-path" value="/scb-ui-zk/target/classes"/>
     </wb-module>
