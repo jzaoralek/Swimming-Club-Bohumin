@@ -10,9 +10,10 @@ CREATE TABLE bank_transaction (
 	uzivatelskaIdentifikace VARCHAR(240),
 	typ VARCHAR(100),
 	mena VARCHAR(50),
-	idPokynu LONG,
-	idPohybu LONG,
+	idPokynu BIGINT,
+	idPohybu BIGINT,
 	komentar VARCHAR(240),
 	provedl VARCHAR(240),
-	zpravaProPrijemnce VARCHAR(240)
+	zpravaProPrijemnce VARCHAR(240),
+	PRIMARY KEY (idPohybu)
 );

@@ -164,7 +164,7 @@ CREATE TABLE payment(
 	PRIMARY KEY (uuid)
 );
 
-CREATE TABLE bank_transaction(
+CREATE TABLE bank_transaction (
 	protiucet_cisloUctu VARCHAR(240),
 	protiucet_kodBanky VARCHAR(240),
 	protiucet_nazevBanky VARCHAR(240),
@@ -176,9 +176,10 @@ CREATE TABLE bank_transaction(
 	uzivatelskaIdentifikace VARCHAR(240),
 	typ VARCHAR(100),
 	mena VARCHAR(50),
-	idPokynu LONG,
-	idPohybu LONG,
+	idPokynu BIGINT,
+	idPohybu BIGINT,
 	komentar VARCHAR(240),
 	provedl VARCHAR(240),
-	zpravaProPrijemnce VARCHAR(240)
+	zpravaProPrijemnce VARCHAR(240),
+	PRIMARY KEY (idPohybu)
 );
