@@ -4,7 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -38,7 +40,9 @@ public class TransactionDaoImpl extends BaseJdbcDao implements TransactionDao {
 			+ " WHERE idPohybu = :" + ID_POHYBU_PARAM;
 	private static final String SELECT_BY_DATUM_POHYBU_INTERVAL = "SELECT " + COLLS_ALL
 			+ " FROM bank_transaction "
-			+ " WHERE datumPohybu BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM;
+			+ " WHERE datumPohybu BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM
+	        + " ORDER BY datumPohybu DESC ";
+	private static final String SELECT_ALL_ID_POHYBU = "SELECT DISTINCT idPohybu from bank_transaction";
 	
 	@Autowired
 	public TransactionDaoImpl(DataSource ds) {
@@ -99,6 +103,11 @@ public class TransactionDaoImpl extends BaseJdbcDao implements TransactionDao {
 		return namedJdbcTemplate.query(SELECT_BY_DATUM_POHYBU_INTERVAL, paramMap, new TransactionRowMapper());
 	}
 
+	@Override
+	public Set<String> getAllIdPohybu() {
+		return new HashSet<>(namedJdbcTemplate.getJdbcOperations().queryForList(SELECT_ALL_ID_POHYBU, String.class));		
+	}
+	
 	public static final class TransactionRowMapper implements RowMapper<Transaction> {
 
 		@Override

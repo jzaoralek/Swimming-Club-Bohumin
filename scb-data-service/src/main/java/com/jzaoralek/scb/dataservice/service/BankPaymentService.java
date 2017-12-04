@@ -23,4 +23,11 @@ public interface BankPaymentService {
 	 * @return
 	 */
 	List<Transaction> getByInterval(Calendar dateFrom, Calendar dateTo);
+	
+	/**
+	 * Load bank payments from internet banking client and store to local database.
+	 * @param dateFrom
+	 * @param dateTo
+	 */
+	void processPayments(Calendar dateFrom, Calendar dateTo);
 }

@@ -3,6 +3,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,8 +35,8 @@ public class TransactionDaoTest extends BaseTestCase {
 		AccountInfo protiucet = new AccountInfo();
 		protiucet.setCisloUctu("protiucet_cisloUctu");
 		protiucet.setKodBanky("protiucet_kodBanky");
-		protiucet.setNazevBanky("protiucet_nazevBanky");
-		protiucet.setNazevUctu("protiucet_nazevUctu");
+		protiucet.setNazevBanky("ČŠřžýáíéěščůú_nazev_bakny");
+		protiucet.setNazevUctu("ČŠřžýáíéěščůúprotiucet_nazevUctu");
 		item.setProtiucet(protiucet);
 		
 		item.setDatumPohybu(datumPohybu);
@@ -47,9 +48,9 @@ public class TransactionDaoTest extends BaseTestCase {
 		item.setMena("mena");
 		item.setIdPokynu(idPokynu);
 		item.setIdPohybu(idPohybu);
-		item.setKomentar("komentar");
-		item.setProvedl("provedl");
-		item.setZpravaProPrijemnce("zpravaProPrijemnce");
+		item.setKomentar("ČŠřžýáíéěščůú_komentář");
+		item.setProvedl("ČŠřžýáíéěščůú_provedl");
+		item.setZpravaProPrijemnce("ČŠřžýáíéěščůú_zpravaProPrijemnce");
 	}
 	
 	@Test
@@ -89,5 +90,13 @@ public class TransactionDaoTest extends BaseTestCase {
 		List<Transaction> transactionList = transactionDao.getByInterval(yesterday, tomorrow);
 		Assert.assertNotNull(transactionList);
 		Assert.assertTrue(transactionList.size() == 1);
+	}
+	
+	@Test
+	public void getAllIdPohybuTest() {
+		transactionDao.insertBulk(Arrays.asList(item));
+		Set<String> idPohybuList = transactionDao.getAllIdPohybu();
+		Assert.assertNotNull(idPohybuList);
+		Assert.assertTrue(idPohybuList.size() == 1);
 	}
 }
