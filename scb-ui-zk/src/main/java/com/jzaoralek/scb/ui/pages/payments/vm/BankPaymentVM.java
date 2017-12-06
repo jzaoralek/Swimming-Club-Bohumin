@@ -1,5 +1,7 @@
 package com.jzaoralek.scb.ui.pages.payments.vm;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -20,8 +22,8 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 
-import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
+import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 
@@ -41,7 +43,6 @@ public class BankPaymentVM extends BaseContextVM {
 	@Init
 	public void init() {
 		initYearContext();
-		setDateFromTo();
 		loadData();
 	}
 	
@@ -60,7 +61,7 @@ public class BankPaymentVM extends BaseContextVM {
 	}
 	
 	@Command
-	@NotifyChange("courseList")
+	@NotifyChange("transactionList")
 	public void filterDomCmd() {
 		this.transactionList = filter.getTransactionListFiltered(this.transactionListBase);
 	}
@@ -76,6 +77,7 @@ public class BankPaymentVM extends BaseContextVM {
 	}
 	
 	private void loadData() {
+		setDateFromTo();
 		this.transactionList = bankPaymentService.getByInterval(this.dateFrom, this.dateTo);
 		this.transactionListBase = this.transactionList;
 	}
@@ -142,15 +144,27 @@ public class BankPaymentVM extends BaseContextVM {
 	}
 	
 	public static class TransactionFilter {
-
+		private DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_PATTERN);
+		private String nazevUctu;
+		private String nazevUctuLc;
+		private String datumPohybu;
+		private String objem;
 		private String varSymbol;
-		private String varSymbolLc;
 
-		public boolean matches(String varSymbolIn, boolean emptyMatch) {
-			if (varSymbol == null) {
+		public boolean matches(String nazevUctuIn, String birthDateIn, String objemIn, String varSymbolIn, boolean emptyMatch) {
+			if (nazevUctu == null && datumPohybu == null && objem == null && varSymbol == null) {
 				return emptyMatch;
 			}
-			if (varSymbol != null && !varSymbolIn.toLowerCase().contains(varSymbolLc)) {
+			if (nazevUctuIn == null || (nazevUctu != null && !nazevUctuIn.toLowerCase().contains(nazevUctuLc))) {
+				return false;
+			}
+			if (datumPohybu != null && !birthDateIn.contains(datumPohybu)) {
+				return false;
+			}
+			if (objem != null && !objemIn.startsWith(objem)) {
+				return false;
+			}
+			if (varSymbolIn == null || (varSymbol != null && !varSymbolIn.contains(varSymbol))) {
 				return false;
 			}
 			return true;
@@ -162,23 +176,47 @@ public class BankPaymentVM extends BaseContextVM {
 			}
 			List<Transaction> ret = new ArrayList<Transaction>();
 			for (Transaction item : transactionList) {
-				if (matches(item.getVariabilniSymbol(), true)) {
+				if (matches(item.getProtiucet().getNazevUctu()
+						, dateFormat.format(item.getDatumPohybu().getTime())
+						, String.valueOf(item.getObjem())
+						, item.getVariabilniSymbol()
+						, true)) {
 					ret.add(item);
 				}
 			}
 			return ret;
 		}
 
+		public String getnazevUctu() {
+			return nazevUctu == null ? "" : nazevUctu;
+		}
+		public void setnazevUctu(String name) {
+			this.nazevUctu = StringUtils.hasText(name) ? name.trim() : null;
+			this.nazevUctuLc = this.nazevUctu == null ? null : this.nazevUctu.toLowerCase();
+		}
+		public String getDatumPohybu() {
+			return datumPohybu == null ? "" : datumPohybu;
+		}
+		public void setDatumPohybu(String datumPohybu) {
+			this.datumPohybu = StringUtils.hasText(datumPohybu) ? datumPohybu.trim() : null;
+		}
+		public String getObjem() {
+			return objem == null ? "" : objem;
+		}
+		public void setObjem(String objem) {
+			this.objem = StringUtils.hasText(objem) ? objem.trim() : null;
+		}
 		public String getVarSymbol() {
 			return varSymbol == null ? "" : varSymbol;
 		}
-		public void setvarSymbol(String name) {
-			this.varSymbol = StringUtils.hasText(name) ? name.trim() : null;
-			this.varSymbolLc = this.varSymbol == null ? null : this.varSymbol.toLowerCase();
+		public void setVarSymbol(String varSymbol) {
+			this.varSymbol = StringUtils.hasText(varSymbol) ? varSymbol.trim() : null;
 		}
-
 		public void setEmptyValues() {
-			varSymbol = null;
+			nazevUctu = null;
+			nazevUctuLc = null;
+			datumPohybu = null;
+			objem = null;
 			varSymbol = null;
 		}
 	}
