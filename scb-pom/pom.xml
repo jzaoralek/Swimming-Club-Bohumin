@@ -32,7 +32,12 @@
 				<artifactId>scb-ui-zk</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+			<dependency>
+				<groupId>wojnar.bank</groupId>
+				<artifactId>fio-client</artifactId>
+				<version>1.0</version>
+			</dependency>
+
 			<!-- Spring -->
 			<dependency>
 				<groupId>org.springframework</groupId>
