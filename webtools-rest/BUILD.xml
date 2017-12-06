@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project name="webtools-rest" basedir="." default="build">
+	
+	<import file="../webtools-pom/BUILD.xml"/>
+
+	<property name="PROJECT_HOME"	value="."/>
+
+	<target name="clean">
+		<delete dir="${PROJECT_HOME}/target" />
+	</target>
+	
+	<!-- 
+	============================================================================= 
+    	MAIN targets
+   	=============================================================================
+    -->
+	<target name="build" depends="mvn-install">
+		
+	</target>
+	
+	<target name="mvn-install" depends="checkSystemProperties,clean">
+		<maven goal="clean install" dir="${PROJECT_HOME}"/>
+	</target>
+</project>

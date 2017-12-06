@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.jzaoralek.scb.dataservice.dao.BaseTestCase;
+import com.jzaoralek.scb.dataservice.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;

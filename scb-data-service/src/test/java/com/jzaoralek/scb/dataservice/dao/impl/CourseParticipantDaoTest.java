@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import com.jzaoralek.scb.dataservice.dao.BaseTestCase;
+import com.jzaoralek.scb.dataservice.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;

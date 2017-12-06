@@ -1,4 +1,4 @@
-package com.jzaoralek.scb.dataservice.dao;
+package com.jzaoralek.scb.dataservice;
 
 import java.sql.Time;
 import java.util.Calendar;

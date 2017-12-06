@@ -32,8 +32,6 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 	private static final String COURSE_UUID_PARAM = "COURSE_UUID_PARAM";
 	
 	private static final String PAYMENT_DATE_PARAM = "payment_date";
-	private static final String DATE_FROM_PARAM = "DATE_FROM";
-	private static final String DATE_TO_PARAM = "DATE_TO";
 	private static final String PROCESS_TYPE_PARAM = "PROCESS_TYPE";
 	
 	private static final String INSERT = "INSERT INTO payment " +

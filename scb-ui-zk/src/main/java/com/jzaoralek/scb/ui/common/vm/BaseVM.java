@@ -393,4 +393,8 @@ public class BaseVM {
     public boolean isCourseApplicationAllowed() {
     	return configurationService.isCourseApplicationsAllowed();
     }
+    
+    public String getDateColWidth() {
+    	return WebConstants.DATE_COL_WIDTH;
+    }
 }

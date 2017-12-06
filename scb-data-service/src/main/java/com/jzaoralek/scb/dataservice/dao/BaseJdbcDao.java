@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -26,6 +27,8 @@ public abstract class BaseJdbcDao {
 	protected static final String TIME_TO_PARAM = "TIME_TO";
 	protected static final String DESCRIPTION_PARAM = "description";
 	protected static final String USER_UUID_PARAM = "USER_UUID";
+	protected static final String DATE_FROM_PARAM = "DATE_FROM";
+	protected static final String DATE_TO_PARAM = "DATE_TO";
 
 	protected final JdbcTemplate jdbcTemplate;
 	protected final NamedParameterJdbcTemplate namedJdbcTemplate;
@@ -60,5 +63,11 @@ public abstract class BaseJdbcDao {
 		} else {
 			return d;
 		}
+	}
+	
+	public static Calendar toCalendar(Date date){ 
+	  Calendar cal = Calendar.getInstance();
+	  cal.setTime(date);
+	  return cal;
 	}
 }

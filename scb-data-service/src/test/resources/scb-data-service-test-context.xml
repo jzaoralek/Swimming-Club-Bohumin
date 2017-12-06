@@ -16,6 +16,7 @@
 
 	<context:annotation-config />
 	<context:component-scan base-package="com.jzaoralek.scb.dataservice.dao" />
+	<context:component-scan base-package="com.jzaoralek.scb.dataservice.service" />
 
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
@@ -31,6 +32,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath:${user.name}.properties</value>
+				<value>classpath:smtp.properties</value>
 			</list> 
 		</property> 
 	</bean> 
