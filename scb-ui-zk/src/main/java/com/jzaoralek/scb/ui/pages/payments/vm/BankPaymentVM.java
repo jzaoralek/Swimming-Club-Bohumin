@@ -17,6 +17,7 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
@@ -25,6 +26,7 @@ import org.zkoss.zul.Listheader;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 
 import bank.fioclient.dto.Transaction;
@@ -49,7 +51,15 @@ public class BankPaymentVM extends BaseContextVM {
 	@NotifyChange("*")
 	@Command
 	public void reloadPaymentsCmd() {
-		bankPaymentService.processPayments(this.dateFrom, this.dateTo);
+		int newPaymentCount = bankPaymentService.updateBankPayments(this.dateFrom, this.dateTo);
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.bankPaymentProcessed.arg", new Object[] {newPaymentCount}));
+		loadData();
+	}
+	
+	@Command
+	public void pairPaymentsCmd() {
+		int newPaymentCount = bankPaymentService.processPaymentPairing(this.dateFrom, this.dateTo);
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.bankPaymentPaired.arg", new Object[] {newPaymentCount}));
 		loadData();
 	}
 	

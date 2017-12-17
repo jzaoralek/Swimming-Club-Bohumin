@@ -3,6 +3,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,6 +73,11 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + ", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", user_uuid=:"+USER_UUID_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String SELECT_COURSE_COURSE_PARTIC_BY_UUID = "select uuid, course_participant_uuid, course_uuid from course_course_participant where uuid = :"+UUID_PARAM;
 
+	private static final String SELECT_BY_PERSONAL_NO_AND_INTERVAL = "SELECT cp.* FROM course_participant cp, course_course_participant ccp, course c " + 
+			" WHERE cp.uuid = ccp.course_participant_uuid AND ccp.course_uuid = c.uuid " +
+			" AND REPLACE(cp.personal_number,'/','') =:" + PERSONAL_NUMBER_PARAM + 
+			" AND c.year_from = :"+DATE_FROM_PARAM+" AND c.year_to =:"+DATE_TO_PARAM;
+	
 	@Autowired
 	private ContactDao contactDao;
 
@@ -111,6 +117,18 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(PERSONAL_NUMBER_PARAM, personalNumber);
 		List<CourseParticipant> courseParticipantList = namedJdbcTemplate.query(SELECT_BY_PERSONAL_NUMBER, paramMap, new CourseParticipantRowMapper(contactDao));
 		return !courseParticipantList.isEmpty();
+	}
+	
+	@Override
+	public CourseParticipant getByPersonalNumberAndInterval(String personalNumber, int yearFrom, int yearTo) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(PERSONAL_NUMBER_PARAM, personalNumber)
+				.addValue(DATE_FROM_PARAM, yearFrom)
+				.addValue(DATE_TO_PARAM, yearTo);
+		try {
+			return namedJdbcTemplate.queryForObject(SELECT_BY_PERSONAL_NO_AND_INTERVAL, paramMap, new CourseParticipantRowMapper(contactDao));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	@Override

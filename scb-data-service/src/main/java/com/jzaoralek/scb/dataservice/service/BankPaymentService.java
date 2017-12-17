@@ -28,6 +28,15 @@ public interface BankPaymentService {
 	 * Load bank payments from internet banking client and store to local database.
 	 * @param dateFrom
 	 * @param dateTo
+	 * @return count of processed bank payments
 	 */
-	void processPayments(Calendar dateFrom, Calendar dateTo);
+	int updateBankPayments(Calendar dateFrom, Calendar dateTo);
+	
+	/**
+	 * Pairing of bank payments from local database to course participant in current year by personal number as variable symbol.
+	 * @param dateFrom
+	 * @param dateTo
+	 * @return count of paired payments
+	 */
+	int processPaymentPairing(Calendar dateFrom, Calendar dateTo);
 }

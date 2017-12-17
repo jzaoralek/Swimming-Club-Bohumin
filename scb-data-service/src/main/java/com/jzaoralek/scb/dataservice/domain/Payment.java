@@ -3,6 +3,8 @@ package com.jzaoralek.scb.dataservice.domain;
 import java.util.Date;
 import java.util.UUID;
 
+import bank.fioclient.dto.Transaction;
+
 public class Payment implements IdentEntity {
 
 	public enum PaymentType {
@@ -17,6 +19,19 @@ public class Payment implements IdentEntity {
 		MANUAL;
 	}
 	
+	public Payment() {}
+	
+	public Payment(Transaction transaction, Course course, CourseParticipant courseParticipant, PaymentProcessType processType) {
+		this.amount = transaction.getObjem().longValue();
+		this.paymentDate = transaction.getDatumPohybu().getTime();
+		this.description = transaction.getKomentar();
+		this.type = PaymentType.BANK_TRANS;
+		this.course = course;
+		this.courseParticipant = courseParticipant;
+		this.processType = processType;
+		this.bankTransactionIdPohybu = transaction.getIdPohybu();
+	}
+	
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
@@ -27,6 +42,7 @@ public class Payment implements IdentEntity {
 	private Course course;
 	private CourseParticipant courseParticipant;
 	private PaymentProcessType processType;
+	private Long bankTransactionIdPohybu;
 	
 	@Override
 	public UUID getUuid() {
@@ -94,11 +110,18 @@ public class Payment implements IdentEntity {
 	public void setCourseParticipant(CourseParticipant courseParticipant) {
 		this.courseParticipant = courseParticipant;
 	}
+	public Long getBankTransactionIdPohybu() {
+		return bankTransactionIdPohybu;
+	}
+	public void setBankTransactionIdPohybu(Long bankTransactionIdPohybu) {
+		this.bankTransactionIdPohybu = bankTransactionIdPohybu;
+	}
 	
 	@Override
 	public String toString() {
 		return "Payment [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", amount=" + amount
 				+ ", paymentDate=" + paymentDate + ", description=" + description + ", type=" + type + ", course="
-				+ course + ", courseParticipant=" + courseParticipant + ", processType=" + processType + "]";
+				+ course + ", courseParticipant=" + courseParticipant + ", processType=" + processType
+				+ ", bankTransactionIdPohybu=" + bankTransactionIdPohybu + "]";
 	}
 }

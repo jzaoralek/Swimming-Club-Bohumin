@@ -40,7 +40,8 @@
 			            		</vbox>
 			            		<vbox hflex="min" vflex="1" align="end" pack="center" sclass="header-div" >
 			            			<hbox vflex="1" pack="center" align="center">
-			            				<button label="${c:l('txt.ui.common.Refresh')}" sclass="btn-warning" onClick="@command('reloadPaymentsCmd')" style="margin-right: 5px; "/>
+			            				<button label="${c:l('txt.ui.common.Stahnout')}" sclass="btn-warning" onClick="@command('reloadPaymentsCmd')" style="margin-right: 5px; "/>
+			            				<button label="${c:l('txt.ui.common.Zparovat')}" sclass="btn-warning" onClick="@command('pairPaymentsCmd')" style="margin-right: 5px; "/>
 			            				<!-- Rocnik -->
 			            				<include src="/pages/common/component/context-year.zul"/>
 			            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=transactionList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />

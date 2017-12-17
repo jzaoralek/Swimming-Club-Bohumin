@@ -3,7 +3,9 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -30,19 +32,25 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 	
 	private static final String COURSE_PARTIC_UUID_PARAM = "COURSE_PARTIC_UUID_PARAM";
 	private static final String COURSE_UUID_PARAM = "COURSE_UUID_PARAM";
+	private static final String BANK_TRANSACTION_ID_POHYBU = "bank_transaction_id_pohybu";
 	
 	private static final String PAYMENT_DATE_PARAM = "payment_date";
 	private static final String PROCESS_TYPE_PARAM = "PROCESS_TYPE";
 	
 	private static final String INSERT = "INSERT INTO payment " +
-			"(uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type) " +
-			"VALUES (:"+UUID_PARAM+", :"+AMOUNT_PARAM+", :"+TYPE_PARAM+", :"+DESCRIPTION_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+COURSE_PARTIC_UUID_PARAM+", :"+COURSE_UUID_PARAM+", :"+PAYMENT_DATE_PARAM+", :"+PROCESS_TYPE_PARAM+")";
-	private static final String UPDATE = "UPDATE payment SET amount = :"+AMOUNT_PARAM+", type = :"+TYPE_PARAM+", description = :"+DESCRIPTION_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM+", course_uuid = :"+COURSE_UUID_PARAM+", payment_date = :"+PAYMENT_DATE_PARAM+", process_type = :"+PROCESS_TYPE_PARAM+" WHERE uuid=:"+UUID_PARAM;
+			"(uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type, bank_transaction_id_pohybu) " +
+			"VALUES (:"+UUID_PARAM+", :"+AMOUNT_PARAM+", :"+TYPE_PARAM+", :"+DESCRIPTION_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+COURSE_PARTIC_UUID_PARAM+", :"+COURSE_UUID_PARAM+", :"+PAYMENT_DATE_PARAM+", :"+PROCESS_TYPE_PARAM+", :"+BANK_TRANSACTION_ID_POHYBU+")"; 
+	private static final String UPDATE = "UPDATE payment SET amount = :"+AMOUNT_PARAM+", type = :"+TYPE_PARAM+", description = :"+DESCRIPTION_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM+", "
+			+ "course_uuid = :"+COURSE_UUID_PARAM+", payment_date = :"+PAYMENT_DATE_PARAM+", process_type = :"+PROCESS_TYPE_PARAM+", bank_transaction_id_pohybu = :"+BANK_TRANSACTION_ID_POHYBU+" WHERE uuid=:"+UUID_PARAM;
 	private static final String DELETE = "DELETE FROM payment where uuid = :" + UUID_PARAM;
-	private static final String SELECT_BY_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type FROM payment WHERE uuid=:" + UUID_PARAM;
-	private static final String SELECT_BY_COURSE_COURSE_PARTICIPANT_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type "
+	private static final String SELECT_BY_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type, bank_transaction_id_pohybu FROM payment WHERE uuid=:" + UUID_PARAM;
+	private static final String SELECT_BY_COURSE_COURSE_PARTICIPANT_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type, bank_transaction_id_pohybu "
 			+ "FROM payment WHERE course_participant_uuid=:" + COURSE_PARTIC_UUID_PARAM + " AND course_uuid=:" + COURSE_UUID_PARAM + " AND payment_date BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM +
 			" ORDER BY payment_date desc";
+	private static final String SELECT_BANK_PAYMENT_BY_DATE_INTERVAL = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type, bank_transaction_id_pohybu "
+			+ "FROM payment WHERE type = 'BANK_TRANS' AND payment_date BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM +
+			" ORDER BY payment_date desc";
+	private static final String SELECT_ALL_BANK_TRANS_ID_POHYBU = "SELECT DISTINCT bank_transaction_id_pohybu from payment WHERE bank_transaction_id_pohybu IS NOT NULL";
 	
 	@Autowired
 	private CourseDao courseDao;
@@ -74,6 +82,14 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 		paramMap.addValue(DATE_TO_PARAM, to);
 		return namedJdbcTemplate.query(SELECT_BY_COURSE_COURSE_PARTICIPANT_UUID, paramMap, new PaymentRowMapper(courseDao, courseParticipantDao));
 	}
+	
+	@Override
+	public List<Payment> getBankPaymentByDateInterval(Date from, Date to) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue(DATE_FROM_PARAM, from);
+		paramMap.addValue(DATE_TO_PARAM, to);
+		return namedJdbcTemplate.query(SELECT_BANK_PAYMENT_BY_DATE_INTERVAL, paramMap, new PaymentRowMapper(courseDao, courseParticipantDao));
+	}
 
 	@Override
 	public void insert(Payment payment) {
@@ -84,6 +100,7 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 		paramMap.addValue(PROCESS_TYPE_PARAM, payment.getProcessType().name());
 		paramMap.addValue(DESCRIPTION_PARAM, payment.getDescription());
 		paramMap.addValue(PAYMENT_DATE_PARAM, payment.getPaymentDate());
+		paramMap.addValue(BANK_TRANSACTION_ID_POHYBU, payment.getBankTransactionIdPohybu());
 		paramMap.addValue(COURSE_PARTIC_UUID_PARAM, payment.getCourseParticipant().getUuid().toString());
 		paramMap.addValue(COURSE_UUID_PARAM, payment.getCourse().getUuid().toString());
 		
@@ -101,6 +118,7 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 		paramMap.addValue(PAYMENT_DATE_PARAM, payment.getPaymentDate());
 		paramMap.addValue(COURSE_PARTIC_UUID_PARAM, payment.getCourseParticipant().getUuid().toString());
 		paramMap.addValue(COURSE_UUID_PARAM, payment.getCourse().getUuid().toString());
+		paramMap.addValue(BANK_TRANSACTION_ID_POHYBU, payment.getBankTransactionIdPohybu());
 		
 		namedJdbcTemplate.update(UPDATE, paramMap);
 	}
@@ -108,6 +126,11 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 	@Override
 	public void delete(Payment course) {
 		namedJdbcTemplate.update(DELETE, new MapSqlParameterSource().addValue(UUID_PARAM, course.getUuid().toString()));
+	}
+	
+	@Override
+	public Set<String> getAllBankTransIdPohybu() {
+		return new HashSet<>(namedJdbcTemplate.getJdbcOperations().queryForList(SELECT_ALL_BANK_TRANS_ID_POHYBU, String.class));
 	}
 	
 	public static final class PaymentRowMapper implements RowMapper<Payment> {
@@ -127,6 +150,7 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 			ret.setAmount(rs.getLong("amount"));
 			ret.setDescription(rs.getString("description"));
 			ret.setType(PaymentType.valueOf(rs.getString("type")));
+			ret.setBankTransactionIdPohybu(rs.getLong("bank_transaction_id_pohybu"));
 			UUID courseParticipantUuid = UUID.fromString(rs.getString("course_participant_uuid"));
 			if (courseParticipantUuid != null) {
 				ret.setCourseParticipant(courseParticipantDao.getByUuid(courseParticipantUuid, false));
