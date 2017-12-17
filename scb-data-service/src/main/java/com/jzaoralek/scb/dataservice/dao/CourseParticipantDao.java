@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ public interface CourseParticipantDao {
 	 */
 	CourseParticipant getCourseParticInOneCourse(UUID courseCourseParticUuid);
 	boolean existsByPersonalNumber(String personalNumber);
+	CourseParticipant getByPersonalNumberAndInterval(String personalNumber, int yearFrom, int yearTo);
 	List<CourseParticipant> getByCourseUuid(UUID courseUuid);
 	List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid);
 	List<CourseParticipant> getByUserUuid(UUID userUuid);

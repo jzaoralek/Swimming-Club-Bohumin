@@ -132,4 +132,12 @@ public class Transaction {
         this.komentar = komentar;
     }
 
+	@Override
+	public String toString() {
+		return "Transaction [protiucet=" + protiucet + ", datumPohybu=" + datumPohybu + ", objem=" + objem
+				+ ", konstantniSymbol=" + konstantniSymbol + ", variabilniSymbol=" + variabilniSymbol
+				+ ", uzivatelskaIdentifikace=" + uzivatelskaIdentifikace + ", typ=" + typ + ", mena=" + mena
+				+ ", idPokynu=" + idPokynu + ", idPohybu=" + idPohybu + ", komentar=" + komentar + ", provedl="
+				+ provedl + ", zpravaProPrijemnce=" + zpravaProPrijemnce + "]";
+	}
 }

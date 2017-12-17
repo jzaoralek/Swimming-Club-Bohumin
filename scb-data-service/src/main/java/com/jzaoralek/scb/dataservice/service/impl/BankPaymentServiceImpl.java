@@ -12,8 +12,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.jzaoralek.scb.dataservice.dao.CourseDao;
+import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
+import com.jzaoralek.scb.dataservice.dao.PaymentDao;
 import com.jzaoralek.scb.dataservice.dao.TransactionDao;
+import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.Payment;
+import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
+import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 
 import bank.fioclient.dto.AccountStatement;
 import bank.fioclient.dto.AuthToken;
@@ -22,7 +30,7 @@ import bank.fioclient.exception.EarlyAccessException;
 import bank.fioclient.exception.FioClientException;
 
 @Service("bankPaymentService")
-public class BankPaymentServiceImpl implements BankPaymentService {
+public class BankPaymentServiceImpl extends BaseAbstractService implements BankPaymentService {
 
 	private final Logger LOG = LoggerFactory.getLogger(getClass());
 	
@@ -34,6 +42,15 @@ public class BankPaymentServiceImpl implements BankPaymentService {
 	
 	@Autowired
 	private TransactionDao transactionDao;
+	
+	@Autowired
+	private PaymentDao paymentDao;
+	
+	@Autowired
+	private CourseParticipantDao courseParticipantDao;
+	
+	@Autowired
+	private CourseDao courseDao;
 	
 	@Override
 	public AccountStatement transactions(Calendar datumOd, Calendar datumDo) {		
@@ -57,25 +74,96 @@ public class BankPaymentServiceImpl implements BankPaymentService {
 	}
 	
 	@Override
-	public void processPayments(Calendar dateFrom, Calendar dateTo) {
-		LOG.info("Processing payments, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
+	public int updateBankPayments(Calendar dateFrom, Calendar dateTo) {
+		LOG.info("Updating bank payments, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
+		// nacteni bankovnich transakci z FIO
 		AccountStatement accountStatement = transactions(dateFrom, dateTo);
 		if (accountStatement == null || CollectionUtils.isEmpty(accountStatement.getTransactions())) {
-			LOG.info("No payment to process, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
-			return;
+			LOG.info("No bank payment to process, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
+			return 0;
 		}
-		
+		// nacteni sady jiz zpracovanych idPohybu bankovnich transakci z FIO
 		Set<String> idPohybuSet = transactionDao.getAllIdPohybu();
 		
-		// check unique idPohybu
+		// vytvoreni seznamu novych bankovnich transakci pro zpracovani
 		List<Transaction> transactionToProcessList = new ArrayList<>();
-		
 		for (Transaction transaction : accountStatement.getTransactions()) {
 			if (!idPohybuSet.contains(String.valueOf(transaction.getIdPohybu()))) {
 				transactionToProcessList.add(transaction);
 			}
 		}
 		
+		if (CollectionUtils.isEmpty(transactionToProcessList)) {
+			LOG.info("No new bank payment to process, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
+			return 0;
+		}
+		
+		LOG.info("New bank payment to process: {}, dateFrom: {}, dateTo: {}", transactionToProcessList.size(), dateFrom, dateTo);
+		
+		// ulozeni seznamu novych bankovnich transakci
 		transactionDao.insertBulk(transactionToProcessList);
+		
+		LOG.info("Updating bank payments finished. New bank payments: {}, dateFrom: {}, dateTo: {}", transactionToProcessList.size(), dateFrom, dateTo);
+		
+		return transactionToProcessList.size();
+	}
+	
+	@Override
+	public int processPaymentPairing(Calendar dateFrom, Calendar dateTo) {
+		LOG.info("Processing transaction to payment pairing, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
+		
+		// nacteni idPohybu jiz zparovanych plateb 
+		Set<String> processedIdPohybuSet = paymentDao.getAllBankTransIdPohybu();
+		
+		// nacteni bankovnich transakci pro dany rocnik a vyrazeni jiz zparovanych, vysledkem je seznam plateb, ktere zatim nebyly zparovany
+		List<Transaction> transactionList = transactionDao.getByInterval(dateFrom, dateTo);
+		
+		// vyrazenio jiz zparovanych bankovnich transakci a vytvoreni seznamu novych bankovnich transakci pro zparovani
+		List<Transaction> unpairedTransactionList = new ArrayList<>();
+		for (Transaction transaction : transactionList) {
+			if (!processedIdPohybuSet.contains(String.valueOf(transaction.getIdPohybu()))) {
+				unpairedTransactionList.add(transaction);
+			}
+		}
+		
+		if (CollectionUtils.isEmpty(unpairedTransactionList)) {
+			LOG.info("No transaction to pairing, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
+			return 0;
+		}
+		
+		LOG.info("Transaction to pairing: {}, dateFrom: {}, dateTo: {}", unpairedTransactionList.size(), dateFrom, dateTo);
+		
+		// projit bankovni transakce ke zparovani a v danem rocniku vyhledat ucastniky k nimz transakce patri a vytvorit seznam plateb ke zpracovani
+		List<Payment> paymentToProcessList = new ArrayList<>();
+		Payment payment = null;
+		List<Course> courseList = null;
+		for (Transaction transaction : unpairedTransactionList) {
+			// vyhledat zda-li v danem rocniku existuje courseParticipant s personalNo = varSymbol
+			CourseParticipant courseParticipant = courseParticipantDao.getByPersonalNumberAndInterval(transaction.getVariabilniSymbol(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
+			if (courseParticipant != null) {
+				// dotahnout kurz do nehoz ucastnik parti, pocita se s tim ze v danem rocniku muze byt ucastnik pouze v jednom kurzu!!!
+				courseList = courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
+				// na zaklade transaction a courseParticipant vytvorit payment pro zpracovani
+				payment = new Payment(transaction, courseList.get(0), courseParticipant, PaymentProcessType.AUTOMATIC);
+				fillIdentEntity(payment);
+				paymentToProcessList.add(payment);
+			}
+		}
+		
+		if (CollectionUtils.isEmpty(paymentToProcessList)) {
+			LOG.info("No new payment to process, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
+			return 0;
+		}
+		
+		LOG.info("New payment to process: {}, dateFrom: {}, dateTo: {}", paymentToProcessList.size(), dateFrom, dateTo);
+		
+		// ulozeni seznamu novych plateb
+		for (Payment paymentToProcess : paymentToProcessList) {
+			paymentDao.insert(paymentToProcess);
+		}
+		
+		LOG.info("Processing new payments finished. Processed new payments: {}, dateFrom: {}, dateTo: {}", paymentToProcessList.size(), dateFrom, dateTo);
+		
+		return paymentToProcessList.size();
 	}
 }

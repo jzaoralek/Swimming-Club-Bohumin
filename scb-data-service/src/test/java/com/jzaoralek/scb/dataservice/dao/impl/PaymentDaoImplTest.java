@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -19,13 +20,14 @@ import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
 
 public class PaymentDaoImplTest extends BaseTestCase {
 
-	private static final PaymentType TYPE = PaymentType.CASH;
+	private static final PaymentType TYPE = PaymentType.BANK_TRANS;
 	private static final PaymentProcessType PROCESS_TYPE = PaymentProcessType.MANUAL;
 	private static final String DESCRIPTION = "description";
 	private static final Long AMOUNT = 2200L;
 	private static final UUID COURSE_PARTICIPANT_UUID = UUID.randomUUID();
 	private static final UUID COURSE_UUID = UUID.randomUUID();
 	private static final Date PAYMENT_DATE = Calendar.getInstance().getTime();
+	private static final Long BANK_TRANS_ID_POHYBU = 3200L;
 	
 	@Autowired
 	private PaymentDao paymentDao;
@@ -43,6 +45,7 @@ public class PaymentDaoImplTest extends BaseTestCase {
 		item.setAmount(AMOUNT);
 		item.setType(TYPE);
 		item.setProcessType(PROCESS_TYPE);
+		item.setBankTransactionIdPohybu(BANK_TRANS_ID_POHYBU);
 		
 		this.coursePartic = new CourseParticipant();
 		this.coursePartic.setUuid(COURSE_PARTICIPANT_UUID);
@@ -70,6 +73,11 @@ public class PaymentDaoImplTest extends BaseTestCase {
 	@Test
 	public void testGetByCourseCourseParticipantUuid() {
 		assertList(paymentDao.getByCourseCourseParticipantUuid(COURSE_PARTICIPANT_UUID, COURSE_UUID, getYesterday(), getTomorrow()), 1 , ITEM_UUID);
+	}
+	
+	@Test
+	public void testGetBankPaymentByDateInterval() {
+		assertList(paymentDao.getBankPaymentByDateInterval(getYesterday(), getTomorrow()), 1 , ITEM_UUID);
 	}
 
 	@Test
@@ -99,6 +107,14 @@ public class PaymentDaoImplTest extends BaseTestCase {
 	public void testDelete() {
 		paymentDao.delete(item);
 		Assert.assertNull(paymentDao.getByUuid(ITEM_UUID));
+	}
+	
+	@Test
+	public void getAllIdPohybuTest() {
+		Set<String> idPohybuList = paymentDao.getAllBankTransIdPohybu();
+		Assert.assertNotNull(idPohybuList);
+		Assert.assertTrue(idPohybuList.size() == 1);
+		Assert.assertTrue(idPohybuList.iterator().next().equals(String.valueOf(BANK_TRANS_ID_POHYBU)));
 	}
 	
 	private Date getYesterday() {

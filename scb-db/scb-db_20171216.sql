@@ -1,0 +1,1 @@
+ALTER TABLE payment ADD bank_transaction_id_pohybu bigint;
