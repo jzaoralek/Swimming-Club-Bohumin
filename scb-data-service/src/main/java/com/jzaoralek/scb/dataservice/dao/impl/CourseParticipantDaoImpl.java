@@ -75,7 +75,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	private static final String SELECT_BY_PERSONAL_NO_AND_INTERVAL = "SELECT cp.* FROM course_participant cp, course_course_participant ccp, course c " + 
 			" WHERE cp.uuid = ccp.course_participant_uuid AND ccp.course_uuid = c.uuid " +
-			" AND REPLACE(cp.personal_number,'/','') =:" + PERSONAL_NUMBER_PARAM + 
+			" AND TRIM(LEADING '0' FROM REPLACE(cp.personal_number,'/','')) =:" + PERSONAL_NUMBER_PARAM + 
 			" AND c.year_from = :"+DATE_FROM_PARAM+" AND c.year_to =:"+DATE_TO_PARAM;
 	
 	@Autowired

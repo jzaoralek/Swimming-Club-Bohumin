@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
@@ -139,14 +140,16 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 		List<Course> courseList = null;
 		for (Transaction transaction : unpairedTransactionList) {
 			// vyhledat zda-li v danem rocniku existuje courseParticipant s personalNo = varSymbol
-			CourseParticipant courseParticipant = courseParticipantDao.getByPersonalNumberAndInterval(transaction.getVariabilniSymbol(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
-			if (courseParticipant != null) {
-				// dotahnout kurz do nehoz ucastnik parti, pocita se s tim ze v danem rocniku muze byt ucastnik pouze v jednom kurzu!!!
-				courseList = courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
-				// na zaklade transaction a courseParticipant vytvorit payment pro zpracovani
-				payment = new Payment(transaction, courseList.get(0), courseParticipant, PaymentProcessType.AUTOMATIC);
-				fillIdentEntity(payment);
-				paymentToProcessList.add(payment);
+			if (StringUtils.hasText(transaction.getVariabilniSymbol())) {
+				CourseParticipant courseParticipant = courseParticipantDao.getByPersonalNumberAndInterval(transaction.getVariabilniSymbol(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
+				if (courseParticipant != null) {
+					// dotahnout kurz do nehoz ucastnik parti, pocita se s tim ze v danem rocniku muze byt ucastnik pouze v jednom kurzu!!!
+					courseList = courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
+					// na zaklade transaction a courseParticipant vytvorit payment pro zpracovani
+					payment = new Payment(transaction, courseList.get(0), courseParticipant, PaymentProcessType.AUTOMATIC);
+					fillIdentEntity(payment);
+					paymentToProcessList.add(payment);
+				}				
 			}
 		}
 		
