@@ -59,6 +59,10 @@ public class PaymentDetailVM extends BaseVM {
 		}
 	}
 	
+	public boolean isPaymentTypeAutomatic() {
+		return this.payment != null && this.payment.getProcessType() == PaymentProcessType.AUTOMATIC;
+	}
+	
 	private Listitem getPaymentTypeListItem(PaymentType role) {
 		if (role == null) {
 			return null;
