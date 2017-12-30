@@ -11,5 +11,12 @@ public interface TransactionDao {
 	List<Transaction> getAll();
 	Transaction getByIdPohybu(Long idPohybu);
 	List<Transaction> getByInterval(Calendar dateFrom, Calendar dateTo);
+	/**
+	 * Getting transactions that hasn't been paired to payment.
+	 * @param dateFrom
+	 * @param dateTo
+	 * @return
+	 */
+	List<Transaction> getNotInPaymentByInterval(Calendar dateFrom, Calendar dateTo);
 	Set<String> getAllIdPohybu();
 }

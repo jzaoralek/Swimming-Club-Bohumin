@@ -19,7 +19,7 @@
 					<vbox hflex="4" align="start" >
 						<headline label="${vm.pageHeadline}" menuSelected="menu_courseParticipantList" />
 					</vbox>
-					<hbox hflex="1" vflex="1" align="center" pack="end" >
+					<hbox hflex="1" vflex="1" align="center" pack="end" >				
 						<button onClick="@command('backCmd')" 
 							label="${c:l('txt.ui.common.Back')}" 
 							visible="@load(vm.isBackButtonVisible())"
@@ -163,6 +163,10 @@
 			            				<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
 			            					sclass="btn-warning" 
 			            					iconSclass="z-icon-plus"
+			            					visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
+			            				<button onClick="@command('pairPaymentManualCmd')" 
+			            					sclass="btn-warning" 
+			            					label="${c:l('txt.ui.common.RucneZparovat')}"
 			            					visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
 			            			</hbox>
 			            		</vbox>

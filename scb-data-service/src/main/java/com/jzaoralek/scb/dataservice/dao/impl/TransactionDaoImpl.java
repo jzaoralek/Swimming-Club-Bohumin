@@ -38,10 +38,16 @@ public class TransactionDaoImpl extends BaseJdbcDao implements TransactionDao {
 	private static final String SELECT_BY_ID_POHYBU = "SELECT " + COLLS_ALL
 			+ " FROM bank_transaction "
 			+ " WHERE idPohybu = :" + ID_POHYBU_PARAM;
+	private static final String SELECT_NOT_IN_PAYMENT_BY_DATUM_POHYBU_INTERVAL = "SELECT " + COLLS_ALL
+			+ " FROM bank_transaction "
+			+ " WHERE idpohybu NOT IN (SELECT bank_transaction_id_pohybu from payment p where p.type = 'BANK_TRANS' AND p.bank_transaction_id_pohybu IS NOT NULL) "
+			+ " AND datumPohybu BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM
+	        + " ORDER BY datumPohybu DESC ";
 	private static final String SELECT_BY_DATUM_POHYBU_INTERVAL = "SELECT " + COLLS_ALL
 			+ " FROM bank_transaction "
 			+ " WHERE datumPohybu BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM
-	        + " ORDER BY datumPohybu DESC ";
+		    + " ORDER BY datumPohybu DESC ";
+	
 	private static final String SELECT_ALL_ID_POHYBU = "SELECT DISTINCT idPohybu from bank_transaction";
 	
 	@Autowired
@@ -101,6 +107,14 @@ public class TransactionDaoImpl extends BaseJdbcDao implements TransactionDao {
 				.addValue(DATE_FROM_PARAM, dateFrom)
 				.addValue(DATE_TO_PARAM, dateTo);
 		return namedJdbcTemplate.query(SELECT_BY_DATUM_POHYBU_INTERVAL, paramMap, new TransactionRowMapper());
+	}
+	
+	@Override
+	public List<Transaction> getNotInPaymentByInterval(Calendar dateFrom, Calendar dateTo) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource()
+				.addValue(DATE_FROM_PARAM, dateFrom)
+				.addValue(DATE_TO_PARAM, dateTo);
+		return namedJdbcTemplate.query(SELECT_NOT_IN_PAYMENT_BY_DATUM_POHYBU_INTERVAL, paramMap, new TransactionRowMapper());
 	}
 
 	@Override

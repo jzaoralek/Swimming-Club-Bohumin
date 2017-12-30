@@ -60,7 +60,7 @@ public class PaymentDetailVM extends BaseVM {
 	}
 	
 	public boolean isPaymentTypeAutomatic() {
-		return this.payment != null && this.payment.getProcessType() == PaymentProcessType.AUTOMATIC;
+		return this.payment != null && (EnumSet.of(PaymentProcessType.AUTOMATIC, PaymentProcessType.PAIRED).contains(this.payment.getProcessType()));
 	}
 	
 	private Listitem getPaymentTypeListItem(PaymentType role) {

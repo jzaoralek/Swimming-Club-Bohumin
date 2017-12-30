@@ -1,0 +1,12 @@
+<window id="modalWindow"
+	title="${c:l('txt.ui.common.assignParticipantToCourse')}" 
+	border="normal" 
+    width="590px"
+    position="center,center" 
+    closable="true">
+    
+    <vlayout viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.payments.vm.BankPaymentUnpairedWinVM')" >
+        <!-- Seznam nezparovanych plateb v danem obdobi -->
+        <include src="/pages/secured/ADMIN/seznam-bankovnich-plateb-listbox.zul" selectMode="true" modalWindow="${modalWindow}" coursePartic="${vm.coursePartic}" course="${vm.course}" />
+    </vlayout>
+</window>

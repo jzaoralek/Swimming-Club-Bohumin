@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -17,16 +18,25 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
+import org.zkoss.zul.Window;
 
+import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.Payment;
+import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
+import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
+import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 
 import bank.fioclient.dto.Transaction;
@@ -36,14 +46,20 @@ public class BankPaymentVM extends BaseContextVM {
 	@WireVariable
 	private BankPaymentService bankPaymentService;
 	
+	@WireVariable
+	private PaymentService paymentService;
+	
 	private List<Transaction> transactionList;
 	private List<Transaction> transactionListBase;
 	private Calendar dateFrom;
 	private Calendar dateTo;
 	private final TransactionFilter filter = new TransactionFilter();
+	private Boolean selectMode;
+	private Transaction transactionSelected;
 
 	@Init
-	public void init() {
+	public void init(@BindingParam("selectMode")Boolean selectMode) {
+		this.selectMode = selectMode;
 		initYearContext();
 		loadData();
 	}
@@ -81,6 +97,26 @@ public class BankPaymentVM extends BaseContextVM {
 		ExcelUtil.exportToExcel("seznam_bankovnich_plateb.xls", buildExcelRowData(listbox));
 	}
 	
+	@Command
+	public void pairPaymentCmd(@BindingParam("window") final Window window
+			, @BindingParam(WebConstants.COURSE_PARTIC_PARAM) final CourseParticipant courseParticipant
+			, @BindingParam(WebConstants.COURSE_PARAM) final Course course) {
+		Objects.requireNonNull(courseParticipant, "courseParticipant");
+		Objects.requireNonNull(course, "course");
+		Objects.requireNonNull(window, "window");
+		Objects.requireNonNull(transactionSelected, "transactionSelected");
+		
+		Payment payment = new Payment(this.transactionSelected, course, courseParticipant, PaymentProcessType.PAIRED);
+		payment.setCourseParticipant(courseParticipant);
+		payment.setCourse(course);
+		paymentService.store(payment);
+		
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
+		EventQueueHelper.publish(ScbEventQueues.PAYMENT_QUEUE, ScbEvent.RELOAD_PAYMENT_DATA_EVENT, null, null);
+		
+		window.detach();
+	}
+	
 	@Override
 	protected void courseYearChangeCmdCore() {
 		loadData();
@@ -88,7 +124,13 @@ public class BankPaymentVM extends BaseContextVM {
 	
 	private void loadData() {
 		setDateFromTo();
-		this.transactionList = bankPaymentService.getByInterval(this.dateFrom, this.dateTo);
+		if (!this.selectMode) {
+			// vsechny platby za dané obdobi
+			this.transactionList = bankPaymentService.getByInterval(this.dateFrom, this.dateTo);			
+		} else {
+			// nezparovane platby za dane obdobi
+			this.transactionList = bankPaymentService.getNotInPaymentByInterval(this.dateFrom, this.dateTo);
+		}
 		this.transactionListBase = this.transactionList;
 	}
 	
@@ -151,6 +193,14 @@ public class BankPaymentVM extends BaseContextVM {
 	
 	public TransactionFilter getFilter() {
 		return filter;
+	}
+	
+	public Transaction getTransactionSelected() {
+		return transactionSelected;
+	}
+
+	public void setTransactionSelected(Transaction transactionSelected) {
+		this.transactionSelected = transactionSelected;
 	}
 	
 	public static class TransactionFilter {

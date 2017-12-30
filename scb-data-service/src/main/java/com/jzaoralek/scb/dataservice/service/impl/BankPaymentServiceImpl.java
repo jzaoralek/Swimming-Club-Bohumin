@@ -75,6 +75,11 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 	}
 	
 	@Override
+	public List<Transaction> getNotInPaymentByInterval(Calendar dateFrom, Calendar dateTo) {
+		return transactionDao.getNotInPaymentByInterval(dateFrom, dateTo);
+	}
+	
+	@Override
 	public int updateBankPayments(Calendar dateFrom, Calendar dateTo) {
 		LOG.info("Updating bank payments, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
 		// nacteni bankovnich transakci z FIO

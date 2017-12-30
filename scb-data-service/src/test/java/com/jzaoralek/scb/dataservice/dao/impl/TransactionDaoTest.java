@@ -93,6 +93,21 @@ public class TransactionDaoTest extends BaseTestCase {
 	}
 	
 	@Test
+	public void getNotInPaymentByIntervalTest() {
+		transactionDao.insertBulk(Arrays.asList(item));
+		
+		Calendar yesterday = Calendar.getInstance();
+		yesterday.add(Calendar.DATE, -1);
+		
+		Calendar tomorrow = Calendar.getInstance();
+		tomorrow.add(Calendar.DATE, 1);
+		
+		List<Transaction> transactionList = transactionDao.getNotInPaymentByInterval(yesterday, tomorrow);
+		Assert.assertNotNull(transactionList);
+		Assert.assertTrue(transactionList.size() == 1);
+	}
+	
+	@Test
 	public void getAllIdPohybuTest() {
 		transactionDao.insertBulk(Arrays.asList(item));
 		Set<String> idPohybuList = transactionDao.getAllIdPohybu();

@@ -1,0 +1,124 @@
+<zk>
+	<custom-attributes selectMode="${arg.selectMode ne null ? arg.selectMode : false}" />
+	<custom-attributes modalWindow="${arg.modalWindow}" />
+	<custom-attributes coursePartic="${arg.coursePartic}" />
+	<custom-attributes course="${arg.course}" />
+	
+	<vbox hflex="20" pack="center" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.payments.vm.BankPaymentVM', selectMode=selectMode)">	
+		<listbox model="@load(vm.transactionList)"
+			id="transactionList"
+			hflex="1"
+			mold="paging"
+			pageSize="10"
+			selectedItem="@bind(vm.transactionSelected)"
+			checkmark="${selectMode}"
+			emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+			class="listbox" >
+	        <auxhead>
+	            <auxheader class="header" colspan="4" >
+	            	<hbox hflex="1" height="42px" align="center" >
+		            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+	            			<hbox vflex="1" align="center" >
+	            				<label value="${c:l('txt.ui.menu.bankPayments')}" style="margin-right:5px;" />
+	            			</hbox>
+	            		</vbox>
+	            		<vbox hflex="min" vflex="1" align="end" pack="center" sclass="header-div" >
+	            			<hbox vflex="1" pack="center" align="center">
+	            				<button iconSclass="z-icon-check" onClick="@command('pairPaymentCmd', window=modalWindow, coursePartic=coursePartic, course=course)" disabled="@load(vm.transactionSelected eq null)" if="${selectMode}" sclass="btn-success" tooltiptext="OK" style="margin-right: 5px;"/>
+	            				<button label="${c:l('txt.ui.common.Stahnout')}" if="${!selectMode}" sclass="btn-warning" onClick="@command('reloadPaymentsCmd')" style="margin-right: 5px;"/>
+	            				<button label="${c:l('txt.ui.common.Zparovat')}" if="${!selectMode}" sclass="btn-warning" onClick="@command('pairPaymentsCmd')" style="margin-right: 5px; "/>
+	            				<!-- Rocnik -->
+	            				<include src="/pages/common/component/context-year.zul"/>
+	            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=transactionList)" if="${!selectMode}"  tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
+	           					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" if="${!selectMode}" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
+							</hbox>
+						</vbox>
+					</hbox>
+	            </auxheader>
+	        </auxhead>
+	        
+	        <!-- Filter -->
+			<auxhead height="37px">
+				<auxheader class="filter">
+					<textbox hflex="1"
+						instant="true"
+						value="@bind(vm.filter.datumPohybu)"
+						onChange="@command('filterDomCmd')" />
+				</auxheader>
+				<auxheader class="filter">
+					<textbox hflex="1"
+						instant="true"
+						value="@bind(vm.filter.objem)"
+						onChange="@command('filterDomCmd')" />
+				</auxheader>
+				<auxheader class="filter">
+					<textbox hflex="1"
+						instant="true"
+						value="@bind(vm.filter.varSymbol)"
+						onChange="@command('filterDomCmd')" />
+				</auxheader>
+				<auxheader class="filter">
+					<textbox hflex="1"
+						instant="true"
+						value="@bind(vm.filter.nazevUctu)"
+						onChange="@command('filterDomCmd')" />
+				</auxheader>
+			</auxhead>
+	
+	        <listhead>
+	            <listheader label="${c:l('txt.ui.common.date')}" sort="auto(datumPohybu)" align="left" width="${selectMode ? '150' : vm.dateColWidth}" />
+	            <listheader label="${c:l('txt.ui.common.Amount')}" sort="auto(objem)" align="center" hflex="1" />
+	            <listheader label="${c:l('txt.ui.common.VarSymbol')}" sort="auto(variabilniSymbol)" align="center" hflex="1" />
+	            <listheader label="${c:l('txt.ui.common.ZUctu')}" sort="auto(protiucet.nazevUctu)" align="left" hflex="2" />
+	        </listhead>
+	        
+	        <template name="model">
+	            <listitem>
+	                <listcell label="@load(each.datumPohybu.time) @converter(vm.dateConverter)" />
+	                <listcell label="${each.objem} ${c:l('txt.ui.common.CZK')}" />
+	                <listcell label="${each.variabilniSymbol}" />	
+	                <listcell>
+	                	<hbox hflex="1" vflex="1" align="center">
+		                	<hbox hflex="1">
+		                		<vbox hflex="1">
+				                	<label value="${each.protiucet.nazevUctu}" />
+		                		</vbox>
+		                		<vbox width="30px" align="center" >
+		                			<!-- Z uctu popup -->
+				                	<a iconSclass="z-icon-info-circle" popup="paymentPopup_${each.idPohybu}, position=after_end" style="font-size: large; margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.Podrobnosti')}" />
+				                	<popup id="paymentPopup_${each.idPohybu}">
+								    	<vbox style="margin: 5px;">
+								    		<grid hflex="min" vflex="min">
+												<auxhead>
+													<auxheader class="header" colspan="3" >
+														<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+															<label value="${c:l('txt.ui.common.Podrobnosti')}" />
+														</vbox>
+													</auxheader>
+												</auxhead>
+												<columns>
+													<column />
+													<column align="left"/>
+												</columns>
+												<rows>
+													<row>
+														<label value="${c:l('txt.ui.common.CisloUctu')}"/>
+														<label value="${each.protiucet.cisloUctu} / ${each.protiucet.kodBanky}"/>
+													</row>
+													<row>
+														<label value="${c:l('txt.ui.common.ZpravaProPrijemce')}"/>
+														<label value="${each.zpravaProPrijemnce}"/>
+													</row>
+												</rows>
+											</grid>
+								    	</vbox>
+								    </popup>
+		                		</vbox>
+		                	</hbox>
+	                	</hbox>
+	                </listcell>
+	            </listitem>
+	        </template>
+	    </listbox>
+    </vbox>
+</zk>

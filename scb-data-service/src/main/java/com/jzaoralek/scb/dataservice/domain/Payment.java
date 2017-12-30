@@ -16,6 +16,7 @@ public class Payment implements IdentEntity {
 	
 	public enum PaymentProcessType {
 		AUTOMATIC,
+		PAIRED,
 		MANUAL;
 	}
 	
