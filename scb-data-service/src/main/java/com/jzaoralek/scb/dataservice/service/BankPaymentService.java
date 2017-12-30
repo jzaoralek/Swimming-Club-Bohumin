@@ -25,6 +25,14 @@ public interface BankPaymentService {
 	List<Transaction> getByInterval(Calendar dateFrom, Calendar dateTo);
 	
 	/**
+	 * Load bank payments from local database that hasn't been processed, it means paired to payment.
+	 * @param dateFrom
+	 * @param dateTo
+	 * @return
+	 */
+	List<Transaction> getNotInPaymentByInterval(Calendar dateFrom, Calendar dateTo);
+	
+	/**
 	 * Load bank payments from internet banking client and store to local database.
 	 * @param dateFrom
 	 * @param dateTo

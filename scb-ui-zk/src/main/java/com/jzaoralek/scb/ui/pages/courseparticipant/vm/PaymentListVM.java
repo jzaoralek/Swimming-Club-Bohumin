@@ -45,6 +45,7 @@ import com.jzaoralek.scb.ui.common.vm.BaseVM;
 public class PaymentListVM extends BaseVM {
 
 	private static final String PAYMENT_DETAIL_WINDOW = "/pages/secured/TRAINER/detail-platby.zul";
+	private static final String MANUAL_PAYMENT_PAIR_WINDOW = "/pages/secured/ADMIN/seznam-bank-plateb-nezpar-window.zul";
 	
 	@WireVariable
 	private PaymentService paymentService;
@@ -98,6 +99,15 @@ public class PaymentListVM extends BaseVM {
 		Map<String, Object> args = new HashMap<>();
 		args.put(WebConstants.UUID_PARAM, uuid);
 		WebUtils.openModal(PAYMENT_DETAIL_WINDOW, Labels.getLabel("txt.ui.common.PaymentDetail"), args);
+	}
+	
+	@Command
+	public void pairPaymentManualCmd() {
+		Map<String, Object> args = new HashMap<>();
+		args.put(WebConstants.COURSE_PARTIC_PARAM, this.coursePartic);
+		args.put(WebConstants.COURSE_PARAM, this.course);
+		String modalTitle = Labels.getLabel("txt.ui.common.ZparovaniPlatbyUcastnika", new Object[] {this.coursePartic.getContact().getCompleteName() + ", " + this.coursePartic.getPersonalNo()});
+		WebUtils.openModal(MANUAL_PAYMENT_PAIR_WINDOW, modalTitle, args);
 	}
 	
 	@Command
