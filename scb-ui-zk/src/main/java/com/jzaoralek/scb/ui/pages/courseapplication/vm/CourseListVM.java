@@ -183,8 +183,7 @@ public class CourseListVM extends BaseContextVM {
 				data.put(String.valueOf(i+1),
 						new Object[] { item.getName(),
 								item.getDescription(),
-								item.getParticipantListCount(),
-								item.getLessonListCount()});
+								item.getParticipantListCount()});
 			}
 		}
 
