@@ -25,7 +25,7 @@
 				<row sclass="form-grid-row" style="border: none; padding: 10px 10px 10px 10px;" >
 					<cell sclass="form-grid-cell" >
 						<hbox hflex="1">
-							<!-- Komu -->
+							<!-- Prijemci -->
 							<label value="${c:l('txt.ui.common.Prijemcu')}:" />
 							[<label value="@load(vm.emailAddressCount)" />]
 							<a iconSclass="z-icon-list-alt" popup="sendToListPopup, position=after_end" style="font-size: large; margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.SeznamPrijemcu')}" />
