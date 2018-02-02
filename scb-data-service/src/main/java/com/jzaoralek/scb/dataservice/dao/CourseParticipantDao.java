@@ -1,6 +1,5 @@
 package com.jzaoralek.scb.dataservice.dao;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 

@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,7 +60,6 @@ public class CourseListVM extends BaseContextVM {
 	@Init
 	public void init() {
 		initYearContext();
-		
 		loadData();
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);

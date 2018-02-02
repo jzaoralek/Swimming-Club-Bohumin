@@ -5,9 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -234,7 +237,41 @@ public class CourseApplicationListVM extends BaseContextVM {
 			},
 			msgParams
 		);
+	}
+	
+	/**
+	 * Otevre modal pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 */
+	@Command
+	public void openModalToSendEmailCmd() {
+		if (CollectionUtils.isEmpty(this.courseApplicationList)) {
+			return;
+		}
 		
+		Map<String, Object> args = new HashMap<>();
+		args.put(WebConstants.COURSE_PARTIC_CONTACT_LIST_PARAM, buildCourseParticipantContactSet(this.courseApplicationList));
+		WebUtils.openModal(WebPages.EMAIL_DETAIL_WINDOW.getUrl(), null, args);
+	}
+	
+	/**
+	 * Sestavi seznam emailovych adres ucastniku.
+	 * @param courseApplicationList
+	 * @return
+	 */
+	private Set<String> buildCourseParticipantContactSet(List<CourseApplication> courseApplicationList) {
+		if (CollectionUtils.isEmpty(courseApplicationList)) {
+			return Collections.emptySet();
+		}
+		
+		Set<String> ret = new HashSet<>();
+		for (CourseApplication item : courseApplicationList) {
+			if (item.getCourseParticRepresentative() != null 
+					&& item.getCourseParticRepresentative().getContact() != null
+					&& StringUtils.hasText(item.getCourseParticRepresentative().getContact().getEmail1())) {
+				ret.add(item.getCourseParticRepresentative().getContact().getEmail1());				
+			}
+		}
+		return ret;
 	}
 
 	@SuppressWarnings("unchecked")
