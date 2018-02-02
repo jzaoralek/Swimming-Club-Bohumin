@@ -42,10 +42,9 @@
 					<cell sclass="form-grid-cell" >
 						<vbox hflex="1">
 							<!-- Subject -->
-							<label value="${c:l('txt.ui.common.Predmet')}"/>
 							<textbox id="txtSubject"
 								value="@bind(fx.messageSubject) @validator(vm.notNullValidator)"
-								placeholder="*"
+								placeholder="${c:l('txt.ui.common.Predmet')}"
                            		hflex="1"
                            		tabindex="1"
                            		focus="true" />
@@ -64,7 +63,6 @@
 							<!-- Text -->
 							<textbox id="txtMessage"
 								value="@bind(fx.messageText) @validator(vm.notNullValidator)"
-								placeholder="*"
                            		hflex="1"
                            		multiline="true"
                            		rows="26"
