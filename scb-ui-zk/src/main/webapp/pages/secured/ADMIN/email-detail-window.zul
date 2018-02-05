@@ -28,13 +28,35 @@
 							<!-- Prijemci -->
 							<label value="${c:l('txt.ui.common.Prijemcu')}:" />
 							[<label value="@load(vm.emailAddressCount)" />]
-							<a iconSclass="z-icon-list-alt" popup="sendToListPopup, position=after_end" style="font-size: large; margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.SeznamPrijemcu')}" />
+							<a iconSclass="z-icon-list-alt" popup="sendToListPopup, position=after_start" style="font-size: large; margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.SeznamPrijemcu')}" />
 		                	<popup id="sendToListPopup" height="350px" width="300px">
-						    	<vbox style="margin: 5px;">
-						    		<label value="@load(vm.emailAddressSet)" />
-						    	</vbox>
-						    </popup>
-										    
+					    		<listbox model="@load(vm.emailAddressSet)"
+									hflex="1"
+									height="330px"
+									emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+									class="listbox" >
+							        
+							        <!-- Filter -->
+									<auxhead height="37px">
+										<auxheader class="filter">
+											<textbox hflex="1"
+												value="@bind(vm.filter.address)"
+												instant="true"
+												onChange="@command('filterDomCmd')" />
+										</auxheader>
+									</auxhead>
+									
+							        <listhead>
+							            <listheader label="${c:l('txt.ui.common.email')}" sort="auto(each)" />
+							        </listhead>
+							         
+							        <template name="model">
+							            <listitem>
+							                <listcell label="${each}" />
+							            </listitem>
+							        </template>
+							    </listbox>
+						    </popup>	    
 						</hbox>
 					</cell>		
 				</row>
