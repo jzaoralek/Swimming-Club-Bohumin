@@ -11,7 +11,8 @@ public enum WebPages {
 	USER_PARTICIPANT_DETAIL("/pages/secured/USER/ucastnik.zul"),
 	USER_LIST("/pages/secured/ADMIN/seznam-uzivatelu.zul"),
 	USER_DETAIL("/pages/secured/ADMIN/uzivatel.zul"),
-	PAYMENT_LIST("/pages/secured/TRAINER/seznam-plateb.zul");
+	PAYMENT_LIST("/pages/secured/TRAINER/seznam-plateb.zul"),
+	EMAIL_DETAIL_WINDOW("/pages/secured/ADMIN/email-detail-window.zul");
 
 	private String url;
 

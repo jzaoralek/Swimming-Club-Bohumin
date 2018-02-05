@@ -176,7 +176,7 @@
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 				<configuration>
-					<scanIntervalSeconds>120</scanIntervalSeconds>
+					<scanIntervalSeconds>0</scanIntervalSeconds>
 					<webApp>
 						<contextPath>/scb-ui-zk</contextPath>
 					</webApp>
