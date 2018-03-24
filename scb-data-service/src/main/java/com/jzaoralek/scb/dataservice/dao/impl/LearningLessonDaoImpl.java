@@ -279,7 +279,7 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 			ret.setTimeFrom(rs.getTime("time_from"));
 			ret.setTimeTo(rs.getTime("time_to"));
 			UUID lessonUuid = UUID.fromString(rs.getString("lesson_uuid"));
-			ret.setLesson(lessonDao.getByUuid(lessonUuid));
+//			ret.setLesson(lessonDao.getByUuid(lessonUuid));
 
 			String courseParticUuid = rs.getString("COURSE_PARTICIPANT_UUID");
 			if (StringUtils.hasText(courseParticUuid)) {
