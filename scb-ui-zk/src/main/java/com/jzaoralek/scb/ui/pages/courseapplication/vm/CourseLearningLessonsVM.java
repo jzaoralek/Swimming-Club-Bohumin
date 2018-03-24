@@ -16,7 +16,6 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
@@ -30,7 +29,6 @@ import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -78,19 +76,21 @@ public class CourseLearningLessonsVM extends BaseVM {
 		this.pageHeadline = Labels.getLabel("txt.ui.heading.learningCourse", new Object[]{this.course.getName()});
 		setReturnPage(fromPage);
 
-		if (StringUtils.isEmpty(tabSelected) || CourseLearnLessonTab.valueOf(tabSelected) == CourseLearnLessonTab.LESSONS) {
-			// lekce
-			this.tabSelected = CourseLearnLessonTab.LESSONS;
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
-			cal.set(Calendar.DAY_OF_MONTH, 1);
-			this.monthSelected = cal;
-			buildLessonList(this.monthSelected);			
-		} else if (CourseLearnLessonTab.valueOf(tabSelected) == CourseLearnLessonTab.ATTENDANCE) {
-			// statistika dochazky
-			this.tabSelected = CourseLearnLessonTab.ATTENDANCE;
-			this.lessonStats = learningLessonService.buildCourseStatistics(this.course.getUuid(), null);			
-		}
+		// lekce
+		this.tabSelected = CourseLearnLessonTab.LESSONS;
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		this.monthSelected = cal;
+		buildLessonList(this.monthSelected);
+		
+//		if (StringUtils.isEmpty(tabSelected) || CourseLearnLessonTab.valueOf(tabSelected) == CourseLearnLessonTab.LESSONS) {
+//			
+//		} else if (CourseLearnLessonTab.valueOf(tabSelected) == CourseLearnLessonTab.ATTENDANCE) {
+//			// statistika dochazky
+//			this.tabSelected = CourseLearnLessonTab.ATTENDANCE;
+//			this.lessonStats = learningLessonService.buildCourseStatistics(this.course.getUuid(), null);			
+//		}
 		
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.LEARNING_LESSON_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
@@ -137,14 +137,20 @@ public class CourseLearningLessonsVM extends BaseVM {
 		 WebUtils.openModal("/pages/secured/TRAINER/learning-lesson-window.zul");
 	}
 	
+//	@Command
+//	public void redirectToTab(@BindingParam(WebConstants.TAB_PARAM) String tab) {
+//		if (!StringUtils.hasText(tab)) {
+//			throw new IllegalArgumentException("tab is null");
+//		}
+//		
+//		CourseLearnLessonTab tabSelected = CourseLearnLessonTab.valueOf(tab);
+//		Executions.sendRedirect("/pages/secured/TRAINER/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+this.course.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST + "&" + WebConstants.TAB_PARAM + "=" + tabSelected);
+//	}
+	
+	@NotifyChange("lessonStats")
 	@Command
-	public void redirectToTab(@BindingParam(WebConstants.TAB_PARAM) String tab) {
-		if (!StringUtils.hasText(tab)) {
-			throw new IllegalArgumentException("tab is null");
-		}
-		
-		CourseLearnLessonTab tabSelected = CourseLearnLessonTab.valueOf(tab);
-		Executions.sendRedirect("/pages/secured/TRAINER/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+this.course.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST + "&" + WebConstants.TAB_PARAM + "=" + tabSelected);
+	public void lessonAttendanceTabOnSelect() {
+		this.lessonStats = learningLessonService.buildCourseStatistics(this.course.getUuid(), null);	
 	}
 
 	/**

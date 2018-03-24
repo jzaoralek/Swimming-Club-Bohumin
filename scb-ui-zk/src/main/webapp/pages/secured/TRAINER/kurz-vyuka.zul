@@ -35,14 +35,16 @@
 				<vbox hflex="20" pack="center" sclass="vbox-content" >
 					<tabbox id="tb" hflex="1">
 					    <tabs id="tabs">
+<!-- 					        selected="@load(vm.tabSelected eq 'LESSONS')" -->
+<!-- 					        onSelect="@command('redirectToTab', tab='LESSONS')" -->
 					        <tab id="lessonAttendance" 
 					        	label="${c:l('txt.ui.common.lessons')}"
-					        	selected="@load(vm.tabSelected eq 'LESSONS')"
-					        	onSelect="@command('redirectToTab', tab='LESSONS')" />
+					        	 />
+<!-- 					        selected="@load(vm.tabSelected eq 'ATTENDANCE')" -->
+<!-- 					        onSelect="@command('redirectToTab', tab='ATTENDANCE')" -->
 					        <tab id="lessonAttendanceStats" 
 					        	label="${c:l('txt.ui.common.attendance')}" 
-					        	selected="@load(vm.tabSelected eq 'ATTENDANCE')"
-					        	onSelect="@command('redirectToTab', tab='ATTENDANCE')"  />
+					        	onSelect="@command('lessonAttendanceTabOnSelect')" />
 					    </tabs>
 					    <tabpanels>
 					    	<tabpanel>
@@ -102,7 +104,73 @@
 							    </listbox>
 					    	</tabpanel>
 					    	<tabpanel>
-					    		<lesson-stats lessonStats="${vm.lessonStats}" participantMode="false" />
+<!-- 					    		<lesson-stats lessonStats="${vm.lessonStats}" participantMode="false" /> -->
+					    		
+					    		<style src="/resources/css/spreadsheet_grid.css" />
+								<grid sclass="grid-spreadsheet" height="480px" hflex="1"
+									style="border: none; overflow:scroll;"
+									model="@load(vm.lessonStats.learnLessonsStatsList)">
+									<columns>
+										<column align="left" sclass="header" width="80px" />
+<!-- 										<column align="center" sclass="header" width="60px" /> -->
+										<column align="center" sclass="header" width="80px" />
+										<column align="center" sclass="header last" width="80px" />
+										
+										<column align="center" hflex="1" sclass="header last"
+											style="white-space: normal;" >
+											<hbox children="@load(vm.lessonStats.getParticipantStatsList())">
+												<template name="children">
+													<vbox vflex="1" align="center" width="80px">
+														<hbox height="40px" align="start" pack="center">
+															<vbox align="center">
+																<label value="@load(each.particName)" style="font-weight: bold;cursor: default;" visible="true" />
+																<label value="${c:l('txt.ui.common.lessonAttendance')}" style="font-weight: bold;cursor: default;" visible="false" />
+															</vbox>
+														</hbox>
+														<hbox vflex="1">
+															<label value="@load(each.particAttendance)"
+																tooltiptext="${c:l('txt.ui.common.lessonAttendance')}"
+																style="cursor: default;" />
+															<label value="%" />
+														</hbox>
+													</vbox>
+												</template>
+											</hbox>
+										</column>
+										
+									</columns>
+									<template name="model">
+										<row hflex="1">
+											<cell sclass="years" style="margin: 10px;">
+												<label
+													value="@load(each.learningLesson.lessonDate) @converter(vm.monthConverter)"
+													visible="@load(each.learningLesson.firstInMonth)" />
+											</cell>
+<!-- 											<cell sclass="season"> -->
+<!-- 												<label value="@load(each.learningLesson.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" /> -->
+<!-- 											</cell> -->
+											<cell sclass="season">
+												<label
+													value="@load(each.learningLesson.lessonDate) @converter(vm.dateConverter)" />
+											</cell>
+											<cell sclass="month last">
+												<label
+													value="@load(each.learningLesson.timeFrom) @converter(vm.timeConverter)" />
+												-
+												<label
+													value="@load(each.learningLesson.timeTo) @converter(vm.timeConverter)" />
+											</cell>
+											<hbox children="@load(each.courseParticipantList)">
+												<template name="children">
+													<vbox vflex="1" align="center" width="80px">
+														<label value="@load(each.lessonAttendance ? 'Ano' : 'Ne')"
+															style="@load(each.lessonAttendance ? 'color:green;' : 'color:red;')" />		
+													</vbox>
+												</template>
+											</hbox>
+										</row>
+									</template>
+								</grid>
 					    	</tabpanel>
 						</tabpanels>
 					</tabbox>
