@@ -1,16 +1,17 @@
-DROP TABLE contact;
-DROP TABLE course_participant;
-DROP TABLE user;
-DROP TABLE course_application;
-DROP TABLE result;
-DROP TABLE course;
-DROP TABLE course_course_participant;
-DROP TABLE lesson;
-DROP TABLE configuration;
-DROP TABLE codelist_item;
-DROP TABLE learning_lesson;
-DROP TABLE participant_learning_lesson;
-DROP TABLE bank_transaction;
+DROP TABLE IF EXISTS contact;
+DROP TABLE IF EXISTS  course_participant;
+DROP TABLE IF EXISTS  user;
+DROP TABLE IF EXISTS  course_application;
+DROP TABLE IF EXISTS  result;
+DROP TABLE IF EXISTS  course;
+DROP TABLE IF EXISTS  course_course_participant;
+DROP TABLE IF EXISTS  lesson;
+DROP TABLE IF EXISTS  configuration;
+DROP TABLE IF EXISTS  codelist_item;
+DROP TABLE IF EXISTS  learning_lesson;
+DROP TABLE IF EXISTS  participant_learning_lesson;
+DROP TABLE IF EXISTS  bank_transaction;
+DROP TABLE IF EXISTS  payment;
 
 CREATE TABLE contact(
 	uuid varchar(36),
@@ -61,6 +62,7 @@ CREATE TABLE course_application(
 	year_to YEAR NOT NULL,
 	course_participant_uuid varchar(36) REFERENCES course_participant(uuid),
 	user_uuid varchar(36) REFERENCES user(uuid),
+	payed ENUM('0','1') NOT NULL DEFAULT '0',
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
@@ -69,7 +71,7 @@ CREATE TABLE course_application(
 CREATE TABLE course(
 	uuid varchar(36),
 	name VARCHAR(100) NOT NULL,
-	description VARCHAR(240),
+	description VARCHAR(240) CHARACTER SET utf8,
 	year_from YEAR,
 	year_to YEAR,
 	price_semester_1 INT NOT NULL,
@@ -100,7 +102,7 @@ CREATE TABLE lesson(
 CREATE TABLE configuration(
 	uuid varchar(36),
 	name ENUM('COURSE_APPLICATION_ALLOWED','COURSE_APPLICATION_YEAR') NOT NULL,
-	description VARCHAR(100),
+	description VARCHAR(100) CHARACTER SET utf8,
 	val VARCHAR(240),
   type  ENUM('STRING','INTEGER','BOOLEAN') NOT NULL,
 	modif_at TIMESTAMP NOT NULL,
@@ -112,7 +114,7 @@ CREATE TABLE codelist_item (
 	uuid varchar(36),
 	item_type ENUM('SWIMMING_STYLE') NOT NULL,
 	name VARCHAR(100) NOT NULL,
-	description VARCHAR(240),
+	description VARCHAR(240) CHARACTER SET utf8,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
@@ -124,7 +126,7 @@ CREATE TABLE result(
 	result_date date NOT NULL,
 	style_uuid varchar(36) REFERENCES codelist_item(uuid),
 	distance MEDIUMINT NOT NULL,
-	description varchar(240),
+	description varchar(240) CHARACTER SET utf8,
 	course_participant_uuid varchar(36) REFERENCES course_participant(uuid),
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
@@ -136,7 +138,7 @@ CREATE TABLE learning_lesson (
 	lesson_date DATE NOT NULL,
 	time_from time NOT NULL,
 	time_to time NOT NULL,
-	description varchar(240),
+	description varchar(240) CHARACTER SET utf8,
 	additional_column_int INT,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
