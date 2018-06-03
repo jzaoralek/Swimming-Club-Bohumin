@@ -1,4 +1,6 @@
 #!/bin/bash
+# ./002-db-objects.sh ${user}
+
 echo "Creating database objects, user/database: $1"
 echo ""
 

@@ -1,4 +1,6 @@
 #!/bin/bash
+# ./001-db-user.sh root password ${user}
+
 echo "Creating Swimming club database and user."
 echo "Input params:"
 echo "- admin user: $1"

@@ -1,4 +1,6 @@
 #!/bin/bash
+# ./003-db-data.sh ${user}
+
 echo "Creating database data. User/database $1"
 echo ""
 
