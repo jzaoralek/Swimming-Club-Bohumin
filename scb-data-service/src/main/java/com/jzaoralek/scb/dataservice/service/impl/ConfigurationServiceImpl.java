@@ -55,7 +55,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public List<String> getCourseYearFromActualYearList() {
-		return getYearList(false);
+		return getYearList(true);
 	}
 
 	private  List<String> getYearList(boolean fromStartYear) {
