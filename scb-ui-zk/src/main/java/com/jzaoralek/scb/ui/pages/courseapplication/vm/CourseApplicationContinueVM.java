@@ -126,7 +126,7 @@ public class CourseApplicationContinueVM extends BaseVM {
 		
 		try {
 			courseApplicationService.store(courseApplication);
-			byte[] byteArray = JasperUtil.getReport(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplication.getYearFrom()}));
+			byte[] byteArray = JasperUtil.getReport(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplication.getYearFrom()}), configurationService);
 			this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);			
 			sendMail(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {String.valueOf(courseApplication.getYearFrom())+"/"+String.valueOf(courseApplication.getYearTo())}));
 		} catch (ScbValidationException e) {

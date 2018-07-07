@@ -128,7 +128,7 @@ public class CourseParticipantListVM extends BaseVM {
 			courseApplicationService.store(courseApplication);
 			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationSend"));
 			this.courseParticipantList = courseService.getCourseParticListByRepresentativeUuid(SecurityUtils.getLoggedUser().getUuid());
-			byte[] byteArray = JasperUtil.getReport(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplication.getYearFrom()}));
+			byte[] byteArray = JasperUtil.getReport(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplication.getYearFrom()}), configurationService);
 			this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);			
 			sendMail(courseApplication, this.pageHeadline);
 		} catch (ScbValidationException e) {

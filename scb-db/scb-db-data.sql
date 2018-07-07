@@ -6,7 +6,16 @@ DELETE FROm user;
 INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
 VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499611', 'COURSE_APPLICATION_ALLOWED', 'Přihlášky do kurzu povoleny', 'true', 'BOOLEAN', now(), 'SYSTEM');
 INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
-VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499611', 'COURSE_APPLICATION_YEAR', 'Aktuální ročník', '2017/2018', 'STRING', now(), 'SYSTEM');
+VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499611', 'COURSE_APPLICATION_YEAR', 'Aktuální ročník', '2017/2018', 'ENUM', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499612', 'ORGANIZATION_NAME', 'Název klubu', 'Plavecký klub Bohumín', 'STRING', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499613', 'ORGANIZATION_PHONE', 'Telefonní kontakt na klub', '+420 604 920 452', 'STRING', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499614', 'ORGANIZATION_EMAIl', 'Emailový kontakt na klub', 'info@pkbohumin.cz', 'STRING', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499615', 'WELCOME_INFO', 'Uvítací informace na homepage', 'Vítejte na stránkách Plaveckého klubu Bohumín.', 'STRING', now(), 'SYSTEM');
+
 
 INSERT INTO codelist_item (uuid, item_type, name, description, modif_at, modif_by) 
 VALUES ('82bb2300-8234-11e6-ae22-56b6b6499611', 'SWIMMING_STYLE', 'Prsa', '',  now(), 'SYSTEM');

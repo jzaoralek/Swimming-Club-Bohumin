@@ -15,6 +15,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.jzaoralek.scb.dataservice.controller.CourseApplicationController;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.ui.common.converter.Converters;
 
 import net.sf.jasperreports.engine.JRAbstractExporter;
@@ -33,7 +34,7 @@ public class JasperUtil {
     public static String XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 
-    public static byte[] getReport(CourseApplication courseApplication, String title) {
+    public static byte[] getReport(CourseApplication courseApplication, String title, ConfigurationService configurationService) {
         InputStream reportStream = null;
         ByteArrayOutputStream baos = null;
         if (courseApplication == null) {
@@ -46,9 +47,9 @@ public class JasperUtil {
 
             Map<String, Object> paramsMap = new HashMap<String, Object>();
             paramsMap.put("reportTitle", title);
-            paramsMap.put("organizationNameTitle", Labels.getLabel("txt.ui.organization.name"));
-            paramsMap.put("contactPhone", Labels.getLabel("txt.ui.organization.phone"));
-            paramsMap.put("contactEmail", Labels.getLabel("txt.ui.organization.email"));
+            paramsMap.put("organizationNameTitle", ConfigUtil.getOrgName(configurationService));
+            paramsMap.put("contactPhone", ConfigUtil.getOrgPhone(configurationService));
+            paramsMap.put("contactEmail", ConfigUtil.getOrgEmail(configurationService));
             paramsMap.put("courseParticFirstname", getNotNullValue(courseApplication.getCourseParticipant().getContact().getFirstname()));
             paramsMap.put("courseParticSurname", getNotNullValue(courseApplication.getCourseParticipant().getContact().getSurname()));
             paramsMap.put("courseParticBirthdate", Converters.getDateconverter().coerceToUi(courseApplication.getCourseParticipant().getBirthdate(), null, null));

@@ -1,4 +1,4 @@
-<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.menu.configuration')}"?>
+<?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.menu.configuration')}"?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 
@@ -52,14 +52,15 @@
 					                		<listbox selectedItem="@bind(each.value)" 
 												model="@load(vm.courseYearList)"
 												mold="select"
-												visible="${each.type eq 'STRING'}"
+												if="${each.type eq 'ENUM'}"
 												height="25px" >
 												<template name="model">
 													<listitem label="${each}" value="${each}" />
 												</template>
 											</listbox>
+											<textbox if="${each.type eq 'STRING'}" value="@bind(each.value)" hflex="1"/>
 							                <listbox selectedItem="@bind(each.value)"
-												visible="${each.type eq 'BOOLEAN'}"
+												if="${each.type eq 'BOOLEAN'}"
 												mold="select"
 												height="25px" >
 												<listitem label="Ano" value="true" />

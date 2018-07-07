@@ -57,6 +57,26 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public List<String> getCourseYearFromActualYearList() {
 		return getYearList(true);
 	}
+	
+	@Override
+	public String getOrgName() {
+		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_NAME.name()).getValue();
+	}
+
+	@Override
+	public String getOrgPhone() {
+		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_PHONE.name()).getValue();
+	}
+
+	@Override
+	public String getOrgEmail() {
+		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_EMAIl.name()).getValue();
+	}
+
+	@Override
+	public String getWelcomeInfo() {
+		return configurationDao.getByName(Config.ConfigName.WELCOME_INFO.name()).getValue();
+	}
 
 	private  List<String> getYearList(boolean fromStartYear) {
 		List<String> ret = new ArrayList<>();

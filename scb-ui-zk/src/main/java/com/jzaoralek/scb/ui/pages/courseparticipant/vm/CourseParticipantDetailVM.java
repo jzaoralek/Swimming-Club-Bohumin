@@ -110,7 +110,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	
 	@Command
 	public void downloadCourseApplicationCmd(@BindingParam(WebConstants.COURSE_APPLICATION_PARAM) CourseApplication courseApplication) {
-		byte[] byteArray = JasperUtil.getReport(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplication.getYearFrom()}));
+		byte[] byteArray = JasperUtil.getReport(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplication.getYearFrom()}), configurationService);
 		Attachment attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
 		WebUtils.downloadAttachment(attachment);
 	}

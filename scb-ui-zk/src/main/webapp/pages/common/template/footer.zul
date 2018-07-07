@@ -1,12 +1,11 @@
 <hlayout spacing="0" style="background: #e4e6e9; border: 1px solid #cfcfcf;">
 	<vbox hflex="1" />
 	
-	<vbox hflex="20" pack="center" align="end" >
+	<vbox hflex="20" pack="center" align="end" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.FooterVM')" >
 		<hbox align="center" height="50px">
 			${c:l('txt.ui.common.contact')}: 
-			<label value="${c:l('txt.ui.organization.phone')}" style="white-space: nowrap;" />, 
-			<a href="mailto:${c:l('txt.ui.organization.email')} ">${c:l('txt.ui.organization.email')} </a>
-			
+			<label value="${vm.orgPhone}" style="white-space: nowrap;" />, 
+			<a href="mailto:${vm.orgEmail} ">${vm.orgEmail} </a>
 		</hbox>
 	</vbox>
 	

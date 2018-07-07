@@ -1,4 +1,4 @@
-<?page title="${c:l('txt.ui.organization.name')} - ${vm.pageHeadline}"?>
+<?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.common.participantDetail')}"?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>

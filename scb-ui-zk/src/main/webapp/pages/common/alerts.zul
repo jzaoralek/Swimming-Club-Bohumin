@@ -1,5 +1,5 @@
 <!-- <?component name="headline" macroURI="/pages/template/components/page-headline.zul"?> -->
-<?page title="${c:l('txt.ui.organization.name')} - Alerts"?>
+<?page title="Alerts"?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 
 <zk>
