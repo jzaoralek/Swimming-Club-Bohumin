@@ -6,41 +6,32 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
-import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
-import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
-import org.zkoss.bind.annotation.NotifyChange;
-import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
-import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
-import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
-import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.converter.Converters;
+import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.ManifestSolver;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.validator.ExistingUsernameValidator;
 import com.jzaoralek.scb.ui.common.validator.Validators;
-import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM;
 
 public class BaseVM {
 
@@ -51,6 +42,12 @@ public class BaseVM {
 	private final List<Boolean> booleanListItem = Arrays.asList(null, Boolean.TRUE, Boolean.FALSE);
 	private final List<Listitem> roleList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(ScbUserRole.class));
 	private final List<Listitem> roleListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(ScbUserRole.class));
+	
+	protected static String orgName;
+	protected String orgEmail;
+	protected String orgPhone;
+	protected String welcomeInfo;
+	
 
 	@WireVariable
 	protected ConfigurationService configurationService;
@@ -68,6 +65,14 @@ public class BaseVM {
 	@Init
 	public void init() {
 		this.existingUsernameValidator = new ExistingUsernameValidator(scbUserService);
+		
+		// naplneni cashovanych hodnot z konfigurace
+		orgName = ConfigUtil.getOrgName(configurationService);		
+	}
+
+	
+	public static String getOrgNameStatic() {
+		return orgName;
 	}
 
 	public String getDateFormat() {
@@ -315,7 +320,7 @@ public class BaseVM {
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
 
-		byte[] byteArray = JasperUtil.getReport(courseApplication, headline);
+		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
 		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
 
 		// mail to course participant representative
@@ -332,7 +337,7 @@ public class BaseVM {
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
 
 		// mail to club
-		mailService.sendMail(Labels.getLabel("txt.ui.organization.email"), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
+		mailService.sendMail(ConfigUtil.getOrgEmail(configurationService), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
 	}
 	
 	protected void sendMailWithResetpassword(ScbUser user) {

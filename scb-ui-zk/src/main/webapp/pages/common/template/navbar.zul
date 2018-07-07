@@ -19,7 +19,7 @@
 		
 		<!-- Brand Logo -->
 		<vbox vflex="1" hflex="10" align="start" pack="center" >
-			<a label="${c:l('txt.ui.organization.name')}" 
+			<a label="${vm.orgName}" 
 				sclass="pull-left navbar-brand" 
 				style="font-size: 22px; font-weight: bold;" href="/" />
 		</vbox>

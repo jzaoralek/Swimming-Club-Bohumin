@@ -9,6 +9,7 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 
 import com.jzaoralek.scb.dataservice.domain.Config;
+import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -28,6 +29,7 @@ public class ConfigVM extends BaseVM {
 	@Command
 	public void updateCmd(@BindingParam("config") Config config) {
 		configurationService.update(config);
+		ConfigUtil.clearSessionConfigCache(config.getName());
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
 	}
 

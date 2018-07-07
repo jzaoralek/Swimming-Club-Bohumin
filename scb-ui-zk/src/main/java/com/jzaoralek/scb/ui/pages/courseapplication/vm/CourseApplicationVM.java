@@ -52,6 +52,7 @@ public class CourseApplicationVM extends BaseVM {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
+		super.init();
 		// kontrola zda-li prihlasky povolene
 		if (!isSecuredPage() && !isCourseApplicationAllowed()) {
 			this.editMode = false;

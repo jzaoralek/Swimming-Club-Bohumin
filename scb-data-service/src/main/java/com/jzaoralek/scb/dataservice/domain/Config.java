@@ -11,13 +11,18 @@ public class Config implements IdentEntity {
 
 	public enum ConfigName {
 		COURSE_APPLICATION_ALLOWED,
-		COURSE_APPLICATION_YEAR;
+		COURSE_APPLICATION_YEAR,
+		ORGANIZATION_NAME,
+		ORGANIZATION_PHONE,
+		ORGANIZATION_EMAIl,
+		WELCOME_INFO;
 	}
 
 	public enum ConfigType {
 		STRING,
 		INTEGER,
-		BOOLEAN;
+		BOOLEAN,
+		ENUM;
 	}
 
 	private UUID uuid;

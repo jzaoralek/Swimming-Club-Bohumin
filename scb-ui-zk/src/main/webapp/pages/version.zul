@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
-<?page title="${c:l('txt.ui.organization.name')} - ${c:l('txt.ui.common.version')}"?>
+<?page title="${c:l('txt.ui.common.version')}"?>
 
 <zk>
 	<vlayout viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.vm.VersionVM')" style="background: white;" hflex="1" vflex="1">
