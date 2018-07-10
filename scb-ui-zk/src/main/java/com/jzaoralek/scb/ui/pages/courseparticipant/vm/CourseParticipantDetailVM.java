@@ -21,10 +21,12 @@ import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.LearningLessonStatsWrapper;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.service.CodeListService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
@@ -50,11 +52,16 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
 	
+	@WireVariable
+	private LearningLessonService learningLessonService;
+	
 	private CourseParticipant courseParticipant;
 	private List<Listitem> swimStyleListitemList;
 	private Listitem swimStyleListitemSelected;
+	private LearningLessonStatsWrapper lessonStats;
 	private List<Course> courseList;
 	private List<CourseApplication> courseApplicationList;
+	private Course courseSelected;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
@@ -140,6 +147,19 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		return sb.toString();
 	}
 	
+	@NotifyChange("lessonStats")
+	@Command
+	public void courseOnSelectCmd() {
+		this.lessonStats = learningLessonService.buildCourseStatistics(this.courseSelected.getUuid(), this.courseParticipant.getUuid());
+	}
+	
+	@NotifyChange({"lessonStats","courseSelected"})
+	@Command
+	public void showAttendanceCmd(@BindingParam("course") Course course) {
+		this.lessonStats = learningLessonService.buildCourseStatistics(course.getUuid(), this.courseParticipant.getUuid());
+		this.courseSelected = course;
+	}
+	
 	public CourseParticipant getCourseParticipant() {
 		return courseParticipant;
 	}
@@ -166,5 +186,17 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	
 	public List<CourseApplication> getCourseApplicationList() {
 		return courseApplicationList;
+	}
+	
+	public Course getCourseSelected() {
+		return courseSelected;
+	}
+
+	public void setCourseSelected(Course courseSelected) {
+		this.courseSelected = courseSelected;
+	}
+	
+	public LearningLessonStatsWrapper getLessonStats() {
+		return lessonStats;
 	}
 }
