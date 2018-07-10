@@ -2,6 +2,7 @@
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
+<?component name="lesson-stats" macroURI="/pages/common/component/lesson-stats.zul"?>
 
 <zk>
 	<borderlayout self="@{define(mainContent)}" hflex="1" 
@@ -175,14 +176,10 @@
 						    	</tabpanel>
 						    	
 						    	<tabpanel fulfill="courseApplications.onSelect">
-						    		<!-- Prihlasky -->
-						    		
-						    		
-						    		
+						    		<!-- Prihlasky --> 		
 						    		<listbox model="@load(vm.courseApplicationList)"
 										id="courseApplicationList"
 										hflex="1"
-										style="margin-top: 20px;"
 										mold="paging"
 										pageSize="10"
 										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
@@ -221,55 +218,125 @@
 						    		
 						    	</tabpanel>
 						    	
-						    	<tabpanel hflex="1" fulfill="courses.onSelect">
-						    		<!-- Kurzy -->
-						    		<listbox model="@load(vm.courseList)"
-										id="courseList"
-										hflex="1"
-										mold="paging"
-										pageSize="10"
-										oddRowSclass="listbox-odd-row"
-										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-										class="listbox" >
-								        <auxhead>
-								            <auxheader class="header" colspan="3" >
-								            	<hbox hflex="1" height="42px" align="center" >
-									            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-								            			<hbox vflex="1" align="center">
-								            				<label value="${c:l('txt.ui.menu.courses')}" style="margin-right:5px;" />
-								            			</hbox>
-								            		</vbox>
-								            		<vbox hflex="1" vflex="1" align="end" pack="center" sclass="header-div" >
-								            			<hbox vflex="1" pack="center" align="center">
-								            				<!-- Rocnik -->
-			            									<include src="/pages/common/component/context-year.zul"/>
-														</hbox>
-													</vbox>
-												</hbox>
-								            </auxheader>
-								        </auxhead>
-										
-								        <listhead>
-								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" />
-								            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" />
-								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left"  />
-								        </listhead>
-								         
-								        <template name="model" var="item">
-								            <listitem>
-								                <listcell label="${item.name}" />
-								                <listcell label="${item.description}" />
-								                <listcell>
-								                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
-								                		<label value="${vm.getLessonToUi(each)}"/>
-													</vbox>
-								                </listcell>
-								            </listitem>
-								        </template>
-								    </listbox>
+						    	<tabpanel hflex="1" fulfill="courses.onSelect" vflex="1">
+						    		<vbox vflex="1" align="start">
+						    		
+							    		<!-- Kurzy -->
+							    		<listbox model="@load(vm.courseList)"
+											id="courseList"
+											hflex="1"
+											mold="paging"
+											onSelect="@command('courseOnSelectCmd')"
+											selectedItem="@bind(vm.courseSelected)"
+											pageSize="10"
+											oddRowSclass="listbox-odd-row"
+											emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+											class="listbox" >
+									        <auxhead>
+									            <auxheader class="header" colspan="4" >
+									            	<hbox hflex="1" height="42px" align="center" >
+										            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+									            			<hbox vflex="1" align="center">
+									            				<label value="${c:l('txt.ui.menu.courses')}" style="margin-right:5px;" />
+									            			</hbox>
+									            		</vbox>
+									            		<vbox hflex="1" vflex="1" align="end" pack="center" sclass="header-div" >
+									            			<hbox vflex="1" pack="center" align="center">
+									            				<!-- Rocnik -->
+				            									<include src="/pages/common/component/context-year.zul"/>
+															</hbox>
+														</vbox>
+													</hbox>
+									            </auxheader>
+									        </auxhead>
+											
+									        <listhead>
+									            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" />
+									            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" />
+									            <listheader label="${c:l('txt.ui.common.lessons')}" align="left"  />
+									            <listheader hflex="min"/>
+									        </listhead>
+									         
+									        <template name="model" var="item">
+									            <listitem>
+									                <listcell label="${item.name}" />
+									                <listcell label="${item.description}" />
+									                <listcell>
+									                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
+									                		<label value="${vm.getLessonToUi(each)}"/>
+														</vbox>
+									                </listcell>
+									                <listcell>
+									                	<button label="${c:l('txt.ui.common.attendance')}" onClick="@command('showAttendanceCmd', course=item)" />
+									                </listcell>
+									            </listitem>
+									        </template>
+									    </listbox>
+									    
+									    <!-- Dochazka -->
+									    <style src="/resources/css/spreadsheet_grid.css" />
+										<grid sclass="grid-spreadsheet" height="480px" 
+											style="border: none; overflow:scroll; margin-top: 20px;"
+											visible="@load(vm.courseSelected ne null)"
+											model="@load(vm.lessonStats.learnLessonsStatsList)">
+											
+											<columns>
+												<column align="left" sclass="header" width="80px" >
+													<label value="${c:l('txt.ui.common.attendance')}" /> 
+												</column>
+												<column align="center" sclass="header" width="80px" />
+												<column align="center" sclass="header last" width="80px" />
+												
+												<column align="center" hflex="1" sclass="header last"
+													style="white-space: normal;" >
+													<hbox children="@load(vm.lessonStats.getParticipantStatsList())">
+														<template name="children">
+															<vbox vflex="1" align="center" width="80px">
+																
+																<hbox vflex="1">
+																	<label value="@load(each.particAttendance)"
+																		tooltiptext="${c:l('txt.ui.common.lessonAttendance')}"
+																		style="cursor: default;" />
+																	<label value="%" />
+																</hbox>
+															</vbox>
+														</template>
+													</hbox>
+												</column>
+											</columns>
+											<template name="model">
+												<row hflex="1">
+													<cell sclass="years" style="margin: 10px;">
+														<label
+															value="@load(each.learningLesson.lessonDate) @converter(vm.monthConverter)"
+															visible="@load(each.learningLesson.firstInMonth)" />
+													</cell>
+													<cell sclass="season">
+														<label
+															value="@load(each.learningLesson.lessonDate) @converter(vm.dateConverter)" />
+													</cell>
+													<cell sclass="month last">
+														<label
+															value="@load(each.learningLesson.timeFrom) @converter(vm.timeConverter)" />
+														-
+														<label
+															value="@load(each.learningLesson.timeTo) @converter(vm.timeConverter)" />
+													</cell>
+													<hbox children="@load(each.courseParticipantList)">
+														<template name="children">
+															<vbox vflex="1" align="center" width="80px">
+																<label value="@load(each.lessonAttendance ? 'Ano' : 'Ne')"
+																	style="@load(each.lessonAttendance ? 'color:green;' : 'color:red;')" />		
+															</vbox>
+														</template>
+													</hbox>
+												</row>
+											</template>
+										</grid>
+								    </vbox>
 						    	</tabpanel>
 						    	
-						    	<tabpanel hflex="1" visible="false" fulfill="courseParticipantResult.onSelect">
+						    	<tabpanel hflex="1" if="false" fulfill="courseParticipantResult.onSelect">
 						    		<!-- Vysledky -->
 						    		<hbox pack="start" style="margin-top: 10px;">
 						    			<label value="${c:l('txt.ui.common.style')}: "/>
