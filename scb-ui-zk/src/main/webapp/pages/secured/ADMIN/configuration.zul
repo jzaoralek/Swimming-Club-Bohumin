@@ -23,6 +23,7 @@
 				<tabbox id="tb" hflex="1" style="margin-top: 20px;">
 				    <tabs id="tabs">
 				        <tab id="courseParticipants" label="${c:l('txt.ui.common.configBasic')}" />
+				        <tab id="courseLocations" label="${c:l('txt.ui.common.courseLocations')}" />
 				        <tab id="lessons" label="${c:l('txt.ui.common.swimStyleAdmin')}"  />
 				    </tabs>
 				    <tabpanels>
@@ -76,6 +77,54 @@
 						    </listbox>
 				        </tabpanel>
 				        
+				        <!-- Mista konani kurzu -->
+				        <tabpanel  viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.configuration.vm.CourseLocationAdminVM')">
+				    		<listbox model="@load(vm.courseLocationList)"
+								id="courseLocationList"
+								hflex="1"
+								mold="paging"
+								pageSize="10"
+								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+								class="listbox" >
+						        <auxhead>
+						            <auxheader class="header" colspan="3" >
+						            	<hbox hflex="1" height="42px" align="center" >
+							            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+						            			<hbox vflex="1" align="center">
+						            				<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" sclass="btn-warning" iconSclass="z-icon-plus" />
+						            			</hbox>
+						            		</vbox>
+						            		<vbox hflex="1" vflex="1" align="end" pack="center" >
+						            			<hbox>
+					            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
+												</hbox>
+											</vbox>
+										</hbox>
+						            </auxheader>
+						        </auxhead>
+						        
+						        <listhead>
+						            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
+						            <listheader label="${c:l('txt.ui.common.description2')}" sort="auto(description)" align="left" hflex="2" />
+						            <listheader width="50px" align="center" />
+						        </listhead>
+						         
+						        <template name="model">
+						            <listitem>
+						                <listcell label="${each.name}" onDoubleClick="@command('detailCmd', item=each)" />
+						                <listcell label="${each.description}" onDoubleClick="@command('detailCmd', item=each)" />                	
+						                <listcell>
+						                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
+						                	<menupopup id="menuCourse_${each.uuid}" >
+												<menuitem label="Detail" onClick="@command('detailCmd', item=each)" />
+												<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)"  />
+									       	</menupopup>
+						                </listcell>
+						            </listitem>
+						        </template>
+						    </listbox>
+				    	</tabpanel>
+				        
 				    	<!-- Administrace stylu -->
 				    	<tabpanel  viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.configuration.vm.SwimStyleAdminVM')">
 				    		<listbox model="@load(vm.codeListItemList)"
@@ -103,8 +152,8 @@
 						        </auxhead>
 						        
 						        <listhead>
-						            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" />
-						            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" />
+						            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
+						            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" hflex="2" />
 						            <listheader width="50px" align="center" />
 						        </listhead>
 						         

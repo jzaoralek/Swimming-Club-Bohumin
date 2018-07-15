@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
+import com.jzaoralek.scb.dataservice.dao.CourseLocationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
@@ -33,7 +35,9 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	
 	@Autowired
 	private LessonService lessonService;
-
+	
+	@Autowired
+	private CourseLocationDao courseLocationDao;
 
 	@Override
 	public void delete(UUID uuid) throws ScbValidationException {
@@ -51,8 +55,14 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 
 	@Override
-	public List<Course> getAll(int yearFrom, int yearTo) {
-		return courseDao.getAll(yearFrom, yearTo);
+	public List<Course> getAll(int yearFrom, int yearTo, boolean withLessons) {
+		List<Course> ret = courseDao.getAll(yearFrom, yearTo);
+		if (withLessons && ret != null && !ret.isEmpty()) {
+			for (Course item : ret) {
+				item.setLessonList(lessonService.getByCourse(item.getUuid()));								
+			}
+		}
+		return ret;
 	}
 
 	@Override
@@ -171,5 +181,50 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		}
 
 		return false;
+	}
+
+	@Override
+	public List<CourseLocation> getCourseLocationAll() {
+		return courseLocationDao.getAll();
+	}
+
+	@Override
+	public CourseLocation getCourseLocationByUuid(UUID uuid) {
+		return courseLocationDao.getByUuid(uuid);
+	}
+
+	@Override
+	public CourseLocation store(CourseLocation courseLocatiom) {
+		if (courseLocatiom == null) {
+			throw new IllegalArgumentException("courseLocatiom is null");
+		}
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Storing courseLocatiom: " + courseLocatiom);
+		}
+
+		boolean insert = courseLocatiom.getUuid() == null;
+		if (courseLocatiom.getUuid() == null) {
+			courseLocatiom.setUuid(UUID.randomUUID());
+		}
+		
+		if (insert) {
+			courseLocationDao.insert(courseLocatiom);
+		} else {
+			courseLocationDao.update(courseLocatiom);
+		}
+
+		return courseLocatiom;
+	}
+
+
+	@Override
+	public void deleteCourseLocation(CourseLocation courseLocatiom) {
+		courseLocationDao.delete(courseLocatiom);
+	}
+
+	@Override
+	public boolean existsByCourseLocation(UUID courseLocationUuid) {
+		return courseDao.existsByCourseLocation(courseLocationUuid);
 	}
 }

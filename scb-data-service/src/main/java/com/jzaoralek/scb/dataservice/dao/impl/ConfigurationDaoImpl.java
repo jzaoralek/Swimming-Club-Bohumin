@@ -20,7 +20,6 @@ import com.jzaoralek.scb.dataservice.domain.Config;
 public class ConfigurationDaoImpl extends BaseJdbcDao implements ConfigurationDao {
 
 	private static final String NAME_PARAM = "name";
-	private static final String DESCRIPTION_PARAM = "description";
 	private static final String VALUE_PARAM = "value";
 	private static final String TYPE_PARAM = "type";
 

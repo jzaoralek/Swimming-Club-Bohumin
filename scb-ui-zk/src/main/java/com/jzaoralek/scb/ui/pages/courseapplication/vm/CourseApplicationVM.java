@@ -1,5 +1,8 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -17,12 +20,13 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
 
+import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
-import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
+import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
@@ -40,16 +44,19 @@ public class CourseApplicationVM extends BaseVM {
 	private boolean showNotification;
 	private String confirmText;
 	private String errotText;
-	private String pageHeadline;
 	private String captcha;
+	private List<Course> courseList;
+	private Set<Course> courseSelected;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
 
 	@WireVariable
+	private CourseService courseService;
+	
+	@WireVariable
 	private ScbUserService scbUserService;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
 		super.init();
@@ -71,6 +78,24 @@ public class CourseApplicationVM extends BaseVM {
 		this.showNotification = false;
 
 		setReturnPage(fromPage);
+		
+		if (!isSecuredPage()) {
+			this.application.fillYearFromTo(configurationService.getCourseApplicationYear());			
+		}
+		
+		// seznam kurzu
+		this.courseList = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
+		// nastaveni vybraneho kurzu
+		if (this.securedMode 
+				&& this.courseList != null 
+				&& !this.courseList.isEmpty()
+				&& this.application.getCourseParticipant().getCourseUuid() != null) {
+			for (Course item : this.courseList) {
+				if (item.getUuid().toString().equals(this.application.getCourseParticipant().getCourseUuid().toString()))
+					this.courseSelected.add(item);
+					break;
+			}
+		}
 
 		if (courseApplication == null) {
 			this.pageHeadline = getNewCourseApplicationTitle();
@@ -105,11 +130,15 @@ public class CourseApplicationVM extends BaseVM {
 				// zjistit zda-li pred zalozenim objednavky uz uzivatel v aplikaci existoval
 				ScbUser scbUserBeforeApplicationSave = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
 				
-				courseApplicationService.store(application);
-				//WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationSend"));
+				CourseApplication courseApplication = courseApplicationService.store(application);
 				this.editMode = false;
 				this.confirmText = Labels.getLabel("msg.ui.info.applicationSend");
 				this.showNotification = true;
+				
+				// prihlaseni rovnou do kurzu
+				if (this.courseSelected != null && !this.courseSelected.isEmpty()) {
+					courseService.storeCourseParticipants(Arrays.asList(courseApplication.getCourseParticipant()), this.courseSelected.iterator().next().getUuid());
+				}
 
 				sendMail(this.application, this.pageHeadline);
 				
@@ -231,5 +260,14 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public void setCaptcha(String captcha) {
 		this.captcha = captcha;
+	}
+	public Set<Course> getCourseSelected() {
+		return courseSelected;
+	}
+	public void setCourseSelected(Set<Course> courseSelected) {
+		this.courseSelected = courseSelected;
+	}
+	public List<Course> getCourseList() {
+		return courseList;
 	}
 }

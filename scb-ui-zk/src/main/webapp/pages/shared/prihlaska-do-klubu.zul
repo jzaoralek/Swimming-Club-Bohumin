@@ -58,6 +58,70 @@
 							Údaje označené hvězdičkou jsou povinné.
 						</vbox>
 						
+						<!-- Vyber kurzu -->
+						<grid hflex="1" sclass="form-grid" style="margin-top: 20px;margin-bottom: 20px;" >
+							<columns>
+				                <column align="center" hflex="1" />
+				            </columns>
+				            <auxhead>
+				            	<auxheader colspan="2" style="background: #428CCD;">
+				            		<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+				            			<hbox>
+					            			<vbox>
+					            				<label value="${c:l('txt.ui.common.CourseSelection')}"/>
+											</vbox>
+				            			</hbox>
+				            		</vbox>
+				            	</auxheader>
+				            </auxhead>
+							<rows style="background: white;">
+								<row sclass="form-grid-row" style="border: none;" >
+									<listbox model="@load(vm.courseList)" 
+										hflex="1"
+										selectedItems="@bind(vm.courseSelected)"
+										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+										class="listbox"
+										visible="@load(vm.courseList ne null)"
+										multiple="false"
+										checkmark="true" >
+										
+										
+								        <listhead>
+								            <listheader width="25px" />
+								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
+								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
+								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
+								            <listheader width="25px" />
+								        </listhead>
+								         
+								        <template name="model" var="item">
+								            <listitem>
+								                <listcell></listcell>
+								                <listcell label="${item.name}" />
+								                <listcell label="${item.courseLocation.name}" />
+								                <listcell>
+								                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
+								                		<label value="${vm.getLessonToUi(each)}"/>
+													</vbox>
+								                </listcell>
+								                <listcell>
+									                <vbox>
+														<!-- Popis -->
+									                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
+									                	<popup id="descriptionPopup_${item.uuid}">
+													    	<vbox style="margin: 5px;">
+													    		<label value="${item.description}"/>
+													    	</vbox>
+													    </popup>
+							                		</vbox>
+								                </listcell>
+								            </listitem>
+								        </template>
+								    </listbox>
+								</row>
+							</rows>
+						</grid>
+						
 						<!-- Zakonny zastupce -->
 						<grid hflex="1" sclass="form-grid" style="margin-top: 20px;margin-bottom: 20px;" >
 				            <auxhead>
@@ -102,7 +166,7 @@
 									</cell>
 								</row>
 								
-								<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 30px;" >
+								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
 									<cell sclass="form-grid-cell" >
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.firstname')}"/>

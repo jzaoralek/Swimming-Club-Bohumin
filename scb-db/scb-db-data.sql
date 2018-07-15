@@ -15,7 +15,8 @@ INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_b
 VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499614', 'ORGANIZATION_EMAIl', 'Emailový kontakt na klub', 'info@pkbohumin.cz', 'STRING', now(), 'SYSTEM');
 INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
 VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499615', 'WELCOME_INFO', 'Uvítací informace na homepage', 'Vítejte na stránkách Plaveckého klubu Bohumín.', 'STRING', now(), 'SYSTEM');
-
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499616', 'COURSE_APPL_SEL_REQ', 'Výběr kurzu v rámci přihlášky', 'true', 'BOOLEAN', now(), 'SYSTEM');
 
 INSERT INTO codelist_item (uuid, item_type, name, description, modif_at, modif_by) 
 VALUES ('82bb2300-8234-11e6-ae22-56b6b6499611', 'SWIMMING_STYLE', 'Prsa', '',  now(), 'SYSTEM');

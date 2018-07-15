@@ -21,7 +21,10 @@ public class Course implements IdentEntity {
 	private Long priceSemester1;
 	private Long priceSemester2;
 	private List<CourseParticipant> participantList;
+	private int participantCount;
 	private List<Lesson> lessonList;
+	private CourseLocation courseLocation;
+	private Integer maxParticipantCount;
 
 	@Override
 	public UUID getUuid() {
@@ -89,6 +92,9 @@ public class Course implements IdentEntity {
 	public void setParticipantList(List<CourseParticipant> participantList) {
 		this.participantList = participantList;
 	}
+	public void setParticipantCount(int participantCount) {
+		this.participantCount = participantCount;
+	}
 	public List<Lesson> getLessonList() {
 		return lessonList;
 	}
@@ -100,7 +106,7 @@ public class Course implements IdentEntity {
 	}
 	public int getParticipantListCount() {
 		if (CollectionUtils.isEmpty(this.participantList)) {
-			return 0;
+			return this.participantCount;
 		} else {
 			return this.participantList.size();
 		}
@@ -124,11 +130,25 @@ public class Course implements IdentEntity {
 		this.yearTo = Integer.valueOf(years[1]);
 	}
 	
+	public CourseLocation getCourseLocation() {
+		return courseLocation;
+	}
+	public void setCourseLocation(CourseLocation courseLocation) {
+		this.courseLocation = courseLocation;
+	}
+	public Integer getMaxParticipantCount() {
+		return maxParticipantCount;
+	}
+	public void setMaxParticipantCount(Integer maxParticipantCount) {
+		this.maxParticipantCount = maxParticipantCount;
+	}
+	
 	@Override
 	public String toString() {
 		return "Course [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", name=" + name
 				+ ", description=" + description + ", yearFrom=" + yearFrom + ", yearTo=" + yearTo + ", priceSemester1="
 				+ priceSemester1 + ", priceSemester2=" + priceSemester2 + ", participantList=" + participantList
-				+ ", lessonList=" + lessonList + "]";
+				+ ", lessonList=" + lessonList + ", courseLocation=" + courseLocation + ", maxParticipantCount="
+				+ maxParticipantCount + "]";
 	}
 }

@@ -21,6 +21,7 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
@@ -43,6 +44,7 @@ public class CourseVM extends BaseVM {
 	private String courseYearSelected;
 	private Boolean updateMode;
 	private List<CourseParticipant> participantSelectedList;
+	private List<CourseLocation> courseLocationList;
 
 	@WireVariable
 	private CourseService courseService;
@@ -61,16 +63,29 @@ public class CourseVM extends BaseVM {
 			course = courseService.getByUuid(UUID.fromString(uuid));
 		}
 		this.courseYearList = configurationService.getCourseYearFromActualYearList();
+		this.courseLocationList = courseService.getCourseLocationAll();
 		if (course != null) {
 			this.course = course;
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseDetail");
 			this.updateMode = true;
 			this.courseYearSelected = course.getYear();
+			// misto kurzu
+			if (this.course.getCourseLocation() != null && this.courseLocationList != null && !this.courseLocationList.isEmpty()) {
+				for (CourseLocation item : this.courseLocationList) {
+					if (item.getUuid().toString().equals(this.course.getCourseLocation().getUuid().toString())) {
+						this.course.setCourseLocation(item);
+					}
+				}
+			}
 		} else {
 			this.course = new Course();
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseNew");
 			this.updateMode = false;
 			this.courseYearSelected = configurationService.getCourseApplicationYear();
+			// misto kurzu
+			if (this.courseLocationList != null && !this.courseLocationList.isEmpty()) {
+				this.course.setCourseLocation(this.courseLocationList.get(0));
+			}
 		}
 
 		setReturnPage(fromPage);
@@ -218,4 +233,9 @@ public class CourseVM extends BaseVM {
 	public void setParticipantSelectedList(List<CourseParticipant> participantSelectedList) {
 		this.participantSelectedList = participantSelectedList;
 	}
+
+	public List<CourseLocation> getCourseLocationList() {
+		return courseLocationList;
+	}
+	
 }

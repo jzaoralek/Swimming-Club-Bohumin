@@ -17,6 +17,7 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -107,6 +108,21 @@ public class BaseVM {
 	}
 	public static int getDescriptionMaxlength() {
 		return WebConstants.DESCRIPTION_MAXLENGTH;
+	}
+	
+	/**
+	 * Prevede lekci na format zobrazitelny v tabulce se spravnym formatem dnu a casu.
+	 * @param lesson
+	 * @return
+	 */
+	public String getLessonToUi(Lesson lesson) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Converters.getEnumlabelconverter().coerceToUi(lesson.getDayOfWeek(), null, null));
+		sb.append(" ");
+		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeFrom(), null, null));
+		sb.append(" - ");
+		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeTo(), null, null));
+		return sb.toString();
 	}
 
 	public Validator getEmailValidator() {

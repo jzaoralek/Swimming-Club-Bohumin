@@ -158,7 +158,7 @@ public class CourseListVM extends BaseContextVM {
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
 
-		this.courseList = courseService.getAll(yearFrom, yearTo);
+		this.courseList = courseService.getAll(yearFrom, yearTo, false);
 		this.courseListBase = this.courseList;
 		BindUtils.postNotifyChange(null, null, this, "courseList");
 	}
