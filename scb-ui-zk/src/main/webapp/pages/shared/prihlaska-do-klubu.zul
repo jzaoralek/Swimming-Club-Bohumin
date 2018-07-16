@@ -79,6 +79,7 @@
 									<!-- Verejna cast -->
 									<listbox model="@load(vm.courseList)" 
 										hflex="1"
+										height="350px"
 										selectedItems="@bind(vm.courseSelected)"
 										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 										class="listbox"
@@ -93,7 +94,7 @@
 								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
 								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
 								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" />
-								            <listheader width="25px" />
+								            <listheader width="50px" align="center" />
 								        </listhead>
 								         
 								        <template name="model" var="item" >
@@ -135,7 +136,6 @@
 								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
 								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
 								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" />
-								            <listheader width="25px" />
 								        </listhead>
 								         
 								        <template name="model" var="item" >
@@ -148,17 +148,6 @@
 													</vbox>
 								                </listcell>
 								                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
-								                <listcell>
-									                <vbox>
-														<!-- Popis -->
-									                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
-									                	<popup id="descriptionPopup_${item.uuid}">
-													    	<vbox style="margin: 5px;">
-													    		<label value="${item.description}"/>
-													    	</vbox>
-													    </popup>
-							                		</vbox>
-								                </listcell>
 								            </listitem>
 								        </template>
 								    </listbox>
