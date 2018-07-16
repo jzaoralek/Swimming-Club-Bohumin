@@ -88,4 +88,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 		return ret;
 	}
+
+	@Override
+	public boolean isCourseSelectionRequired() {
+		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.COURSE_APPL_SEL_REQ.name()).getValue());
+	}
 }

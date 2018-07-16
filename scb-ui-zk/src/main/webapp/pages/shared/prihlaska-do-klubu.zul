@@ -59,7 +59,7 @@
 						</vbox>
 						
 						<!-- Vyber kurzu -->
-						<grid hflex="1" sclass="form-grid" style="margin-top: 20px;margin-bottom: 20px;" >
+						<grid hflex="1" sclass="form-grid" style="margin-top: 20px;margin-bottom: 20px;" if="${vm.courseSelectionRequired}" >
 							<columns>
 				                <column align="center" hflex="1" />
 				            </columns>
@@ -76,26 +76,28 @@
 				            </auxhead>
 							<rows style="background: white;">
 								<row sclass="form-grid-row" style="border: none;" >
+									<!-- Verejna cast -->
 									<listbox model="@load(vm.courseList)" 
 										hflex="1"
 										selectedItems="@bind(vm.courseSelected)"
 										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 										class="listbox"
 										visible="@load(vm.courseList ne null)"
+										if="${!vm.securedMode}"
 										multiple="false"
 										checkmark="true" >
-										
 										
 								        <listhead>
 								            <listheader width="25px" />
 								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
 								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
 								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
+								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" />
 								            <listheader width="25px" />
 								        </listhead>
 								         
-								        <template name="model" var="item">
-								            <listitem>
+								        <template name="model" var="item" >
+								            <listitem style="${vm.getCourseRowColor(item)}" disabled="${item.fullOccupancy}">
 								                <listcell></listcell>
 								                <listcell label="${item.name}" />
 								                <listcell label="${item.courseLocation.name}" />
@@ -104,6 +106,48 @@
 								                		<label value="${vm.getLessonToUi(each)}"/>
 													</vbox>
 								                </listcell>
+								                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
+								                <listcell>
+									                <vbox>
+														<!-- Popis -->
+									                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
+									                	<popup id="descriptionPopup_${item.uuid}">
+													    	<vbox style="margin: 5px;">
+													    		<label value="${item.description}"/>
+													    	</vbox>
+													    </popup>
+							                		</vbox>
+								                </listcell>
+								            </listitem>
+								        </template>
+								    </listbox>
+								    
+								    <!-- Admin cast -->
+									<listbox model="@load(vm.courseList)" 
+										hflex="1"
+										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+										class="listbox"
+										visible="@load(vm.courseList ne null)"
+										if="${vm.securedMode}">
+										
+								        <listhead>
+								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
+								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
+								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
+								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" />
+								            <listheader width="25px" />
+								        </listhead>
+								         
+								        <template name="model" var="item" >
+								            <listitem>
+								                <listcell label="${item.name}" />
+								                <listcell label="${item.courseLocation.name}" />
+								                <listcell>
+								                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
+								                		<label value="${vm.getLessonToUi(each)}"/>
+													</vbox>
+								                </listcell>
+								                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
 								                <listcell>
 									                <vbox>
 														<!-- Popis -->

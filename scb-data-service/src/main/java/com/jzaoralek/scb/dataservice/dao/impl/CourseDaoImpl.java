@@ -50,7 +50,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 
 	private static final String UPDATE = "UPDATE course SET uuid = :"+UUID_PARAM+" , name = :"+NAME_PARAM+", description = :"+DESCRIPTION_PARAM+", year_from = :"+YEAR_FROM_PARAM+", year_to = :"+YEAR_TO_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", price_semester_1 = :"+PRICE_SEMESTER_1_PARAM+", price_semester_2 = :"+PRICE_SEMESTER_2_PARAM+", course_location_uuid = :"+COURSE_LOCATION_UUID_PARAM+", max_participant_count = :"+MAX_PARTIC_COUNT_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course where uuid = :" + UUID_PARAM;
-	private static final String SELECT_ALL = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by, c.price_semester_1, c.price_semester_2, "
+	private static final String SELECT_ALL = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by, c.price_semester_1, c.price_semester_2, c.max_participant_count, "
 			+ "cl.uuid \"course_location_uuid\" , cl.name \"course_location_name\", cl.description  \"course_location_description\", "
 			+ "(select count(*) FROM course_course_participant ccp "
 					+ "WHERE ccp.course_uuid = c.uuid) \"participant_count\"  "
@@ -59,7 +59,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			+ "WHERE year_from = :"+YEAR_FROM_PARAM+" AND year_to = :"+YEAR_TO_PARAM;
 	private static final String SELECT_ALL_EXCEPT_COURSE = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by, price_semester_1, price_semester_2, course_location_uuid, max_participant_count FROM course where uuid != :"+COURSE_UUID_PARAM;
 	private static final String SELECT_BY_UUID = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by, price_semester_1, price_semester_2, course_location_uuid, max_participant_count FROM course WHERE uuid=:" + UUID_PARAM;
-	private static final String SELECT_BY_COURSE_PARTICIPANT = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by, c.price_semester_1, c.price_semester_2, course_location_uuid, "
+	private static final String SELECT_BY_COURSE_PARTICIPANT = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by, c.price_semester_1, c.price_semester_2, course_location_uuid, max_participant_count, "
 			+ "cl.uuid \"course_location_uuid\" , cl.name \"course_location_name\", cl.description  \"course_location_description\", "
 			+ "(select count(*) FROM course_course_participant ccp "
 					+ "WHERE ccp.course_uuid = c.uuid) \"participant_count\"  "
@@ -206,6 +206,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			ret.setPriceSemester1(rs.getLong("price_semester_1"));
 			ret.setPriceSemester2(rs.getLong("price_semester_2"));
 			ret.setParticipantCount(rs.getInt("participant_count"));
+			ret.setMaxParticipantCount(rs.getInt("max_participant_count"));
 
 			CourseLocation courseLocation;
 			String courseLocationUuid = rs.getString("course_location_uuid");

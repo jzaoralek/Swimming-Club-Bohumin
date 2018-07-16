@@ -26,6 +26,14 @@ public class Course implements IdentEntity {
 	private CourseLocation courseLocation;
 	private Integer maxParticipantCount;
 
+	public String getOccupancy() {
+		return getParticipantListCount() + " / " + (this.maxParticipantCount != null ? this.maxParticipantCount : 0);
+	}
+	
+	public boolean isFullOccupancy() {
+		return getParticipantListCount() >= (this.maxParticipantCount != null ? this.maxParticipantCount : 0);
+	}
+	
 	@Override
 	public UUID getUuid() {
 		return uuid;

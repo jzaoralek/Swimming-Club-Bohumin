@@ -13,6 +13,7 @@ public interface ConfigurationService {
 	List<String> getCourseYearList();
 	List<String> getCourseYearFromActualYearList();
 	boolean isCourseApplicationsAllowed();
+	boolean isCourseSelectionRequired();
 	String getOrgName();
 	String getOrgPhone();
 	String getOrgEmail();

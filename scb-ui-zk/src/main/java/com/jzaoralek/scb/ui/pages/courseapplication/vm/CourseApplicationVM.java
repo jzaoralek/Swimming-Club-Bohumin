@@ -47,6 +47,7 @@ public class CourseApplicationVM extends BaseVM {
 	private String captcha;
 	private List<Course> courseList;
 	private Set<Course> courseSelected;
+	private boolean courseSelectionRequired;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -83,18 +84,16 @@ public class CourseApplicationVM extends BaseVM {
 			this.application.fillYearFromTo(configurationService.getCourseApplicationYear());			
 		}
 		
-		// seznam kurzu
-		this.courseList = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
-		// nastaveni vybraneho kurzu
-		if (this.securedMode 
-				&& this.courseList != null 
-				&& !this.courseList.isEmpty()
-				&& this.application.getCourseParticipant().getCourseUuid() != null) {
-			for (Course item : this.courseList) {
-				if (item.getUuid().toString().equals(this.application.getCourseParticipant().getCourseUuid().toString()))
-					this.courseSelected.add(item);
-					break;
-			}
+		this.courseSelectionRequired = configurationService.isCourseSelectionRequired();
+		
+		if (this.courseSelectionRequired) {
+			if (!this.securedMode) {
+				// seznam vsech kurzu
+				this.courseList = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);				
+			} else {
+				// seznam vybranych kurzu
+				this.courseList = courseService.getByCourseParticipantUuid(this.application.getCourseParticipant().getUuid(), this.application.getYearFrom(), this.application.getYearTo());
+			}			
 		}
 
 		if (courseApplication == null) {
@@ -125,6 +124,17 @@ public class CourseApplicationVM extends BaseVM {
 				if (!this.healthInfoAgreement || !this.personalInfoProcessAgreement) {
 					WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.agreementWithHealtAndDataInfo"));
 					return;
+				}
+				
+				// pokud byl vybran kurz, potreba zkontrolovat zda-li uz neni zaplnen
+				if (this.courseSelectionRequired && this.courseSelected != null && !this.courseSelected.isEmpty()) {
+					Course selectedCourseDb = courseService.getByUuid(this.courseSelected.iterator().next().getUuid());
+					if (selectedCourseDb.isFullOccupancy()) {
+						WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.courseIsFull", new Object[] {this.courseSelected.iterator().next().getName()}));
+						// reload seznamu kurzu
+						this.courseList = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
+						return;
+					}
 				}
 				
 				// zjistit zda-li pred zalozenim objednavky uz uzivatel v aplikaci existoval
@@ -215,6 +225,22 @@ public class CourseApplicationVM extends BaseVM {
 		this.healthInfoAgreement = false;
 		this.personalInfoProcessAgreement = false;
 	}
+	
+	public String getCourseRowColor(Course course) {
+		if (course == null) {
+			return null;
+		}
+		
+		if (this.securedMode) {
+			return "";
+		}
+		
+		if (course.isFullOccupancy()) {
+			return "background: #F0F0F0";
+		}
+		
+		return "";
+	}
 
 	public CourseApplication getApplication() {
 		return application;
@@ -269,5 +295,8 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public List<Course> getCourseList() {
 		return courseList;
+	}
+	public boolean isCourseSelectionRequired() {
+		return courseSelectionRequired;
 	}
 }

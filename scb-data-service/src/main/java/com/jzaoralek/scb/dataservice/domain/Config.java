@@ -11,6 +11,7 @@ public class Config implements IdentEntity {
 
 	public enum ConfigName {
 		COURSE_APPLICATION_ALLOWED,
+		COURSE_APPL_SEL_REQ,
 		COURSE_APPLICATION_YEAR,
 		ORGANIZATION_NAME,
 		ORGANIZATION_PHONE,
