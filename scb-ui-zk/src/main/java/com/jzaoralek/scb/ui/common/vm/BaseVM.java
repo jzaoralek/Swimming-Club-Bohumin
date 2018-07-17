@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
+import javax.faces.application.Application;
+
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
@@ -16,6 +18,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
@@ -334,8 +337,43 @@ public class BaseVM {
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text1"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		
+		// Ucastnik
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text3"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(courseApplication.getCourseParticipant().getContact().getCompleteName());
+		
+		// Kurz
+		if (courseApplication.getCourseParticipant().getCourseList() != null && !courseApplication.getCourseParticipant().getCourseList().isEmpty()) {
+			Course course = courseApplication.getCourseParticipant().getCourseList().get(0);
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text4"));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			// nazev a popis
+			mailToRepresentativeSb.append(course.getName() + (StringUtils.hasText(course.getDescription()) ? (", " + course.getDescription()) : ""));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			if (course.getCourseLocation() != null) {
+				// nazev a popis mista kurzu
+				mailToRepresentativeSb.append(course.getCourseLocation().getName() + (StringUtils.hasText(course.getCourseLocation().getDescription()) ? (", " + course.getCourseLocation().getDescription()) : ""));
+				mailToRepresentativeSb.append(System.getProperty("line.separator"));				
+			}
+			if (course.getLessonList() != null && !course.getLessonList().isEmpty()) {
+				// lekce
+				for (Lesson item : course.getLessonList()) {
+					mailToRepresentativeSb.append(getLessonToUi(item));
+					mailToRepresentativeSb.append(System.getProperty("line.separator"));
+				}
+			}
+			
+		}
+		
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
 
+		
+		
 		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
 		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
 

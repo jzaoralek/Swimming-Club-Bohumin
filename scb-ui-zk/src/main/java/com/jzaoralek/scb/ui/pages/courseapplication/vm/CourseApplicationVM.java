@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -148,6 +149,7 @@ public class CourseApplicationVM extends BaseVM {
 				// prihlaseni rovnou do kurzu
 				if (this.courseSelected != null && !this.courseSelected.isEmpty()) {
 					courseService.storeCourseParticipants(Arrays.asList(courseApplication.getCourseParticipant()), this.courseSelected.iterator().next().getUuid());
+					this.application.getCourseParticipant().setCourseList(new ArrayList<>(this.courseSelected));
 				}
 
 				sendMail(this.application, this.pageHeadline);
