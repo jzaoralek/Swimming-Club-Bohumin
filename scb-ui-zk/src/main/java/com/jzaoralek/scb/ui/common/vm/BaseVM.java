@@ -238,7 +238,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text4"));
 		
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin"), mailToUser.toString(), null, null);
+		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin"), mailToUser.toString(), null);
 	}
 	
 	protected void sendEndOfSeasonMailToUser(ScbUser user) {
@@ -274,7 +274,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text12"));
 		
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.endOfSeason.subject"), mailToUser.toString(), null, null);
+		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.endOfSeason.subject"), mailToUser.toString(), null);
 	}
 	
 	public List<Boolean> getBooleanListItem() {
@@ -378,7 +378,7 @@ public class BaseVM {
 		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
 
 		// mail to course participant representative
-		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), byteArray,this.attachment.getName().toLowerCase());
+		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), Arrays.asList(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase())));
 
 		StringBuilder mailToClupSb = new StringBuilder();
 		String courseApplicationYear = configurationService.getCourseApplicationYear();
@@ -391,7 +391,7 @@ public class BaseVM {
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
 
 		// mail to club
-		mailService.sendMail(ConfigUtil.getOrgEmail(configurationService), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
+		mailService.sendMail(ConfigUtil.getOrgEmail(configurationService), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null);
 	}
 	
 	protected void sendMailWithResetpassword(ScbUser user) {
@@ -409,7 +409,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text4"));
 
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, null);
+		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null);
 	}
 	
 	@Command

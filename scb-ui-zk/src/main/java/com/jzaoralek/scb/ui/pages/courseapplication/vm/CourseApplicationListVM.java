@@ -230,7 +230,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text4"));
 						
-						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null, null);
+						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null);
 						WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
 					}
 				}

@@ -42,7 +42,7 @@ public class EmailDetailWinVM extends BaseVM {
 	@Command
 	public void submitCmd(@BindingParam("window") Window window) {
 		for (String item : this.emailAddressSet) {
-			mailService.sendMail(item, this.messageSubject, this.messageText, null, null);
+			mailService.sendMail(item, this.messageSubject, this.messageText, null);
 		}
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
