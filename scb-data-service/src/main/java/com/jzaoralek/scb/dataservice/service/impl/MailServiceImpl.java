@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.service.MailService;
 
 @Service("mailService")
@@ -43,7 +45,7 @@ public class MailServiceImpl implements MailService {
     private String mailSmtpPassword;
 
     @Override
-    public void sendMail(String to, String subject, String text, byte[] attachment, String attachmentName) {
+    public void sendMail(String to, String subject, String text, List<Attachment> attachmentList) {
         if (LOG.isDebugEnabled()) {
         	LOG.debug("Send email '" + subject + "' to '" + to + "'.");
         }
@@ -81,12 +83,16 @@ public class MailServiceImpl implements MailService {
 
           // Part two is attachment
 
-          if (attachment != null) {
-        	  DataSource dataSource = new ByteArrayDataSource(attachment, "application/pdf");
-        	  MimeBodyPart pdfBodyPart = new MimeBodyPart();
-        	  pdfBodyPart.setDataHandler(new DataHandler(dataSource));
-        	  pdfBodyPart.setFileName(attachmentName);
-        	  multipart.addBodyPart(pdfBodyPart);
+          if (attachmentList != null && !attachmentList.isEmpty()) {
+        	  for (Attachment attachment : attachmentList) {
+        		  if (attachment != null) {
+        			  DataSource dataSource = new ByteArrayDataSource(attachment.getFile(), "application/pdf");
+        			  MimeBodyPart pdfBodyPart = new MimeBodyPart();
+        			  pdfBodyPart.setDataHandler(new DataHandler(dataSource));
+        			  pdfBodyPart.setFileName(attachment.getName());
+        			  multipart.addBodyPart(pdfBodyPart);
+        		  }        	          		  
+        	  }
           }
 
           // Send the complete message parts
