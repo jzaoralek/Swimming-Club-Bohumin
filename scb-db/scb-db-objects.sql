@@ -72,7 +72,7 @@ CREATE TABLE course_application(
 CREATE TABLE course(
 	uuid varchar(36),
 	name VARCHAR(100) CHARACTER SET utf8 NOT NULL,
-	description VARCHAR(240) CHARACTER SET utf8,
+	description VARCHAR(1000) CHARACTER SET utf8,
 	year_from YEAR,
 	year_to YEAR,
 	price_semester_1 INT NOT NULL,
@@ -193,6 +193,6 @@ CREATE TABLE bank_transaction (
 CREATE TABLE course_location (
 	uuid varchar(36),
 	name VARCHAR(240) CHARACTER SET utf8,
-	description VARCHAR(240) CHARACTER SET utf8,
+	description VARCHAR(1000) CHARACTER SET utf8,
 	PRIMARY KEY (uuid)
 );

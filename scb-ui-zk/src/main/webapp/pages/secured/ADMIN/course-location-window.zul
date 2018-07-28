@@ -47,7 +47,7 @@
 							<label value="${c:l('txt.ui.common.description2')}"/>
 							<textbox id="codeListItemDescription"
 								value="@bind(fx.item.description)"
-								maxlength="240"
+								maxlength="1000"
 								multiline="true"
 								sclass="form-input-text"
 								tabindex="2"

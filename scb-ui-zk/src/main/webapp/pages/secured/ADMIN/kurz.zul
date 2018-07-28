@@ -70,7 +70,7 @@
 									<label value="${c:l('txt.ui.common.description2')}"/>
 									<textbox id="courseDescription"
 										value="@bind(fx.course.description)"
-										maxlength="@load(vm.getDescriptionMaxlength())"
+										maxlength="1000"
 										style="height: 30px;"
 										multiline="true"
 										tabindex="2"
