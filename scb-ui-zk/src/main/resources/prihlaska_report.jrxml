@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="prihlaska_report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a55adce4-c6f6-4eb2-9966-8c944668fcb1">
 	<property name="ireport.zoom" value="1.6105100000000008"/>
 	<property name="ireport.x" value="0"/>
@@ -239,7 +240,7 @@
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="342" y="627" width="178" height="20" uuid="6c62e128-617d-4389-a22a-c4d83c15520c"/>
+				<reportElement x="337" y="624" width="190" height="20" uuid="6c62e128-617d-4389-a22a-c4d83c15520c"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[datum a podpis zákonného zástupce]]></text>
 			</staticText>
