@@ -1,0 +1,17 @@
+<?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
+<?page title="${c:l('txt.Login')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+
+<zk>
+	<borderlayout self="@{define(mainContent)}" hflex="1"
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.security.vm.SendMailVM')" >
+		<center border="none" >
+			<div>
+				<button label="Send mail" onClick="@command('sendMailCmd')" />
+			</div>
+		</center>
+	</borderlayout>
+	
+</zk>

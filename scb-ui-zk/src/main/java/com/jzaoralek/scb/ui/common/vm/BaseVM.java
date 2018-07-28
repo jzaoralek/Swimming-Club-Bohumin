@@ -1,5 +1,9 @@
 package com.jzaoralek.scb.ui.common.vm;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
@@ -7,6 +11,7 @@ import java.util.List;
 
 import javax.faces.application.Application;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
@@ -372,13 +377,30 @@ public class BaseVM {
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
 
-		
-		
 		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
 		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
+		
+        List<com.jzaoralek.scb.dataservice.domain.Attachment> attachmentList = new ArrayList<>();
+        // attachment prihlaska
+        attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase()));
 
+        // attachment gdpr
+        byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
+		if (gdprByteArray != null) {
+			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
+		}
+		
+		// attachment lekarska prohlidka
+		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
+		if (lekarskaProhlidkaByteArray != null) {
+			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
+		}
+        
 		// mail to course participant representative
-		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), Arrays.asList(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase())));
+		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
+				, Labels.getLabel("txt.ui.menu.application")
+				, mailToRepresentativeSb.toString()
+				, attachmentList);
 
 		StringBuilder mailToClupSb = new StringBuilder();
 		String courseApplicationYear = configurationService.getCourseApplicationYear();
