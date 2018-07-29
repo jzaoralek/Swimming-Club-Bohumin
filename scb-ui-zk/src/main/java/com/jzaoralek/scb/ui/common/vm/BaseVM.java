@@ -299,6 +299,25 @@ public class BaseVM {
 	}
 
 	public void sendMail(CourseApplication courseApplication, String headline) {
+		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
+		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
+		
+        List<com.jzaoralek.scb.dataservice.domain.Attachment> attachmentList = new ArrayList<>();
+        // attachment prihlaska
+        attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase()));
+
+        // attachment gdpr
+        byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
+		if (gdprByteArray != null) {
+			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
+		}
+		
+		// attachment lekarska prohlidka
+		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
+		if (lekarskaProhlidkaByteArray != null) {
+			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
+		}
+		
 		StringBuilder mailToRepresentativeSb = new StringBuilder();
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
@@ -337,29 +356,21 @@ public class BaseVM {
 			
 		}
 		
+		if (attachmentList != null && !attachmentList.isEmpty()) {
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			if (attachmentList.size() == 1) {
+				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text5"));
+			} else {
+				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text6"));
+			}
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		}
+		
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(configurationService.getOrgName());
 
-		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
-		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
-		
-        List<com.jzaoralek.scb.dataservice.domain.Attachment> attachmentList = new ArrayList<>();
-        // attachment prihlaska
-        attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase()));
-
-        // attachment gdpr
-        byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
-		if (gdprByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
-		}
-		
-		// attachment lekarska prohlidka
-		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
-		if (lekarskaProhlidkaByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
-		}
-        
 		// mail to course participant representative
 		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
 				, Labels.getLabel("txt.ui.menu.application")
