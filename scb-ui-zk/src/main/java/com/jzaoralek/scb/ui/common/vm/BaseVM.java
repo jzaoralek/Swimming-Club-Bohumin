@@ -1,10 +1,17 @@
 package com.jzaoralek.scb.ui.common.vm;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
+import javax.faces.application.Application;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
@@ -16,7 +23,9 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -108,6 +117,21 @@ public class BaseVM {
 	public static int getDescriptionMaxlength() {
 		return WebConstants.DESCRIPTION_MAXLENGTH;
 	}
+	
+	/**
+	 * Prevede lekci na format zobrazitelny v tabulce se spravnym formatem dnu a casu.
+	 * @param lesson
+	 * @return
+	 */
+	public String getLessonToUi(Lesson lesson) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Converters.getEnumlabelconverter().coerceToUi(lesson.getDayOfWeek(), null, null));
+		sb.append(" ");
+		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeFrom(), null, null));
+		sb.append(" - ");
+		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeTo(), null, null));
+		return sb.toString();
+	}
 
 	public Validator getEmailValidator() {
 		return Validators.getEmailValidator();
@@ -185,7 +209,7 @@ public class BaseVM {
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text0"));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text1"));
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text1", new Object[] {configurationService.getOrgName(), configurationService.getBaseURL()}));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text2", new Object[] {user.getUsername()}));
@@ -217,45 +241,9 @@ public class BaseVM {
 		
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text4"));
+		mailToUser.append(configurationService.getOrgName());
 		
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin"), mailToUser.toString(), null, null);
-	}
-	
-	protected void sendEndOfSeasonMailToUser(ScbUser user) {
-		StringBuilder mailToUser = new StringBuilder();
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text0"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text1"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text2"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text3"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text4"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text5"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text6"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text7"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text8"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text9"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text10"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text11"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text12"));
-		
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.endOfSeason.subject"), mailToUser.toString(), null, null);
+		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
 	}
 	
 	public List<Boolean> getBooleanListItem() {
@@ -318,13 +306,65 @@ public class BaseVM {
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text1"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
+		
+		// Ucastnik
+		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text3"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(courseApplication.getCourseParticipant().getContact().getCompleteName());
+		
+		// Kurz
+		if (courseApplication.getCourseParticipant().getCourseList() != null && !courseApplication.getCourseParticipant().getCourseList().isEmpty()) {
+			Course course = courseApplication.getCourseParticipant().getCourseList().get(0);
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text4"));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			// nazev a popis
+			mailToRepresentativeSb.append(course.getName() + (StringUtils.hasText(course.getDescription()) ? (", " + course.getDescription()) : ""));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			if (course.getCourseLocation() != null) {
+				// nazev a popis mista kurzu
+				mailToRepresentativeSb.append(course.getCourseLocation().getName() + (StringUtils.hasText(course.getCourseLocation().getDescription()) ? (", " + course.getCourseLocation().getDescription()) : ""));
+				mailToRepresentativeSb.append(System.getProperty("line.separator"));				
+			}
+			if (course.getLessonList() != null && !course.getLessonList().isEmpty()) {
+				// lekce
+				for (Lesson item : course.getLessonList()) {
+					mailToRepresentativeSb.append(getLessonToUi(item));
+					mailToRepresentativeSb.append(System.getProperty("line.separator"));
+				}
+			}
+			
+		}
+		
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(configurationService.getOrgName());
 
 		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
 		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
+		
+        List<com.jzaoralek.scb.dataservice.domain.Attachment> attachmentList = new ArrayList<>();
+        // attachment prihlaska
+        attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase()));
 
+        // attachment gdpr
+        byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
+		if (gdprByteArray != null) {
+			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
+		}
+		
+		// attachment lekarska prohlidka
+		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
+		if (lekarskaProhlidkaByteArray != null) {
+			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
+		}
+        
 		// mail to course participant representative
-		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("txt.ui.menu.application"), mailToRepresentativeSb.toString(), byteArray,this.attachment.getName().toLowerCase());
+		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
+				, Labels.getLabel("txt.ui.menu.application")
+				, mailToRepresentativeSb.toString()
+				, attachmentList);
 
 		StringBuilder mailToClupSb = new StringBuilder();
 		String courseApplicationYear = configurationService.getCourseApplicationYear();
@@ -337,7 +377,7 @@ public class BaseVM {
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
 
 		// mail to club
-		mailService.sendMail(ConfigUtil.getOrgEmail(configurationService), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, null);
+		mailService.sendMail(ConfigUtil.getOrgEmail(configurationService), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null);
 	}
 	
 	protected void sendMailWithResetpassword(ScbUser user) {
@@ -345,7 +385,7 @@ public class BaseVM {
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text0"));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text1"));
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text1", new Object[] {configurationService.getBaseURL()}));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text2", new Object[] {user.getUsername()}));
@@ -353,9 +393,9 @@ public class BaseVM {
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text3", new Object[] {user.getPassword()}));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text4"));
+		mailToUser.append(configurationService.getOrgName());
 
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, null);
+		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null);
 	}
 	
 	@Command

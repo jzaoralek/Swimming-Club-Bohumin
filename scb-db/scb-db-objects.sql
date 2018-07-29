@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS  learning_lesson;
 DROP TABLE IF EXISTS  participant_learning_lesson;
 DROP TABLE IF EXISTS  bank_transaction;
 DROP TABLE IF EXISTS  payment;
+DROP TABLE IF EXISTS  course_location;
 
 CREATE TABLE contact(
 	uuid varchar(36),
@@ -70,14 +71,16 @@ CREATE TABLE course_application(
 
 CREATE TABLE course(
 	uuid varchar(36),
-	name VARCHAR(100) NOT NULL,
-	description VARCHAR(240) CHARACTER SET utf8,
+	name VARCHAR(100) CHARACTER SET utf8 NOT NULL,
+	description VARCHAR(1000) CHARACTER SET utf8,
 	year_from YEAR,
 	year_to YEAR,
 	price_semester_1 INT NOT NULL,
 	price_semester_2 INT NOT NULL,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
+	max_participant_count INT,
+	course_location_uuid varchar(36) REFERENCES course_location(uuid),
 	PRIMARY KEY (uuid)
 );
 
@@ -101,10 +104,10 @@ CREATE TABLE lesson(
 
 CREATE TABLE configuration(
 	uuid varchar(36),
-	name ENUM('COURSE_APPLICATION_ALLOWED','COURSE_APPLICATION_YEAR','ORGANIZATION_NAME','ORGANIZATION_PHONE','ORGANIZATION_EMAIl','WELCOME_INFO') NOT NULL,
+	name varchar(36) NOT NULL,
 	description VARCHAR(200) CHARACTER SET utf8,
-	val VARCHAR(240) CHARACTER SET utf8,
-  type  ENUM('STRING','INTEGER','BOOLEAN','ENUM') NOT NULL,
+	val VARCHAR(1000) CHARACTER SET utf8,
+    type  ENUM('STRING','INTEGER','BOOLEAN','ENUM') NOT NULL,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
@@ -185,4 +188,11 @@ CREATE TABLE bank_transaction (
 	provedl VARCHAR(240) CHARACTER SET utf8,
 	zpravaProPrijemnce VARCHAR(240) CHARACTER SET utf8,
 	PRIMARY KEY (idPohybu)
+);
+
+CREATE TABLE course_location (
+	uuid varchar(36),
+	name VARCHAR(240) CHARACTER SET utf8,
+	description VARCHAR(1000) CHARACTER SET utf8,
+	PRIMARY KEY (uuid)
 );

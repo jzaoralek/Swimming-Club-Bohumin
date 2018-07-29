@@ -1,5 +1,10 @@
 package com.jzaoralek.scb.ui.common.utils;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -7,10 +12,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listitem;
@@ -20,6 +28,8 @@ import com.jzaoralek.scb.ui.common.vm.Attachment;
 
 public final class WebUtils {
 
+	private static final Logger logger = Logger.getLogger(WebUtils.class);
+	
 	private WebUtils() {}
 
 	public static void showNotificationInfo(String msg) {
@@ -160,5 +170,31 @@ public final class WebUtils {
 	 */
 	public static String getMessageItemFromEnum(Enum<?> e){
 		return Labels.getLabel("enum." + e.getDeclaringClass().getSimpleName() + "." + e.name());
+	}
+	
+	/**
+	 * Vraci byteArray odpoviodajici souboru na vstupu.
+	 * @param path
+	 * @return
+	 */
+	public static byte[] getFileAsByteArray(String path) {
+		byte[] ret = null;
+		FileInputStream fileInputStream = null;
+		BufferedInputStream bufferedInputStream = null;
+		try {
+			fileInputStream = new FileInputStream(new File(WebApps.getCurrent().getRealPath(path)));
+			bufferedInputStream = new BufferedInputStream(fileInputStream);			
+
+			ret = IOUtils.toByteArray(bufferedInputStream);       		
+			
+			bufferedInputStream.close();				
+			fileInputStream.close();
+		} catch (FileNotFoundException e) {
+			logger.error("FileNotFoundException caught.", e);
+		} catch (IOException e) {
+			logger.error("IOException caught.", e);
+		} 
+		
+		return ret;
 	}
 }

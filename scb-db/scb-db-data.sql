@@ -15,7 +15,14 @@ INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_b
 VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499614', 'ORGANIZATION_EMAIl', 'Emailový kontakt na klub', 'info@pkbohumin.cz', 'STRING', now(), 'SYSTEM');
 INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
 VALUES ('61c867ae-7e9a-11e6-ae22-56b6b6499615', 'WELCOME_INFO', 'Uvítací informace na homepage', 'Vítejte na stránkách Plaveckého klubu Bohumín.', 'STRING', now(), 'SYSTEM');
-
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499616', 'COURSE_APPL_SEL_REQ', 'Výběr kurzu v rámci přihlášky', 'true', 'BOOLEAN', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499617', 'BASE_URL', 'Základní url aplikace, NEMĚNIT!', 'https://www.pkbohumin.cz', 'STRING', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499618', 'HEALTH_AGREEMENT', 'Text souhlasem se zdravotní způsobilostí, zobrazen na přihlášce.', 'Souhlasím s kolektivním plaveckým výcvikem svého syna/dcery. Prohlašuji na základě lékařského posouzení zdravotního stavu, že můj syn/dcera je způsobilý/způsobilá absolvovat fyzickou zátěž sportovních tréninků a plaveckých závodů bez nebezpečí poškození jeho/jejího zdravotního stavu. V případě změny zdravotního stavu budu neprodleně informovat zástupce Plaveckého klubu Bohumín.', 'STRING', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499619', 'PERSONAL_DATA_PROCESS_AGREEMENT', 'Text souhlasem se zpracováním osobních údajů, zobrazen na přihlášce.', 'Souhlasím se zpracováním osobních údajů podle zákona č. 101/2000 Sb.Souhlasím s možností fotografování svého syna/dcery a s možností zveřejnění fotografií nebo videa v rámci propagace Plaveckého klubu Bohumín. Potvrzuji, že jsem se seznámil s Provozním řádem aquacentra Bohumín.', 'STRING', now(), 'SYSTEM');
 
 INSERT INTO codelist_item (uuid, item_type, name, description, modif_at, modif_by) 
 VALUES ('82bb2300-8234-11e6-ae22-56b6b6499611', 'SWIMMING_STYLE', 'Prsa', '',  now(), 'SYSTEM');

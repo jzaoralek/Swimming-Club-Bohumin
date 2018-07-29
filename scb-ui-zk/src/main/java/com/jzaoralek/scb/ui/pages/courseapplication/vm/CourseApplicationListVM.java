@@ -222,15 +222,15 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text1", new Object[] {courseApplication.getCourseParticipant().getContact().getCompleteName(), courseYearSelected}));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
-						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text2", new Object[] {courseApplication.getCourseParticipant().getUuid(), courseApplication.getCourseParticRepresentative().getUuid()}));
+						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text2", new Object[] {configurationService.getBaseURL(), courseApplication.getCourseParticipant().getUuid(), courseApplication.getCourseParticRepresentative().getUuid()}));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text3"));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
-						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text4"));
+						mailToUser.append(configurationService.getOrgName());
 						
-						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null, null);
+						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null);
 						WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
 					}
 				}

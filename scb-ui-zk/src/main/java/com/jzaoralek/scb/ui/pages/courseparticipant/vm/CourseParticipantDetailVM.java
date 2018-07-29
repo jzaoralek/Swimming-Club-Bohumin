@@ -62,6 +62,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	private List<Course> courseList;
 	private List<CourseApplication> courseApplicationList;
 	private Course courseSelected;
+	private boolean showLessonStats;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
@@ -132,32 +133,17 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.swimStyleListitemSelected = this.swimStyleListitemList.get(0);
 	}
 	
-	/**
-	 * Prevede lekci na format zobrazitelny v tabulce se spravnym formatem dnu a casu.
-	 * @param lesson
-	 * @return
-	 */
-	public String getLessonToUi(Lesson lesson) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(Converters.getEnumlabelconverter().coerceToUi(lesson.getDayOfWeek(), null, null));
-		sb.append(" ");
-		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeFrom(), null, null));
-		sb.append(" - ");
-		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeTo(), null, null));
-		return sb.toString();
-	}
+//	@NotifyChange("lessonStats")
+//	@Command
+//	public void courseOnSelectCmd() {
+//		this.lessonStats = learningLessonService.buildCourseStatistics(this.courseSelected.getUuid(), this.courseParticipant.getUuid());
+//	}
 	
-	@NotifyChange("lessonStats")
-	@Command
-	public void courseOnSelectCmd() {
-		this.lessonStats = learningLessonService.buildCourseStatistics(this.courseSelected.getUuid(), this.courseParticipant.getUuid());
-	}
-	
-	@NotifyChange({"lessonStats","courseSelected"})
+	@NotifyChange({"lessonStats","showLessonStats"})
 	@Command
 	public void showAttendanceCmd(@BindingParam("course") Course course) {
 		this.lessonStats = learningLessonService.buildCourseStatistics(course.getUuid(), this.courseParticipant.getUuid());
-		this.courseSelected = course;
+		this.showLessonStats = true;
 	}
 	
 	public CourseParticipant getCourseParticipant() {
@@ -198,5 +184,9 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	
 	public LearningLessonStatsWrapper getLessonStats() {
 		return lessonStats;
+	}
+	
+	public boolean isShowLessonStats() {
+		return showLessonStats;
 	}
 }

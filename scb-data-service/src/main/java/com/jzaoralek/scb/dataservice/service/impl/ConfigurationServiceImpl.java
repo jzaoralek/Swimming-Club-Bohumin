@@ -88,4 +88,24 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 		return ret;
 	}
+
+	@Override
+	public boolean isCourseSelectionRequired() {
+		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.COURSE_APPL_SEL_REQ.name()).getValue());
+	}
+
+	@Override
+	public String getBaseURL() {
+		return configurationDao.getByName(Config.ConfigName.BASE_URL.name()).getValue();
+	}
+
+	@Override
+	public String getHealthAgreement() {
+		return configurationDao.getByName(Config.ConfigName.HEALTH_AGREEMENT.name()).getValue();
+	}
+
+	@Override
+	public String getPersDataProcessAgreement() {
+		return configurationDao.getByName(Config.ConfigName.PERSONAL_DATA_PROCESS_AGREEMENT.name()).getValue();
+	}
 }

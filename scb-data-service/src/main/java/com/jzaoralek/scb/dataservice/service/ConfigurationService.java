@@ -13,10 +13,14 @@ public interface ConfigurationService {
 	List<String> getCourseYearList();
 	List<String> getCourseYearFromActualYearList();
 	boolean isCourseApplicationsAllowed();
+	boolean isCourseSelectionRequired();
 	String getOrgName();
 	String getOrgPhone();
 	String getOrgEmail();
 	String getWelcomeInfo();
+	String getBaseURL();
+	String getHealthAgreement();
+	String getPersDataProcessAgreement();
 	List<Config> getAll();
 	void update(Config config);
 }

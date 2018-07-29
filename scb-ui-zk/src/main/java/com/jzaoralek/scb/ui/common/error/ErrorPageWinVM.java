@@ -43,7 +43,7 @@ public class ErrorPageWinVM extends BaseVM {
 			this.errorReport = buildErrorReport();
 
 			// mail to administrator
-			mailService.sendMail(Labels.getLabel("txt.ui.administrator.email"), Labels.getLabel("txt.ui.internalError"), this.errorReport, null, null);
+			mailService.sendMail(Labels.getLabel("txt.ui.administrator.email"), Labels.getLabel("txt.ui.internalError"), this.errorReport, null);
 		}
 	}
 

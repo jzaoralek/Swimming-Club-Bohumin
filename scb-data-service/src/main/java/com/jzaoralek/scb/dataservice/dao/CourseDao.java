@@ -15,4 +15,5 @@ public interface CourseDao {
 	void insert(Course course);
 	void update(Course course);
 	void delete(Course course);
+	boolean existsByCourseLocation(UUID courseLocationUuid);
 }

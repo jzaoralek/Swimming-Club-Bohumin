@@ -72,7 +72,7 @@
 					
 			        <listhead>
 			            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
-			            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" hflex="1" />
+			            <listheader label="${c:l('txt.ui.common.description2')}" sort="auto(description)" align="left" hflex="1" />
 			            <listheader label="${c:l('txt.ui.common.participantCount')}" sort="auto(participantListCount)" align="center" hflex="min"  />
 			            <listheader width="140px" align="center" />
 			        </listhead>
