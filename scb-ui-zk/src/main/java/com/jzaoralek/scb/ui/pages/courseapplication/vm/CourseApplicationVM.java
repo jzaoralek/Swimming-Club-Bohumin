@@ -214,6 +214,14 @@ public class CourseApplicationVM extends BaseVM {
 		}
 	}
 	
+	public String getHealthAgreement() {
+		return configurationService.getHealthAgreement();
+	}
+	
+	public String getPersDataProcessAgreement() {
+		return configurationService.getPersDataProcessAgreement();
+	}
+	
 	/**
 	 * Udaj muze menit pouze prihlaseny user nebo neprihlaseny uzivatel.
 	 * @return

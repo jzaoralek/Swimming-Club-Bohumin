@@ -524,15 +524,14 @@
 						
 						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)">
 							<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="18" />
-							<label value="${c:l('txt.ui.application.healthAgreement')}" />
+							<label value="${vm.healthAgreement}" />
 						</hbox>
 						
 						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" style="margin-top: 20px;">
 							<checkbox checked="@bind(vm.personalInfoProcessAgreement)" tabindex="19" />
 							<hbox>
 								<span>
-									<label value="${c:l('txt.ui.application.personaldataProcessAgreement')}" />
-									<a href="${c:l('txt.ui.url.aquacentrumbohumin')}">${c:l('txt.ui.aquacentrumbohumin')}</a>.
+									<label value="${vm.persDataProcessAgreement}" />
 								</span>
 							</hbox>
 						</hbox>

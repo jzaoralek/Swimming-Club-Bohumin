@@ -209,7 +209,7 @@ public class BaseVM {
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text0"));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text1"));
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text1", new Object[] {configurationService.getOrgName(), configurationService.getBaseURL()}));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text2", new Object[] {user.getUsername()}));
@@ -241,45 +241,9 @@ public class BaseVM {
 		
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text4"));
+		mailToUser.append(configurationService.getOrgName());
 		
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin"), mailToUser.toString(), null);
-	}
-	
-	protected void sendEndOfSeasonMailToUser(ScbUser user) {
-		StringBuilder mailToUser = new StringBuilder();
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text0"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text1"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text2"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text3"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text4"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text5"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text6"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text7"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text8"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text9"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text10"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text11"));
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.endOfSeason.text12"));
-		
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.endOfSeason.subject"), mailToUser.toString(), null);
+		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
 	}
 	
 	public List<Boolean> getBooleanListItem() {
@@ -375,7 +339,7 @@ public class BaseVM {
 		
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text2"));
+		mailToRepresentativeSb.append(configurationService.getOrgName());
 
 		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
 		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
@@ -421,7 +385,7 @@ public class BaseVM {
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text0"));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text1"));
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text1", new Object[] {configurationService.getBaseURL()}));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text2", new Object[] {user.getUsername()}));
@@ -429,7 +393,7 @@ public class BaseVM {
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text3", new Object[] {user.getPassword()}));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text4"));
+		mailToUser.append(configurationService.getOrgName());
 
 		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null);
 	}

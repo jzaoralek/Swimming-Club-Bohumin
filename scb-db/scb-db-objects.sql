@@ -106,7 +106,7 @@ CREATE TABLE configuration(
 	uuid varchar(36),
 	name varchar(36) NOT NULL,
 	description VARCHAR(200) CHARACTER SET utf8,
-	val VARCHAR(240) CHARACTER SET utf8,
+	val VARCHAR(1000) CHARACTER SET utf8,
     type  ENUM('STRING','INTEGER','BOOLEAN','ENUM') NOT NULL,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
