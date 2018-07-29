@@ -92,7 +92,7 @@
 								            <listheader width="25px"  valign="top" />
 								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="3" valign="top"/>
 								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(courseLocation.name)" align="left" hflex="2" valign="top" />
-								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" width="135px" valign="top" />
+								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" width="140px" valign="top" />
 								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" valign="top" />
 								            <listheader width="50px" align="center" valign="top" />
 								        </listhead>
@@ -113,11 +113,11 @@
 														<!-- Popis -->
 									                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
 									                	<popup id="descriptionPopup_${item.uuid}">
-													    	<vbox width="350px">
+													    	<vbox width="440px">
 													    		<textbox multiline="true" 
 													    			readonly="true"
 													    			hflex="1"
-													    			rows="10" 
+													    			rows="16" 
 													    			value="${item.description}" />
 													    	</vbox>
 													    </popup>
