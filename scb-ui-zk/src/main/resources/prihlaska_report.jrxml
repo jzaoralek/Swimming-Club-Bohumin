@@ -26,7 +26,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="33" splitType="Stretch">
+		<band height="65" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="555" height="33" uuid="42c8225c-1943-423f-bf8d-62c70ee17220"/>
 				<textElement verticalAlignment="Middle">
@@ -34,6 +34,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="455" y="0" width="100" height="40" uuid="8271e4b1-8131-47fb-a921-74e385abd43c"/>
+				<imageExpression><![CDATA["/Users/jakub.zaoralek/Downloads/logo_Klub_plaveckych_sportu_Ostrava_small.jpg"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
