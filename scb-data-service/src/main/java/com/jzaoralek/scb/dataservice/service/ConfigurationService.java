@@ -18,6 +18,9 @@ public interface ConfigurationService {
 	String getOrgPhone();
 	String getOrgEmail();
 	String getWelcomeInfo();
+	String getBaseURL();
+	String getHealthAgreement();
+	String getPersDataProcessAgreement();
 	List<Config> getAll();
 	void update(Config config);
 }

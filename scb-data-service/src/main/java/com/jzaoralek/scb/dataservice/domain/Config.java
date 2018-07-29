@@ -16,7 +16,10 @@ public class Config implements IdentEntity {
 		ORGANIZATION_NAME,
 		ORGANIZATION_PHONE,
 		ORGANIZATION_EMAIl,
-		WELCOME_INFO;
+		WELCOME_INFO,
+		BASE_URL,
+		HEALTH_AGREEMENT,
+		PERSONAL_DATA_PROCESS_AGREEMENT;
 	}
 
 	public enum ConfigType {
