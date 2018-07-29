@@ -89,21 +89,21 @@
 										checkmark="true" >
 										
 								        <listhead>
-								            <listheader width="25px" />
-								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
-								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
-								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
-								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" />
-								            <listheader width="50px" align="center" />
+								            <listheader width="25px"  valign="top" />
+								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="3" valign="top"/>
+								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(courseLocation.name)" align="left" hflex="2" valign="top" />
+								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" width="135px" valign="top" />
+								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" valign="top" />
+								            <listheader width="50px" align="center" valign="top" />
 								        </listhead>
 								         
 								        <template name="model" var="item" >
-								            <listitem style="${vm.getCourseRowColor(item)}" disabled="${item.fullOccupancy}">
+								            <listitem style="${vm.getCourseRowColor(item)}" disabled="${item.fullOccupancy}" >
 								                <listcell></listcell>
-								                <listcell label="${item.name}" />
+								                <listcell label="${item.name}" style="font-weight: bold;" />
 								                <listcell label="${item.courseLocation.name}" />
 								                <listcell>
-								                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
+								                	<vbox vflex="1" align="start" forEach="${item.lessonList}" >
 								                		<label value="${vm.getLessonToUi(each)}"/>
 													</vbox>
 								                </listcell>
@@ -113,8 +113,12 @@
 														<!-- Popis -->
 									                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
 									                	<popup id="descriptionPopup_${item.uuid}">
-													    	<vbox style="margin: 5px;">
-													    		<label value="${item.description}"/>
+													    	<vbox width="350px">
+													    		<textbox multiline="true" 
+													    			readonly="true"
+													    			hflex="1"
+													    			rows="10" 
+													    			value="${item.description}" />
 													    	</vbox>
 													    </popup>
 							                		</vbox>
