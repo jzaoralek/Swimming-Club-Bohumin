@@ -22,6 +22,8 @@
 	<parameter name="representativeEmail1" class="java.lang.String"/>
 	<parameter name="representativeEmail2" class="java.lang.String"/>
 	<parameter name="healthInfo" class="java.lang.String"/>
+	<parameter name="healthAgreement" class="java.lang.String"/>
+	<parameter name="persDataProcessAgreement" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -210,20 +212,6 @@
 				<textFieldExpression><![CDATA[$P{representativeEmail2}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="466" width="555" height="31" uuid="ae97241e-1948-46bc-a3d2-4e2f36bfdfa7"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Souhlasím s kolektivním plaveckým výcvikem svého syna/dcery. Prohlašuji na základě lékařského posouzení zdravotního stavu, že můj syn/dcera je způsobilý/způsobilá absolvovat fyzickou zátěž sportovních tréninků a plaveckých závodů bez nebezpečí poškození jeho/jejího zdravotního stavu. V případě změny zdravotního stavu budu neprodleně informovat zástupce Plaveckého klubu Bohumín.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="507" width="555" height="24" uuid="2a73ab7e-b4aa-458c-8cea-7e2801facb90"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Souhlasím se zpracováním osobních údajů podle zákona č. 101/2000 Sb.Souhlasím s možností fotografování svého syna/dcery a s možností zveřejnění fotografií nebo videa v rámci propagace Plaveckého klubu Bohumín. Potvrzuji, že jsem se seznámil s Provozním řádem aquacentra Bohumín.]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="0" y="377" width="229" height="20" uuid="9588d3c3-fe63-4be3-9251-f1114d68704d"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
@@ -255,6 +243,22 @@
 				</textElement>
 				<text><![CDATA[Účastník (dítě)]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="0" y="450" width="555" height="44" uuid="806614ff-a402-4982-bda4-cf3601ad29ab"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" pdfEncoding="Cp1250"/>
+					<paragraph lineSpacingSize="0.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{healthAgreement}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="501" width="555" height="48" uuid="aea7a6f4-5601-4c37-864c-fa0f1cdac709"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" pdfEncoding="Cp1250"/>
+					<paragraph lineSpacingSize="0.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{persDataProcessAgreement}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<detail>
