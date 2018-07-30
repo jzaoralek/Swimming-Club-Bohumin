@@ -268,33 +268,33 @@
 	<pageFooter>
 		<band height="37" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="555" height="12" uuid="d516e05f-202a-47cd-a719-a9c07bf60aca"/>
+				<reportElement x="0" y="-11" width="555" height="12" uuid="d516e05f-202a-47cd-a719-a9c07bf60aca"/>
 				<textElement textAlignment="Center">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{organizationNameTitle}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="12" width="555" height="14" uuid="7c96577f-ef74-4087-835f-e27f16d30e6e"/>
+				<reportElement x="0" y="1" width="555" height="14" uuid="7c96577f-ef74-4087-835f-e27f16d30e6e"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contactPhone}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="24" width="555" height="11" uuid="6a5aea12-5d24-47a7-90e4-69aa5411e65a"/>
+				<reportElement x="0" y="13" width="555" height="11" uuid="6a5aea12-5d24-47a7-90e4-69aa5411e65a"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contactEmail}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="0" y="13" width="193" height="18" uuid="c870c02f-d634-4e02-a02e-d07fce3d86f3"/>
+				<reportElement x="0" y="2" width="193" height="18" uuid="c870c02f-d634-4e02-a02e-d07fce3d86f3"/>
 				<imageExpression><![CDATA["/Users/jakub.zaoralek/Disk Google/Personal/SwimmingClubBohumin/KPSOstrava/logo_kps_zapati.png"]]></imageExpression>
 			</image>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="72" splitType="Stretch"/>
+		<band height="17" splitType="Stretch"/>
 	</summary>
 </jasperReport>
