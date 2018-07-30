@@ -1,17 +1,11 @@
 package com.jzaoralek.scb.ui.common.vm;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
-import javax.faces.application.Application;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
