@@ -32,7 +32,7 @@
 		<band height="50" splitType="Stretch">
 			<image>
 				<reportElement x="0" y="0" width="480" height="50" uuid="677df44f-8edc-4245-8f2b-be294a283fe2"/>
-				<imageExpression><![CDATA["/Users/jakub.zaoralek/Disk Google/Personal/SwimmingClubBohumin/KPSOstrava/logo_kps_zahlavi.png"]]></imageExpression>
+				<imageExpression><![CDATA["/home/sportologic.cz/resources/kpsostrava/logo_kps_zahlavi.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>
@@ -290,7 +290,7 @@
 			</textField>
 			<image>
 				<reportElement x="0" y="2" width="193" height="18" uuid="c870c02f-d634-4e02-a02e-d07fce3d86f3"/>
-				<imageExpression><![CDATA["/Users/jakub.zaoralek/Disk Google/Personal/SwimmingClubBohumin/KPSOstrava/logo_kps_zapati.png"]]></imageExpression>
+				<imageExpression><![CDATA["/home/sportologic.cz/resources/kpsostrava/logo_kps_zapati.png"]]></imageExpression>
 			</image>
 		</band>
 	</pageFooter>
