@@ -92,7 +92,7 @@
 								            <listheader width="25px"  valign="top" />
 								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="3" valign="top"/>
 								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(courseLocation.name)" align="left" hflex="2" valign="top" />
-								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" width="140px" valign="top" />
+								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" valign="top" />
 								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" valign="top" />
 								            <listheader width="50px" align="center" valign="top" />
 								        </listhead>
@@ -104,7 +104,7 @@
 								                <listcell label="${item.courseLocation.name}" />
 								                <listcell>
 								                	<vbox vflex="1" align="start" forEach="${item.lessonList}" >
-								                		<label value="${vm.getLessonToUi(each)}"/>
+								                		<label value="${vm.getLessonToUi(each)}" />
 													</vbox>
 								                </listcell>
 								                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
