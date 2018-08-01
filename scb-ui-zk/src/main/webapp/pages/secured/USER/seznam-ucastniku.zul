@@ -87,12 +87,78 @@
 			    
 			    <popup id="newParticipantPopup">
 					<!-- Ucastnik -->
-					<grid hflex="1" sclass="form-grid" style="border: none;" >
+					<grid width="550px" sclass="form-grid" style="border: none;" >
 						<columns>
 			                <column align="center" hflex="1" />
 			            </columns>
 						<rows style="background: white;" >
-							<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
+							<row sclass="form-grid-row" style="border: none; padding: 5px 5px 10px 5px;" >
+								<!-- Vyber kurzu -->
+								<cell sclass="form-grid-cell">
+									<listbox model="@load(vm.courseList)" 
+										hflex="1"
+										height="350px"
+										selectedItems="@bind(vm.courseSelected)"
+										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+										class="listbox"
+										visible="@load(vm.courseList ne null)"
+										multiple="false"
+										checkmark="true" >
+										
+										<auxhead>
+								            <auxheader class="header" colspan="6" >
+								            	<hbox hflex="1" height="28px" align="center" >
+									            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+								            			<hbox vflex="1" align="center">
+								            				<label value="${c:l('txt.ui.common.CourseSelection')}"/>
+								            			</hbox>
+								            		</vbox>
+												</hbox>
+								            </auxheader>
+								        </auxhead>
+										
+								        <listhead>
+								            <listheader width="25px"  valign="top" />
+								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="3" valign="top"/>
+								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(courseLocation.name)" align="left" hflex="2" valign="top" />
+								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" valign="top" />
+								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" valign="top" />
+								            <listheader width="50px" align="center" valign="top" />
+								        </listhead>
+								         
+								        <template name="model" var="item" >
+								            <listitem style="${vm.getCourseRowColor(item)}" disabled="${item.fullOccupancy}" >
+								                <listcell></listcell>
+								                <listcell label="${item.name}" style="font-weight: bold;" />
+								                <listcell label="${item.courseLocation.name}" />
+								                <listcell>
+								                	<vbox vflex="1" align="start" forEach="${item.lessonList}" >
+								                		<label value="${vm.getLessonToUi(each)}" />
+													</vbox>
+								                </listcell>
+								                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
+								                <listcell>
+									                <vbox>
+														<!-- Popis -->
+									                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
+									                	<popup id="descriptionPopup_${item.uuid}">
+													    	<vbox width="440px">
+													    		<textbox multiline="true" 
+													    			readonly="true"
+													    			hflex="1"
+													    			rows="16" 
+													    			value="${item.description}" />
+													    	</vbox>
+													    </popup>
+							                		</vbox>
+								                </listcell>
+								            </listitem>
+								        </template>
+								    </listbox>
+							    </cell>
+							</row>
+							
+							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;" >
 								<cell sclass="form-grid-cell">
 									<vbox hflex="1">
 										<label value="${c:l('txt.ui.common.birthNumber')}"/>
@@ -113,7 +179,7 @@
 									</vbox>
 								</cell>
 							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;" >
 								<cell sclass="form-grid-cell" >
 									<vbox hflex="1">
 										<label value="${c:l('txt.ui.common.firstname')}"/>
@@ -133,7 +199,7 @@
 									</vbox>
 								</cell>
 							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;;">
+							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;">
 								<cell sclass="form-grid-cell">
 									<vbox hflex="1">
 										<label value="${c:l('txt.ui.common.surname')}"/>
@@ -153,7 +219,7 @@
 									</vbox>
 								</cell>
 							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
+							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;">
 								<cell sclass="form-grid-cell">
 									<vbox hflex="1">
 										<label value="${c:l('txt.ui.common.birthDate')}"/>
@@ -172,7 +238,7 @@
 									</vbox>
 								</cell>
 							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
+							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;">
 								<cell sclass="form-grid-cell">
 									<vbox hflex="1">
 										<label value="${c:l('txt.ui.common.healthInsurance')}"/>
@@ -192,7 +258,7 @@
 									</vbox>
 								</cell>
 							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 30px 20px 30px;">
+							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;">
 								<cell sclass="form-grid-cell">
 									<vbox hflex="1">
 										<label value="${c:l('txt.ui.application.healthInfo')}"/>
@@ -205,7 +271,7 @@
 							</row>
 						</rows>
 					</grid>
-					<hbox style="margin-bottom: 10px;" hflex="1" pack="center" >
+					<hbox style="margin-bottom: 5px;margin-left: 10px;" hflex="1" pack="center" >
 						<button label="Odeslat" onClick="@command('submit', popup=newParticipantPopup)" iconSclass="z-icon-check" />
 					</hbox>
 					<script type="text/javascript">
