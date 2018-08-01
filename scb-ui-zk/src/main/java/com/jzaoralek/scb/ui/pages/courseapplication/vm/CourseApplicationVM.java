@@ -130,10 +130,18 @@ public class CourseApplicationVM extends BaseVM {
 				// pokud byl vybran kurz, potreba zkontrolovat zda-li uz neni zaplnen
 				if (this.courseSelectionRequired && this.courseSelected != null && !this.courseSelected.isEmpty()) {
 					Course selectedCourseDb = courseService.getByUuid(this.courseSelected.iterator().next().getUuid());
+					if (selectedCourseDb == null) {
+						WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.courseIsDeleted", new Object[] {this.courseSelected.iterator().next().getName()}));
+						// reload seznamu kurzu
+						this.courseList = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
+						this.courseSelected.clear();
+						return;
+					}
 					if (selectedCourseDb.isFullOccupancy()) {
 						WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.courseIsFull", new Object[] {this.courseSelected.iterator().next().getName()}));
 						// reload seznamu kurzu
 						this.courseList = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
+						this.courseSelected.clear();
 						return;
 					}
 				}
