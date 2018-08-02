@@ -75,15 +75,34 @@
 				            	</auxheader>
 				            </auxhead>
 							<rows style="background: white;">
-								<row sclass="form-grid-row" style="border: none;" >
+								<row sclass="form-grid-row" 
+									style="border: none; padding: 10px 20px 20px 20px;"
+									if="${!vm.securedMode}" >
+									<cell sclass="form-grid-cell" >
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.courseLocation2')}"/>
+											<!-- Vyber mista konani kurzu -->
+											<combobox model="@init(vm.courseLocationList)"
+												onSelect="@command('courseLocationSelectCmd')"
+												selectedItem="@bind(vm.courseLocationSelected)"
+												style="background: white;"
+												hflex="1"
+												readonly="true"
+												if="${!vm.securedMode}" >
+												<template name="model">
+									            	<comboitem label="${each.name}"/>
+												</template>
+											</combobox>
+										</vbox>
+									</cell>
+								</row>
+								<row sclass="form-grid-row"  >
 									<!-- Verejna cast -->
 									<listbox model="@load(vm.courseList)" 
 										hflex="1"
 										height="350px"
 										selectedItems="@bind(vm.courseSelected)"
-										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 										class="listbox"
-										visible="@load(vm.courseList ne null)"
 										if="${!vm.securedMode}"
 										multiple="false"
 										checkmark="true" >
@@ -91,7 +110,6 @@
 								        <listhead>
 								            <listheader width="25px"  valign="top" />
 								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="3" valign="top"/>
-								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(courseLocation.name)" align="left" hflex="2" valign="top" />
 								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" valign="top" />
 								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" valign="top" />
 								            <listheader width="50px" align="center" valign="top" />
@@ -101,7 +119,6 @@
 								            <listitem style="${vm.getCourseRowColor(item)}" disabled="${item.fullOccupancy}" >
 								                <listcell></listcell>
 								                <listcell label="${item.name}" style="font-weight: bold;" />
-								                <listcell label="${item.courseLocation.name}" />
 								                <listcell>
 								                	<vbox vflex="1" align="start" forEach="${item.lessonList}" >
 								                		<label value="${vm.getLessonToUi(each)}" />
@@ -269,7 +286,7 @@
 								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
 									<cell sclass="form-grid-cell" >
 										<vbox hflex="1">
-											<label value="${c:l('txt.ui.common.phone')} 2:"/>
+											<label value="${c:l('txt.ui.common.phone')} 2"/>
 											<textbox id="representativePhone2" readonly="@load(!vm.editMode)" 
 												value="@bind(fx.application.courseParticRepresentative.contact.phone2)"
 												maxlength="@load(vm.getPhoneMaxlength())"
