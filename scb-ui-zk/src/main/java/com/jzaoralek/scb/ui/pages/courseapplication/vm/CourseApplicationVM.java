@@ -23,6 +23,7 @@ import org.zkoss.zul.Messagebox;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
@@ -47,8 +48,11 @@ public class CourseApplicationVM extends BaseVM {
 	private String errotText;
 	private String captcha;
 	private List<Course> courseList;
+	private List<Course> courseListAll;
 	private Set<Course> courseSelected;
 	private boolean courseSelectionRequired;
+	private List<CourseLocation> courseLocationList;
+	private CourseLocation courseLocationSelected;
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -89,8 +93,10 @@ public class CourseApplicationVM extends BaseVM {
 		
 		if (this.courseSelectionRequired) {
 			if (!this.securedMode) {
+				// seznam mist konani
+				this.courseLocationList = courseService.getCourseLocationAll();
 				// seznam vsech kurzu
-				this.courseList = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);				
+				this.courseListAll = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);		
 			} else {
 				// seznam vybranych kurzu
 				this.courseList = courseService.getByCourseParticipantUuid(this.application.getCourseParticipant().getUuid(), this.application.getYearFrom(), this.application.getYearTo());
@@ -222,6 +228,24 @@ public class CourseApplicationVM extends BaseVM {
 		}
 	}
 	
+	@NotifyChange("courseList")
+	@Command
+	public void courseLocationSelectCmd() {
+		if (this.courseListAll == null || this.courseListAll.isEmpty() || this.courseLocationSelected == null) {
+			return;
+		}
+		
+		if (this.courseList == null) {
+			this.courseList = new ArrayList<>();
+		}
+		
+		for (Course courseItem : this.courseListAll) {
+			if (courseItem.getCourseLocation().getUuid().toString().equals(this.courseLocationSelected.getUuid().toString())) {
+				this.courseList.add(courseItem);
+			}
+		}
+	}
+	
 	public String getHealthAgreement() {
 		return configurationService.getHealthAgreement();
 	}
@@ -316,5 +340,14 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public boolean isCourseSelectionRequired() {
 		return courseSelectionRequired;
+	}
+	public List<CourseLocation> getCourseLocationList() {
+		return courseLocationList;
+	}
+	public CourseLocation getCourseLocationSelected() {
+		return courseLocationSelected;
+	}
+	public void setCourseLocationSelected(CourseLocation courseLocationSelected) {
+		this.courseLocationSelected = courseLocationSelected;
 	}
 }
