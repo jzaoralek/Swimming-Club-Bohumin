@@ -61,7 +61,7 @@
 						<!-- Vyber kurzu -->
 						<grid hflex="1" sclass="form-grid" style="margin-top: 20px;margin-bottom: 20px;" if="${vm.courseSelectionRequired}" >
 							<columns>
-				                <column align="center" hflex="1" />
+				                <column align="left" hflex="1" />
 				            </columns>
 				            <auxhead>
 				            	<auxheader colspan="2" style="background: #428CCD;">
@@ -95,6 +95,14 @@
 												</template>
 											</combobox>
 										</vbox>
+									</cell>
+								</row>
+								<row sclass="form-grid-row" 
+									style="border: none; padding: 0px 20px 20px 20px;"
+									visible="@load(vm.courseList ne null and vm.courseList.isEmpty())" >
+									<!-- Nenalezen zadky kurz -->
+									<cell sclass="form-grid-cell" >
+										<label value="${c:l('txt.ui.common.NoCourseFoundForLocation')}"/>
 									</cell>
 								</row>
 								<row sclass="form-grid-row" 
