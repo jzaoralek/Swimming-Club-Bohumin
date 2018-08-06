@@ -172,31 +172,7 @@
 															<!-- Popis -->
 										                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
 										                	<popup id="descriptionPopup_${item.uuid}">
-														    	<vlayout width="440px">
-														    		<label value="${c:l('txt.ui.common.CourseDeciption')}" style="margin-left: 5px;"/>
-														    		<textbox multiline="true" 
-														    			readonly="true"
-														    			hflex="1"
-														    			style="margin: 5px;"
-														    			rows="16" 
-														    			value="${item.description}" />
-														    		<hlayout style="margin-top: 5px;">
-														    			<vlayout hflex="1">
-																    		<label value="${c:l('txt.ui.common.priceSemester1')}" style="margin-left: 5px;"/>
-																    		<hlayout>
-																	    		<textbox readonly="true"  width="75px" style="margin-left: 5px;" value="${item.priceSemester1}" />
-																	    		<label value="${c:l('txt.ui.common.CZK')}" style="margin-left: 2px" />
-																    		</hlayout>
-														    			</vlayout>
-														    			<vlayout hflex="1">
-																    		<label value="${c:l('txt.ui.common.priceSemester2')}" style="margin-left: 5px;"/>
-																    		<hlayout>
-																	    		<textbox readonly="true" width="75px" style="margin-left: 5px;" value="${item.priceSemester2}" />
-																	    		<label value="${c:l('txt.ui.common.CZK')}" style="margin-left: 2px" />
-																    		</hlayout>
-														    			</vlayout>
-														    		</hlayout>
-														    	</vlayout>
+										                		<course-description course="${item}" />
 														    </popup>
 								                		</vbox>
 									                </listcell>
