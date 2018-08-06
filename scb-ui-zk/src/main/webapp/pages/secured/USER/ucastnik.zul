@@ -271,9 +271,7 @@
 															<!-- Popis -->
 										                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
 										                	<popup id="descriptionPopup_${item.uuid}">
-														    	<vbox style="margin: 5px;">
-														    		<label value="${item.description}"/>
-														    	</vbox>
+														    	<course-description course="${item}" />
 														    </popup>
 								                		</vbox>
 									                </listcell>
