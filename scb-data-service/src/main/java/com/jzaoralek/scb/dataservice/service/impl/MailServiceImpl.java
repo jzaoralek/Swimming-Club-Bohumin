@@ -86,7 +86,7 @@ public class MailServiceImpl implements MailService {
           if (attachmentList != null && !attachmentList.isEmpty()) {
         	  for (Attachment attachment : attachmentList) {
         		  if (attachment != null) {
-        			  DataSource dataSource = new ByteArrayDataSource(attachment.getFile(), "application/pdf");
+        			  DataSource dataSource = new ByteArrayDataSource(attachment.getByteArray(), "application/pdf");
         			  MimeBodyPart pdfBodyPart = new MimeBodyPart();
         			  pdfBodyPart.setDataHandler(new DataHandler(dataSource));
         			  pdfBodyPart.setFileName(attachment.getName());
