@@ -20,10 +20,13 @@ import org.zkoss.zul.Listitem;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
+import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig.CourseApplicationFileType;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
+import com.jzaoralek.scb.dataservice.service.CourseApplicationFileConfigService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
@@ -61,6 +64,9 @@ public class BaseVM {
 	
 	@WireVariable
 	protected MailService mailService;
+	
+	@WireVariable
+	protected CourseApplicationFileConfigService courseApplicationFileConfigService;
 
 	protected String returnToPage;
 	
@@ -292,6 +298,21 @@ public class BaseVM {
 		attachment.setName(fileName.toString());
 		return attachment;
 	}
+	
+	private CourseApplicationFileConfig getByType(List<CourseApplicationFileConfig> cafcList, CourseApplicationFileType type) {
+		if (cafcList == null || cafcList.isEmpty()) {
+			return null;
+		}
+		
+		CourseApplicationFileConfig ret = null;
+		for (CourseApplicationFileConfig fileConfig : cafcList) {
+			if (fileConfig.getType() == type) {
+				ret = fileConfig;
+				break;
+			}
+		}
+		return ret;
+	}
 
 	public void sendMail(CourseApplication courseApplication, String headline) {
 		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
@@ -301,25 +322,32 @@ public class BaseVM {
         // attachment prihlaska
         attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase()));
 
+        // dynamic attachments (GDPR, HEALTH_INFO, HEALTH_EXAM, CLUB_RULES)
+        List<CourseApplicationFileConfig> cafcList = courseApplicationFileConfigService.getListForEmail();
+        for (CourseApplicationFileType type : CourseApplicationFileType.values()) {
+        	CourseApplicationFileConfig gdprFileConfig = getByType(cafcList, type);
+        	if (gdprFileConfig != null && gdprFileConfig.isEmailAttachment() && gdprFileConfig.getAttachment() != null) {
+        		attachmentList.add(gdprFileConfig.getAttachment());
+        	}
+        }
         // attachment gdpr
-        byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
-		if (gdprByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
-		}
-		byte[] gdprPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.pdf");
-		if (gdprPdfByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprPdfByteArray,"souhlas-clena-klubu.pdf"));
-		}
-		
+//      byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
+//		if (gdprByteArray != null) {
+//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
+//		}
+//		byte[] gdprPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.pdf");
+//		if (gdprPdfByteArray != null) {
+//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprPdfByteArray,"souhlas-clena-klubu.pdf"));
+//		}
 		// attachment lekarska prohlidka
-		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
-		if (lekarskaProhlidkaByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
-		}
-		byte[] lekarskaProhlidkaPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.pdf");
-		if (lekarskaProhlidkaPdfByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaPdfByteArray,"lekarska-prohlidka.pdf"));
-		}
+//		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
+//		if (lekarskaProhlidkaByteArray != null) {
+//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
+//		}
+//		byte[] lekarskaProhlidkaPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.pdf");
+//		if (lekarskaProhlidkaPdfByteArray != null) {
+//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaPdfByteArray,"lekarska-prohlidka.pdf"));
+//		}
 		
 		StringBuilder mailToRepresentativeSb = new StringBuilder();
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));

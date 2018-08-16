@@ -210,9 +210,9 @@ CREATE TABLE file (
 
 CREATE TABLE course_application_file_config(
 	uuid varchar(36),
-	type ENUM('GDPR','HEALTH_INFO','HEALTH_EXAM', 'CLUB_RULES') NOT NULL,
+	type ENUM('GDPR','HEALTH_INFO','HEALTH_EXAM', 'CLUB_RULES') NOT NULL UNIQUE,
 	file_uuid varchar(36) REFERENCES file(uuid),
-	page_text VARCHAR(1000) CHARACTER SET utf8,
+	page_text ENUM('0','1') NOT NULL,
 	page_attachment ENUM('0','1') NOT NULL,
 	email_attachment ENUM('0','1') NOT NULL,
 	description VARCHAR(1000) CHARACTER SET utf8,

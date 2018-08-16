@@ -20,12 +20,12 @@ public class CourseApplicationFileConfigServiceImpl extends BaseAbstractService 
 	
 	@Override
 	public List<CourseApplicationFileConfig> getListForPage() {
-		return null;
+		return courseApplicationFileConfigDao.getListForPage();
 	}
 
 	@Override
 	public List<CourseApplicationFileConfig> getListForEmail() {
-		return null;
+		return courseApplicationFileConfigDao.getListForEmail();
 	}
 
 	@Override

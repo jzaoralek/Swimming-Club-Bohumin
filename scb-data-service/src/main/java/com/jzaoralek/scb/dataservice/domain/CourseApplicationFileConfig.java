@@ -15,11 +15,12 @@ public class CourseApplicationFileConfig implements IdentEntity {
 	private String modifBy;
 	private Date modifAt;
 	private CourseApplicationFileType type;
+	private UUID attachmentUuid;
 	private Attachment attachment;
 	private boolean pageText;
 	private boolean pageAttachment;
 	private boolean emailAttachment;
-	private String descrion;
+	private String description;
 	
 	@Override
 	public UUID getUuid() {
@@ -57,6 +58,12 @@ public class CourseApplicationFileConfig implements IdentEntity {
 	public void setAttachment(Attachment attachment) {
 		this.attachment = attachment;
 	}
+	public UUID getAttachmentUuid() {
+		return attachmentUuid;
+	}
+	public void setAttachmentUuid(UUID attachmentUuid) {
+		this.attachmentUuid = attachmentUuid;
+	}
 	public boolean isPageText() {
 		return pageText;
 	}
@@ -75,10 +82,10 @@ public class CourseApplicationFileConfig implements IdentEntity {
 	public void setEmailAttachment(boolean emailAttachment) {
 		this.emailAttachment = emailAttachment;
 	}
-	public String getDescrion() {
-		return descrion;
+	public String getDescription() {
+		return description;
 	}
-	public void setDescrion(String descrion) {
-		this.descrion = descrion;
+	public void setDescription(String descrion) {
+		this.description = descrion;
 	}
 }
