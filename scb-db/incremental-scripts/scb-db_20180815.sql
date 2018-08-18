@@ -30,16 +30,16 @@ VALUES  ('fd33a4d4-7e99-11e6-ae22-56b6b6499629', 'GDPR', 'fd33a4d4-7e99-11e6-ae2
 INSERT INTO file (uuid, name, description, content, content_type) 
 VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499630', 'prvni-soubor.docx', 'health info', null, 'application/file');
 INSERT INTO course_application_file_config(uuid, type, file_uuid, page_attachment, email_attachment, description, modif_at, modif_by)
-VALUES  ('fd33a4d4-7e99-11e6-ae22-56b6b6499631', 'HEALTH_INFO', 'fd33a4d4-7e99-11e6-ae22-56b6b6499630', '0', '0', 'popis gdpr souboru', now(), 'SYSTEM');
+VALUES  ('fd33a4d4-7e99-11e6-ae22-56b6b6499631', 'HEALTH_INFO', 'fd33a4d4-7e99-11e6-ae22-56b6b6499630', '0', '0', 'popis health info souboru', now(), 'SYSTEM');
 
 -- HEALTH_EXAM
 INSERT INTO file (uuid, name, description, content, content_type) 
 VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499632', 'kosatky_formular_zdravotni prohlidka.pdf', 'health exam', null, 'application/file');
 INSERT INTO course_application_file_config(uuid, type, file_uuid, page_attachment, email_attachment, description, modif_at, modif_by)
-VALUES  ('fd33a4d4-7e99-11e6-ae22-56b6b6499633', 'HEALTH_EXAM', 'fd33a4d4-7e99-11e6-ae22-56b6b6499632', '0', '0', 'popis gdpr souboru', now(), 'SYSTEM');
+VALUES  ('fd33a4d4-7e99-11e6-ae22-56b6b6499633', 'HEALTH_EXAM', 'fd33a4d4-7e99-11e6-ae22-56b6b6499632', '0', '0', 'popis health exam souboru', now(), 'SYSTEM');
 
 -- CLUB_RULES
 INSERT INTO file (uuid, name, description, content, content_type) 
 VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499634', 'kosatky_zásady-pro-přijetí-do-klubu.pdf', 'club rules', null, 'application/file');
 INSERT INTO course_application_file_config(uuid, type, file_uuid, page_attachment, email_attachment, description, modif_at, modif_by)
-VALUES  ('fd33a4d4-7e99-11e6-ae22-56b6b6499635', 'CLUB_RULES', 'fd33a4d4-7e99-11e6-ae22-56b6b6499634', '0', '0', 'popis gdpr souboru', now(), 'SYSTEM');
+VALUES  ('fd33a4d4-7e99-11e6-ae22-56b6b6499635', 'CLUB_RULES', 'fd33a4d4-7e99-11e6-ae22-56b6b6499634', '0', '0', 'popis club rules souboru', now(), 'SYSTEM');
