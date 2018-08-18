@@ -561,19 +561,37 @@
 						<!-- Health info agreement -->
 						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" if="${vm.healthInfoConfirmRequired}" style="margin-top: 10px;">
 							<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="18" />
-							<label value="${vm.healthAgreement}" />
+							<vlayout>
+								<label value="${vm.healthAgreement}" />
+								<a label="${c:l('txt.ui.common.DocumentToDownload')}" 
+									onClick="@command('downloadHealthInfoCmd')" 
+									iconSclass="z-icon-download"
+									if="${vm.healthInfoDocEnabled}" />
+							</vlayout>
 						</hbox>
 						
 						<!-- Personal data process agreement -->
 						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" if="${vm.gdprConfirmRequired}" style="margin-top: 10px;">
 							<checkbox checked="@bind(vm.personalInfoProcessAgreement)" tabindex="19" />
-							<label value="${vm.persDataProcessAgreement}" />
+							<vlayout>
+								<label value="${vm.persDataProcessAgreement}" />
+								<a label="${c:l('txt.ui.common.DocumentToDownload')}" 
+									onClick="@command('downloadGdprCmd')"
+									iconSclass="z-icon-download"
+									if="${vm.gdprDocEnabled}" />
+							</vlayout>
 						</hbox>
 						
 						<!-- Club rules agreement -->
 						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" if="${vm.clubRulesConfirmRequired}" style="margin-top: 10px;">
 							<checkbox checked="@bind(vm.clubRulesAgreement)" tabindex="19" />
-							<label value="${vm.clubRulesText}" />
+							<vlayout>
+								<label value="${vm.clubRulesText}" />
+								<a label="${c:l('txt.ui.common.DocumentToDownload')}" 
+									onClick="@command('downloadClubRulesCmd')"
+									iconSclass="z-icon-download"
+									if="${vm.clubRulesDocEnabled}" />
+							</vlayout>
 						</hbox>
 						
 						<!-- Captcha -->

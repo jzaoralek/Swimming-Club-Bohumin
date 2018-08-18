@@ -21,6 +21,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
 
+import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
@@ -271,6 +272,33 @@ public class CourseApplicationVM extends BaseVM {
 		}
 	}
 	
+	@Command
+	public void downloadHealthInfoCmd() {
+		Attachment attachment = courseApplicationFileConfigService.getFileByUuid(this.healthInfoAgreementConfig.getAttachmentUuid());
+		if (attachment != null && attachment.getByteArray() != null) {
+			Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
+			WebUtils.downloadAttachment(attachment);			
+		}
+	}
+	
+	@Command
+	public void downloadGdprCmd() {
+		Attachment attachment = courseApplicationFileConfigService.getFileByUuid(this.getGdprAgreementConfig().getAttachmentUuid());
+		if (attachment != null && attachment.getByteArray() != null) {
+			Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
+			WebUtils.downloadAttachment(attachment);			
+		}
+	}
+	
+	@Command
+	public void downloadClubRulesCmd() {
+		Attachment attachment = courseApplicationFileConfigService.getFileByUuid(this.clubRulesAgreementConfig.getAttachmentUuid());
+		if (attachment != null && attachment.getByteArray() != null) {
+			Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
+			WebUtils.downloadAttachment(attachment);			
+		}
+	}
+	
 	public String getHealthAgreement() {
 		return configurationService.getHealthAgreement();
 	}
@@ -320,6 +348,36 @@ public class CourseApplicationVM extends BaseVM {
 	 */
 	public boolean isHealthInfoConfirmRequired() {
 		return this.healthInfoAgreementConfig != null && this.healthInfoAgreementConfig.isPageText();
+	}
+	
+	/**
+	 * Dostupnost dokumentu pravidla klubu ke stazeni.
+	 * @return
+	 */
+	public boolean isClubRulesDocEnabled() {
+		return this.clubRulesAgreementConfig != null 
+				&& this.clubRulesAgreementConfig.isPageAttachment()
+				&& this.clubRulesAgreementConfig.getAttachmentUuid() != null;
+	}
+	
+	/**
+	 * Dostupnost dokumentu gdpr ke stazeni.
+	 * @return
+	 */
+	public boolean isGdprDocEnabled() {
+		return this.gdprAgreementConfig != null 
+				&& this.gdprAgreementConfig.isPageAttachment()
+				&& this.gdprAgreementConfig.getAttachmentUuid() != null;
+	}
+
+	/**
+	 * Dostupnost dokumentu odsouhlaseni zdravotniho stavu ke stazeni.
+	 * @return
+	 */
+	public boolean isHealthInfoDocEnabled() {
+		return this.healthInfoAgreementConfig != null 
+				&& this.healthInfoAgreementConfig.isPageAttachment()
+				&& this.healthInfoAgreementConfig.getAttachmentUuid() != null;
 	}
 	
 	public String getCourseRowColor(Course course) {
