@@ -23,6 +23,8 @@ import org.zkoss.zul.Messagebox;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
+import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig.CourseApplicationFileType;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
@@ -41,6 +43,7 @@ public class CourseApplicationVM extends BaseVM {
 	private CourseApplication application;
 	private boolean healthInfoAgreement;
 	private boolean personalInfoProcessAgreement;
+	private boolean clubRulesAgreement;
 	private boolean editMode;
 	private boolean securedMode;
 	private boolean showNotification;
@@ -53,7 +56,10 @@ public class CourseApplicationVM extends BaseVM {
 	private boolean courseSelectionRequired;
 	private List<CourseLocation> courseLocationList;
 	private CourseLocation courseLocationSelected;
-
+	private CourseApplicationFileConfig clubRulesAgreementConfig;
+	private CourseApplicationFileConfig healthInfoAgreementConfig;
+	private CourseApplicationFileConfig gdprAgreementConfig;
+	
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
 
@@ -96,7 +102,9 @@ public class CourseApplicationVM extends BaseVM {
 				// seznam mist konani
 				this.courseLocationList = courseService.getCourseLocationAll();
 				// seznam vsech kurzu
-				this.courseListAll = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);		
+				this.courseListAll = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
+				// konfigurace souhlasu týkajici se zdravotniho stavu, zpracování informací, pravidel klubu
+				initAgreementFileConfig();
 			} else {
 				// seznam vybranych kurzu
 				this.courseList = courseService.getByCourseParticipantUuid(this.application.getCourseParticipant().getUuid(), this.application.getYearFrom(), this.application.getYearTo());
@@ -109,7 +117,20 @@ public class CourseApplicationVM extends BaseVM {
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {String.valueOf(courseApplication.getYearFrom())});
 		}
 	}
-
+	
+	/**
+	 * Init agreemnts of gdpr, health info and club rules and connected files to download.
+	 */
+	private void initAgreementFileConfig() {
+		// konfigurace souhlasu týkajici se zdravotniho stavu, zpracování informací, pravidel klubu
+		List<CourseApplicationFileConfig> cafcPageList = courseApplicationFileConfigService.getListForPage();
+		if (cafcPageList != null) {
+			this.clubRulesAgreementConfig = getByType(cafcPageList, CourseApplicationFileType.CLUB_RULES);
+			this.healthInfoAgreementConfig = getByType(cafcPageList, CourseApplicationFileType.HEALTH_INFO);
+			this.gdprAgreementConfig = getByType(cafcPageList, CourseApplicationFileType.GDPR);
+		}
+	}
+	
 	@NotifyChange("*")
 	@Command
     public void submit() {
@@ -128,7 +149,9 @@ public class CourseApplicationVM extends BaseVM {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Creating application: " + this.application);
 				}
-				if (!this.healthInfoAgreement || !this.personalInfoProcessAgreement) {
+				if ((isHealthInfoConfirmRequired() && !this.healthInfoAgreement) 
+						|| (isGdprConfirmRequired() && !this.personalInfoProcessAgreement)
+						|| (isClubRulesConfirmRequired() && !this.clubRulesAgreement)) {
 					WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.agreementWithHealtAndDataInfo"));
 					return;
 				}
@@ -268,6 +291,35 @@ public class CourseApplicationVM extends BaseVM {
 		this.application = courseApplication != null ? courseApplication : new CourseApplication();
 		this.healthInfoAgreement = false;
 		this.personalInfoProcessAgreement = false;
+		this.clubRulesAgreement = false;
+	}
+	
+	public String getClubRulesText() {
+		return Labels.getLabel("txt.ui.common.ClubRulesAgreement", new Object[] {configurationService.getOrgName()});
+	}
+	
+	/**
+	 * Povinnost odsouhlaseni pravidel klubu.
+	 * @return
+	 */
+	public boolean isClubRulesConfirmRequired() {
+		return this.clubRulesAgreementConfig != null && this.clubRulesAgreementConfig.isPageText();
+	}
+	
+	/**
+	 * Povinnost odsouhlaseni gdpr.
+	 * @return
+	 */
+	public boolean isGdprConfirmRequired() {
+		return this.gdprAgreementConfig != null && this.gdprAgreementConfig.isPageText();
+	}
+
+	/**
+	 * Povinnost odsouhlaseni zdravotniho stavu.
+	 * @return
+	 */
+	public boolean isHealthInfoConfirmRequired() {
+		return this.healthInfoAgreementConfig != null && this.healthInfoAgreementConfig.isPageText();
 	}
 	
 	public String getCourseRowColor(Course course) {
@@ -303,6 +355,12 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public void setPersonalInfoProcessAgreement(boolean personalInfoProcessAgreement) {
 		this.personalInfoProcessAgreement = personalInfoProcessAgreement;
+	}
+	public boolean isClubRulesAgreement() {
+		return clubRulesAgreement;
+	}
+	public void setClubRulesAgreement(boolean clubRulesAgreement) {
+		this.clubRulesAgreement = clubRulesAgreement;
 	}
 	public boolean isEditMode() {
 		return editMode;
@@ -352,4 +410,23 @@ public class CourseApplicationVM extends BaseVM {
 	public void setCourseLocationSelected(CourseLocation courseLocationSelected) {
 		this.courseLocationSelected = courseLocationSelected;
 	}
+	public CourseApplicationFileConfig getClubRulesAgreementConfig() {
+		return clubRulesAgreementConfig;
+	}
+	public void setClubRulesAgreementConfig(CourseApplicationFileConfig clubRulesAgreementConfig) {
+		this.clubRulesAgreementConfig = clubRulesAgreementConfig;
+	}
+	public CourseApplicationFileConfig getHealthInfoAgreementConfig() {
+		return healthInfoAgreementConfig;
+	}
+	public void setHealthInfoAgreementConfig(CourseApplicationFileConfig healthInfoAgreementConfig) {
+		this.healthInfoAgreementConfig = healthInfoAgreementConfig;
+	}
+	public CourseApplicationFileConfig getGdprAgreementConfig() {
+		return gdprAgreementConfig;
+	}
+	public void setGdprAgreementConfig(CourseApplicationFileConfig gdprAgreementConfig) {
+		this.gdprAgreementConfig = gdprAgreementConfig;
+	}
+	
 }

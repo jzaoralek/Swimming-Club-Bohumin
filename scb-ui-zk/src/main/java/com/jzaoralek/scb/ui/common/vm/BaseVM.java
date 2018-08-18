@@ -299,7 +299,7 @@ public class BaseVM {
 		return attachment;
 	}
 	
-	private CourseApplicationFileConfig getByType(List<CourseApplicationFileConfig> cafcList, CourseApplicationFileType type) {
+	protected CourseApplicationFileConfig getByType(List<CourseApplicationFileConfig> cafcList, CourseApplicationFileType type) {
 		if (cafcList == null || cafcList.isEmpty()) {
 			return null;
 		}

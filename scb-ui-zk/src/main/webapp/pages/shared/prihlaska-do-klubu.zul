@@ -558,21 +558,26 @@
 							</rows>
 						</grid>
 						
-						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)">
+						<!-- Health info agreement -->
+						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" if="${vm.healthInfoConfirmRequired}" style="margin-top: 10px;">
 							<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="18" />
 							<label value="${vm.healthAgreement}" />
 						</hbox>
 						
-						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" style="margin-top: 20px;">
+						<!-- Personal data process agreement -->
+						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" if="${vm.gdprConfirmRequired}" style="margin-top: 10px;">
 							<checkbox checked="@bind(vm.personalInfoProcessAgreement)" tabindex="19" />
-							<hbox>
-								<span>
-									<label value="${vm.persDataProcessAgreement}" />
-								</span>
-							</hbox>
+							<label value="${vm.persDataProcessAgreement}" />
 						</hbox>
 						
-						<hbox style="margin-bottom: 20px; margin-top: 20px" visible="@load(vm.editMode and !vm.securedMode)">
+						<!-- Club rules agreement -->
+						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" if="${vm.clubRulesConfirmRequired}" style="margin-top: 10px;">
+							<checkbox checked="@bind(vm.clubRulesAgreement)" tabindex="19" />
+							<label value="${vm.clubRulesText}" />
+						</hbox>
+						
+						<!-- Captcha -->
+						<hbox style="margin-bottom: 10px; margin-top: 20px" visible="@load(vm.editMode and !vm.securedMode)">
 							<vbox align="center">
 							    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
 							    <bw.captcha id="cap1" />
@@ -585,8 +590,8 @@
 							</vbox>
 						</hbox>
 						
-						<hbox style="margin-bottom: 20px;">
-							<vbox>
+						<hlayout style="margin-bottom: 20px;margin-top: 10px;">
+							<vlayout>
 								<button label="Odeslat" tabindex="21"
 									onClick="@command('submit')" 
 									iconSclass="z-icon-check" 
@@ -595,8 +600,8 @@
 									onClick="@command('submit')" 
 									iconSclass="z-icon-check" 
 									visible="@load(vm.editMode and vm.securedMode)" />
-							</vbox>
-						</hbox>
+							</vlayout>
+						</hlayout>
 					</vbox>
 					
 					<popup id="emailPopup" >

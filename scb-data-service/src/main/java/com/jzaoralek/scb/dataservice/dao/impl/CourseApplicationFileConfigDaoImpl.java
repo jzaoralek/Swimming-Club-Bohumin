@@ -25,7 +25,7 @@ public class CourseApplicationFileConfigDaoImpl extends BaseJdbcDao implements C
 
 	private static final String SELECT_FILE_BY_UUID = "select uuid, name, description, content, content_type from file where uuid=:" + UUID_PARAM;
 	private static final String SELECT_ALL_COLLUMNS_BASE = "SELECT uuid, type, file_uuid, page_text, page_attachment, email_attachment, description, modif_at, modif_by FROM course_application_file_config ";
-	private static final String SELECT_FOR_PAGE = SELECT_ALL_COLLUMNS_BASE + " WHERE page_attachment = '1'";
+	private static final String SELECT_FOR_PAGE = SELECT_ALL_COLLUMNS_BASE + " WHERE page_text = '1'";
 	private static final String SELECT_FOR_EMAIL = SELECT_ALL_COLLUMNS_BASE + "WHERE email_attachment = '1'";
 					
 	
