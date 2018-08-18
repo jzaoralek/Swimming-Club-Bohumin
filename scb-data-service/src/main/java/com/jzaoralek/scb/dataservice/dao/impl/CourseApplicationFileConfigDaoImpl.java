@@ -15,9 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationFileConfigDao;
-import com.jzaoralek.scb.dataservice.dao.impl.CourseApplicationDaoImpl.CourseApplicationRowMapper;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
-import com.jzaoralek.scb.dataservice.domain.Config;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
 
 @Repository

@@ -104,12 +104,15 @@ public class CourseApplicationVM extends BaseVM {
 				this.courseLocationList = courseService.getCourseLocationAll();
 				// seznam vsech kurzu
 				this.courseListAll = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
-				// konfigurace souhlasu týkajici se zdravotniho stavu, zpracování informací, pravidel klubu
-				initAgreementFileConfig();
 			} else {
 				// seznam vybranych kurzu
 				this.courseList = courseService.getByCourseParticipantUuid(this.application.getCourseParticipant().getUuid(), this.application.getYearFrom(), this.application.getYearTo());
 			}			
+		}
+		
+		if (!this.securedMode) {
+			// konfigurace souhlasu týkajici se zdravotniho stavu, zpracování informací, pravidel klubu
+			initAgreementFileConfig();			
 		}
 
 		if (courseApplication == null) {
@@ -125,10 +128,14 @@ public class CourseApplicationVM extends BaseVM {
 	private void initAgreementFileConfig() {
 		// konfigurace souhlasu týkajici se zdravotniho stavu, zpracování informací, pravidel klubu
 		List<CourseApplicationFileConfig> cafcPageList = courseApplicationFileConfigService.getListForPage();
+		LOG.info("initAgreementFileConfig():: cafcPageList: " + cafcPageList);
 		if (cafcPageList != null) {
 			this.clubRulesAgreementConfig = getByType(cafcPageList, CourseApplicationFileType.CLUB_RULES);
+			LOG.info("initAgreementFileConfig():: clubRulesAgreementConfig: " + clubRulesAgreementConfig);
 			this.healthInfoAgreementConfig = getByType(cafcPageList, CourseApplicationFileType.HEALTH_INFO);
+			LOG.info("initAgreementFileConfig():: healthInfoAgreementConfig: " + healthInfoAgreementConfig);
 			this.gdprAgreementConfig = getByType(cafcPageList, CourseApplicationFileType.GDPR);
+			LOG.info("initAgreementFileConfig():: gdprAgreementConfig: " + gdprAgreementConfig);
 		}
 	}
 	

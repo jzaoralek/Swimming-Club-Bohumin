@@ -41,11 +41,11 @@
 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
 		
 		<!-- Platby -->
-		<menuitem label="${c:l('txt.ui.menu.payments')}"
-			tooltiptext="${c:l('txt.ui.menu.bankPayments')}"
-			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-			href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul" >
-		</menuitem>
+<!-- 		<menuitem label="${c:l('txt.ui.menu.payments')}" -->
+<!-- 			tooltiptext="${c:l('txt.ui.menu.bankPayments')}" -->
+<!-- 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" -->
+<!-- 			href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul" > -->
+<!-- 		</menuitem> -->
 			
 		<!-- Nastaveni -->
 		<menuitem label="${c:l('txt.ui.menu.configuration')}" 

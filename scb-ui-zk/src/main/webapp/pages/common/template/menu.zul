@@ -102,14 +102,14 @@
 			</menuitem>
 			
 			<!-- Platby -->
-			<menuitem style="text-align: center; width: 100px;"
-				label="${c:l('txt.ui.menu.payments')}" 
-				id="menu_bankPaymentList"
-				iconSclass="z-icon-credit-card" 
-				tooltiptext="${c:l('txt.ui.menu.bankPayments')}"
-				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul" >
-			</menuitem>
+<!-- 			<menuitem style="text-align: center; width: 100px;" -->
+<!-- 				label="${c:l('txt.ui.menu.payments')}"  -->
+<!-- 				id="menu_bankPaymentList" -->
+<!-- 				iconSclass="z-icon-credit-card"  -->
+<!-- 				tooltiptext="${c:l('txt.ui.menu.bankPayments')}" -->
+<!-- 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" -->
+<!-- 				href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul" > -->
+<!-- 			</menuitem> -->
 			
 			<!-- Nastaveni -->
 			<menuitem style="text-align: center; width: 100px;"
