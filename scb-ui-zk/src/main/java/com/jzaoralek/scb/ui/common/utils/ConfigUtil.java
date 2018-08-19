@@ -18,7 +18,9 @@ public final class ConfigUtil {
 		if (StringUtils.hasText(orgNameSession)) {
 			return orgNameSession;
 		} else {
-			return configurationService.getOrgName();
+			String value = configurationService.getOrgName();
+			addToSessionConfigCache(ConfigName.ORGANIZATION_NAME, value); 
+			return value;
 		}
 	}
 	
@@ -27,7 +29,9 @@ public final class ConfigUtil {
 		if (StringUtils.hasText(orgEmailSession)) {
 			return orgEmailSession;
 		} else {
-			return configurationService.getOrgEmail();
+			String value = configurationService.getOrgEmail();
+			addToSessionConfigCache(ConfigName.ORGANIZATION_EMAIl, value);
+			return value;
 		}
 	}
 	
@@ -36,7 +40,9 @@ public final class ConfigUtil {
 		if (StringUtils.hasText(orgPhoneSession)) {
 			return orgPhoneSession;
 		} else {
-			return configurationService.getOrgPhone();
+			String value = configurationService.getOrgPhone();
+			addToSessionConfigCache(ConfigName.ORGANIZATION_PHONE, value);
+			return value;
 		}
 	}
 	
@@ -45,8 +51,25 @@ public final class ConfigUtil {
 		if (StringUtils.hasText(welcomeInfoSession)) {
 			return welcomeInfoSession;
 		} else {
-			return configurationService.getWelcomeInfo();
+			String value = configurationService.getWelcomeInfo();
+			addToSessionConfigCache(ConfigName.WELCOME_INFO, value);
+			return value;
 		}
+	}
+	
+	public static boolean isPaymentsAvailable(ConfigurationService configurationService) {
+		Boolean paymentsAvailableSession = (Boolean)WebUtils.getSessAtribute(ConfigName.PAYMENTS_AVAILABLE.name());
+		if (paymentsAvailableSession != null) {
+			return paymentsAvailableSession;
+		} else {
+			Boolean value = configurationService.isPaymentsAvailable();
+			addToSessionConfigCache(ConfigName.PAYMENTS_AVAILABLE, value); 
+			return value;
+		}
+	}
+	
+	public static void addToSessionConfigCache(ConfigName configName, Object value) {
+		WebUtils.setSessAtribute(configName.name(), value);
 	}
 	
 	public static void clearSessionConfigCache(String configName) {

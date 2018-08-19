@@ -108,6 +108,7 @@
 				iconSclass="z-icon-credit-card" 
 				tooltiptext="${c:l('txt.ui.menu.bankPayments')}"
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
+				if="${vm.paymentsAvailable}"
 				href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul" >
 			</menuitem>
 			

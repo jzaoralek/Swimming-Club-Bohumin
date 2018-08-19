@@ -112,6 +112,7 @@ CREATE TABLE configuration(
     type  ENUM('STRING','INTEGER','BOOLEAN','ENUM') NOT NULL,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
+    superadmin_config ENUM('0','1') NOT NULL DEFAULT '0',
 	PRIMARY KEY (uuid)
 );
 

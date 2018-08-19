@@ -387,18 +387,25 @@ public class BaseVM {
 			
 		}
 		
-		if (attachmentList != null && !attachmentList.isEmpty()) {
+		// specificky text z konfigurace
+		String specText = configurationService.getCourseApplicationEmailSpecText();
+		if (StringUtils.hasText(specText)) {
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-			if (attachmentList.size() == 1) {
-				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text5"));
-			} else {
-				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text6"));
-			}
+			mailToRepresentativeSb.append(specText);
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		}
 		
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+//		if (attachmentList != null && !attachmentList.isEmpty()) {
+//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+//			if (attachmentList.size() == 1) {
+//				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text5"));
+//			} else {
+//				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text6"));
+//			}
+//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+//		}
+		
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(configurationService.getOrgName());
 
