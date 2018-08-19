@@ -330,7 +330,7 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	
 	public String getClubRulesText() {
-		return Labels.getLabel("txt.ui.common.ClubRulesAgreement", new Object[] {configurationService.getOrgName()});
+		return configurationService.getClubRulesAgreement();
 	}
 	
 	/**

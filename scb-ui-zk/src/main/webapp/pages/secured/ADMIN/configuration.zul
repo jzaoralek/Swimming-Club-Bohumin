@@ -54,14 +54,16 @@
 												model="@load(vm.courseYearList)"
 												mold="select"
 												if="${each.type eq 'ENUM'}"
+												disabled="${each.superAdminConfig}"
 												height="25px" >
 												<template name="model">
 													<listitem label="${each}" value="${each}" />
 												</template>
 											</listbox>
-											<textbox if="${each.type eq 'STRING'}" value="@bind(each.value)" hflex="1"/>
+											<textbox if="${each.type eq 'STRING'}" value="@bind(each.value)" hflex="1" disabled="${each.superAdminConfig}" />
 							                <listbox selectedItem="@bind(each.value)"
 												if="${each.type eq 'BOOLEAN'}"
+												disabled="${each.superAdminConfig}"
 												mold="select"
 												height="25px" >
 												<listitem label="Ano" value="true" />

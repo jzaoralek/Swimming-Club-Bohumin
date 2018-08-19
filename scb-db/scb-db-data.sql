@@ -23,6 +23,14 @@ INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_b
 VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499618', 'HEALTH_AGREEMENT', 'Text souhlasem se zdravotní způsobilostí, zobrazen na přihlášce.', 'Souhlasím s kolektivním plaveckým výcvikem svého syna/dcery. Prohlašuji na základě lékařského posouzení zdravotního stavu, že můj syn/dcera je způsobilý/způsobilá absolvovat fyzickou zátěž sportovních tréninků a plaveckých závodů bez nebezpečí poškození jeho/jejího zdravotního stavu. V případě změny zdravotního stavu budu neprodleně informovat zástupce Plaveckého klubu Bohumín.', 'STRING', now(), 'SYSTEM');
 INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
 VALUES ('fd33a4d4-7e99-11e6-ae22-56b6b6499619', 'PERSONAL_DATA_PROCESS_AGREEMENT', 'Text souhlasem se zpracováním osobních údajů, zobrazen na přihlášce.', 'Souhlasím se zpracováním osobních údajů podle zákona č. 101/2000 Sb.Souhlasím s možností fotografování svého syna/dcery a s možností zveřejnění fotografií nebo videa v rámci propagace Plaveckého klubu Bohumín. Potvrzuji, že jsem se seznámil s Provozním řádem aquacentra Bohumín.', 'STRING', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499620', 'CLUB_RULES_AGREEMENT', 'Text se souhlasem s pravidly klubu, zobrazen na přihlášce.', 'Souhlasím s pravidly klubu.', 'STRING', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499624', 'COURSE_APPL_EMAIL_SPEC_TEXT', 'Specifický text v emailu rodičům po podání přihlášky na kurz.', 'Přiložené dokumenty prosím přineste do konce září.', 'STRING', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
+VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499622', 'ORGANIZATION_CONTACT_PERSON', 'Jméno a příjmení kontaktní osoby klubu', 'Adrian Kuder', 'STRING', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by, superadmin_config) 
+VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499623', 'PAYMENTS_AVAILABLE', 'Dostupnost modulu platby', 'true','BOOLEAN', now(), 'SYSTEM','1');
 
 INSERT INTO codelist_item (uuid, item_type, name, description, modif_at, modif_by) 
 VALUES ('82bb2300-8234-11e6-ae22-56b6b6499611', 'SWIMMING_STYLE', 'Prsa', '',  now(), 'SYSTEM');

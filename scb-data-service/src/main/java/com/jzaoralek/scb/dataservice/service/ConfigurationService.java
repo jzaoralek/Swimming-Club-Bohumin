@@ -21,6 +21,10 @@ public interface ConfigurationService {
 	String getBaseURL();
 	String getHealthAgreement();
 	String getPersDataProcessAgreement();
+	String getClubRulesAgreement();
+	String getCourseApplicationEmailSpecText();
+	String getOrgContactPerson();
+	boolean isPaymentsAvailable();
 	List<Config> getAll();
 	void update(Config config);
 }
