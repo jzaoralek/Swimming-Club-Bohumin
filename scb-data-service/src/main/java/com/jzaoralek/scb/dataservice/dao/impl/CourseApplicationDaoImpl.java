@@ -313,6 +313,49 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
 			"AND c.year_to = :"+YEAR_TO_PARAM+ " " +
 			"order by con_part.surname ";
+	
+	private static final String SELECT_ASSIGNED_TO_COURSE_MIN = "select distinct" +
+			" con_part.firstname " +
+			", con_part.surname " +
+			", cp.uuid \"participant_uuid\" " +
+			", con_repr.email1 " +
+			", usr.uuid  \"representative_uuid\" " +
+			", ca.uuid " +
+			", ca.payed " +
+			", ca.year_from " +
+			", ca.year_to " +
+			", ca.modif_at " +
+			", ca.modif_by " +
+			", ccp.varsymbol_core " + 
+			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
+			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
+			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\" " +
+			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +			
+			", (select sum(amount) from payment where payment.course_participant_uuid = cp.uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\"" +
+			", (select count(*) " +
+			"		from course_application cain " +
+			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
+			"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
+			"from  " +
+			"course_application ca " +
+			", course_participant cp " +
+			", contact con_part " +
+			", contact con_repr " +
+			", user usr " +
+			", course_course_participant ccp " +
+			", course c " +
+			"where " +
+			"ca.course_participant_uuid = cp.uuid " +
+			"and cp.contact_uuid = con_part.uuid " +
+			"and ca.user_uuid = usr.uuid " +
+			"and usr.contact_uuid = con_repr.uuid " +
+			"AND ca.year_from = :"+YEAR_FROM_PARAM+" " +
+			"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
+			"AND cp.uuid = ccp.course_participant_uuid " +
+			"AND c.uuid = ccp.course_uuid " +
+			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
+			"AND c.year_to = :"+YEAR_TO_PARAM+ " " +
+			"order by con_part.surname ";
 
 	private static final String SELECT_BY_UUID = "select uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by, payed from course_application where uuid=:" + UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course_application where uuid = :" + UUID_PARAM;
@@ -400,7 +443,9 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	@Override
 	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE, paramMap, new CourseApplicationRowMapper(courseDao, true));
+		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE_MIN, paramMap, new CourseApplicationMinRowMapper());
+//		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE_MIN, paramMap, new CourseApplicationRowMapper(courseDao, true));
+		
 	}
 	
 	@Override
@@ -419,6 +464,55 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		}
 	}
 
+	public static final class CourseApplicationMinRowMapper implements RowMapper<CourseApplication> {
+
+		@Override
+		public CourseApplication mapRow(ResultSet rs, int rowNum) throws SQLException {
+			CourseApplication ret = new CourseApplication();
+			fetchIdentEntity(rs, ret);
+			
+			ret.setYearFrom(rs.getInt("year_from"));
+			ret.setYearTo(rs.getInt("year_to"));
+			
+			CourseParticipant courseParticipant = new CourseParticipant();
+			courseParticipant.setUuid(UUID.fromString(rs.getString("participant_uuid")));
+			courseParticipant.setVarsymbolCore(rs.getInt("varsymbol_core"));
+			
+			String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
+			String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");				
+			if (StringUtils.hasText(courseCourseParticipantUuid)) {
+				courseParticipant.setCourseUuid(UUID.fromString(courseCourseParticipantUuid)); 
+			}
+			if (StringUtils.hasText(courseNameCourseParticipantUuid)) {
+				courseParticipant.setCourseName(courseNameCourseParticipantUuid); 
+			}
+			// payment sum
+			long paymentSum = rs.getLong("PAYMENT_SUM");
+			long priceSemester1 = rs.getLong("COURSE_PRICE_SEMESTER_1");
+			long priceSemester2 = rs.getLong("COURSE_PRICE_SEMESTER_2");
+			courseParticipant.setCoursePaymentVO(new CoursePaymentVO(paymentSum, priceSemester1, priceSemester2));
+
+			Contact courseParticipantContact = new Contact();
+			courseParticipantContact.setFirstname(rs.getString("firstname"));
+			courseParticipantContact.setSurname(rs.getString("surname"));
+			courseParticipant.setContact(courseParticipantContact);
+
+			ret.setCourseParticipant(courseParticipant);
+
+			ScbUser courseParticRepresentative = new ScbUser();
+			Contact courseParticRepresentativeContact = new Contact();
+			courseParticRepresentativeContact.setEmail1(rs.getString("email1"));
+			courseParticRepresentative.setContact(courseParticRepresentativeContact);
+			courseParticRepresentative.setUuid(UUID.fromString(rs.getString("representative_uuid")));
+			ret.setCourseParticRepresentative(courseParticRepresentative);
+
+			ret.setPayed(rs.getInt("payed") == 1);
+			ret.setCurrentParticipant(rs.getInt("current_participant") == 1);
+			
+			return ret;
+		}
+	}
+	
 	public static final class CourseApplicationRowMapper implements RowMapper<CourseApplication> {
 		private CourseDao courseDao;
 		private boolean extended;

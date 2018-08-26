@@ -24,6 +24,7 @@ public interface ConfigurationService {
 	String getClubRulesAgreement();
 	String getCourseApplicationEmailSpecText();
 	String getOrgContactPerson();
+	String getBankAccountNumber();
 	boolean isPaymentsAvailable();
 	List<Config> getAll();
 	void update(Config config);

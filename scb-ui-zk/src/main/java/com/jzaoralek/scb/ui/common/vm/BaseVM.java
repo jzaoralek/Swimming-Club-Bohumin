@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
@@ -242,7 +243,7 @@ public class BaseVM {
 		
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(configurationService.getOrgName());
+		mailToUser.append(buildMailSignature());
 		
 		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
 	}
@@ -279,6 +280,21 @@ public class BaseVM {
 		return Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
 	}
 	
+	/**
+	 * Sestavi variabilni symbol pro platbu ucastnika za kurz.
+	 * @param yearFrom
+	 * @param semester
+	 * @param courseParticVarsymbolCore
+	 * @return
+	 */
+	public String buildCoursePaymentVarsymbol(int yearFrom, int semester, int courseParticVarsymbolCore) {
+		Objects.requireNonNull(yearFrom, "yearFrom");
+		Objects.requireNonNull(semester, "semester");
+		Objects.requireNonNull(courseParticVarsymbolCore, "courseParticVarsymbolCore");
+		
+		return String.valueOf(yearFrom) + String.valueOf(semester) + String.valueOf(courseParticVarsymbolCore);
+	}
+	
 	protected Attachment buildCourseApplicationAttachment(CourseApplication courseApplication, byte[] byteArray) {
 		if (courseApplication == null) {
 			throw new IllegalArgumentException("courseApplication is null");
@@ -312,6 +328,25 @@ public class BaseVM {
 			}
 		}
 		return ret;
+	}
+	
+	/**
+	 * Sestavi podlis do emailu.
+	 * @return
+	 */
+	protected String buildMailSignature() {
+		StringBuilder sb = new StringBuilder();		
+		sb.append(configurationService.getOrgName());
+		sb.append(WebConstants.LINE_SEPARATOR);
+		sb.append(Labels.getLabel("txt.ui.common.contact"));
+		sb.append(": ");
+		sb.append(configurationService.getOrgContactPerson());
+		sb.append(", ");
+		sb.append(configurationService.getOrgPhone());
+		sb.append(", ");
+		sb.append(configurationService.getOrgEmail());
+
+		return sb.toString();
 	}
 
 	public void sendMail(CourseApplication courseApplication, String headline) {
@@ -407,7 +442,7 @@ public class BaseVM {
 //		}
 		
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(configurationService.getOrgName());
+		mailToRepresentativeSb.append(buildMailSignature());
 
 		// mail to course participant representative
 		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
@@ -442,7 +477,7 @@ public class BaseVM {
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text3", new Object[] {user.getPassword()}));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(configurationService.getOrgName());
+		mailToUser.append(buildMailSignature());
 
 		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null);
 	}

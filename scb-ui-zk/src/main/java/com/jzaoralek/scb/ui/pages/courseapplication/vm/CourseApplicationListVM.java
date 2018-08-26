@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -69,6 +70,8 @@ public class CourseApplicationListVM extends BaseContextVM {
 	private boolean unregToCurrYear;
 	private String unregToCurrYearLabel;
 	private final List<Listitem> coursePaymentStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(CoursePaymentState.class));
+	private String bankAccountNumber;
+	private int yearFrom;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -77,6 +80,8 @@ public class CourseApplicationListVM extends BaseContextVM {
 
 		setPageMode();
 		loadData();
+		
+		this.bankAccountNumber = configurationService.getBankAccountNumber();
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
@@ -228,7 +233,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text3"));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
-						mailToUser.append(configurationService.getOrgName());
+						mailToUser.append(buildMailSignature());
 						
 						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null);
 						WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
@@ -274,6 +279,80 @@ public class CourseApplicationListVM extends BaseContextVM {
 		return ret;
 	}
 
+	/**
+	 * Na emailove adresy zastupcu ybranych ucastniku odesle instrukce k platbe za dany kurz.
+	 */
+	@Command
+	public void sendPaymentInstructionCmd(@BindingParam("firstSemester") final boolean firstSemester) {
+		if (CollectionUtils.isEmpty(this.courseApplicationList)) {
+			return;
+		}
+		
+		// validace, ze v konfiguraci je vyplneno cislo bankovniho uctu
+		final String bankAccountNumber = configurationService.getBankAccountNumber();
+		if (!StringUtils.hasText(bankAccountNumber)) {
+			WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.noBankAccountInConfig"));
+			return;
+		}
+		
+		final List<CourseApplication> courseApplicationList = this.courseApplicationList;
+		final int semester = firstSemester ? 1 : 2;		
+		String[] years = getYearsFromContext();
+		final String yearFromTo = years[0] + "/" + years[1];
+		final int yearFrom = Integer.parseInt(years[0]);
+		
+		final Object[] msgParams = new Object[] {semester};
+		
+		MessageBoxUtils.showDefaultConfirmDialog(
+			"msg.ui.quest.sendMailWithPaymentInstructions",
+			"msg.ui.title.sendMail",
+			new SzpEventListener() {
+				@Override
+				public void onOkEvent() {
+					StringBuilder mailToUser = null;
+					for (CourseApplication courseApplication : courseApplicationList) {
+						mailToUser = new StringBuilder();
+						mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text0"));
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text1", new Object[] {courseApplication.getCourseParticipant().getCourseName(), semester, yearFromTo}));
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+
+						// cislo uctu
+						mailToUser.append(Labels.getLabel("txt.ui.common.AccountNo"));
+						mailToUser.append(": ");
+						mailToUser.append(bankAccountNumber);
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						
+						// castka
+						long priceForSemester = firstSemester ? courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceFirstSemester() : courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceSecondSemester();
+						mailToUser.append(Labels.getLabel("txt.ui.common.Amount"));
+						mailToUser.append(": ");
+						mailToUser.append(priceForSemester);
+						mailToUser.append(" ");
+						mailToUser.append(Labels.getLabel("txt.ui.common.CZK"));
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						
+						// variabilni symbol
+						mailToUser.append(Labels.getLabel("txt.ui.common.VarSymbol"));
+						mailToUser.append(": ");
+						mailToUser.append(buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore()));
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						mailToUser.append(WebConstants.LINE_SEPARATOR);
+						
+						// podpis
+						mailToUser.append(buildMailSignature());
+						
+						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {courseApplication.getCourseParticipant().getCourseName(), semester, yearFromTo}), mailToUser.toString(), null);
+						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
+					}
+				}
+			},
+			msgParams
+		);
+	}
+	
 	@SuppressWarnings("unchecked")
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
 		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
@@ -333,6 +412,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
+		this.yearFrom = yearFrom;
 		
 		this.unregToCurrYearLabel = Labels.getLabel("txt.ui.common.unregisteredFrom")+" "+String.valueOf(yearFrom-1)+"/"+String.valueOf(yearTo-1);
 
@@ -372,6 +452,14 @@ public class CourseApplicationListVM extends BaseContextVM {
 	
 	public List<Listitem> getCoursePaymentStateListWithEmptyItem() {
 		return coursePaymentStateListWithEmptyItem;
+	}
+	
+	public String getBankAccountNumber() {
+		return bankAccountNumber;
+	}
+	
+	public int getYearFrom() {
+		return yearFrom;
 	}
 
 	public static class CourseApplicationFilter {

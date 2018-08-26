@@ -253,7 +253,8 @@
 									            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
 									            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
 									            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
-									            <listheader width="25px" />
+<!-- 									            <listheader width="35px" /> -->
+									            <listheader width="35px" />
 									            <listheader hflex="min"/>
 									        </listhead>
 									         
@@ -266,6 +267,18 @@
 									                		<label value="${vm.getLessonToUi(each)}"/>
 														</vbox>
 									                </listcell>
+													<!-- Platba -->
+<!-- 									                <listcell> -->
+<!-- 										                <vbox> -->
+<!-- 										                	<a iconSclass="z-icon-credit-card" popup="paymentPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.PaymentInstruction')}" /> -->
+<!-- 										                	<popup id="paymentPopup_${item.uuid}"> -->
+<!-- 														    	<payment-instruction course="${item}"  -->
+<!-- 														    		orgAccountNumber="${vm.orgAccountNo}"  -->
+<!-- 														    		paymentVarSymbolFirstSemester="${vm.paymentVarSymbolFirstSemester}"   -->
+<!-- 														    		paymentVarSymbolSecondSemester="${vm.paymentVarSymbolSecondSemester}"  /> -->
+<!-- 														    </popup> -->
+<!-- 								                		</vbox> -->
+<!-- 									                </listcell> -->
 									                <listcell>
 										                <vbox>
 															<!-- Popis -->

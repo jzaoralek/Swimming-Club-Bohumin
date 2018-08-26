@@ -25,6 +25,7 @@ public class CourseParticipant implements IdentEntity {
 	private UUID courseUuid;
 	private String courseName;
 	private CoursePaymentVO coursePaymentVO;
+	private int varsymbolCore;
 
 	/*
 	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
@@ -168,6 +169,14 @@ public class CourseParticipant implements IdentEntity {
 		this.coursePaymentVO = coursePaymentVO;
 	}
 	
+	public int getVarsymbolCore() {
+		return varsymbolCore;
+	}
+
+	public void setVarsymbolCore(int varsymbolCore) {
+		this.varsymbolCore = varsymbolCore;
+	}
+	
 	public String getInCourseInfo() {
 		String ret = null;
 		String DELIMITER = ", ";
@@ -189,7 +198,7 @@ public class CourseParticipant implements IdentEntity {
 				+ contact + ", birthdate=" + birthdate + ", personalNo=" + personalNo + ", healthInsurance="
 				+ healthInsurance + ", healthInfo=" + healthInfo + ", resultList=" + resultList + ", courseList="
 				+ courseList + ", representativeUuid=" + representativeUuid + ", courseUuid=" + courseUuid
-				+ ", courseName=" + courseName + ", coursePaymentVO=" + coursePaymentVO + ", lessonAttendance="
-				+ lessonAttendance + "]";
+				+ ", courseName=" + courseName + ", coursePaymentVO=" + coursePaymentVO + ", varsymbolCore="
+				+ varsymbolCore + ", lessonAttendance=" + lessonAttendance + "]";
 	}
 }
