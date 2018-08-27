@@ -171,7 +171,6 @@
 <!-- 									    		<label value=" ${c:l('txt.ui.common.CZK')}" /> -->
 <!-- 									    	</hbox> -->
 											
-											
 									    	<payment-instruction orgAccountNumber="${vm.bankAccountNumber}" 
 									    		priceSemester1="${each.courseParticipant.coursePaymentVO.priceFirstSemester}"
 									    		priceSemester2="${each.courseParticipant.coursePaymentVO.priceSecondSemester}"
