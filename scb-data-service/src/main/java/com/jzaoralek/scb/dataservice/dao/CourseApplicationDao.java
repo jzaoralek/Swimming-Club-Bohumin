@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,5 +18,6 @@ public interface CourseApplicationDao {
 	void insert(CourseApplication courseApplication);
 	void update(CourseApplication courseApplication);
 	void updatePayed(CourseApplication courseApplication, boolean payed);
+	void updateNotifiedPayment(List<UUID> courseParticUuidList, Date notifiedAt);
 	void delete(CourseApplication courseApplication);
 }

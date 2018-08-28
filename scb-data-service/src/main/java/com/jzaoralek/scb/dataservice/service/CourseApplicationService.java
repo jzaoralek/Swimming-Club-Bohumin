@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,5 +20,6 @@ public interface CourseApplicationService {
 	void storeCourseParticipant(CourseParticipant courseParticipant);
 	CourseApplication store(CourseApplication courseApplication) throws ScbValidationException;
 	void updatePayed(UUID uuid, boolean payed) throws ScbValidationException;
+	void updateNotifiedPayment(List<UUID> courseParticUuidList);
 	void delete(UUID uuid) throws ScbValidationException;
 }

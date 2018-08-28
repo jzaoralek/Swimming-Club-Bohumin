@@ -2,15 +2,20 @@ package com.jzaoralek.scb.ui.pages.payments.vm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import org.jfree.util.Log;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
@@ -18,6 +23,9 @@ import com.jzaoralek.scb.ui.pages.payments.dto.PaymentInstruction;
 
 public class PaymentInstructionWinVM extends BaseVM {
 
+	@WireVariable
+	private CourseApplicationService courseApplicationService;
+	
 	private List<PaymentInstruction> paymentInstructionList;
 	private int semester;
 	private String bankAccountNumber;
@@ -44,7 +52,12 @@ public class PaymentInstructionWinVM extends BaseVM {
 		}
 		
 		StringBuilder mailToUser = null;
+		List<UUID> sentCourseParticUuidList = new ArrayList<>();
 		for (PaymentInstruction paymentInstruction : this.paymentInstructionList) {
+			if (!StringUtils.hasText(paymentInstruction.getCourseParticReprEmail())) {
+				Log.warn("submitCmd():: No course participant representative email for courseParticipant: " + paymentInstruction.getCourseParticName());
+				continue;
+			}
 			mailToUser = new StringBuilder();
 			mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text0"));
 			mailToUser.append(WebConstants.LINE_SEPARATOR);
@@ -78,9 +91,14 @@ public class PaymentInstructionWinVM extends BaseVM {
 			mailToUser.append(buildMailSignature());
 			
 			mailService.sendMail(paymentInstruction.getCourseParticReprEmail(), Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo}), mailToUser.toString(), null);
+			sentCourseParticUuidList.add(paymentInstruction.getCourseParticipantUuid());
 		}
 		
-		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
+		if (!CollectionUtils.isEmpty(sentCourseParticUuidList)) {
+			courseApplicationService.updateNotifiedPayment(sentCourseParticUuidList);
+		}
+		
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentInstructionSent"));
 		
 		window.detach();
 	}
@@ -99,7 +117,8 @@ public class PaymentInstructionWinVM extends BaseVM {
 					, firstSemester ? courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceFirstSemester() : courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceSecondSemester()
 					, this.semester
 					, buildCoursePaymentVarsymbol(yearFrom, this.semester, courseApplication.getCourseParticipant().getVarsymbolCore())
-					, bankAccountNumber));
+					, bankAccountNumber
+					, courseApplication.getCourseParticipant().getUuid()));
 		}
 	}
 	

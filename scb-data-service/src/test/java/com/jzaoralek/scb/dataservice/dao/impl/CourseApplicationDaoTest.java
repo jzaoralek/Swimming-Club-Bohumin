@@ -1,5 +1,7 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.UUID;
 
 import org.junit.After;
@@ -86,6 +88,10 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	@Test
 	public void testGetAssignedToCourse() {
 		assertList(courseApplicationDao.getAssignedToCourse(YEAR_FROM, YEAR_TO), 0, ITEM_UUID);
+	}
+	
+	public void testUpdateNotifiedPayment() {
+		courseApplicationDao.updateNotifiedPayment(Arrays.asList(COURSE_PARTICIPANT_UUID), Calendar.getInstance().getTime());
 	}
 	
 	@Test

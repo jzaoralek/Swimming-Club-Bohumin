@@ -2,6 +2,8 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -327,6 +329,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", ca.modif_at " +
 			", ca.modif_by " +
 			", ccp.varsymbol_core " + 
+			", ccp.notified_payment_at " + 
 			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
 			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
 			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\" " +
@@ -361,7 +364,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	private static final String DELETE = "DELETE FROM course_application where uuid = :" + UUID_PARAM;
 	private static final String UPDATE = "UPDATE course_application SET year_from=:"+YEAR_FROM_PARAM+", year_to=:"+YEAR_TO_PARAM+", course_participant_uuid=:"+COURSE_PARTICIPANT_UUID_PARAM+", user_uuid=:"+USER_UUID_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", payed = :"+PAYED_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String UPDATE_PAYED = "UPDATE course_application SET modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", payed = :"+PAYED_PARAM+" WHERE uuid=:"+UUID_PARAM;
-
+	private static final String UPDATE_NOTIFIED_PAYMENT = "UPDATE COURSE_COURSE_PARTICIPANT SET notified_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
+	
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
 
@@ -398,6 +402,20 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		namedJdbcTemplate.update(UPDATE, paramMap);
 	}
 
+	@Override
+	public void updateNotifiedPayment(List<UUID> courseParticUuidList, Date notifiedAt) {
+		List<String> uuidList = new ArrayList<>();
+		for (UUID item : courseParticUuidList) {
+			uuidList.add(item.toString());
+		}
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("uuids", uuidList);
+		paramMap.addValue("notifiedAt", notifiedAt);
+		
+		namedJdbcTemplate.update(UPDATE_NOTIFIED_PAYMENT, paramMap);
+	}
+	
 	@Override
 	public void updatePayed(CourseApplication courseApplication, boolean payed) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -477,6 +495,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			CourseParticipant courseParticipant = new CourseParticipant();
 			courseParticipant.setUuid(UUID.fromString(rs.getString("participant_uuid")));
 			courseParticipant.setVarsymbolCore(rs.getInt("varsymbol_core"));
+			courseParticipant.setNotifiedPaymentAt(rs.getTimestamp("notified_payment_at"));
 			
 			String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
 			String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");				

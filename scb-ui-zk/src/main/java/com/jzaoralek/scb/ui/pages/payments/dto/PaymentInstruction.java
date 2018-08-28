@@ -1,5 +1,7 @@
 package com.jzaoralek.scb.ui.pages.payments.dto;
 
+import java.util.UUID;
+
 public class PaymentInstruction {
 	
 	private String courseParticName;
@@ -9,8 +11,9 @@ public class PaymentInstruction {
 	private int semester;
 	private String varsymbol;
 	private String bankAccountNumber;
-	
-	public PaymentInstruction(String courseParticName, String courseParticReprEmail, String courseName, long priceSemester, int semester, String varsymbol, String bankAccountNumber) {
+	private UUID courseParticipantUuid;
+
+	public PaymentInstruction(String courseParticName, String courseParticReprEmail, String courseName, long priceSemester, int semester, String varsymbol, String bankAccountNumber, UUID courseParticipantUuid) {
 		super();
 		this.courseName = courseName;
 		this.priceSemester = priceSemester;
@@ -19,6 +22,7 @@ public class PaymentInstruction {
 		this.bankAccountNumber = bankAccountNumber;
 		this.courseParticReprEmail = courseParticReprEmail;
 		this.courseParticName = courseParticName;
+		this.courseParticipantUuid = courseParticipantUuid;
 	}
 	
 	public String getCourseName() {
@@ -62,6 +66,12 @@ public class PaymentInstruction {
 	}
 	public void setCourseParticName(String courseParticName) {
 		this.courseParticName = courseParticName;
+	}
+	public UUID getCourseParticipantUuid() {
+		return courseParticipantUuid;
+	}
+	public void setCourseParticipantUuid(UUID courseParticipantUuid) {
+		this.courseParticipantUuid = courseParticipantUuid;
 	}
 
 	@Override
