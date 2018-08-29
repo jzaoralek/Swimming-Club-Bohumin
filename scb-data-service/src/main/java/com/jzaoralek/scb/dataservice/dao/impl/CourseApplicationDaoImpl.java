@@ -365,8 +365,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	private static final String DELETE = "DELETE FROM course_application where uuid = :" + UUID_PARAM;
 	private static final String UPDATE = "UPDATE course_application SET year_from=:"+YEAR_FROM_PARAM+", year_to=:"+YEAR_TO_PARAM+", course_participant_uuid=:"+COURSE_PARTICIPANT_UUID_PARAM+", user_uuid=:"+USER_UUID_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", payed = :"+PAYED_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String UPDATE_PAYED = "UPDATE course_application SET modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", payed = :"+PAYED_PARAM+" WHERE uuid=:"+UUID_PARAM;
-	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER1 = "UPDATE COURSE_COURSE_PARTICIPANT SET notified_semester_1_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
-	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER2 = "UPDATE COURSE_COURSE_PARTICIPANT SET notified_semester_2_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
+	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER1 = "UPDATE course_course_participant SET notified_semester_1_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
+	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER2 = "UPDATE course_course_participant SET notified_semester_2_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
 	
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
