@@ -540,13 +540,13 @@ public class CourseApplicationListVM extends BaseContextVM {
 			List<CourseApplication> ret = new ArrayList<CourseApplication>();
 			for (CourseApplication item : codelistModelList) {
 				if (matches(item.getCourseParticipant().getContact().getSurname() + " " + item.getCourseParticipant().getContact().getFirstname()
-						, dateFormat.format(item.getCourseParticipant().getBirthdate())
+						, item.getCourseParticipant().getBirthdate() != null ? dateFormat.format(item.getCourseParticipant().getBirthdate()) : null
 						, item.getCourseParticipant().getPersonalNo()
 						, item.getCourseParticRepresentative().getContact().getSurname() + " " + item.getCourseParticRepresentative().getContact().getFirstname()
 						, item.getCourseParticRepresentative().getContact().getPhone1()
 						, item.getCourseParticRepresentative().getContact().getEmail1()
 						, dateTimeFormat.format(item.getModifAt())
-						, item.getCourseParticipant().getInCourseInfo()
+						, item.getCourseParticipant().getCourseName()
 						, item.getCourseParticipant().inCourse()
 						, (item.getCourseParticipant().getCoursePaymentVO() != null) ? item.getCourseParticipant().getCoursePaymentVO().getStateTotal() : null
 						, !item.isCurrentParticipant()
