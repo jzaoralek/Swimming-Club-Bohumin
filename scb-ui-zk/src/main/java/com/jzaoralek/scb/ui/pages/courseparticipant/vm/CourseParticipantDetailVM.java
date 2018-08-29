@@ -61,6 +61,10 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	private List<CourseApplication> courseApplicationList;
 	private Course courseSelected;
 	private boolean showLessonStats;
+	private String orgAccountNo;
+	private String paymentVarSymbolFirstSemester;
+	private String paymentVarSymbolSecondSemester;
+	private int yearFrom;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
@@ -73,6 +77,9 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		}
 		setReturnPage(fromPage);
 		fillSwimStyleItemList();
+		this.orgAccountNo = configurationService.getBankAccountNumber();
+		this.paymentVarSymbolFirstSemester = buildCoursePaymentVarsymbol(this.yearFrom, 1, this.courseParticipant.getVarsymbolCore());
+		this.paymentVarSymbolSecondSemester = buildCoursePaymentVarsymbol(this.yearFrom, 2, this.courseParticipant.getVarsymbolCore());
 	}
 	
 	protected void courseYearChangeCmdCore() {
@@ -83,7 +90,8 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		String[] years = getYearsFromContext();
 		
 		int yearFrom = Integer.parseInt(years[0]);
-		int yearTo = Integer.parseInt(years[1]);
+		int yearTo = Integer.parseInt(years[1]);		
+		this.yearFrom = yearFrom;
 
 		List<Course> courseListAll = courseService.getByCourseParticipantUuid(this.courseParticipant.getUuid(), yearFrom, yearTo);
 		this.courseList = new ArrayList<>();
@@ -181,4 +189,17 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	public boolean isShowLessonStats() {
 		return showLessonStats;
 	}
+	
+	public String getOrgAccountNo() {
+		return orgAccountNo;
+	}
+	
+	public String getPaymentVarSymbolFirstSemester() {
+		return paymentVarSymbolFirstSemester;
+	}
+
+	public String getPaymentVarSymbolSecondSemester() {
+		return paymentVarSymbolSecondSemester;
+	}
+
 }

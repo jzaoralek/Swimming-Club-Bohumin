@@ -128,4 +128,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public boolean isPaymentsAvailable() {
 		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.PAYMENTS_AVAILABLE.name()).getValue());
 	}
+
+	@Override
+	public String getBankAccountNumber() {
+		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_BANK_ACCOUNT_NUMBER.name()).getValue();
+	}
 }

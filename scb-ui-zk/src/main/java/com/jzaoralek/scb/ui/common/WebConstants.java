@@ -33,6 +33,7 @@ public final class WebConstants {
 	public static final String COURSE_UUID_PARAM = "courseUuid";
 	public static final String COURSE_PARTIC_UUID_PARAM = "courseParticUuid";
 	public static final String COURSE_APPLICATION_PARAM = "courseApplication";
+	public static final String COURSE_APPLICATION_LIST_PARAM = "courseApplicationList";
 	public static final String COURSE_PARTIC_PARAM = "coursePartic";
 	public static final String COURSE_PARAM = "course";
 	public static final String COURSE_PARTICIPANT_UUID_PARAM = "courseParticipant";
@@ -42,7 +43,10 @@ public final class WebConstants {
 	
 	public static final String YEAR_FROM_PARAM = "yearFrom";
 	public static final String YEAR_TO_PARAM = "yearTo";
+	public static final String YEAR_FROM_TO_PARAM = "yearTo";
 	public static final String YEAR_SELECTED_PARAM = "yearSelected";
+	public static final String SEMESTER_PARAM = "semester";
+	public static final String BANK_ACCOUNT_NO_PARAM = "bankAccountNo";
 	
 	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 

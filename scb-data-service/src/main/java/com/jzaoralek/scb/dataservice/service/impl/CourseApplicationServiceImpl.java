@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
@@ -122,6 +124,15 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 
 		courseApplicationDao.updatePayed(courseApplication, payed);
+	}
+	
+	@Override
+	public void updateNotifiedPayment(List<UUID> courseParticUuidList, boolean firstSemester) {
+		if (CollectionUtils.isEmpty(courseParticUuidList)) {
+			return;
+		}
+		courseApplicationDao.updateNotifiedPayment(courseParticUuidList, Calendar.getInstance().getTime(), firstSemester);
+		
 	}
 
 	@Override
