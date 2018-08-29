@@ -18,6 +18,6 @@ public interface CourseApplicationDao {
 	void insert(CourseApplication courseApplication);
 	void update(CourseApplication courseApplication);
 	void updatePayed(CourseApplication courseApplication, boolean payed);
-	void updateNotifiedPayment(List<UUID> courseParticUuidList, Date notifiedAt);
+	void updateNotifiedPayment(List<UUID> courseParticUuidList, Date notifiedAt, boolean firstSemester);
 	void delete(CourseApplication courseApplication);
 }

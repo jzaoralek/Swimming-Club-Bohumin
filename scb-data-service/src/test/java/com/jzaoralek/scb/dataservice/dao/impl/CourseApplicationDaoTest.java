@@ -91,7 +91,7 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	}
 	
 	public void testUpdateNotifiedPayment() {
-		courseApplicationDao.updateNotifiedPayment(Arrays.asList(COURSE_PARTICIPANT_UUID), Calendar.getInstance().getTime());
+		courseApplicationDao.updateNotifiedPayment(Arrays.asList(COURSE_PARTICIPANT_UUID), Calendar.getInstance().getTime(), true);
 	}
 	
 	@Test

@@ -93,7 +93,8 @@ CREATE TABLE course_course_participant(
 	VARSYMBOL_CORE INT NULL auto_increment UNIQUE,
 	individual_price_semester_1 INT NULL,
 	individual_price_semester_2 INT NULL,
-    notified_payment_at TIMESTAMP NULL,
+    notified_semester_1_payment_at TIMESTAMP NULL,
+    notified_semester_2_payment_at TIMESTAMP NULL,
 	PRIMARY KEY (uuid)
 );
 

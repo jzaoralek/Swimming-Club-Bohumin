@@ -20,6 +20,6 @@ public interface CourseApplicationService {
 	void storeCourseParticipant(CourseParticipant courseParticipant);
 	CourseApplication store(CourseApplication courseApplication) throws ScbValidationException;
 	void updatePayed(UUID uuid, boolean payed) throws ScbValidationException;
-	void updateNotifiedPayment(List<UUID> courseParticUuidList);
+	void updateNotifiedPayment(List<UUID> courseParticUuidList, boolean firstSemester);
 	void delete(UUID uuid) throws ScbValidationException;
 }

@@ -27,6 +27,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 	private CourseApplicationService courseApplicationService;
 	
 	private List<PaymentInstruction> paymentInstructionList;
+	private boolean firstSemester;
 	private int semester;
 	private String bankAccountNumber;
 	private String yearFromTo;
@@ -37,12 +38,12 @@ public class PaymentInstructionWinVM extends BaseVM {
 	public void init() {
 		List<CourseApplication> courseApplicationList = (List<CourseApplication>) WebUtils.getArg(WebConstants.COURSE_APPLICATION_LIST_PARAM);
 		int yearFrom = (int)WebUtils.getArg(WebConstants.YEAR_FROM_PARAM);
-		boolean firstSemester = (boolean)WebUtils.getArg(WebConstants.SEMESTER_PARAM);
+		this.firstSemester = (boolean)WebUtils.getArg(WebConstants.SEMESTER_PARAM);
 		this.bankAccountNumber = (String)WebUtils.getArg(WebConstants.BANK_ACCOUNT_NO_PARAM);
 		this.yearFromTo = (String)WebUtils.getArg(WebConstants.YEAR_FROM_TO_PARAM);
-		this.pageHeadline = firstSemester ? Labels.getLabel("txt.ui.common.PaymentInstructionsFirstSemester") : Labels.getLabel("txt.ui.common.PaymentInstructionsSecondSemester");
+		this.pageHeadline = this.firstSemester ? Labels.getLabel("txt.ui.common.PaymentInstructionsFirstSemester") : Labels.getLabel("txt.ui.common.PaymentInstructionsSecondSemester");
 
-		initData(courseApplicationList, yearFrom, firstSemester, bankAccountNumber);
+		initData(courseApplicationList, yearFrom, this.firstSemester, bankAccountNumber);
 	}
 	
 	@Command
@@ -95,7 +96,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 		}
 		
 		if (!CollectionUtils.isEmpty(sentCourseParticUuidList)) {
-			courseApplicationService.updateNotifiedPayment(sentCourseParticUuidList);
+			courseApplicationService.updateNotifiedPayment(sentCourseParticUuidList, this.firstSemester);
 		}
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentInstructionSent"));

@@ -127,11 +127,11 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	}
 	
 	@Override
-	public void updateNotifiedPayment(List<UUID> courseParticUuidList) {
+	public void updateNotifiedPayment(List<UUID> courseParticUuidList, boolean firstSemester) {
 		if (CollectionUtils.isEmpty(courseParticUuidList)) {
 			return;
 		}
-		courseApplicationDao.updateNotifiedPayment(courseParticUuidList, Calendar.getInstance().getTime());
+		courseApplicationDao.updateNotifiedPayment(courseParticUuidList, Calendar.getInstance().getTime(), firstSemester);
 		
 	}
 

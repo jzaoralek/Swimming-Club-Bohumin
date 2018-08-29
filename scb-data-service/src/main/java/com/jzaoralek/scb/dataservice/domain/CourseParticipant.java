@@ -26,7 +26,8 @@ public class CourseParticipant implements IdentEntity {
 	private String courseName;
 	private CoursePaymentVO coursePaymentVO;
 	private int varsymbolCore;
-	private Date notifiedPaymentAt;
+	private Date notifiedSemester1PaymentAt;
+	private Date notifiedSemester2PaymentAt;
 
 	/*
 	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
@@ -178,12 +179,20 @@ public class CourseParticipant implements IdentEntity {
 		this.varsymbolCore = varsymbolCore;
 	}
 	
-	public Date getNotifiedPaymentAt() {
-		return notifiedPaymentAt;
+	public Date getNotifiedSemester1PaymentAt() {
+		return notifiedSemester1PaymentAt;
 	}
 
-	public void setNotifiedPaymentAt(Date notifiedPaymentAt) {
-		this.notifiedPaymentAt = notifiedPaymentAt;
+	public void setNotifiedSemester1PaymentAt(Date notifiedSemester1PaymentAt) {
+		this.notifiedSemester1PaymentAt = notifiedSemester1PaymentAt;
+	}
+
+	public Date getNotifiedSemester2PaymentAt() {
+		return notifiedSemester2PaymentAt;
+	}
+
+	public void setNotifiedSemester2PaymentAt(Date notifiedSemester2PaymentAt) {
+		this.notifiedSemester2PaymentAt = notifiedSemester2PaymentAt;
 	}
 	
 	public String getInCourseInfo() {
@@ -208,7 +217,9 @@ public class CourseParticipant implements IdentEntity {
 				+ healthInsurance + ", healthInfo=" + healthInfo + ", resultList=" + resultList + ", courseList="
 				+ courseList + ", representativeUuid=" + representativeUuid + ", courseUuid=" + courseUuid
 				+ ", courseName=" + courseName + ", coursePaymentVO=" + coursePaymentVO + ", varsymbolCore="
-				+ varsymbolCore + ", notifiedPaymentAt=" + notifiedPaymentAt + ", lessonAttendance=" + lessonAttendance
-				+ "]";
+				+ varsymbolCore + ", notifiedSemester1PaymentAt=" + notifiedSemester1PaymentAt
+				+ ", notifiedSemester2PaymentAt=" + notifiedSemester2PaymentAt + ", lessonAttendance="
+				+ lessonAttendance + "]";
 	}
+
 }
