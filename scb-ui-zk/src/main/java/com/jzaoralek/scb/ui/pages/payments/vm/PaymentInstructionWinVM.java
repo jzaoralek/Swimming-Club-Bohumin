@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.ui.pages.payments.vm;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 	private int semester;
 	private String bankAccountNumber;
 	private String yearFromTo;
+	private Date paymentDeadline;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -88,6 +90,12 @@ public class PaymentInstructionWinVM extends BaseVM {
 			mailToUser.append(WebConstants.LINE_SEPARATOR);
 			mailToUser.append(WebConstants.LINE_SEPARATOR);
 			
+			// termin uhrazeni
+			if (this.paymentDeadline != null) {
+				mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text2", new Object[]{getDateConverter().coerceToUi(this.paymentDeadline, null, null)}));
+				mailToUser.append(WebConstants.LINE_SEPARATOR);
+				mailToUser.append(WebConstants.LINE_SEPARATOR);
+			}
 			// podpis
 			mailToUser.append(buildMailSignature());
 			
@@ -128,5 +136,11 @@ public class PaymentInstructionWinVM extends BaseVM {
 	}
 	public String getBankAccountNumber() {
 		return bankAccountNumber;
+	}
+	public Date getPaymentDeadline() {
+		return paymentDeadline;
+	}
+	public void setPaymentDeadline(Date paymentDeadline) {
+		this.paymentDeadline = paymentDeadline;
 	}
 }
