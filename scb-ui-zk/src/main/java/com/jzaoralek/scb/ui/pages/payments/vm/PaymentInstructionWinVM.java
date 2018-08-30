@@ -18,7 +18,10 @@ import org.zkoss.zul.Window;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 import com.jzaoralek.scb.ui.pages.payments.dto.PaymentInstruction;
 
@@ -108,6 +111,8 @@ public class PaymentInstructionWinVM extends BaseVM {
 		}
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentInstructionSent"));
+		
+		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT, null, null);
 		
 		window.detach();
 	}
