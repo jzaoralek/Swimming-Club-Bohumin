@@ -36,6 +36,7 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO.CoursePaymentState;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
@@ -69,6 +70,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 	private boolean unregToCurrYear;
 	private String unregToCurrYearLabel;
 	private final List<Listitem> coursePaymentStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(CoursePaymentState.class));
+	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(PaymentNotifSendState.class));
 	private String bankAccountNumber;
 	private int yearFrom;
 
@@ -78,9 +80,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 		initYearContext();
 
 		setPageMode();
-		loadData();
-		
+		loadData();		
 		this.bankAccountNumber = configurationService.getBankAccountNumber();
+
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
@@ -461,6 +463,10 @@ public class CourseApplicationListVM extends BaseContextVM {
 		return coursePaymentStateListWithEmptyItem;
 	}
 	
+	public List<Listitem> getPaymentNotifStateListWithEmptyItem() {
+		return paymentNotifStateListWithEmptyItem;
+	}
+	
 	public String getBankAccountNumber() {
 		return bankAccountNumber;
 	}
@@ -489,10 +495,34 @@ public class CourseApplicationListVM extends BaseContextVM {
 		private String courseLc;
 		private Boolean inCourse;
 		private Listitem coursePaymentState;
+		private Listitem paymentNotifSendState;
 		private Boolean newParticipant;
 
-		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean inCourseIn, CoursePaymentState coursePaymentStateIn, boolean newParticipantIn, boolean emptyMatch) {
-			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null && inCourse == null && coursePaymentState == null && newParticipant == null) {
+		public boolean matches(String courseParticNameIn
+				, String birthDateIn
+				, String birthNoIn
+				, String courseParticRepresentativeIn
+				, String phoneIn
+				, String emailIn
+				, String modifAtIn
+				, String courseIn
+				, boolean inCourseIn
+				, CoursePaymentState coursePaymentStateIn
+				, boolean newParticipantIn
+				, PaymentNotifSendState paymentNotifSendStateIn
+				, boolean emptyMatch) {
+			if (courseParticName == null
+					&& birthDate == null 
+					&& birthNo == null
+					&& courseParticRepresentative == null 
+					&& phone == null 
+					&& email == null 
+					&& modifAt == null 
+					&& course == null 
+					&& inCourse == null 
+					&& coursePaymentState == null
+					&& paymentNotifSendState == null
+					&& newParticipant == null) {
 				return emptyMatch;
 			}
 			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
@@ -525,6 +555,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 			if (coursePaymentState != null && coursePaymentState.getValue() != null && ((CoursePaymentState)coursePaymentState.getValue()) != coursePaymentStateIn) {
 				return false;
 			}
+			if (paymentNotifSendState != null && paymentNotifSendState.getValue() != null && ((PaymentNotifSendState)paymentNotifSendState.getValue()) != paymentNotifSendStateIn) {
+				return false;
+			}
 			
 			if (newParticipant != null && (newParticipant != newParticipantIn)) {
 				return false;
@@ -550,6 +583,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						, item.getCourseParticipant().inCourse()
 						, (item.getCourseParticipant().getCoursePaymentVO() != null) ? item.getCourseParticipant().getCoursePaymentVO().getStateTotal() : null
 						, !item.isCurrentParticipant()
+						, item.getCourseParticipant().getPaymentNotifSendState()
 						, true)) {
 					ret.add(item);
 				}
@@ -652,6 +686,14 @@ public class CourseApplicationListVM extends BaseContextVM {
 			this.newParticipant = newParticipant;
 		}
 
+		public Listitem getPaymentNotifSendState() {
+			return paymentNotifSendState;
+		}
+
+		public void setPaymentNotifSendState(Listitem paymentNotifSendState) {
+			this.paymentNotifSendState = paymentNotifSendState;
+		}
+		
 		public void setEmptyValues() {
 			code = null;
 			courseParticName = null;
@@ -667,6 +709,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 			courseLc = null;
 			inCourse = null;
 			coursePaymentState = null;
+			paymentNotifSendState = null;
 			newParticipant = null;
 		}
 	}

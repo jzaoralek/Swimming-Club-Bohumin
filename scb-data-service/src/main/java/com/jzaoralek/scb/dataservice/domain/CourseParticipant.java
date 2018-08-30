@@ -10,6 +10,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class CourseParticipant implements IdentEntity {
 
+	public enum PaymentNotifSendState {
+		NO_NOTIFICATION,
+		NOT_SENT_FIRST_SEMESTER,
+		NOT_SENT_SECOND_SEMESTER,
+		BOTH;
+	}
+	
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
@@ -208,6 +215,17 @@ public class CourseParticipant implements IdentEntity {
 		}
 
 		return ret;
+	}
+	
+	public PaymentNotifSendState getPaymentNotifSendState() {
+		if (this.notifiedSemester1PaymentAt == null && this.notifiedSemester2PaymentAt == null) {
+			return PaymentNotifSendState.NO_NOTIFICATION;
+		} else if (this.notifiedSemester1PaymentAt == null) {
+			return PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER;
+		} else if (this.notifiedSemester2PaymentAt == null) {
+			return PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER;
+		}
+		return PaymentNotifSendState.BOTH;
 	}
 
 	@Override
