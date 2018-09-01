@@ -1,7 +1,10 @@
 package com.jzaoralek.scb.dataservice.domain;
 
 import java.util.Date;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.util.CollectionUtils;
@@ -217,15 +220,22 @@ public class CourseParticipant implements IdentEntity {
 		return ret;
 	}
 	
-	public PaymentNotifSendState getPaymentNotifSendState() {
-		if (this.notifiedSemester1PaymentAt == null && this.notifiedSemester2PaymentAt == null) {
-			return PaymentNotifSendState.NO_NOTIFICATION;
-		} else if (this.notifiedSemester1PaymentAt == null) {
-			return PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER;
-		} else if (this.notifiedSemester2PaymentAt == null) {
-			return PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER;
+	public Set<PaymentNotifSendState> getPaymentNotifSendState() {
+		Set<PaymentNotifSendState> ret = new HashSet<>();
+		if (this.notifiedSemester1PaymentAt == null) {
+			ret.add(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER);
 		}
-		return PaymentNotifSendState.BOTH;
+		if (this.notifiedSemester2PaymentAt == null) {
+			ret.add(PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER);
+		}
+		
+		if (this.notifiedSemester1PaymentAt == null && this.notifiedSemester2PaymentAt == null) {
+			ret.add(PaymentNotifSendState.NO_NOTIFICATION);
+		}
+		if (this.notifiedSemester1PaymentAt != null && this.notifiedSemester2PaymentAt != null) {
+			ret.add(PaymentNotifSendState.BOTH);			
+		}
+		return ret;
 	}
 
 	@Override

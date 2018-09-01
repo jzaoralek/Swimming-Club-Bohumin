@@ -134,7 +134,7 @@
 			                <listcell label="${each.courseParticipant.courseName}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
 			                	<hbox popup="paymentInstructionPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" hflex="1" pack="center">
-				                	<a iconSclass="z-icon-check" style="font-size: 20px; color: green;" 
+				                	<a iconSclass="z-icon-check" style="font-size: 20px; color: green;"
 				                		visible="@load(!empty(each.courseParticipant.notifiedSemester1PaymentAt))"
 				                		tooltiptext="${each.courseParticipant.notifiedSemester1PaymentAt}"/>
 				                	<a iconSclass="z-icon-check" style="font-size: 20px; color: green;" 

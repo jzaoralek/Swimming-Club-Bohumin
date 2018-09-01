@@ -70,7 +70,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 	private boolean unregToCurrYear;
 	private String unregToCurrYearLabel;
 	private final List<Listitem> coursePaymentStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(CoursePaymentState.class));
-	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(PaymentNotifSendState.class));
+	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.of(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER, PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER));
 	private String bankAccountNumber;
 	private int yearFrom;
 
@@ -509,7 +509,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 				, boolean inCourseIn
 				, CoursePaymentState coursePaymentStateIn
 				, boolean newParticipantIn
-				, PaymentNotifSendState paymentNotifSendStateIn
+				, Set<PaymentNotifSendState> paymentNotifSendStateIn
 				, boolean emptyMatch) {
 			if (courseParticName == null
 					&& birthDate == null 
@@ -555,7 +555,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 			if (coursePaymentState != null && coursePaymentState.getValue() != null && ((CoursePaymentState)coursePaymentState.getValue()) != coursePaymentStateIn) {
 				return false;
 			}
-			if (paymentNotifSendState != null && paymentNotifSendState.getValue() != null && ((PaymentNotifSendState)paymentNotifSendState.getValue()) != paymentNotifSendStateIn) {
+			if (paymentNotifSendState != null && paymentNotifSendState.getValue() != null && !paymentNotifSendStateIn.contains((PaymentNotifSendState)paymentNotifSendState.getValue())) {
 				return false;
 			}
 			
