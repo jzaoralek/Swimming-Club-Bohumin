@@ -52,6 +52,7 @@
 				            			<button label="${c:l('txt.ui.common.Messaging')}" 
 				            				iconSclass="z-icon-envelope"
 				            				popup="messagePopup, position=after_end"
+				            				if="false"
 				            				visible="${vm.isLoggedUserInRole('ADMIN')}"
 				            				sclass="btn-warning"  />
 					                	<menupopup id="messagePopup" width="250px" >
