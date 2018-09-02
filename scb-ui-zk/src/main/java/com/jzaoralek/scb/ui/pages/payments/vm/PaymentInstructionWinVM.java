@@ -68,7 +68,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 			mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text0"));
 			mailToUser.append(WebConstants.LINE_SEPARATOR);
 			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text1", new Object[] {paymentInstruction.getCourseName(), paymentInstruction.getSemester(), yearFromTo}));
+			mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text1", new Object[] {paymentInstruction.getCourseName(), paymentInstruction.getSemester(), yearFromTo, paymentInstruction.getCourseParticName()}));
 			mailToUser.append(WebConstants.LINE_SEPARATOR);
 			mailToUser.append(WebConstants.LINE_SEPARATOR);
 
@@ -102,12 +102,17 @@ public class PaymentInstructionWinVM extends BaseVM {
 			// podpis
 			mailToUser.append(buildMailSignature());
 			
-			mailService.sendMail(paymentInstruction.getCourseParticReprEmail(), Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo}), mailToUser.toString(), null);
+			// TODO: 20180902, odkomentovat po vyreseni problemu
+			// mailService.sendMail(paymentInstruction.getCourseParticReprEmail(), Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo}), mailToUser.toString(), null);
+			// odeslani na platby@sportologic.cz
+			mailService.sendMail("platby@sportologic.cz", Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}), mailToUser.toString(), null);
+			
 			sentCourseParticUuidList.add(paymentInstruction.getCourseParticipantUuid());
 		}
 		
 		if (!CollectionUtils.isEmpty(sentCourseParticUuidList)) {
-			courseApplicationService.updateNotifiedPayment(sentCourseParticUuidList, this.firstSemester);
+			// TODO: 20180902, odkomentovat po vyreseni problemu
+			// courseApplicationService.updateNotifiedPayment(sentCourseParticUuidList, this.firstSemester);
 		}
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentInstructionSent"));
