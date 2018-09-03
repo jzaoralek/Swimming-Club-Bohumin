@@ -3,11 +3,8 @@ package com.jzaoralek.scb.ui.pages.payments.vm;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
-import org.jfree.util.Log;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
@@ -16,23 +13,26 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
+import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
-import com.jzaoralek.scb.ui.pages.payments.dto.PaymentInstruction;
 
 public class PaymentInstructionWinVM extends BaseVM {
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
 	
+	@WireVariable
+	private PaymentService paymentService;
+	
 	private List<PaymentInstruction> paymentInstructionList;
 	private boolean firstSemester;
-	private int semester;
 	private String bankAccountNumber;
 	private String yearFromTo;
 	private Date paymentDeadline;
@@ -57,68 +57,15 @@ public class PaymentInstructionWinVM extends BaseVM {
 			return;
 		}
 		
-		StringBuilder mailToUser = null;
-		List<UUID> sentCourseParticUuidList = new ArrayList<>();
-		for (PaymentInstruction paymentInstruction : this.paymentInstructionList) {
-			if (!StringUtils.hasText(paymentInstruction.getCourseParticReprEmail())) {
-				Log.warn("submitCmd():: No course participant representative email for courseParticipant: " + paymentInstruction.getCourseParticName());
-				continue;
-			}
-			mailToUser = new StringBuilder();
-			mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text0"));
-			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text1", new Object[] {paymentInstruction.getCourseName(), paymentInstruction.getSemester(), yearFromTo, paymentInstruction.getCourseParticName()}));
-			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			mailToUser.append(WebConstants.LINE_SEPARATOR);
-
-			// cislo uctu
-			mailToUser.append(Labels.getLabel("txt.ui.common.AccountNo"));
-			mailToUser.append(": ");
-			mailToUser.append(paymentInstruction.getBankAccountNumber());
-			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			
-			// castka
-			mailToUser.append(Labels.getLabel("txt.ui.common.Amount"));
-			mailToUser.append(": ");
-			mailToUser.append(paymentInstruction.getPriceSemester());
-			mailToUser.append(" ");
-			mailToUser.append(Labels.getLabel("txt.ui.common.CZK"));
-			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			
-			// variabilni symbol
-			mailToUser.append(Labels.getLabel("txt.ui.common.VarSymbol"));
-			mailToUser.append(": ");
-			mailToUser.append(paymentInstruction.getVarsymbol());
-			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			mailToUser.append(WebConstants.LINE_SEPARATOR);
-			
-			// termin uhrazeni
-			if (this.paymentDeadline != null) {
-				mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text2", new Object[]{getDateConverter().coerceToUi(this.paymentDeadline, null, null)}));
-				mailToUser.append(WebConstants.LINE_SEPARATOR);
-				mailToUser.append(WebConstants.LINE_SEPARATOR);
-			}
-			// podpis
-			mailToUser.append(buildMailSignature());
-			
-			// TODO: 20180902, odkomentovat po vyreseni problemu
-			// mailService.sendMail(paymentInstruction.getCourseParticReprEmail(), Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo}), mailToUser.toString(), null);
-			// odeslani na platby@sportologic.cz
-			mailService.sendMail("platby@sportologic.cz", Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}), mailToUser.toString(), null);
-			
-			sentCourseParticUuidList.add(paymentInstruction.getCourseParticipantUuid());
-		}
-		
-		if (!CollectionUtils.isEmpty(sentCourseParticUuidList)) {
-			// TODO: 20180902, odkomentovat po vyreseni problemu
-			// courseApplicationService.updateNotifiedPayment(sentCourseParticUuidList, this.firstSemester);
-		}
+		paymentService.processPaymentInstruction(this.paymentInstructionList
+				, this.yearFromTo
+				, WebConstants.LINE_SEPARATOR
+				, getDateConverter().coerceToUi(this.paymentDeadline, null, null)
+				, buildMailSignature()
+				, this.firstSemester);
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentInstructionSent"));
-		
 		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT, null, null);
-		
 		window.detach();
 	}
 	
@@ -128,14 +75,14 @@ public class PaymentInstructionWinVM extends BaseVM {
 		}
 		
 		this.paymentInstructionList = new ArrayList<>();
-		this.semester = firstSemester ? 1 :2;
+		int semester = firstSemester ? 1 :2;
 		for (CourseApplication courseApplication : courseApplicationList) {
 			this.paymentInstructionList.add(new PaymentInstruction(courseApplication.getCourseParticipant().getContact().getCompleteName()
 					, courseApplication.getCourseParticRepresentative().getContact().getEmail1()
 					, courseApplication.getCourseParticipant().getCourseName()
 					, firstSemester ? courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceFirstSemester() : courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceSecondSemester()
-					, this.semester
-					, buildCoursePaymentVarsymbol(yearFrom, this.semester, courseApplication.getCourseParticipant().getVarsymbolCore())
+					, semester
+					, buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore())
 					, bankAccountNumber
 					, courseApplication.getCourseParticipant().getUuid()));
 		}

@@ -26,8 +26,7 @@
 					id="courseList"
 					hflex="1"
 					style="margin-top: 20px;"
-					mold="paging"
-					pageSize="10"
+					height="900px"
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 					class="listbox" >
 			        <auxhead>

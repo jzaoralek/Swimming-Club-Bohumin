@@ -1,7 +1,9 @@
 package com.jzaoralek.scb.ui.pages.email;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.util.CollectionUtils;
@@ -13,6 +15,7 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Window;
 
+import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
@@ -41,9 +44,16 @@ public class EmailDetailWinVM extends BaseVM {
 	
 	@Command
 	public void submitCmd(@BindingParam("window") Window window) {
-		for (String item : this.emailAddressSet) {
-			mailService.sendMail(item, this.messageSubject, this.messageText, null);
+		if (CollectionUtils.isEmpty(this.emailAddressSet)) {
+			return;
 		}
+		
+		List<Mail> mailList = new ArrayList<>();
+		for (String item : this.emailAddressSet) {
+			mailList.add(new Mail(item, this.messageSubject, this.messageText, null));
+		}
+		
+		mailService.sendMailBatch(mailList);
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
 		window.detach();

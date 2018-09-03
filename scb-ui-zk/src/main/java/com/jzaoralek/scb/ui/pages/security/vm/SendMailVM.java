@@ -45,6 +45,12 @@ public class SendMailVM extends BaseVM {
 	}
 	
 	@Command
+	public void sendMail2Cmd() {
+		mailService.sendMailBatch(null);
+		WebUtils.showNotificationInfo("Odeslani dokonceno.");
+	}
+	
+	@Command
 	public void downloadCmd() {
 		Attachment attachment = courseApplicationFileConfigService.getFileByUuid(UUID.fromString("fd33a4d4-7e99-11e6-ae22-56b6b6499628"));
 		if (attachment != null) {
