@@ -1,4 +1,4 @@
-package com.jzaoralek.scb.ui.pages.payments.dto;
+package com.jzaoralek.scb.dataservice.domain;
 
 import java.util.UUID;
 

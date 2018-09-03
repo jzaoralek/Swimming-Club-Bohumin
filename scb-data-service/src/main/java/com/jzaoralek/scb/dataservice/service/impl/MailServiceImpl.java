@@ -6,7 +6,6 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Authenticator;
-import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -22,9 +21,13 @@ import javax.mail.util.ByteArrayDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.service.MailService;
 
 @Service("mailService")
@@ -119,4 +122,41 @@ public class MailServiceImpl implements MailService {
            return new PasswordAuthentication(username, password);
         }
     }
+
+    @Override
+	public void sendMail(Mail mail) {
+    	if (mail == null) {
+    		return;
+    	}
+		
+    	if (LOG.isDebugEnabled()) {
+        	LOG.debug("Send email: " + mail);
+        }
+		
+		sendMail(mail.getTo(), mail.getSubject(), mail.getText(), mail.getAttachmentList());
+	}
+    
+    @Async
+	@Override
+	public void sendMailBatch(List<Mail> mailList) {
+    	if (CollectionUtils.isEmpty(mailList)) {
+    		return;
+    	}
+    	if (LOG.isDebugEnabled()) {
+     	   LOG.debug("Processiong mail count: " + mailList.size());
+        }
+    	int counter = 0;
+		for (Mail item : mailList) {
+			sendMail(item);
+			counter++;
+			if (counter%DataServiceConstants.MAIL_SENDER_BATCH_SIZE == 0) {
+				try {
+					Thread.sleep(DataServiceConstants.MAIL_SENDER_PAUSE_BETWEEN_BATCH);
+				} catch (InterruptedException e) {
+					LOG.error("InterruptedException caught", e);
+					throw new RuntimeException(e);
+				}				
+			}
+		}
+	}
 }
