@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,7 @@ import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
+import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
 
@@ -33,8 +35,8 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 	@Autowired
 	private MailService mailService;
 	
-//	@Autowired
-//	private CourseApplicationService courseApplicationService;
+	@Autowired
+	private CourseApplicationService courseApplicationService;
 	
 	@Override
 	public List<Payment> getByCourseCourseParticipantUuid(UUID courseParticipantUuid, UUID courseUuid, Date from, Date to) {
@@ -133,6 +135,12 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			mailToUser.append(": ");
 			mailToUser.append(paymentInstruction.getVarsymbol());
 			mailToUser.append(lineSeparator);
+			
+			// zprava pro prijemce
+			mailToUser.append(messageSource.getMessage("txt.ui.common.MessageToReceipent", new Object[] {paymentDeadline}, Locale.getDefault()));
+			mailToUser.append(": ");
+			mailToUser.append(paymentInstruction.getCourseParticName());
+			mailToUser.append(lineSeparator);
 			mailToUser.append(lineSeparator);
 			
 			// termin uhrazeni
@@ -141,15 +149,21 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 				mailToUser.append(lineSeparator);
 				mailToUser.append(lineSeparator);
 			}
+			
+			// pokud jiz bylo uhrazeno, berte jako bezpredmetne
+			mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text4", new Object[] {paymentDeadline}, Locale.getDefault()));
+			mailToUser.append(lineSeparator);
+			mailToUser.append(lineSeparator);
+			
 			// podpis
 			mailToUser.append(mailSignature);
 			
 			// TODO: 20180902, odkomentovat po vyreseni problemu
-			// mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo}, Locale.getDefault()), mailToUser.toString(), null));
+			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));
 			// odeslani na platby@sportologic.cz
 			mailService.sendMail(new Mail("platby@sportologic.cz", messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));			
 			// aktualizace odeslani notifikace v course_course_participant
-			// courseApplicationService.updateNotifiedPayment(Arrays.asList(paymentInstruction.getCourseParticipantUuid()), firstSemester);
+			courseApplicationService.updateNotifiedPayment(Arrays.asList(paymentInstruction.getCourseParticipantUuid()), firstSemester);
 			
 			counter++;
 			// sleeping after batch

@@ -23,6 +23,7 @@ import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.LessonDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 
 @Repository
@@ -158,10 +159,10 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 		paramMap.addValue(PRICE_SEMESTER_2_PARAM, course.getPriceSemester2());
 		paramMap.addValue(MAX_PARTIC_COUNT_PARAM, course.getMaxParticipantCount());
 		
-		courseParticipantDao.deleteAllFromCourse(course.getUuid());
-		if (!CollectionUtils.isEmpty(course.getParticipantList())) {
-			courseParticipantDao.insetToCourse(course.getParticipantList(), course.getUuid());
-		}
+//		courseParticipantDao.deleteAllFromCourse(course.getUuid());
+//		if (!CollectionUtils.isEmpty(course.getParticipantList())) {
+//			courseParticipantDao.insetToCourse(course.getParticipantList(), course.getUuid());
+//		}
 
 		if (course.getCourseLocation() != null) {
 			paramMap.addValue(COURSE_LOCATION_UUID_PARAM, course.getCourseLocation().getUuid().toString());

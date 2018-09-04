@@ -58,9 +58,9 @@
 				            				<!-- Nova zprava zobrazenym ucastnikum. -->
 											<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('openModalToSendEmailCmd')" />
 											<!-- Odeslani instrukci k platbe za prvni pololeti. -->
-											<menuitem label="${c:l('txt.ui.common.PaymentInstructionsFirstSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" disabled="true" />
+											<menuitem label="${c:l('txt.ui.common.PaymentInstructionsFirstSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" />
 											<!-- Odeslani instrukci k platbe za druhe pololeti. -->
-											<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" disabled="true" />
+											<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" />
 								       	</menupopup>
 									</hbox>
 			            		</vbox>
