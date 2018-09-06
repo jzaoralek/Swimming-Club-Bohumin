@@ -16,6 +16,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
+import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -82,7 +83,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 					, courseApplication.getCourseParticipant().getCourseName()
 					, firstSemester ? courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceFirstSemester() : courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceSecondSemester()
 					, semester
-					, buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore())
+					, PaymentUtils.buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore())
 					, bankAccountNumber
 					, courseApplication.getCourseParticipant().getUuid()));
 		}

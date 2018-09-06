@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
@@ -278,21 +277,6 @@ public class BaseVM {
 	public String getNewCourseApplicationTitle() {
 		String year = configurationService.getCourseApplicationYear();
 		return Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
-	}
-	
-	/**
-	 * Sestavi variabilni symbol pro platbu ucastnika za kurz.
-	 * @param yearFrom
-	 * @param semester
-	 * @param courseParticVarsymbolCore
-	 * @return
-	 */
-	public String buildCoursePaymentVarsymbol(int yearFrom, int semester, int courseParticVarsymbolCore) {
-		Objects.requireNonNull(yearFrom, "yearFrom");
-		Objects.requireNonNull(semester, "semester");
-		Objects.requireNonNull(courseParticVarsymbolCore, "courseParticVarsymbolCore");
-		
-		return String.valueOf(yearFrom) + String.valueOf(semester) + String.valueOf(courseParticVarsymbolCore);
 	}
 	
 	protected Attachment buildCourseApplicationAttachment(CourseApplication courseApplication, byte[] byteArray) {
