@@ -6,6 +6,7 @@ import org.junit.Test;
 public class PaymentUtilsTest {
 
 	private static final int VARSYMBOL_YEAR = 2018;
+	private static final int VARSYMBOL_YEAR_WRONG = 2016;
 	private static final int VARSYMBOL_CORE = 154;
 	private static final int VARSYMBOL_SEMESTER = 1;
 	
@@ -23,5 +24,12 @@ public class PaymentUtilsTest {
 		String varsymbolCore = PaymentUtils.getVarsymbolCore(varsymbol, String.valueOf(VARSYMBOL_YEAR));
 		Assert.assertNotNull(varsymbolCore);
 		Assert.assertTrue(varsymbolCore.equals(String.valueOf(VARSYMBOL_CORE)));
+	}
+	
+	@Test
+	public void testGetVarsymbolCore2() {
+		String varsymbol = PaymentUtils.buildCoursePaymentVarsymbol(VARSYMBOL_YEAR, VARSYMBOL_SEMESTER, VARSYMBOL_CORE);
+		String varsymbolCore = PaymentUtils.getVarsymbolCore(varsymbol, String.valueOf(VARSYMBOL_YEAR_WRONG));
+		Assert.assertNull(varsymbolCore);
 	}
 }

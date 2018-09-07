@@ -153,14 +153,14 @@
 			                <listcell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
 									<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
 										visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'NO_PAYMENT')"
-										popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
+										popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
 								    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
 								    	visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PARTLY')"
-								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
+								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
 								    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
 								    	visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PAYED')"
-								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
-								    <popup id="paymentSumPopup_${each.uuid}_${each.courseParticipant.courseUuid}">
+								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
+								    <popup id="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}">
 								    	<vbox style="margin: 5px;">											
 									    	<payment-instruction orgAccountNumber="${vm.bankAccountNumber}" 
 									    		priceSemester1="${each.courseParticipant.coursePaymentVO.priceFirstSemester}"

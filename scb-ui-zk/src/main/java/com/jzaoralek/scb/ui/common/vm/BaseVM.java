@@ -29,6 +29,7 @@ import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationFileConfigService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
+import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -117,6 +118,17 @@ public class BaseVM {
 	}
 	public static int getDescriptionMaxlength() {
 		return WebConstants.DESCRIPTION_MAXLENGTH;
+	}
+	
+	/**
+	 * Sestavi variabilni symbol pro platbu ucastnika za kurz.
+	 * @param yearFrom
+	 * @param semester
+	 * @param courseParticVarsymbolCore
+	 * @return
+	 */
+	public String buildCoursePaymentVarsymbol(int yearFrom, int semester, int courseParticVarsymbolCore) {
+		return PaymentUtils.buildCoursePaymentVarsymbol(yearFrom, semester, courseParticVarsymbolCore);
 	}
 	
 	/**
