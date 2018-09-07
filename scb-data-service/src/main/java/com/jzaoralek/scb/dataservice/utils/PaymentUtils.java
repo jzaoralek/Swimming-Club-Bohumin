@@ -29,13 +29,18 @@ public final class PaymentUtils {
 	 * @param varsymbol
 	 * @return
 	 */
-	public static String getVarsymbolCore(String varsymbol) {
+	public static String getVarsymbolCore(String varsymbol, String year) {
 		if (!StringUtils.hasText(varsymbol)) {
 			return null;
 		}
 		if (varsymbol.length() <= VARSYMBOL_CORE_INDEX) {
-			throw new IllegalStateException("Varsymbol "+varsymbol+" has not correct length.");
+			return null;
 		}
+		// kontrola zda-li začíná variabilni symbol rokem
+		if (!varsymbol.startsWith(year)) {
+			return null;
+		}
+		
 		// odebrat rok a pololeti ze zacatku variabliniho symbolu
 		return varsymbol.substring(VARSYMBOL_CORE_INDEX);
 	}

@@ -20,7 +20,7 @@ public class PaymentUtilsTest {
 	@Test
 	public void testGetVarsymbolCore() {
 		String varsymbol = PaymentUtils.buildCoursePaymentVarsymbol(VARSYMBOL_YEAR, VARSYMBOL_SEMESTER, VARSYMBOL_CORE);
-		String varsymbolCore = PaymentUtils.getVarsymbolCore(varsymbol);
+		String varsymbolCore = PaymentUtils.getVarsymbolCore(varsymbol, String.valueOf(VARSYMBOL_YEAR));
 		Assert.assertNotNull(varsymbolCore);
 		Assert.assertTrue(varsymbolCore.equals(String.valueOf(VARSYMBOL_CORE)));
 	}
