@@ -21,8 +21,8 @@ public class BankPaymentServiceTest extends BaseTestCase {
 	@Ignore
 	@Test
 	public void testGetItemListByType() {
-		Calendar datumOd = new GregorianCalendar(2017,9,28);
-		Calendar datumDo = new GregorianCalendar(2017,10,28);
+		Calendar datumOd = new GregorianCalendar(2018,9,1);
+		Calendar datumDo = new GregorianCalendar(2018,9,9);
 		AccountStatement transactions = bankPaymentService.transactions(datumOd, datumDo);
 		Assert.assertNotNull(transactions);
 	}
