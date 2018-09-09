@@ -15,10 +15,22 @@
 	
     <vbox hflex="1" align="center" >
     	
-    	<hbox hflex="1" style="margin-top: 10px;margin-bottom: 10px; margin-left: 5px;" align="start">
-			<label value="${c:l('txt.ui.common.PaymentDeadline')}:" />
-			<datebox value="@bind(vm.paymentDeadline)" />
-		</hbox>
+    	<grid hflex="1" style="margin-top: 5px;margin-bottom: 5px;border: none;">
+    		<columns>
+    			<column width="195px"/>
+    			<column hflex="1" />
+    		</columns>
+    		<rows>
+    			<row style="border: none;">
+    				<label value="${c:l('txt.ui.common.PaymentDeadline')}:" />
+					<datebox value="@bind(vm.paymentDeadline)" />
+    			</row>
+    			<row style="border: none;">
+    				<label value="${c:l('txt.ui.common.MessageOptionalText')}:" />
+					<textbox value="@bind(vm.optionalText)" hflex="1" />
+    			</row>
+    		</rows>
+    	</grid>
 
 		<listbox model="@load(vm.paymentInstructionList)"
 			hflex="1"

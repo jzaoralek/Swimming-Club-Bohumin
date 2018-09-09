@@ -37,6 +37,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 	private String bankAccountNumber;
 	private String yearFromTo;
 	private Date paymentDeadline;
+	private String optionalText;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -62,6 +63,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 				, this.yearFromTo
 				, WebConstants.LINE_SEPARATOR
 				, getDateConverter().coerceToUi(this.paymentDeadline, null, null)
+				, this.optionalText
 				, buildMailSignature()
 				, this.firstSemester);
 		
@@ -100,5 +102,11 @@ public class PaymentInstructionWinVM extends BaseVM {
 	}
 	public void setPaymentDeadline(Date paymentDeadline) {
 		this.paymentDeadline = paymentDeadline;
+	}
+	public String getOptionalText() {
+		return optionalText;
+	}
+	public void setOptionalText(String optionalText) {
+		this.optionalText = optionalText;
 	}
 }

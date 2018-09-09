@@ -18,7 +18,7 @@
 	<context:annotation-config />
 	<context:component-scan base-package="com.jzaoralek.scb.dataservice" />
 	
-	<task:executor id="sportoLogicTaskExecutor" pool-size="5"  />
+	<task:executor id="sportoLogicTaskExecutor" pool-size="5" />
 	<task:annotation-driven executor="sportoLogicTaskExecutor"/>
 
 	<bean id="transactionManager"
@@ -60,7 +60,11 @@
 	</bean>
 	
 	<!-- Task scheduling -->
-<!-- 	<task:scheduled-tasks> -->
-<!-- 		<task:scheduled ref="paymentTask" method="run" cron="*/5 * * * * *"/> -->
-<!-- 	</task:scheduled-tasks> -->
+	<task:scheduled-tasks>
+		<!-- Download new bank payments -->
+		<task:scheduled ref="paymentTask" method="updateBankPayments" cron="0 0 5 * * ?"/>
+		<!-- Pairing of new bavnk payments -->
+		<task:scheduled ref="paymentTask" method="processPaymentPairing" cron="0 5 5 * * ?"/>
+	</task:scheduled-tasks>
+	
 </beans>

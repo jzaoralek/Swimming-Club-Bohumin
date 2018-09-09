@@ -1,8 +1,13 @@
 package com.jzaoralek.scb.dataservice.utils;
 
+import java.util.GregorianCalendar;
 import java.util.Objects;
 
+import org.javatuples.Pair;
 import org.springframework.util.StringUtils;
+
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
+import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 
 public final class PaymentUtils {
 	
@@ -43,5 +48,22 @@ public final class PaymentUtils {
 		
 		// odebrat rok a pololeti ze zacatku variabliniho symbolu
 		return varsymbol.substring(VARSYMBOL_CORE_INDEX);
+	}
+	
+	/**
+	 * Vraci default datum od do pro dany rocnik, tzn. od 1.9. do 30.6.
+	 * @param configurationService
+	 * @return
+	 */
+	public static Pair<GregorianCalendar, GregorianCalendar> getDefaultDateFromTo(ConfigurationService configurationService) {
+		String courseYearSelected = configurationService.getCourseApplicationYear();
+		if (!StringUtils.hasText(courseYearSelected)) {
+			throw new IllegalStateException("Chyba v konfiguraci, COURSE_APPLICATION_YEAR neni nastaven");
+		}
+ 		String[] years = courseYearSelected.split(ConfigurationServiceImpl.COURSE_YEAR_DELIMITER);
+		int yearFrom = Integer.parseInt(years[0]);
+		int yearTo = Integer.parseInt(years[1]);
+		
+		return new Pair<>(new GregorianCalendar(yearFrom,9,1), new GregorianCalendar(yearTo,6,30));
 	}
 }

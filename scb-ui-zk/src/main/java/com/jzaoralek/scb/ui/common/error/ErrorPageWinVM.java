@@ -16,10 +16,11 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Popup;
 
+import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.service.MailService;
+import com.jzaoralek.scb.dataservice.utils.ExcUtil;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
-import com.jzaoralek.scb.ui.common.utils.ExcUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -43,7 +44,7 @@ public class ErrorPageWinVM extends BaseVM {
 			this.errorReport = buildErrorReport();
 
 			// mail to administrator
-			mailService.sendMail(Labels.getLabel("txt.ui.administrator.email"), Labels.getLabel("txt.ui.internalError"), this.errorReport, null);
+			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, Labels.getLabel("txt.ui.internalError"), this.errorReport, null);
 		}
 	}
 

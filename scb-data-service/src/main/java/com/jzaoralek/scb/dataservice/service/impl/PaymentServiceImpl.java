@@ -95,6 +95,7 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			, String yearFromTo
 			, String lineSeparator
 			, String paymentDeadline
+			, String optionalText
 			, String mailSignature
 			, boolean firstSemester) {
 		if (CollectionUtils.isEmpty(paymentInstructionList)) {
@@ -150,6 +151,13 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 				mailToUser.append(lineSeparator);
 			}
 			
+			// volitelny text
+			if (StringUtils.hasText(optionalText)) {
+				mailToUser.append(optionalText);
+				mailToUser.append(lineSeparator);
+				mailToUser.append(lineSeparator);
+			}
+			
 			// pokud jiz bylo uhrazeno, berte jako bezpredmetne
 			mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text4", new Object[] {paymentDeadline}, Locale.getDefault()));
 			mailToUser.append(lineSeparator);
@@ -158,10 +166,9 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			// podpis
 			mailToUser.append(mailSignature);
 			
-			// TODO: 20180902, odkomentovat po vyreseni problemu
 			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));
 			// odeslani na platby@sportologic.cz
-			mailService.sendMail(new Mail("platby@sportologic.cz", messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));			
+			mailService.sendMail(new Mail(DataServiceConstants.PLATBY_EMAIL, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));			
 			// aktualizace odeslani notifikace v course_course_participant
 			courseApplicationService.updateNotifiedPayment(Arrays.asList(paymentInstruction.getCourseParticipantUuid()), firstSemester);
 			

@@ -18,6 +18,7 @@ public interface PaymentService {
 			, String yearFromTo
 			, String lineSeparator
 			, String paymentDeadline
+			, String optionalText
 			, String mailSignature
 			, boolean firstSemester);
 }
