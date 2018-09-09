@@ -1,4 +1,4 @@
-package com.jzaoralek.scb.ui.common.utils;
+package com.jzaoralek.scb.dataservice.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

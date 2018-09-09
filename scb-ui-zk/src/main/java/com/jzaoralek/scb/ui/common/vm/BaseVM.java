@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
@@ -31,6 +30,7 @@ import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationFileConfigService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
+import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -119,6 +119,17 @@ public class BaseVM {
 	}
 	public static int getDescriptionMaxlength() {
 		return WebConstants.DESCRIPTION_MAXLENGTH;
+	}
+	
+	/**
+	 * Sestavi variabilni symbol pro platbu ucastnika za kurz.
+	 * @param yearFrom
+	 * @param semester
+	 * @param courseParticVarsymbolCore
+	 * @return
+	 */
+	public String buildCoursePaymentVarsymbol(int yearFrom, int semester, int courseParticVarsymbolCore) {
+		return PaymentUtils.buildCoursePaymentVarsymbol(yearFrom, semester, courseParticVarsymbolCore);
 	}
 	
 	/**
@@ -279,21 +290,6 @@ public class BaseVM {
 	public String getNewCourseApplicationTitle() {
 		String year = configurationService.getCourseApplicationYear();
 		return Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
-	}
-	
-	/**
-	 * Sestavi variabilni symbol pro platbu ucastnika za kurz.
-	 * @param yearFrom
-	 * @param semester
-	 * @param courseParticVarsymbolCore
-	 * @return
-	 */
-	public String buildCoursePaymentVarsymbol(int yearFrom, int semester, int courseParticVarsymbolCore) {
-		Objects.requireNonNull(yearFrom, "yearFrom");
-		Objects.requireNonNull(semester, "semester");
-		Objects.requireNonNull(courseParticVarsymbolCore, "courseParticVarsymbolCore");
-		
-		return String.valueOf(yearFrom) + String.valueOf(semester) + String.valueOf(courseParticVarsymbolCore);
 	}
 	
 	protected Attachment buildCourseApplicationAttachment(CourseApplication courseApplication, byte[] byteArray) {

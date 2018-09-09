@@ -37,7 +37,7 @@ public abstract class BaseContextVM extends BaseVM {
 			WebUtils.setSessAtribute(WebConstants.YEAR_SELECTED_PARAM, this.courseYearSelected);
 		}
 	}
-	
+
 	protected String[] getYearsFromContext() {
 		if (!StringUtils.hasText(this.courseYearSelected)) {
 			return null;

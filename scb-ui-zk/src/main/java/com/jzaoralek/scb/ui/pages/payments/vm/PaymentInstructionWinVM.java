@@ -16,6 +16,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
+import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -36,6 +37,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 	private String bankAccountNumber;
 	private String yearFromTo;
 	private Date paymentDeadline;
+	private String optionalText;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -61,6 +63,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 				, this.yearFromTo
 				, WebConstants.LINE_SEPARATOR
 				, getDateConverter().coerceToUi(this.paymentDeadline, null, null)
+				, this.optionalText
 				, buildMailSignature()
 				, this.firstSemester);
 		
@@ -82,7 +85,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 					, courseApplication.getCourseParticipant().getCourseName()
 					, firstSemester ? courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceFirstSemester() : courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceSecondSemester()
 					, semester
-					, buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore())
+					, PaymentUtils.buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore())
 					, bankAccountNumber
 					, courseApplication.getCourseParticipant().getUuid()));
 		}
@@ -99,5 +102,11 @@ public class PaymentInstructionWinVM extends BaseVM {
 	}
 	public void setPaymentDeadline(Date paymentDeadline) {
 		this.paymentDeadline = paymentDeadline;
+	}
+	public String getOptionalText() {
+		return optionalText;
+	}
+	public void setOptionalText(String optionalText) {
+		this.optionalText = optionalText;
 	}
 }

@@ -23,6 +23,7 @@ import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
+import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 
 import bank.fioclient.dto.AccountStatement;
 import bank.fioclient.dto.AuthToken;
@@ -94,7 +95,7 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 		// vytvoreni seznamu novych bankovnich transakci pro zpracovani
 		List<Transaction> transactionToProcessList = new ArrayList<>();
 		for (Transaction transaction : accountStatement.getTransactions()) {
-			if (!idPohybuSet.contains(String.valueOf(transaction.getIdPohybu()))) {
+			if (transaction.getObjem() > 0 && !idPohybuSet.contains(String.valueOf(transaction.getIdPohybu()))) {
 				transactionToProcessList.add(transaction);
 			}
 		}
@@ -146,7 +147,7 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 		for (Transaction transaction : unpairedTransactionList) {
 			// vyhledat zda-li v danem rocniku existuje courseParticipant s personalNo = varSymbol
 			if (StringUtils.hasText(transaction.getVariabilniSymbol())) {
-				CourseParticipant courseParticipant = courseParticipantDao.getByPersonalNumberAndInterval(transaction.getVariabilniSymbol(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
+				CourseParticipant courseParticipant = courseParticipantDao.getByVarsymbolAndInterval(PaymentUtils.getVarsymbolCore(transaction.getVariabilniSymbol(), String.valueOf(dateFrom.get(Calendar.YEAR))), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
 				if (courseParticipant != null) {
 					// dotahnout kurz do nehoz ucastnik parti, pocita se s tim ze v danem rocniku muze byt ucastnik pouze v jednom kurzu!!!
 					courseList = courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));

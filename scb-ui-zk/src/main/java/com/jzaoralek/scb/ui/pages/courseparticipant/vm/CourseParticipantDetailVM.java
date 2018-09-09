@@ -27,11 +27,11 @@ import com.jzaoralek.scb.dataservice.service.CodeListService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
+import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
-import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseParticipantVM;
 
 /**
  * Detail ucastnika zobrazeneho prihlasenym zakonnym zastupcem.
@@ -39,7 +39,7 @@ import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseParticipantVM;
  */
 public class CourseParticipantDetailVM extends BaseContextVM {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CourseParticipantVM.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CourseParticipantDetailVM.class);
 
 	@WireVariable
 	private CourseService courseService;
@@ -78,8 +78,8 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		setReturnPage(fromPage);
 		fillSwimStyleItemList();
 		this.orgAccountNo = configurationService.getBankAccountNumber();
-		this.paymentVarSymbolFirstSemester = buildCoursePaymentVarsymbol(this.yearFrom, 1, this.courseParticipant.getVarsymbolCore());
-		this.paymentVarSymbolSecondSemester = buildCoursePaymentVarsymbol(this.yearFrom, 2, this.courseParticipant.getVarsymbolCore());
+		this.paymentVarSymbolFirstSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 1, this.courseParticipant.getVarsymbolCore());
+		this.paymentVarSymbolSecondSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 2, this.courseParticipant.getVarsymbolCore());
 	}
 	
 	protected void courseYearChangeCmdCore() {
