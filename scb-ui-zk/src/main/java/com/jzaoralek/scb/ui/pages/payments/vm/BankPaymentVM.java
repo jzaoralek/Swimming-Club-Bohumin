@@ -138,8 +138,8 @@ public class BankPaymentVM extends BaseContextVM {
 		
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
-		this.dateFrom = new GregorianCalendar(yearFrom,9,1);
-		this.dateTo = new GregorianCalendar(yearTo,6,30);
+		this.dateFrom = new GregorianCalendar(yearFrom,8,1);
+		this.dateTo = new GregorianCalendar(yearTo,7,31);
 	}
 	
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
