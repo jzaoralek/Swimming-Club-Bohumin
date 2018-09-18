@@ -153,7 +153,8 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 					courseList = courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
 					// na zaklade transaction a courseParticipant vytvorit payment pro zpracovani
 					payment = new Payment(transaction, courseList.get(0), courseParticipant, PaymentProcessType.AUTOMATIC);
-					fillIdentEntity(payment);
+					payment.setModifAt(Calendar.getInstance().getTime());
+					payment.setModifBy(ANONYM_USER_UUID);
 					paymentToProcessList.add(payment);
 				}				
 			}

@@ -12,7 +12,7 @@ import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 public abstract class BaseAbstractService {
 
-	private static final String ANONYM_USER_UUID = "ANONYM";
+	protected static final String ANONYM_USER_UUID = "ANONYM";
 
 	@Autowired
     protected MessageSource messageSource;
