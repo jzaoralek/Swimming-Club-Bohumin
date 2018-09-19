@@ -78,7 +78,6 @@ public class UserListVM extends BaseVM {
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.RELOAD_USER_DATA_EVENT.name())) {
 					loadData();
-					eq.unsubscribe(this);
 				}
 			}
 		});

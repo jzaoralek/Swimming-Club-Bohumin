@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,13 @@ import com.jzaoralek.scb.dataservice.dao.PaymentDao;
 import com.jzaoralek.scb.dataservice.dao.TransactionDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.IdentEntity;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 import bank.fioclient.dto.AccountStatement;
 import bank.fioclient.dto.AuthToken;
@@ -153,8 +156,7 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 					courseList = courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
 					// na zaklade transaction a courseParticipant vytvorit payment pro zpracovani
 					payment = new Payment(transaction, courseList.get(0), courseParticipant, PaymentProcessType.AUTOMATIC);
-					payment.setModifAt(Calendar.getInstance().getTime());
-					payment.setModifBy(ANONYM_USER_UUID);
+					fillPaymentIdentEntity(payment);
 					paymentToProcessList.add(payment);
 				}				
 			}
@@ -175,5 +177,18 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 		LOG.info("Processing new payments finished. Processed new payments: {}, dateFrom: {}, dateTo: {}", paymentToProcessList.size(), dateFrom, dateTo);
 		
 		return paymentToProcessList.size();
+	}
+	
+	protected void fillPaymentIdentEntity(Payment identEntity) {
+		if (identEntity == null) {
+			return;
+		}
+
+		if (identEntity.getUuid() == null) {
+			identEntity.setUuid(UUID.randomUUID());
+		}
+
+		identEntity.setModifAt(Calendar.getInstance().getTime());
+		identEntity.setModifBy(ANONYM_USER_UUID);
 	}
 }
