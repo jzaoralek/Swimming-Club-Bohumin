@@ -245,7 +245,7 @@
 						                <listcell label="${each.contact.surname} ${each.contact.firstname}" />
 						                <listcell label="@load(each.birthdate) @converter(vm.dateConverter)" />	                	
 						                <listcell>
-						                	<button sclass="btn-danger" iconSclass="z-icon-minus" tooltiptext="${c:l('txt.ui.common.remove')}" 
+						                	<button sclass="btn-danger" iconSclass="z-icon-times" tooltiptext="${c:l('txt.ui.common.remove')}" 
 						                		onClick="@command('courseParticipantDeleteCmd', uuid=each.uuid)" 
 						                		hflex="min" width="20px" />
 <!-- 						                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}" /> -->
@@ -299,7 +299,7 @@
 						                	<label value="@load(each.timeTo) @converter(vm.timeConverter)" />
 						                </listcell>	                	
 						                <listcell>
-						                	<button  sclass="btn-danger" iconSclass="z-icon-minus" tooltiptext="${c:l('txt.ui.common.remove')}" onClick="@command('lessonDeleteCmd', uuid=each.uuid)" hflex="min" width="20px" />
+						                	<button  sclass="btn-danger" iconSclass="z-icon-times" tooltiptext="${c:l('txt.ui.common.remove')}" onClick="@command('lessonDeleteCmd', uuid=each.uuid)" hflex="min" width="20px" />
 						                </listcell>
 						            </listitem>
 						        </template>
