@@ -3,6 +3,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
@@ -316,38 +318,70 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 //			"AND c.year_to = :"+YEAR_TO_PARAM+ " " +
 //			"order by con_part.surname ";
 	
-	private static final String SELECT_ASSIGNED_TO_COURSE_MIN = "select distinct" +
-			" con_part.firstname " +
-			", con_part.surname " +
+//	private static final String SELECT_ASSIGNED_TO_COURSE_MIN = "select distinct" +
+//			" con_part.firstname " +
+//			", con_part.surname " +
+//			", cp.uuid \"participant_uuid\" " +
+//			", con_repr.email1 " +
+//			", usr.uuid  \"representative_uuid\" " +
+//			", ca.uuid " +
+//			", ca.payed " +
+//			", ca.year_from " +
+//			", ca.year_to " +
+//			", ca.modif_at " +
+//			", ca.modif_by " +
+//			", ccp.varsymbol_core " + 
+//			", ccp.notified_semester_1_payment_at " + 
+//			", ccp.notified_semester_2_payment_at " + 
+//			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
+//			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
+//			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\" " +
+//			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +			
+//			", (select sum(amount) from payment where payment.course_participant_uuid = cp.uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\"" +
+//			", (select count(*) " +
+//			"		from course_application cain " +
+//			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
+//			"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
+//			"from  " +
+//			"course_application ca " +
+//			", course_participant cp " +
+//			", contact con_part " +
+//			", contact con_repr " +
+//			", user usr " +
+//			", course_course_participant ccp " +
+//			", course c " +
+//			"where " +
+//			"ca.course_participant_uuid = cp.uuid " +
+//			"and cp.contact_uuid = con_part.uuid " +
+//			"and ca.user_uuid = usr.uuid " +
+//			"and usr.contact_uuid = con_repr.uuid " +
+//			"AND ca.year_from = :"+YEAR_FROM_PARAM+" " +
+//			"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
+//			"AND cp.uuid = ccp.course_participant_uuid " +
+//			"AND c.uuid = ccp.course_uuid " +
+//			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
+//			"AND c.year_to = :"+YEAR_TO_PARAM+ " " +
+//			"order by con_part.surname ";
+
+	
+	private static final String SELECT_COURSE_APPLICATION_BY_YEAR_FROM_TO_MIN = 
+			"select " +
+			"con_part.firstname " +
+			", con_part.surname " + 
 			", cp.uuid \"participant_uuid\" " +
-			", con_repr.email1 " +
+			", con_repr.email1 " + 
 			", usr.uuid  \"representative_uuid\" " +
 			", ca.uuid " +
-			", ca.payed " +
 			", ca.year_from " +
 			", ca.year_to " +
 			", ca.modif_at " +
 			", ca.modif_by " +
-			", ccp.varsymbol_core " + 
-			", ccp.notified_semester_1_payment_at " + 
-			", ccp.notified_semester_2_payment_at " + 
-			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
-			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
-			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\" " +
-			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +			
-			", (select sum(amount) from payment where payment.course_participant_uuid = cp.uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\"" +
-			", (select count(*) " +
-			"		from course_application cain " +
-			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
-			"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
-			"from  " +
+			"from " +
 			"course_application ca " +
 			", course_participant cp " +
 			", contact con_part " +
 			", contact con_repr " +
 			", user usr " +
-			", course_course_participant ccp " +
-			", course c " +
 			"where " +
 			"ca.course_participant_uuid = cp.uuid " +
 			"and cp.contact_uuid = con_part.uuid " +
@@ -355,12 +389,27 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			"and usr.contact_uuid = con_repr.uuid " +
 			"AND ca.year_from = :"+YEAR_FROM_PARAM+" " +
 			"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
-			"AND cp.uuid = ccp.course_participant_uuid " +
-			"AND c.uuid = ccp.course_uuid " +
+			"order by con_part.surname";
+	
+	private static final String SELECT_COURSE_COURSE_PARTICIPANT_BY_YEAR_FROM_TO = 
+			"select " +
+			"ccp.course_participant_uuid \"participant_uuid\" " +
+			", ccp.varsymbol_core  " +
+			", ccp.notified_semester_1_payment_at  " +
+			", ccp.notified_semester_2_payment_at " +
+			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
+			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " + 
+			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\"  " +
+			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +
+			", (select sum(amount) from payment where payment.course_participant_uuid = ccp.course_participant_uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\" " +
+			"from " +
+			"course_course_participant ccp " +
+			", course c " +
+			"where " +
+			"c.uuid = ccp.course_uuid " +
 			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
-			"AND c.year_to = :"+YEAR_TO_PARAM+ " " +
-			"order by con_part.surname ";
-
+			"AND c.year_to = :"+YEAR_TO_PARAM;
+			
 	private static final String SELECT_BY_UUID = "select uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by, payed from course_application where uuid=:" + UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course_application where uuid = :" + UUID_PARAM;
 	private static final String UPDATE = "UPDATE course_application SET year_from=:"+YEAR_FROM_PARAM+", year_to=:"+YEAR_TO_PARAM+", course_participant_uuid=:"+COURSE_PARTICIPANT_UUID_PARAM+", user_uuid=:"+USER_UUID_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", payed = :"+PAYED_PARAM+" WHERE uuid=:"+UUID_PARAM;
@@ -467,10 +516,112 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	@Override
 	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
-		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE_MIN, paramMap, new CourseApplicationMinRowMapper());
-//		return namedJdbcTemplate.query(SELECT_ASSIGNED_TO_COURSE_MIN, paramMap, new CourseApplicationRowMapper(courseDao, true));
 		
+		// vsechny prihlasky za dany rok
+		List<CourseApplication> courseApplicationAllByYear = namedJdbcTemplate.query(SELECT_COURSE_APPLICATION_BY_YEAR_FROM_TO_MIN, paramMap, new CourseApplicationMinRowMapper());
+		
+		if (CollectionUtils.isEmpty(courseApplicationAllByYear)) {
+			return Collections.emptyList();
+		}
+		
+		// data z course_course_particiopant a payment za dany rok
+		List<CourseParticipant> courseCourseParticipantAllByYear = namedJdbcTemplate.query(SELECT_COURSE_COURSE_PARTICIPANT_BY_YEAR_FROM_TO, paramMap, new CourseParticipantRowMapper());
+		
+		if (CollectionUtils.isEmpty(courseCourseParticipantAllByYear)) {
+			return Collections.emptyList();
+		}
+		
+		// spojit do vysledneho seznamu obsahujiciho ucastniky zarazene do kurzu v danem roce
+		List<CourseApplication> ret = new  ArrayList<>();
+		List<CourseParticipant> courseParticipantInCourseList = null;
+		CourseParticipant courseParticipant = null;
+		
+		CourseApplication courseApplication = null;
+		for (CourseParticipant courseParticInCourse : courseCourseParticipantAllByYear) {
+			courseApplication = findByCourseParticipantUuid(courseParticInCourse.getUuid(), courseApplicationAllByYear);
+			if (courseApplication != null) {
+				courseParticInCourse.setContact(courseApplication.getCourseParticipant().getContact());
+				courseApplication.setCourseParticipant(courseParticInCourse);
+				ret.add(courseApplication);
+			}
+		}
+		
+//		for (CourseApplication item : courseApplicationAllByYear) {
+//			courseParticipantInCourseList = findCourseParticipantByUuid(item.getCourseParticipant().getUuid(), courseCourseParticipantAllByYear);
+//			if (!CollectionUtils.isEmpty(courseParticipantInCourseList)) {
+//				for (CourseParticipant courseParticInCourse : courseParticipantInCourseList) {
+//					courseParticipant = new CourseParticipant();
+//					// spojeni dat z item a courseParticInCourse
+//					courseParticipant.setContact(item.getCourseParticipant().getContact());
+//					courseParticipant.setUuid(courseParticInCourse.getUuid());
+//					courseParticipant.setVarsymbolCore(courseParticInCourse.getVarsymbolCore());
+//					courseParticipant.setNotifiedSemester1PaymentAt(courseParticInCourse.getNotifiedSemester1PaymentAt());
+//					courseParticipant.setNotifiedSemester2PaymentAt(courseParticInCourse.getNotifiedSemester2PaymentAt());
+//					courseParticipant.setCourseUuid(courseParticInCourse.getCourseUuid()); 
+//					courseParticipant.setCourseName(courseParticInCourse.getCourseName()); 
+//					
+//					// payment sum
+//					if (courseParticInCourse.getCoursePaymentVO() != null) {
+//						courseParticipant.setCoursePaymentVO(new CoursePaymentVO(courseParticInCourse.getCoursePaymentVO().getPaymentSum(), courseParticInCourse.getCoursePaymentVO().getPriceFirstSemester(), courseParticInCourse.getCoursePaymentVO().getPriceSecondSemester()));
+//					}
+//					
+//					item.setCourseParticipant(courseParticipant);
+//					ret.add(item);					
+//				}
+//			}
+//		}
+		
+		return ret;		
 	}
+	
+	/**
+	 * Vrati ucastnika zarazeho do kurzu, vraci list, protoze jeden muze byt ve vice kurzech.
+	 * @param uuid
+	 * @param courseParticipantList
+	 * @return
+	 */
+	private CourseApplication findByCourseParticipantUuid(UUID courseParticipantUuid, List<CourseApplication> courseApplicationList) {
+		if (CollectionUtils.isEmpty(courseApplicationList)) {
+			return null;
+		}
+		
+		for (CourseApplication item : courseApplicationList) {
+			if (item.getCourseParticipant().getUuid().toString().equals(courseParticipantUuid.toString())) {
+				CourseApplication ret = new CourseApplication();
+				ret.setUuid(item.getUuid());
+				ret.setModifAt(item.getModifAt());
+				ret.setModifBy(item.getModifBy());
+				ret.setYearFrom(item.getYearFrom());
+				ret.setYearTo(item.getYearTo());
+				ret.setCourseParticipant(item.getCourseParticipant());
+				ret.setCourseParticRepresentative(item.getCourseParticRepresentative());
+				return ret;
+			}
+		}
+		
+		return null;
+	}
+	
+//	/**
+//	 * Vrati ucastnika zarazeho do kurzu, vraci list, protoze jeden muze byt ve vice kurzech.
+//	 * @param uuid
+//	 * @param courseParticipantList
+//	 * @return
+//	 */
+//	private List<CourseParticipant> findCourseParticipantByUuid(UUID uuid, List<CourseParticipant> courseParticipantList) {
+//		if (uuid == null || CollectionUtils.isEmpty(courseParticipantList)) {
+//			return Collections.emptyList();
+//		}
+//		
+//		List<CourseParticipant> ret = new ArrayList<>();
+//		for (CourseParticipant item : courseParticipantList) {
+//			if (item.getUuid().toString().equals(uuid.toString())) {
+//				ret.add(item);
+//			}
+//		}
+//		
+//		return ret;
+//	}
 	
 	@Override
 	public List<CourseApplication> getByCourseParticipantUuid(UUID courseParticipantUuid) {
@@ -500,23 +651,6 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			
 			CourseParticipant courseParticipant = new CourseParticipant();
 			courseParticipant.setUuid(UUID.fromString(rs.getString("participant_uuid")));
-			courseParticipant.setVarsymbolCore(rs.getInt("varsymbol_core"));
-			courseParticipant.setNotifiedSemester1PaymentAt(rs.getTimestamp("notified_semester_1_payment_at"));
-			courseParticipant.setNotifiedSemester2PaymentAt(rs.getTimestamp("notified_semester_2_payment_at"));
-			
-			String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
-			String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");				
-			if (StringUtils.hasText(courseCourseParticipantUuid)) {
-				courseParticipant.setCourseUuid(UUID.fromString(courseCourseParticipantUuid)); 
-			}
-			if (StringUtils.hasText(courseNameCourseParticipantUuid)) {
-				courseParticipant.setCourseName(courseNameCourseParticipantUuid); 
-			}
-			// payment sum
-			long paymentSum = rs.getLong("PAYMENT_SUM");
-			long priceSemester1 = rs.getLong("COURSE_PRICE_SEMESTER_1");
-			long priceSemester2 = rs.getLong("COURSE_PRICE_SEMESTER_2");
-			courseParticipant.setCoursePaymentVO(new CoursePaymentVO(paymentSum, priceSemester1, priceSemester2));
 
 			Contact courseParticipantContact = new Contact();
 			courseParticipantContact.setFirstname(rs.getString("firstname"));
@@ -531,11 +665,39 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticRepresentative.setContact(courseParticRepresentativeContact);
 			courseParticRepresentative.setUuid(UUID.fromString(rs.getString("representative_uuid")));
 			ret.setCourseParticRepresentative(courseParticRepresentative);
-
-			ret.setPayed(rs.getInt("payed") == 1);
-			ret.setCurrentParticipant(rs.getInt("current_participant") == 1);
 			
 			return ret;
+		}
+	}
+	
+	public static final class CourseParticipantRowMapper implements RowMapper<CourseParticipant> {
+
+		@Override
+		public CourseParticipant mapRow(ResultSet rs, int rowNum) throws SQLException {			
+			
+			CourseParticipant courseParticipant = new CourseParticipant();
+			courseParticipant.setUuid(UUID.fromString(rs.getString("participant_uuid")));
+			
+			courseParticipant.setVarsymbolCore(rs.getInt("varsymbol_core"));
+			courseParticipant.setNotifiedSemester1PaymentAt(rs.getTimestamp("notified_semester_1_payment_at"));
+			courseParticipant.setNotifiedSemester2PaymentAt(rs.getTimestamp("notified_semester_2_payment_at"));
+			 String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
+			 String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");				
+			 if (StringUtils.hasText(courseCourseParticipantUuid)) {
+				courseParticipant.setCourseUuid(UUID.fromString(courseCourseParticipantUuid)); 
+			}
+			if (StringUtils.hasText(courseNameCourseParticipantUuid)) {
+				courseParticipant.setCourseName(courseNameCourseParticipantUuid); 
+			}
+			
+			// payment sum
+			long paymentSum = rs.getLong("PAYMENT_SUM");
+			long priceSemester1 = rs.getLong("COURSE_PRICE_SEMESTER_1");
+			long priceSemester2 = rs.getLong("COURSE_PRICE_SEMESTER_2");
+			courseParticipant.setCoursePaymentVO(new CoursePaymentVO(paymentSum, priceSemester1, priceSemester2));
+
+			
+			return courseParticipant;
 		}
 	}
 	
