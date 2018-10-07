@@ -9,8 +9,8 @@ public final class DataServiceConstants {
 	
 	public static final Date DEFAULT_DATE_FROM =  new GregorianCalendar(1900,0,31).getTime();
 	public static final Date DEFAULT_DATE_TO =  new GregorianCalendar(4000,0,31).getTime();
-	public static final int MAIL_SENDER_PAUSE_BETWEEN_BATCH = 20000;
-	public static final int MAIL_SENDER_BATCH_SIZE = 20;
+	public static final int MAIL_SENDER_PAUSE_BETWEEN_BATCH = 30000;
+	public static final int MAIL_SENDER_BATCH_SIZE = 10;
 	public static final String ADMIN_EMAIL = "jakub.zaoralek@gmail.com";
 	public static final String PLATBY_EMAIL = "platby@sportologic.cz";
 	
