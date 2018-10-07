@@ -123,8 +123,8 @@
 			        <listhead>
 			            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(courseParticipant.contact.surname)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.course')}" sort="auto(courseParticipant.inCourseInfo)" align="left" />
-			            <listheader label="${c:l('txt.ui.common.paymentInstructionSent')}" sort="auto(payed)" align="center" hflex="min" />
-			            <listheader label="${c:l('txt.ui.common.payed')}" sort="auto(payed)" align="center" hflex="min" />
+			            <listheader label="${c:l('txt.ui.common.paymentInstructionSent')}" align="center" hflex="min" />
+			            <listheader label="${c:l('txt.ui.common.payed')}" align="center" hflex="min" />
 			            <listheader width="50px" align="center" />
 			        </listhead>
 			         
