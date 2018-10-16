@@ -423,12 +423,10 @@ public class BaseVM {
 		String specText = configurationService.getCourseApplicationEmailSpecText();
 		if (StringUtils.hasText(specText)) {
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-			mailToRepresentativeSb.append(specText);
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(specText);
 		}
 
-		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text7", new Object[] {String.valueOf(Calendar.getInstance().get(Calendar.YEAR))}));
-		
 //		if (attachmentList != null && !attachmentList.isEmpty()) {
 //			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 //			mailToRepresentativeSb.append(System.getProperty("line.separator"));
@@ -440,6 +438,7 @@ public class BaseVM {
 //			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 //		}
 		
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(buildMailSignature());
 
