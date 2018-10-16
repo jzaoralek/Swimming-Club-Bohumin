@@ -422,6 +422,7 @@ public class BaseVM {
 		String specText = configurationService.getCourseApplicationEmailSpecText();
 		if (StringUtils.hasText(specText)) {
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 			mailToRepresentativeSb.append(specText);
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		}
@@ -437,6 +438,7 @@ public class BaseVM {
 //			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 //		}
 		
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(buildMailSignature());
 
