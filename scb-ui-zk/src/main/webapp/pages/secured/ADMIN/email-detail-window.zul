@@ -42,6 +42,7 @@
 											<textbox hflex="1"
 												value="@bind(vm.filter.address)"
 												instant="true"
+												onOK="@command('filterDomCmd')"
 												onChange="@command('filterDomCmd')" />
 										</auxheader>
 									</auxhead>

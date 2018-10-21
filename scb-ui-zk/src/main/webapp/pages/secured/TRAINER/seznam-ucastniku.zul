@@ -80,15 +80,15 @@
 					<auxhead height="37px">
 						<auxheader class="filter">
 							<textbox hflex="1"
-								instant="true"
 								value="@bind(vm.filter.courseParticName)"
-								onChange="@command('filterDomCmd')" />
+								onChange="@command('filterDomCmd')"
+								onOK="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1" 
-								instant="true"
 								value="@bind(vm.filter.course)"
-								onChange="@command('filterDomCmd')" />
+								onChange="@command('filterDomCmd')"
+								onOK="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<listbox selectedItem="@bind(vm.filter.paymentNotifSendState)" 
