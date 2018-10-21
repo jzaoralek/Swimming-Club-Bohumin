@@ -424,6 +424,7 @@ public class BaseVM {
 		if (StringUtils.hasText(specText)) {
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 			mailToRepresentativeSb.append(specText);
 		}
 

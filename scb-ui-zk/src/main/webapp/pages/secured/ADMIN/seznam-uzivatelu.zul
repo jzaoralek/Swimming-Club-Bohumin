@@ -54,9 +54,9 @@
 					<auxhead height="37px">
 						<auxheader class="filter">
 							<textbox hflex="1"
-								instant="true"
 								value="@bind(vm.filter.usernameName)"
-								onChange="@command('filterDomCmd')" />
+								onChange="@command('filterDomCmd')"
+								onOK="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<listbox selectedItem="@bind(vm.filter.roleItem)" 
@@ -73,21 +73,21 @@
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1"
-								instant="true"
 								value="@bind(vm.filter.completeName)"
-								onChange="@command('filterDomCmd')" />
+								onChange="@command('filterDomCmd')"
+								onOK="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1"
-								instant="true"
 								value="@bind(vm.filter.email)"
-								onChange="@command('filterDomCmd')" />
+								onChange="@command('filterDomCmd')"
+								onOK="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 							<textbox hflex="1"
-								instant="true"
 								value="@bind(vm.filter.phone)"
-								onChange="@command('filterDomCmd')" />
+								onChange="@command('filterDomCmd')"
+								onOK="@command('filterDomCmd')" />
 						</auxheader>
 						<auxheader class="filter">
 						</auxheader>
