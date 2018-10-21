@@ -52,10 +52,7 @@
 	</device-config>
 	
 	<desktop-config>
-		<theme-uri>/resources/css/core.css</theme-uri>
-		<theme-uri>/resources/bootstrap/css/bootstrap.css</theme-uri>
-		<theme-uri>/resources/css/fonts.css</theme-uri>
-		<theme-uri>/resources/css/template.css.dsp</theme-uri>
+		<theme-uri>/resources/css/styles.css</theme-uri>
 	</desktop-config>
 	
 	<language-config>
