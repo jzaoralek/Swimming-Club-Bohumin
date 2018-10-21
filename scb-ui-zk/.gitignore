@@ -1,5 +1,6 @@
 /target/
 /.settings/
+/.externalToolBuilders/
 /bin/
 /build/
 /.project
