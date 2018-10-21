@@ -53,6 +53,10 @@ public final class WebUtils {
 				+ Executions.getCurrent().getDesktop().getRequestPath();
 	}
 
+    public static String getRequestPath() {
+        return Executions.getCurrent().getDesktop().getRequestPath();
+    }
+
 	public static HttpServletRequest getRequest() {
 		return (HttpServletRequest)Executions.getCurrent().getNativeRequest();
 	}

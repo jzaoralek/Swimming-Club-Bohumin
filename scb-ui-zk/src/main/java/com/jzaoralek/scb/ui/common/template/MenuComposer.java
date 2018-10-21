@@ -10,7 +10,6 @@ import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zul.Menubar;
 
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -27,8 +26,9 @@ public class MenuComposer extends SelectorComposer<Component> {
     private static final long serialVersionUID = 1974207164739711580L;
 
     @Wire
-    private Menubar menubar;
+    private HtmlBasedComponent menubar;
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void doAfterCompose(Component comp) throws Exception {
     	final EventQueue eq = EventQueues.lookup(ScbEventQueues.MENU_QUEUE.name() , EventQueues.DESKTOP, true);

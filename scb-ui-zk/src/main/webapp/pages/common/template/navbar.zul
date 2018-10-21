@@ -1,66 +1,44 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
 
-<div sclass="navbar navbar-ext" height="75px" style="margin-bottom:0px;" 
-	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">	
-	
-	<hbox hflex="1" vflex="1" >
-		<vbox vflex="1" pack="center">
-			<a id="mobileMenu"
-				iconSclass="z-icon-bars" 
-				popup="mobileMenuPopup, position=after_start, type=toggle" 
-				sclass="pull-left mobile-menu">
-			</a>
-			<popup id="mobileMenuPopup" sclass="menu navbarPopup2" >
-				<include src="/pages/common/template/menuMobile.zul"/>
-			</popup>
-		</vbox>
-		
-		<vbox hflex="1"/>
+<div height="55px" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">
+	<hlayout>
+		<!-- Mobile menu -->
+		<!--
+		<a id="mobileMenu"
+			iconSclass="z-icon-bars" 
+			popup="mobileMenuPopup, position=after_start, type=toggle">
+		</a>
+		<popup id="mobileMenuPopup" >
+			<include src="/pages/common/template/menuMobile.zul"/>
+		</popup>
+		-->
 		
 		<!-- Brand Logo -->
-		<vbox vflex="1" hflex="10" align="start" pack="center" >
-			<a label="${vm.orgName}" 
-				sclass="pull-left navbar-brand" 
-				style="font-size: 22px; font-weight: bold;" href="/" />
-		</vbox>
-	
-		<!-- Navbar -->
-		<vbox hflex="10" vflex="1" align="end" pack="center" >
-			<hlayout sclass="nav-user pull-right"
-				spacing="0"  
-				viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
-				
-				<button label="@load(vm.loggedUserCompleteName)"
-					sclass="btn-info" iconSclass="z-icon-caret-down"
+		<a label="${vm.orgName}" href="/" />
+		
+		<!-- Logged user name -->
+		<button label="@load(vm.loggedUserCompleteName)"
+					iconSclass="z-icon-caret-down"
 					popup="loggedUserPopup, position=after_end"
 					visible="@load(vm.isUserLogged())" />
-				
-				<!-- User menu -->
-				<menupopup id="loggedUserPopup"  >
-					<menuitem label="${c:l('txt.ui.common.changePassword')}" onClick="@command('changePasswordCmd')" />
-					<menuseparator/>
-					<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-sign-out" onClick="@command('logoutCmd')" />
-				</menupopup>
-				
-				<div sclass="main-menu">
-					<button label="${c:l('txt.ui.menu.application')}" 
-						href="/pages/public/prihlaska-do-klubu.zul" 
-						sclass="btn-warning" iconSclass="z-icon-file-text"
-						visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())"
-						style="margin-right: 10px; font-weight: bold;" />
-				</div>
-				
-				<button
-					tooltiptext="${c:l('txt.ui.login')}"
-					href="/pages/common/login.zul"
-					sclass="btn-info" iconSclass="z-icon-sign-in"
-					visible="@load(!vm.isUserLogged())"
-					style="margin-right: 10px; font-weight: bold;" />
-			</hlayout>
-		</vbox>
+	
+		<!-- User menu -->
+		<menupopup id="loggedUserPopup"  >
+			<menuitem label="${c:l('txt.ui.common.changePassword')}" onClick="@command('changePasswordCmd')" />
+			<menuseparator/>
+			<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-sign-out" onClick="@command('logoutCmd')" />
+		</menupopup>
 		
-		<vbox hflex="1"/>
+		<button label="${c:l('txt.ui.menu.application')}" 
+				href="/pages/public/prihlaska-do-klubu.zul" 
+				iconSclass="z-icon-file-text"
+				visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())"/>
 		
-	</hbox>
+		<button
+				tooltiptext="${c:l('txt.ui.login')}"
+				href="/pages/common/login.zul"
+				iconSclass="z-icon-sign-in"
+				visible="@load(!vm.isUserLogged())"/>
+	</hlayout>
 	
 </div>
