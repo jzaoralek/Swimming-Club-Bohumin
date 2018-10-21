@@ -5,7 +5,7 @@ body{
 }
 
 /* ZK native override */
-.z-label, .z-button, .z-a, .z-menuitem-text{
+.z-label, .z-button, .z-a, .z-menuitem-text, input[type=submit]{
 	font-family: 'Roboto', sans-serif !important;
 }
 
@@ -97,5 +97,147 @@ body{
 	margin-right: 6px;
 	position: relative;
 	top: -2px;
+}
+
+/* LOGIN PAGE */
+.login-page{
+	background-color: #e4e5e6;
+	padding-top: 150px;
+}
+
+.login-page .login-frame{
+	background-color: #fff;
+	width: 390px;
+	margin: 0 auto;
+	border: solid 1px #c8ced3;
+	padding: 45px 40px 40px 40px;
+	border-radius: 4px; 
+}
+
+.login-page .login-frame h1{
+	font-size: 35px;
+	font-weight: 200;
+	padding: 0;
+	margin: 0;
+}
+
+.login-page .login-frame h2{
+	font-size: 14px;
+	font-weight: 400;
+	padding: 0;
+	margin: 15px 0px 20px 0px;
+	color: #73818f !important;
+}
+
+scb-input{
+	display: flex;
+	flex-wrap: wrap;
+	height: 35px;
+	position: relative;
+	margin-bottom: 26px;
+}
+
+scb-input[validation=invalid]{
+	border-color: #f86c6b;
+}
+
+scb-input > input-icon{
+	width: 40px;
+	height: 35px;
+	display: block;
+	border-radius: 4px 0px 0px 4px;
+	border: solid 1px #e4e7ea;
+	border-right: none;
+	line-height: 35px;
+	font-size: 24px;
+	background-color: #f0f3f5;
+	color: rgb(92, 104, 115); 
+}
+
+scb-input[validation=invalid] input-icon{
+	border-color: #f86c6b;
+}
+
+scb-input > input-icon i{
+	padding-left: 9px;
+}
+
+scb-input > input-wrapper{
+	flex: 1;
+	height: 35px;
+	border: solid 1px #e4e7ea;
+	border-radius: 0px 4px 4px 0px;
+	padding: 0px;
+	font-size: 14px;
+	overflow: hidden;
+}
+
+scb-input[validation=invalid] input-wrapper{
+	border-top-color: #f86c6b;
+	border-right-color: #f86c6b;
+	border-bottom-color: #f86c6b;
+}
+
+scb-input input{
+	width:100%;
+	height: 35px;
+	border: none;
+	padding: 0px 15px;
+	font-size: 14px;
+}
+
+scb-input validation{
+	position: absolute;
+	bottom: -25px;
+	left: 0px;
+	right: 0px;
+	height: 25px;
+	line-height: 25px;
+	color: #f86c6b;
+	font-size: 13px;
+}
+
+#input-password i{
+	position: relative;
+	left: 4px;
+}
+
+.login-page input[type=submit]{
+	height: 35px;
+	padding: 0px 30px;
+	background-color: #20a8d8;
+	border-radius: 4px;
+	border: solid 1px  #20a8d8;
+	color: #fff;
+	font-size: 14px;
+	transition: background-color 0.3s;
+}
+
+.login-page input[type=submit]:HOVER{
+	background-color: #1b8eb7;
+}
+
+span.login-failed{
+	display: block;
+	background-color: #f86c6b;
+	color: white;
+	padding: 5px;
+	margin-bottom: 20px;
+	border-radius: 4px;
+}
+
+.login-page a.fp{
+	font-size: 14px;
+	float: right;
+	display: inline-block;
+	color: #20a8d8;
+	padding: 9px 0px;
+	text-decoration: none;
+	transition: color 0.3s;
+}
+
+.login-page a.fp:HOVER{
+	color: #1b8eb7;
+	text-decoration: underline;
 }
 

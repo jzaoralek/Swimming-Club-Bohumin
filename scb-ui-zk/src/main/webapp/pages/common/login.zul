@@ -1,147 +1,72 @@
 <?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
 <?page title="${c:l('txt.Login')}"?>
-<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 
 <zk>
-	<borderlayout self="@{define(mainContent)}" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')"
-		form="@id('fx') @load(vm) @save(vm, before={'loginCmd'})" 
-		vflex="1">
-		<center border="none" style="background:#dfe8f6 url('${pageContext.request.contextPath}/resources/img/background2014Full.jpg') no-repeat center center;" >
-			<div>
-				<hlayout spacing="0">
-					<vbox hflex="1" />
-					
-					<vbox hflex="20" pack="center" align="center" >
-						<hbox hflex="1" pack="center" >
-							<vbox >
-								<headline label="${c:l('txt.ui.login')}" />
-							</vbox>
-						</hbox>
-					</vbox>
-					
-					<vbox hflex="1" />
-				</hlayout>
-			
-				<hlayout xmlns:h="xhtml" >
-					<vbox hflex="1" />
-					
-					<vbox hflex="20" pack="center" align="center" >
-						<window closable="true" border="normal" sclass="alert alert-danger"
-							visible="@load(vm.loginFailure)">
-							<caption iconSclass="z-icon-times">
-								<label value="${c:l('msg.ui.warn.BadCredentials')}" />
-							</caption> 
-						</window>
-						
-						<div style="margin-bottom: 10px;"/>
-						<html >
-							<!-- scb-ui-zk-1.0-SNAPSHOT -->
-							<![CDATA[
-							<form id="loginForm" onsubmit="return validateForm()" method="post" >
-								<table style="background: white;">
-									<tr>
-										<td style="padding-top: 10px; padding-right: 10px; padding-left: 10px;" >
-											${c:l('txt.ui.common.Username')}
-										</td>
-										<td style="padding-top: 10px; padding-right: 10px;">
-											<input type="text" id="username" name="username" class="z-textbox" onBlur="validateUsername()" />
-										</td>
-										<td>
-											<span id="usernameRequiredSpan" class="alert alert-danger" style="visibility: hidden" >
-												${c:l('msg.ui.validation.err.valueRequired')}
-											</span>
-										</td>
-									</tr>
-									<tr>
-										<td style="padding-top: 10px; padding-right: 10px; padding-left: 10px;">
-											${c:l('txt.ui.common.password')}
-										</td>
-										<td style="padding-top: 10px; padding-right: 10px;">
-											<input type="password" id="password" name="password" class="z-textbox" onBlur="validatePassword()" />
-										</td>
-										<td>
-											<span id="passwordRequiredSpan" class="alert alert-danger" style="visibility: hidden" >
-												${c:l('msg.ui.validation.err.valueRequired')}
-											</span>
-										</td>
-									</tr>
-									<tr>
-										<td colspan="2" align="right" style="padding: 10px 10px 5px 0px;">
-											<input id="btnSubmit" type="submit" class="z-button" value="${c:l('txt.ui.common.ToLogin')}" />
-										</td>
-										<td>
-										</td>
-									</tr>
-									<tr>
-										<td colspan="2" align="right" style="padding-bottom: 10px;padding-right: 10px;">
-											<a href="${pageContext.request.contextPath}/pages/public/zapomenute-heslo.zul">${c:l('txt.ui.common.forgottenPassword')}<a/>
-										</td>
-										<td>
-										</td>
-									</tr>
-								</table>
-							</form>
-							<script>
-								function validateForm() {
-									var usernameValid = validateUsername();
-									var passwordValid = validatePassword();
-									
-									if (!usernameValid || !passwordValid) {
-										return false;
-									}
-									
-									return true;
-								}
-								
-								function validateUsername() {
-									var username = document.forms["loginForm"]["username"].value;
-								    
-								    var usernameRequiredSpan = document.getElementById('usernameRequiredSpan');
-								    
-								    usernameRequiredSpan.setAttribute("style", "visibility: hidden");
-								    
-								    var valid = true;
-								    if (username == null || username == "") {
-								    	usernameRequiredSpan.setAttribute("style", "visibility: visible");
-								        valid = false;
-								    }
-								    return valid;
-								}
-								
-								function validatePassword() {
-								    var password = document.forms["loginForm"]["password"].value;
-								    var passwordRequiredSpan = document.getElementById('passwordRequiredSpan');
-								    
-								    passwordRequiredSpan.setAttribute("style", "visibility: hidden");
-								    
-								    var valid = true;
-								    if (password == null || password == "") {
-								    	passwordRequiredSpan.setAttribute("style", "visibility: visible");
-								        valid = false;
-								    }
-								    return valid;
-								}
-								
-								function init() {
-									document.forms["loginForm"].action = "${pageContext.request.contextPath}" + "/login"
-								}
-								
-								init();
-								</script>
-							]]>
-						</html>
-					</vbox>
-					
-					<vbox hflex="1" />
-					
-				</hlayout>
-			</div>
-		</center>
-		<south border="none" >
-			<include src="/pages/common/template/footer.zul"/>
-		</south>
-	</borderlayout>
+	<script src="/resources/js/scb-login.js"></script>
 	
+	<div viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')"
+		sclass="login-page"
+		hflex="1"
+		vflex="1"
+		form="@id('fx') @load(vm) @save(vm, before={'loginCmd'})" >
+	
+		<div sclass="login-frame">
+			<label value="${c:l('msg.ui.warn.BadCredentials')}"  visible="@load(vm.loginFailure)" sclass="login-failed"/>
+			
+			<html>
+				<h1>${c:l('txt.ui.login')}</h1>
+				<h2>${c:l('txt.ui.login.sub')}</h2>
+				
+				<form id="loginForm" onsubmit="return validateForm()" 
+						method="post" 
+						action="${pageContext.request.contextPath}/login">
+						
+					<scb-input id="input-username">
+						<input-icon>
+							<i class="z-icon-user"></i>
+						</input-icon>
+						
+						<input-wrapper>
+							<input type="text" 
+									id="username" 
+									name="username" 
+									onBlur="validateUsername()" 
+									placeholder="${c:l('txt.ui.common.Username')}"/>
+						</input-wrapper>
+						
+						<validation id="usernameRequiredSpan" style="visibility: hidden" >
+							${c:l('msg.ui.validation.err.valueRequired')}
+						</validation>
+					</scb-input>
+					
+					<scb-input id="input-password">
+						<input-icon>
+							<i class="z-icon-lock"></i>
+						</input-icon>
+						
+						<input-wrapper>
+							<input type="password" 
+									id="password" 
+									name="password" 
+									onBlur="validatePassword()" 
+									placeholder="${c:l('txt.ui.common.password')}"/>
+						</input-wrapper>
+						
+						<validation id="passwordRequiredSpan" style="visibility: hidden" >
+							${c:l('msg.ui.validation.err.valueRequired')}
+						</validation>
+					</scb-input>
+					
+					<input id="btnSubmit" type="submit" value="${c:l('txt.ui.common.ToLogin')}" />
+					
+					<a href="${pageContext.request.contextPath}/pages/public/zapomenute-heslo.zul" class="fp"> 
+						${c:l('txt.ui.common.forgottenPassword')} 
+					</a>
+					
+				</form>
+			</html>
+		</div>
+	</div>
 </zk>
