@@ -182,7 +182,6 @@ public class CourseListVM extends BaseContextVM {
 				item = (Course)model.getElementAt(i);
 				data.put(String.valueOf(i+1),
 						new Object[] { item.getName(),
-								item.getDescription(),
 								item.getParticipantListCount()});
 			}
 		}

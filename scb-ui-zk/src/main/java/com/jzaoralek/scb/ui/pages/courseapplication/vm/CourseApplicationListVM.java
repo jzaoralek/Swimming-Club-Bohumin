@@ -36,6 +36,7 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO.CoursePaymentState;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
@@ -375,11 +376,11 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
 		
-		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
-			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone") + " 2";
-			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email") + " 2";			
-			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.residence");
-		}
+//		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
+//			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone") + " 2";
+//			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email") + " 2";			
+//			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.residence");
+//		}
 		data.put("0", headerArray);
 
 		// rows
@@ -392,20 +393,18 @@ public class CourseApplicationListVM extends BaseContextVM {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
 								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
-								item.getCourseParticipant().getPersonalNo(),
 								item.getCourseParticRepresentative().getContact().getCompleteName(),
-								item.getCourseParticRepresentative().getContact().getPhone1(),
-								item.getCourseParticRepresentative().getContact().getEmail1(),
 								dateFormat.format(item.getModifAt()),
 								item.getCourseParticipant().getInCourseInfo(),
-								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
-								item.getCourseParticRepresentative().getContact().getPhone2(),
-								item.getCourseParticRepresentative().getContact().getEmail2(),
-								item.getCourseParticipant().getContact().buildResidence()});
+								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no")});
+//								item.getCourseParticRepresentative().getContact().getPhone2(),
+//								item.getCourseParticRepresentative().getContact().getEmail2(),
+//								item.getCourseParticipant().getContact().buildResidence()}
 				} else {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
-								item.getCourseParticipant().getInCourseInfo(),
+								item.getCourseParticipant().getCourseName(),
+								buildPaymentNotifiedInfo(item.getCourseParticipant()),
 								item.getCourseParticipant().getCoursePaymentVO() != null ? getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null) : null
 								});
 				}
@@ -413,6 +412,31 @@ public class CourseApplicationListVM extends BaseContextVM {
 		}
 
 		return data;
+	}
+	
+	/**
+	 * Sestavi text s informaci o odeslani instrukci k platbe za prvni a druhe pololeti.
+	 * @param cp
+	 * @return
+	 */
+	private String buildPaymentNotifiedInfo(CourseParticipant cp) {
+		if (cp == null) {
+			return null;
+		}
+		StringBuilder ret = new StringBuilder();
+		if (cp.getNotifiedSemester1PaymentAt() != null) {
+			ret.append(Labels.getLabel("txt.ui.common.yes"));
+		} else {
+			ret.append(Labels.getLabel("txt.ui.common.no"));
+		}
+		ret.append(", ");
+		if (cp.getNotifiedSemester2PaymentAt() != null) {
+			ret.append(Labels.getLabel("txt.ui.common.yes"));
+		} else {
+			ret.append(Labels.getLabel("txt.ui.common.no"));
+		}
+
+		return ret.toString();
 	}
 
 	@SuppressWarnings("unchecked")
