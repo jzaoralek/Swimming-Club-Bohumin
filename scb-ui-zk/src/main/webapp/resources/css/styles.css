@@ -30,6 +30,12 @@ body{
 }
 
 /* SCB components */
+
+.scb-content{
+	background-color: #e4e5e6;
+}
+
+/* SIDE MENU */
 .scb-side-menu{
 	background-color: #2f353a;
 	color: #fff;
@@ -64,7 +70,32 @@ body{
 	color: #fff;
 }
 
-
-.scb-content{
-	background-color: #e4e5e6;
+/* NAVBAR (app header) */
+.scb-navbar{
+	border-bottom: solid 1px #c8ced3;
+	overflow: hidden;
 }
+
+.scb-navbar .logged-user-btn{
+	float: right;
+	margin: 7px 7px;
+}
+
+.scb-navbar .brand-name{
+	color: #2f353a;
+	font-size: 18px;
+	font-weight: 300;
+	line-height: 55px;
+	text-decoration: none;
+}
+
+.scb-navbar .brand-logo{
+	width: 40px;
+	height: 40px;
+	border-radius: 20px; 
+	margin-left: 10px;
+	margin-right: 6px;
+	position: relative;
+	top: -2px;
+}
+

@@ -1,7 +1,6 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
 
-<div height="55px" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">
-	<hlayout>
+<div sclass="scb-navbar" height="55px" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">
 		<!-- Mobile menu -->
 		<!--
 		<a id="mobileMenu"
@@ -13,14 +12,18 @@
 		</popup>
 		-->
 		
-		<!-- Brand Logo -->
-		<a label="${vm.orgName}" href="/" />
+		<!-- Brand logo -->
+		<image src="/resources/img/brand_logo.jpg" sclass="brand-logo"/>
+		
+		<!-- Brand Name -->
+		<a label="${vm.orgName}" href="/" sclass="brand-name"/>
 		
 		<!-- Logged user name -->
 		<button label="@load(vm.loggedUserCompleteName)"
-					iconSclass="z-icon-caret-down"
-					popup="loggedUserPopup, position=after_end"
-					visible="@load(vm.isUserLogged())" />
+				sclass="logged-user-btn"
+				iconSclass="z-icon-caret-down"
+				popup="loggedUserPopup, position=after_end"
+				visible="@load(vm.isUserLogged())" />
 	
 		<!-- User menu -->
 		<menupopup id="loggedUserPopup"  >
@@ -29,16 +32,16 @@
 			<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-sign-out" onClick="@command('logoutCmd')" />
 		</menupopup>
 		
-		<button label="${c:l('txt.ui.menu.application')}" 
-				href="/pages/public/prihlaska-do-klubu.zul" 
-				iconSclass="z-icon-file-text"
-				visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())"/>
-		
-		<button
+		<button sclass="logged-user-btn"
 				tooltiptext="${c:l('txt.ui.login')}"
 				href="/pages/common/login.zul"
 				iconSclass="z-icon-sign-in"
 				visible="@load(!vm.isUserLogged())"/>
-	</hlayout>
+		
+		<button label="${c:l('txt.ui.menu.application')}" 
+				sclass="logged-user-btn"
+				href="/pages/public/prihlaska-do-klubu.zul" 
+				iconSclass="z-icon-file-text"
+				visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())"/>
 	
 </div>
