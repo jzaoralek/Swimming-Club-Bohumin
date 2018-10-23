@@ -54,6 +54,7 @@
 	<desktop-config>
 		<theme-uri>/resources/css/styles.css</theme-uri>
 		<theme-uri>https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,700,900</theme-uri>
+		<theme-uri>https://fonts.googleapis.com/css?family=Faster+One|Michroma|Orbitron:400,700></theme-uri>
 	</desktop-config>
 	
 	<language-config>

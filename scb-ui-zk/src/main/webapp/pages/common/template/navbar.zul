@@ -12,11 +12,18 @@
 		</popup>
 		-->
 		
-		<!-- Brand logo -->
-		<image src="/resources/img/brand_logo.jpg" sclass="brand-logo"/>
+		<div sclass="app-logo-wrapper">
+			<label value="S" sclass="app-logo"/>
+			<label value="Sportologic" sclass="app-name"/>
+		</div>
 		
-		<!-- Brand Name -->
-		<a label="${vm.orgName}" href="/" sclass="brand-name"/>
+		<div sclass="brand-logo-wrapper">
+			<!-- Brand logo -->
+			<image src="/resources/img/brand_logo.jpg" sclass="brand-logo"/>
+			
+			<!-- Brand Name -->
+			<a label="${vm.orgName}" href="/" sclass="brand-name"/>
+		</div>
 		
 		<!-- Logged user name -->
 		<button label="@load(vm.loggedUserCompleteName)"
