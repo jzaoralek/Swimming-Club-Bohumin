@@ -1,12 +1,26 @@
 
 body{
 	padding: 0;
-	font-family: 'Roboto', sans-serif;
+	/*font-family: 'Roboto', sans-serif;*/
+	font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;
 }
 
 /* ZK native override */
 .z-label, .z-button, .z-a, .z-menuitem-text, input[type=submit]{
-	font-family: 'Roboto', sans-serif !important;
+	/*font-family: 'Roboto', sans-serif !important;*/
+	font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;
+}
+
+.z-textbox, .z-decimalbox, .z-intbox, .z-longbox, .z-doublebox,
+.z-combobox-input, .z-bandbox-input, .z-datebox-input,
+.z-timebox-input, .z-spinner-input, .z-doublespinner-input {
+	/*font-family: 'Roboto', sans-serif !important;*/
+	font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;
+	font-size: 14px;
+}
+
+.z-label{
+	font-size: 14px;
 }
 
 .z-vlayout-inner{
@@ -29,10 +43,154 @@ body{
 	padding: 0;
 }
 
-/* SCB components */
+.z-button{
+	background-color: #20a8d8;
+	transition: background-color 0.3s
+}
+
+.z-button:HOVER{
+	background-color: #1b8eb7;
+}
+
+.z-groupbox{
+	border: solid 1px #c8ced3;
+	border-radius: 4px !important;
+	padding: 0px; 
+	background-color: #fff;
+	overflow: hidden;
+	margin-bottom: 30px;
+}
+
+.z-groupbox .z-groupbox-header{
+	border: none;
+	background-color: #f0f3f5;
+	height: 46px;
+	border-bottom: solid 1px #c8ced3;
+	padding: 0px 20px;
+}
+
+.z-groupbox .z-groupbox-header .z-caption{
+	top: inherit !important;
+	height: 46px;
+	padding: 0;
+	background-color: #f0f3f5;
+}
+
+.z-groupbox .z-groupbox-header .z-caption .z-caption-content{
+	height: 46px;
+	line-height: 46px;
+	padding: 0;
+	font-size: 14px;
+	color: #23282c;
+	/*font-family: 'Roboto', sans-serif !important;*/
+	font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;
+}
+
+.z-groupbox .z-groupbox-content{
+	border: none;
+	padding: 20px 20px;
+	font-size: 14px;
+	color: #23282c;
+}
+
+.no-inner-padding .z-groupbox-content{
+	padding: 0px;
+}
+
+.z-listbox {
+	border: 1px solid #c8ced3;
+	border-radius:4px;
+	margin-bottom: 30px;
+}
+
+.z-listbox-header , .z-listbox-header th{
+	background-color: #f0f3f5;
+	color: #23282c;
+}
+
+th.z-auxheader{
+	border-bottom-color: #c8ced3;
+}
+
+.z-listheader-content, .z-auxheader-content{
+	color: #23282c;
+	font-size: 14px;
+	padding: 0px 20px;
+	height: 46px;
+	line-height: 46px;
+}
+
+.z-listheader {
+	border-left: 1px solid #c8ced3;
+	border-bottom: 1px solid #c8ced3;
+}
+
+.z-listbox-header-border{
+	border-bottom: 1px solid #c8ced3;
+}
+
+.z-listcell-content{
+	font-size: 14px;
+	padding: 12px 20px;
+}
+
+.z-listitem-selected > .z-listcell > .z-listcell-content > .z-listitem-checkable .z-listitem-icon.z-icon-radio {
+	background-color: #20a8d8;
+}
+
+.z-grid{
+	border: none;
+}
+
+.z-grid .z-cell{
+	border: none;
+	padding: 10px 20px;
+}
+
+/* 
+==========================================================
+SCB common 
+==========================================================
+*/
+.y-scrollable{
+	overflow-y: auto !important;
+}
+
+.scb-headline-big{
+	font-size: 35px;
+	font-weight: 300;
+	margin-bottom: 20px;
+	display: block;
+}
+
+/* 
+==========================================================
+SCB components 
+==========================================================
+*/
 
 .scb-content{
 	background-color: #e4e5e6;
+	padding: 0px;
+}
+
+.scb-view{
+	background-color: #e4e5e6;
+	padding: 30px;
+	overflow-y: auto !important;
+}
+
+.scb-footer{
+	text-align: center;
+}
+
+/* FOOTER */
+.scb-footer{
+	height: 50px;
+	line-height: 50px;
+	background-color: #f0f3f5;
+	font-size: 14px;
+	border-top: solid 1px #c8ced3; 
 }
 
 /* SIDE MENU */
@@ -43,7 +201,7 @@ body{
 
 .scb-side-menu a{
 	font-size: 14px;
-	font-weight: 300;
+	font-weight: 400;
 	color: #fff !important;
 	text-decoration: none;
 	height: 45px;

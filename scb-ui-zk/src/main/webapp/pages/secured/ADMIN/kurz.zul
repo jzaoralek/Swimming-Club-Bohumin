@@ -6,13 +6,13 @@
 
 
 <zk>
-	<div self="@{define(mainContent)}" hflex="1" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseVM')"
-			 validationMessages="@id('vmsgs')"
-       		 form="@id('fx') @load(vm) @save(vm, before='submit')" >
-		<style>
-			<!-- cut/hide the vertical borders in the grid rows -->
-			tr.z-row td.z-row-inner { border-right: 0px #CCC;  }			
-		</style>
+	<div self="@{define(mainContent)}" 
+			hflex="1" 
+			vflex="1"
+			sclass="scb-view"
+			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseVM')"
+			validationMessages="@id('vmsgs')"
+       		form="@id('fx') @load(vm) @save(vm, before='submit')" >
 		
 		<hlayout spacing="0">
 			<vlayout hflex="1" />

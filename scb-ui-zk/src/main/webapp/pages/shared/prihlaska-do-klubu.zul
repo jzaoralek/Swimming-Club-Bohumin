@@ -4,176 +4,146 @@
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 
 <zk>
-	<borderlayout self="@{define(mainContent)}" hflex="1"
-		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
-		validationMessages="@id('vmsgs')"
-	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
-		<center border="none"
-			style="@load(vm.getBorderLayoutCenterStyle())"
-			autoscroll="true" >
-			<div>
-				<hlayout spacing="0">
-					<vbox hflex="1" />
-					
-					<vbox hflex="20" pack="center" align="center" >
-						<hbox hflex="1" pack="end" align="center" >
-							<vbox hflex="1" align="center" >
-								<headline label="${vm.pageHeadline}" menuSelected="menu_applicationToClub" />
-							</vbox>
-						</hbox>
-						<vbox hflex="1" vflex="1" align="end" pack="center">
-							<button onClick="@command('backCmd')" 
-								label="${c:l('txt.ui.common.Back')}" 
-								visible="@load(vm.isBackButtonVisible())"
-								iconSclass="z-icon-arrow-left" />
-						</vbox>
-					</vbox>
-					
-					<vbox hflex="1" />
-				</hlayout>
-				
-				<hlayout spacing="0">
-				
-					<vbox hflex="1" />
-					
-					<!-- Potvrzujici info -->
-					<vbox hflex="20" pack="center" align="center" sclass="vbox-content" visible="@load(vm.showNotification)">
-						<window closable="false" border="normal" sclass="alert alert-success" visible="@load(vm.confirmText ne null)">
-							<caption iconSclass="z-icon-check">
-								<label value="@load(vm.confirmText)"/>
-							</caption>
-						</window>
-						<button label="${c:l('txt.ui.common.ToDownloadApplication')}" onClick="@command('downloadCmd')" iconSclass="z-icon-download" visible="@load(vm.confirmText ne null)" />
-						<window closable="false" border="normal" sclass="alert alert-danger" visible="@load(vm.errotText ne null)" >
-							<caption iconSclass="z-icon-exclamation">
-								<label value="@load(vm.errotText)"/>
-							</caption>
-						</window>
-					</vbox>
+	<div 	self="@{define(mainContent)}" 
+			hflex="1" 
+			vflex="1"
+			sclass="scb-view" 
+			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
+			validationMessages="@id('vmsgs')"
+	    	form="@id('fx') @load(vm) @save(vm, before='submit')">
 		
-					<!-- Formular -->
-					<vbox hflex="20" pack="center" align="center" sclass="vbox-content" visible="@load(vm.editMode)" >	    
+		<vlayout hflex="1">
+			<hlayout spacing="0">
+				<label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
+				
+				<button onClick="@command('backCmd')" 
+							label="${c:l('txt.ui.common.Back')}" 
+							visible="@load(vm.isBackButtonVisible())"
+							iconSclass="z-icon-arrow-left" />
+			</hlayout>
+			
+			<hlayout spacing="0">
+					
+				<!-- Potvrzujici info -->
+				<vlayout visible="@load(vm.showNotification)">
+					<window closable="false" border="normal" sclass="alert alert-success" visible="@load(vm.confirmText ne null)">
+						<caption iconSclass="z-icon-check">
+							<label value="@load(vm.confirmText)"/>
+						</caption>
+					</window>
+					
+					<button label="${c:l('txt.ui.common.ToDownloadApplication')}" onClick="@command('downloadCmd')" iconSclass="z-icon-download" visible="@load(vm.confirmText ne null)" />
+					
+					<window closable="false" border="normal" sclass="alert alert-danger" visible="@load(vm.errotText ne null)" >
+						<caption iconSclass="z-icon-exclamation">
+							<label value="@load(vm.errotText)"/>
+						</caption>
+					</window>
+				</vlayout>
+		
+				<!-- Formular -->
+				<vlayout visible="@load(vm.editMode)">
+					
+	                <!-- Verejna cast -->
+					<listbox model="@load(vm.courseList)" 
+						hflex="1"
+						height="350px"
+						selectedItems="@bind(vm.courseSelected)"
+						emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+						class="listbox"
+						visible="@load(vm.courseList ne null)"
+						if="${!vm.securedMode}"
+						multiple="false"
+						checkmark="true" >
 						
-						<vbox hflex="1" align="end" style="margin: 0px;" visible="false">
-							Údaje označené hvězdičkou jsou povinné.
-						</vbox>
+						<auxhead>
+							<auxheader colspan="6">
+								${c:l('txt.ui.common.CourseSelection')}
+							</auxheader>
+						</auxhead>
 						
-						<!-- Vyber kurzu -->
-						<grid hflex="1" sclass="form-grid" style="margin-top: 20px;margin-bottom: 20px;" if="${vm.courseSelectionRequired}" >
+				        <listhead>
+				            <listheader width="55px" />
+				            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
+				            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
+				            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
+				            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" />
+				            <listheader width="50px" align="center" />
+				        </listhead>
+				         
+				        <template name="model" var="item" >
+				            <listitem style="${vm.getCourseRowColor(item)}" disabled="${item.fullOccupancy}">
+				                <listcell></listcell>
+				                <listcell label="${item.name}" />
+				                <listcell label="${item.courseLocation.name}" />
+				                <listcell>
+				                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
+				                		<label value="${vm.getLessonToUi(each)}"/>
+									</vbox>
+				                </listcell>
+				                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
+				                <listcell>
+					                <vbox>
+										<!-- Popis -->
+					                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
+					                	<popup id="descriptionPopup_${item.uuid}">
+									    	<vbox style="margin: 5px;">
+									    		<label value="${item.description}"/>
+									    	</vbox>
+									    </popup>
+			                		</vbox>
+				                </listcell>
+				            </listitem>
+				        </template>
+				    </listbox>
+							    
+				    <!-- Admin cast -->
+					<listbox model="@load(vm.courseList)" 
+						hflex="1"
+						emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+						class="listbox"
+						visible="@load(vm.courseList ne null)"
+						if="${vm.securedMode}">
+						
+						<auxhead>
+							<auxheader colspan="4">
+								${c:l('txt.ui.common.CourseSelection')}
+							</auxheader>
+						</auxhead>
+						
+				        <listhead>
+				            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
+				            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
+				            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
+				            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" />
+				        </listhead>
+				         
+				        <template name="model" var="item" >
+				            <listitem>
+				                <listcell label="${item.name}" />
+				                <listcell label="${item.courseLocation.name}" />
+				                <listcell>
+				                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
+				                		<label value="${vm.getLessonToUi(each)}"/>
+									</vbox>
+				                </listcell>
+				                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
+				            </listitem>
+				        </template>
+				    </listbox>
+					
+					<!-- Zakonny zastupce -->
+					<groupbox hflex="1" sclass="no-inner-padding">
+		                <caption label="${c:l('txt.ui.common.representative')}" />
+		                
+						<grid hflex="1">
 							<columns>
 				                <column align="center" hflex="1" />
 				            </columns>
-				            <auxhead>
-				            	<auxheader colspan="2" style="background: #428CCD;">
-				            		<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-				            			<hbox>
-					            			<vbox>
-					            				<label value="${c:l('txt.ui.common.CourseSelection')}"/>
-											</vbox>
-				            			</hbox>
-				            		</vbox>
-				            	</auxheader>
-				            </auxhead>
-							<rows style="background: white;">
-								<row sclass="form-grid-row" style="border: none;" >
-									<!-- Verejna cast -->
-									<listbox model="@load(vm.courseList)" 
-										hflex="1"
-										height="350px"
-										selectedItems="@bind(vm.courseSelected)"
-										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-										class="listbox"
-										visible="@load(vm.courseList ne null)"
-										if="${!vm.securedMode}"
-										multiple="false"
-										checkmark="true" >
-										
-								        <listhead>
-								            <listheader width="25px" />
-								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
-								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
-								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
-								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" />
-								            <listheader width="50px" align="center" />
-								        </listhead>
-								         
-								        <template name="model" var="item" >
-								            <listitem style="${vm.getCourseRowColor(item)}" disabled="${item.fullOccupancy}">
-								                <listcell></listcell>
-								                <listcell label="${item.name}" />
-								                <listcell label="${item.courseLocation.name}" />
-								                <listcell>
-								                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
-								                		<label value="${vm.getLessonToUi(each)}"/>
-													</vbox>
-								                </listcell>
-								                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
-								                <listcell>
-									                <vbox>
-														<!-- Popis -->
-									                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
-									                	<popup id="descriptionPopup_${item.uuid}">
-													    	<vbox style="margin: 5px;">
-													    		<label value="${item.description}"/>
-													    	</vbox>
-													    </popup>
-							                		</vbox>
-								                </listcell>
-								            </listitem>
-								        </template>
-								    </listbox>
-								    
-								    <!-- Admin cast -->
-									<listbox model="@load(vm.courseList)" 
-										hflex="1"
-										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-										class="listbox"
-										visible="@load(vm.courseList ne null)"
-										if="${vm.securedMode}">
-										
-								        <listhead>
-								            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
-								            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
-								            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
-								            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" />
-								        </listhead>
-								         
-								        <template name="model" var="item" >
-								            <listitem>
-								                <listcell label="${item.name}" />
-								                <listcell label="${item.courseLocation.name}" />
-								                <listcell>
-								                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
-								                		<label value="${vm.getLessonToUi(each)}"/>
-													</vbox>
-								                </listcell>
-								                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
-								            </listitem>
-								        </template>
-								    </listbox>
-								</row>
-							</rows>
-						</grid>
-						
-						<!-- Zakonny zastupce -->
-						<grid hflex="1" sclass="form-grid" style="margin-top: 20px;margin-bottom: 20px;" >
-				            <auxhead>
-				            	<auxheader colspan="2" style="background: #428CCD;">
-				            		<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-				            			<hbox>
-					            			<vbox>
-					            				<label value="${c:l('txt.ui.common.representative')}"/>
-											</vbox>
-				            			</hbox>
-				            		</vbox>
-				            	</auxheader>
-				            </auxhead>
-							<columns>
-				                <column align="center" hflex="1" />
-				            </columns>
-							<rows style="background: white;">
-								<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
-									<cell sclass="form-grid-cell" >
+				            
+							<rows>
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.email')} / ${c:l('txt.ui.common.Username')}"/>
 											<label value="" />
@@ -199,8 +169,8 @@
 									</cell>
 								</row>
 								
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
-									<cell sclass="form-grid-cell" >
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.firstname')}"/>
 											<textbox id="representativeFirstname" readonly="@load(!vm.editMode)"
@@ -220,7 +190,7 @@
 									</cell>
 								</row>
 								
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+								<row>
 									<cell sclass="form-grid-cell" >
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.surname')}"/>
@@ -241,8 +211,8 @@
 									</cell>
 								</row>
 								
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
-									<cell sclass="form-grid-cell" >
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.phone')} 1"/>
 											<textbox id="representativePhone1" readonly="@load(!vm.editMode)"
@@ -262,7 +232,7 @@
 									</cell>
 								</row>
 								
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
+								<row>
 									<cell sclass="form-grid-cell" >
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.phone')} 2:"/>
@@ -279,8 +249,8 @@
 									</cell>
 								</row>
 								
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 30px 30px;" >
-									<cell sclass="form-grid-cell" >
+								<row>
+									<cell sclass="form-grid-cell" style="padding-bottom: 20px">
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.email')} 2"/>
 											<textbox id="representativeEmail2" readonly="@load(!vm.editMode)" 
@@ -299,26 +269,20 @@
 								</row>
 							</rows>
 						</grid>
-						
-						<!-- Ucastnik -->
-						<grid hflex="1" sclass="form-grid" >
-				            <auxhead>
-				            	<auxheader colspan="2" style="background: #428CCD;">
-				            		<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-				            			<hbox>
-					            			<vbox>
-					            				<label value="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" />
-											</vbox>
-				            			</hbox>
-				            		</vbox>
-				            	</auxheader>
-				            </auxhead>
+					</groupbox>	
+					
+					<!-- Ucastnik -->
+					<groupbox hflex="1" sclass="no-inner-padding">
+		                <caption label="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" />
+		                
+						<grid hflex="1">
 							<columns>
 				                <column align="center" hflex="1" />
 				            </columns>
-							<rows style="background: white;" >
-								<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;">
-									<cell sclass="form-grid-cell">
+				            
+							<rows>
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.birthNumber')}"/>
 											<textbox id="particBirthNumber" readonly="@load(!vm.editMode)"
@@ -338,8 +302,9 @@
 										</vbox>
 									</cell>
 								</row>
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" >
-									<cell sclass="form-grid-cell" >
+								
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.firstname')}"/>
 											<textbox id="particFirstname" readonly="@load(!vm.editMode)"
@@ -358,8 +323,9 @@
 										</vbox>
 									</cell>
 								</row>
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;;">
-									<cell sclass="form-grid-cell">
+								
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.surname')}"/>
 											<textbox id="particSurname" readonly="@load(!vm.editMode)"
@@ -379,9 +345,8 @@
 									</cell>
 								</row>
 								
-								
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;;">
-									<cell sclass="form-grid-cell">
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.street')}"/>
 											<textbox id="particStreet" readonly="@load(!vm.editMode)"
@@ -395,8 +360,9 @@
 										</vbox>
 									</cell>
 								</row>
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;;">
-									<cell sclass="form-grid-cell">
+								
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<hbox>
 												<vbox>
@@ -426,8 +392,9 @@
 										</vbox>
 									</cell>
 								</row>
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;;">
-									<cell sclass="form-grid-cell">
+								
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.city')}"/>
 											<textbox id="particCity" readonly="@load(!vm.editMode)"
@@ -446,8 +413,9 @@
 										</vbox>
 									</cell>
 								</row>
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;;">
-									<cell sclass="form-grid-cell">
+								
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.zipCode')}"/>
 											<textbox id="particZipCode" readonly="@load(!vm.editMode)"
@@ -467,10 +435,8 @@
 									</cell>
 								</row>
 								
-								
-								
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
-									<cell sclass="form-grid-cell">
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.birthDate')}"/>
 											<datebox id="particBirthdate" readonly="@load(!vm.editMode)"
@@ -488,8 +454,9 @@
 										</vbox>
 									</cell>
 								</row>
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
-									<cell sclass="form-grid-cell">
+								
+								<row>
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.healthInsurance')}"/>
 											<textbox id="particHealthInsurance" readonly="@load(!vm.editMode)"
@@ -508,7 +475,8 @@
 										</vbox>
 									</cell>
 								</row>
-								<row sclass="form-grid-row" style="border: none; padding: 0px 30px 30px 30px;">
+								
+								<row sclass="form-grid-row" style="padding-bottom: 20px">
 									<cell sclass="form-grid-cell">
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.application.healthInfo')}"/>
@@ -521,6 +489,13 @@
 								</row>
 							</rows>
 						</grid>
+					</groupbox>
+						
+						
+						
+						
+						
+						
 						
 						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)">
 							<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="18" />
@@ -561,7 +536,7 @@
 									visible="@load(vm.editMode and vm.securedMode)" />
 							</vbox>
 						</hbox>
-					</vbox>
+					</vlayout>
 					
 					<popup id="emailPopup" >
 				        <label value="${c:l('txt.ui.common.email.info')}" />
@@ -573,22 +548,11 @@
 				        });
 				    </script>
 		    
-					<vbox hflex="1" />
 				</hlayout>
-				
-				<div visible="@load(vm.editMode and !vm.securedMode)">
-					<include src="/pages/common/template/footer.zul"/>
-				</div>
-			</div>
-		</center>
-		<south border="none" visible="@load(vm.showNotification)" >
-			<include src="/pages/common/template/footer.zul"/>
-		</south>
-	</borderlayout>
-	
-	
-	
-	
+			
+			
+		</vlayout>
+	</div>
 </zk>
 
 
