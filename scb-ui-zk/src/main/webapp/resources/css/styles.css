@@ -338,12 +338,43 @@ SCB components
 }
 
 .login-page .login-frame{
+	width: 712px;
+	margin: 0 auto;
+}
+
+.login-page .login-frame-left{
 	background-color: #fff;
 	width: 390px;
-	margin: 0 auto;
+	height: 350px;
+	display: inline-block;
 	border: solid 1px #c8ced3;
+	border-right:none;
 	padding: 45px 40px 40px 40px;
-	border-radius: 4px; 
+	border-radius: 4px 0px 0px 4px; 
+	float: left;
+}
+
+.login-page .login-frame-right{
+	width: 320px;
+	height: 350px;
+	display: inline-block;
+	background-color: #20a8d8;
+	border: solid 1px #187da0;
+	border-left:none;
+	padding: 45px 40px 40px 40px;
+	border-radius: 0px 4px 4px 0px; 
+	text-align: center;
+}
+
+.login-page .login-frame-right button{
+	box-shadow: none;
+	background-color: #1985ac;
+	border: solid 1px #187da0;
+	font-size: 14px;
+}
+
+.login-page .login-frame-right button:HOVER{
+	background-color: #20a8d8;
 }
 
 .login-page .login-frame h1{
@@ -359,6 +390,29 @@ SCB components
 	padding: 0;
 	margin: 15px 0px 20px 0px;
 	color: #73818f !important;
+}
+
+.login-page .brand{
+	display: block;
+	text-align: center;
+	color: white;
+	font-family: 'Orbitron' !important;
+	font-size: 28px;
+	margin-top: 30px;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.login-page .brand:HOVER{
+	text-decoration: none;
+}
+
+.login-page .txt{
+	display: block;
+	text-align: center;
+	color: white;
+	line-height: 25px;
+	margin: 30px 0px;
 }
 
 scb-input{

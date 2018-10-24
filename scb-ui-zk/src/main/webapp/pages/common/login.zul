@@ -13,60 +13,69 @@
 		form="@id('fx') @load(vm) @save(vm, before={'loginCmd'})" >
 	
 		<div sclass="login-frame">
-			<label value="${c:l('msg.ui.warn.BadCredentials')}"  visible="@load(vm.loginFailure)" sclass="login-failed"/>
+			<div sclass="login-frame-left">
 			
-			<html>
-				<h1>${c:l('txt.ui.login')}</h1>
-				<h2>${c:l('txt.ui.login.sub')}</h2>
+				<label value="${c:l('msg.ui.warn.BadCredentials')}"  visible="@load(vm.loginFailure)" sclass="login-failed"/>
 				
-				<form id="loginForm" onsubmit="return validateForm()" 
-						method="post" 
-						action="${pageContext.request.contextPath}/login">
-						
-					<scb-input id="input-username">
-						<input-icon>
-							<i class="z-icon-user"></i>
-						</input-icon>
-						
-						<input-wrapper>
-							<input type="text" 
-									id="username" 
-									name="username" 
-									onBlur="validateUsername()" 
-									placeholder="${c:l('txt.ui.common.Username')}"/>
-						</input-wrapper>
-						
-						<validation id="usernameRequiredSpan" style="visibility: hidden" >
-							${c:l('msg.ui.validation.err.valueRequired')}
-						</validation>
-					</scb-input>
+				<html>
+					<h1>${c:l('txt.ui.login')}</h1>
+					<h2>${c:l('txt.ui.login.sub')}</h2>
 					
-					<scb-input id="input-password">
-						<input-icon>
-							<i class="z-icon-lock"></i>
-						</input-icon>
+					<form id="loginForm" onsubmit="return validateForm()" 
+							method="post" 
+							action="${pageContext.request.contextPath}/login">
+							
+						<scb-input id="input-username">
+							<input-icon>
+								<i class="z-icon-user"></i>
+							</input-icon>
+							
+							<input-wrapper>
+								<input type="text" 
+										id="username" 
+										name="username" 
+										onBlur="validateUsername()" 
+										placeholder="${c:l('txt.ui.common.Username')}"/>
+							</input-wrapper>
+							
+							<validation id="usernameRequiredSpan" style="visibility: hidden" >
+								${c:l('msg.ui.validation.err.valueRequired')}
+							</validation>
+						</scb-input>
 						
-						<input-wrapper>
-							<input type="password" 
-									id="password" 
-									name="password" 
-									onBlur="validatePassword()" 
-									placeholder="${c:l('txt.ui.common.password')}"/>
-						</input-wrapper>
+						<scb-input id="input-password">
+							<input-icon>
+								<i class="z-icon-lock"></i>
+							</input-icon>
+							
+							<input-wrapper>
+								<input type="password" 
+										id="password" 
+										name="password" 
+										onBlur="validatePassword()" 
+										placeholder="${c:l('txt.ui.common.password')}"/>
+							</input-wrapper>
+							
+							<validation id="passwordRequiredSpan" style="visibility: hidden" >
+								${c:l('msg.ui.validation.err.valueRequired')}
+							</validation>
+						</scb-input>
 						
-						<validation id="passwordRequiredSpan" style="visibility: hidden" >
-							${c:l('msg.ui.validation.err.valueRequired')}
-						</validation>
-					</scb-input>
-					
-					<input id="btnSubmit" type="submit" value="${c:l('txt.ui.common.ToLogin')}" />
-					
-					<a href="${pageContext.request.contextPath}/pages/public/zapomenute-heslo.zul" class="fp"> 
-						${c:l('txt.ui.common.forgottenPassword')} 
-					</a>
-					
-				</form>
-			</html>
+						<input id="btnSubmit" type="submit" value="${c:l('txt.ui.common.ToLogin')}" />
+						
+						<a href="${pageContext.request.contextPath}/pages/public/zapomenute-heslo.zul" class="fp"> 
+							${c:l('txt.ui.common.forgottenPassword')} 
+						</a>
+						
+					</form>
+				</html>
+			</div>
+			
+			<div sclass="login-frame-right">
+				<a label="Sportologic" sclass="brand" href="/"/>
+				<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
+				<button label="Přihláška" href="/pages/public/prihlaska-do-klubu.zul"/>
+			</div>
 		</div>
 	</div>
 </zk>
