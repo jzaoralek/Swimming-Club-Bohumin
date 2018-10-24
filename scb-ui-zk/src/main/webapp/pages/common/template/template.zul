@@ -15,9 +15,9 @@
 			<include src="/pages/common/template/side-menu.zul"/>
 		</west>
 		
-		<center border="none" autoscroll="false" hflex="1" >
-			<vlayout vflex="1" hflex="1">
-				<div self="@{insert(mainContent)}" vflex="1" hflex="1" sclass="scb-content"></div>
+		<center border="none" autoscroll="false" vflex="1" hflex="1" sclass="scb-template-center">
+			<vlayout hflex="1">
+				<div self="@{insert(mainContent)}" hflex="1" sclass="scb-content"></div>
 				
 				<div sclass="scb-footer-wrapper" >
 					<include src="/pages/common/template/footer.zul"/>

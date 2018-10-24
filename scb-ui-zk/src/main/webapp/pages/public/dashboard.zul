@@ -3,42 +3,39 @@
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 
 <zk>
-	<borderlayout self="@{define(mainContent)}" hflex="1" vflex="1" 
-		 viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.DashboardVM')" >
-		<center border="none" style="background:#dfe8f6 url('${pageContext.request.contextPath}/resources/img/background2014Full.jpg') no-repeat center center;" >
-			<div>
-				<hlayout spacing="0">
+	
+	<div viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.DashboardVM')" 
+			hflex="1" 
+			self="@{define(mainContent)}" 
+			sclass="scb-view" >
+		
+		<vlayout>
+			<vbox hflex="20" pack="center" align="center">
+				<hbox>
+					<headline label="${vm.welcomeInfo}" menuSelected="menu_dashboard" iconSclass="z-icon-tachometer" />
+				</hbox>
+				<button label="@load(vm.newCourseApplicationTitle)" 
+					href="/pages/public/prihlaska-do-klubu.zul"
+					sclass="btn-warning" 
+					iconSclass="z-icon-file-text"
+					visible="@load(vm.isCourseApplicationAllowed())"
+					style="margin-right: 10px; margin-top: 20px; font-weight: bold; height: 50px" />
 				
-					<vbox hflex="1" />
-					
-					<vbox hflex="20" pack="center" align="center">
-						<hbox>
-							<headline label="${vm.welcomeInfo}" menuSelected="menu_dashboard" iconSclass="z-icon-tachometer" />
-						</hbox>
-						<button label="@load(vm.newCourseApplicationTitle)" 
-							href="/pages/public/prihlaska-do-klubu.zul"
-							sclass="btn-warning" iconSclass="z-icon-file-text"
-							visible="@load(vm.isCourseApplicationAllowed())"
-							style="margin-right: 10px; margin-top: 20px; font-weight: bold; height: 50px" />
+				<!-- Prihlasky nejsou povoleny info -->
+				<vbox hflex="20" pack="center" align="center" 
+						sclass="vbox-content" 
+						style="margin-right: 10px; margin-top: 20px;" 
+						visible="@load(!vm.courseApplicationAllowed)" >
 						
-						<!-- Prihlasky nejsou povoleny info -->
-						<vbox hflex="20" pack="center" align="center" sclass="vbox-content" style="margin-right: 10px; margin-top: 20px;" visible="@load(!vm.courseApplicationAllowed)" >
-							<window closable="false" border="normal" sclass="alert alert-danger" >
-								<caption iconSclass="z-icon-exclamation">
-									<label value="Přihlášky do plaveckého kurzu nejsou aktuálně otevřené."/>
-								</caption>
-							</window>
-						</vbox>
-					</vbox>
-					
-					<vbox hflex="1" />
-				</hlayout>
-			</div>
-		</center>
-		<south border="none" >
-			<include src="/pages/common/template/footer.zul"/>
-		</south>
-	</borderlayout>
+					<window closable="false" border="normal" sclass="alert alert-danger" >
+						<caption iconSclass="z-icon-exclamation">
+							<label value="Přihlášky do plaveckého kurzu nejsou aktuálně otevřené."/>
+						</caption>
+					</window>
+				</vbox>
+			</vbox>
+		</vlayout>
+	</div>
 </zk>
 
 

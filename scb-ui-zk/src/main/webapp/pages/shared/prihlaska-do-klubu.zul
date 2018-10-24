@@ -6,7 +6,6 @@
 <zk>
 	<div 	self="@{define(mainContent)}" 
 			hflex="1" 
-			vflex="1"
 			sclass="scb-view" 
 			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
 			validationMessages="@id('vmsgs')"
@@ -32,7 +31,11 @@
 						</caption>
 					</window>
 					
-					<button label="${c:l('txt.ui.common.ToDownloadApplication')}" onClick="@command('downloadCmd')" iconSclass="z-icon-download" visible="@load(vm.confirmText ne null)" />
+					<button label="${c:l('txt.ui.common.ToDownloadApplication')}" 
+						onClick="@command('downloadCmd')" 
+						iconSclass="z-icon-download"
+						visible="@load(vm.confirmText ne null)" 
+						style="margin: 20px 0px"/>
 					
 					<window closable="false" border="normal" sclass="alert alert-danger" visible="@load(vm.errotText ne null)" >
 						<caption iconSclass="z-icon-exclamation">
@@ -491,66 +494,58 @@
 						</grid>
 					</groupbox>
 						
-						
-						
-						
-						
-						
-						
-						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)">
-							<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="18" />
-							<label value="${vm.healthAgreement}" />
+					<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)">
+						<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="18" />
+						<label value="${vm.healthAgreement}" />
+					</hbox>
+					
+					<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" style="margin-top: 20px;">
+						<checkbox checked="@bind(vm.personalInfoProcessAgreement)" tabindex="19" />
+						<hbox>
+							<span>
+								<label value="${vm.persDataProcessAgreement}" />
+							</span>
 						</hbox>
+					</hbox>
 						
-						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" style="margin-top: 20px;">
-							<checkbox checked="@bind(vm.personalInfoProcessAgreement)" tabindex="19" />
-							<hbox>
-								<span>
-									<label value="${vm.persDataProcessAgreement}" />
+					<div sclass="form-captcha-panel">
+						<hlayout>
+						    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
+						    <bw.captcha id="cap1" />
+						    <textbox id="captcha" style="margin-bottom: 15px;" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1, validate=(vm.editMode and !vm.securedMode))" tabindex="20" />
+						    <hbox height="20px">
+							    <span style="margin-left: 10px;" sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[captcha])" >
+									<label value="@bind(vmsgs[captcha])" />
 								</span>
 							</hbox>
-						</hbox>
+						</hlayout>
+					</div>
 						
-						<hbox style="margin-bottom: 20px; margin-top: 20px" visible="@load(vm.editMode and !vm.securedMode)">
-							<vbox align="center">
-							    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
-							    <bw.captcha id="cap1" />
-							    <textbox id="captcha" style="margin-bottom: 15px;" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1, validate=(vm.editMode and !vm.securedMode))" tabindex="20" />
-							    <hbox height="20px">
-								    <span style="margin-left: 10px;" sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[captcha])" >
-										<label value="@bind(vmsgs[captcha])" />
-									</span>
-								</hbox>
-							</vbox>
-						</hbox>
-						
-						<hbox style="margin-bottom: 20px;">
-							<vbox>
-								<button label="Odeslat" tabindex="21"
-									onClick="@command('submit')" 
-									iconSclass="z-icon-check" 
-									visible="@load(vm.editMode and !vm.securedMode)" />
-								<button label="Uložit"
-									onClick="@command('submit')" 
-									iconSclass="z-icon-check" 
-									visible="@load(vm.editMode and vm.securedMode)" />
-							</vbox>
-						</hbox>
-					</vlayout>
+					<hbox style="margin-bottom: 20px;">
+						<vbox>
+							<button label="Odeslat" tabindex="21"
+								onClick="@command('submit')" 
+								iconSclass="z-icon-check" 
+								visible="@load(vm.editMode and !vm.securedMode)" />
+							<button label="Uložit"
+								onClick="@command('submit')" 
+								iconSclass="z-icon-check" 
+								visible="@load(vm.editMode and vm.securedMode)" />
+						</vbox>
+					</hbox>
+				</vlayout>
 					
-					<popup id="emailPopup" >
-				        <label value="${c:l('txt.ui.common.email.info')}" />
-				    </popup>
-											    
-					<script type="text/javascript">
-				        zk.afterMount(function() {
-				            jq("$particBirthNumber").mask("999999/9999");
-				        });
-				    </script>
+				<popup id="emailPopup" >
+			        <label value="${c:l('txt.ui.common.email.info')}" />
+			    </popup>
+										    
+				<script type="text/javascript">
+			        zk.afterMount(function() {
+			            jq("$particBirthNumber").mask("999999/9999");
+			        });
+			    </script>
 		    
-				</hlayout>
-			
-			
+			</hlayout>
 		</vlayout>
 	</div>
 </zk>

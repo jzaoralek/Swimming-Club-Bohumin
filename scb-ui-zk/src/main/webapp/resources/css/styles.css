@@ -110,6 +110,7 @@ body{
 
 th.z-auxheader{
 	border-bottom-color: #c8ced3;
+	border-left-color: #c8ced3;
 }
 
 .z-listheader-content, .z-auxheader-content{
@@ -147,6 +148,12 @@ th.z-auxheader{
 	padding: 10px 20px;
 }
 
+.z-button{
+	height: 36px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
 /* 
 ==========================================================
 SCB common 
@@ -163,6 +170,24 @@ SCB common
 	display: block;
 }
 
+.add-item-btn{
+	height: 36px;
+	width: 36px;
+	border-radius: 18px;
+	text-align:center;
+	padding: 0;
+}
+
+.toolbar-btn{
+	height: 36px;
+	width: 36px;
+	text-align:center;
+	padding: 0;
+	background-color: #f0f3f5;
+	color: #20a8d8;
+	box-shadow: none !important;
+}
+
 /* 
 ==========================================================
 SCB components 
@@ -177,11 +202,16 @@ SCB components
 .scb-view{
 	background-color: #e4e5e6;
 	padding: 30px;
-	overflow-y: auto !important;
 }
 
 .scb-footer{
 	text-align: center;
+}
+
+.scb-template-center > .z-center-body{
+	overflow-y: auto !important;
+	background-color: #e4e5e6;
+	position: relative;
 }
 
 /* FOOTER */
@@ -243,7 +273,9 @@ SCB components
 	display: inline-block;
 	height: 100%;
 	float: left;
-	margin-left: 10px;
+	margin-left: 30px;
+	position: relative;
+	top: -3px;
 }
 
 .scb-navbar .brand-name{
@@ -255,8 +287,8 @@ SCB components
 }
 
 .scb-navbar .brand-logo{
-	width: 40px;
-	height: 40px;
+	width: 30px;
+	height: 30px;
 	border-radius: 3px; 
 	margin-right: 6px;
 	position: relative;
@@ -270,6 +302,8 @@ SCB components
 	display: inline-block;
 	float: left;
 	padding-left: 12px;
+	position: relative;
+	top: 0px;
 }
 
 .scb-navbar .app-logo-wrapper .app-logo{
@@ -437,5 +471,24 @@ span.login-failed{
 .login-page a.fp:HOVER{
 	color: #1b8eb7;
 	text-decoration: underline;
+}
+
+/* VALIDATION */
+.form-grid-validation-hbox .alert-danger, .alert-danger span{
+	color: red;
+}
+
+.form-captcha-panel{
+	background-color: #fff;
+	border: solid 1px #c8ced3;
+	padding: 20px;
+	padding-right: 15px;
+	display: inline-block;
+	border-radius: 4px;
+	margin: 30px 0px; 
+}
+
+.form-captcha-panel .z-hlayout-inner{
+	margin-right: 5px;
 }
 
