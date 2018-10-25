@@ -376,11 +376,11 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
 		
-//		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
-//			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone") + " 2";
-//			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email") + " 2";			
-//			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.residence");
-//		}
+		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone");
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email");			
+			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.residence");
+		}
 		data.put("0", headerArray);
 
 		// rows
@@ -396,10 +396,10 @@ public class CourseApplicationListVM extends BaseContextVM {
 								item.getCourseParticRepresentative().getContact().getCompleteName(),
 								dateFormat.format(item.getModifAt()),
 								item.getCourseParticipant().getInCourseInfo(),
-								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no")});
-//								item.getCourseParticRepresentative().getContact().getPhone2(),
-//								item.getCourseParticRepresentative().getContact().getEmail2(),
-//								item.getCourseParticipant().getContact().buildResidence()}
+								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
+								item.getCourseParticRepresentative().getContact().getPhone1(),
+								item.getCourseParticRepresentative().getContact().getEmail1(),
+								item.getCourseParticipant().getContact().buildResidence()});
 				} else {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),

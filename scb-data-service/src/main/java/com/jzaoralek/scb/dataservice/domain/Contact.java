@@ -3,6 +3,8 @@ package com.jzaoralek.scb.dataservice.domain;
 import java.util.Date;
 import java.util.UUID;
 
+import org.springframework.util.StringUtils;
+
 /**
  * Contact used in CourseParticipant and User.
  *
@@ -120,7 +122,9 @@ public class Contact implements IdentEntity {
 	public String buildResidence() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.city + ", ");
-		sb.append(this.street + " ");
+		if (StringUtils.hasText(this.street)) {
+			sb.append(this.street + " ");			
+		}
 		sb.append(this.landRegistryNumber);
 		if (this.houseNumber != null && this.houseNumber > 0) {
 			sb.append("/"+this.houseNumber);
