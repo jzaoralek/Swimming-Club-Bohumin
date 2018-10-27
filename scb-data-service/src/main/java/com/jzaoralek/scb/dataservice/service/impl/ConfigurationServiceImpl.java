@@ -133,4 +133,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public String getBankAccountNumber() {
 		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_BANK_ACCOUNT_NUMBER.name()).getValue();
 	}
+
+	@Override
+	public boolean isAttendanceForParentsVisible() {
+		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.ATTENDANCE_FOR_PARENTS_VISIBLE.name()).getValue());
+	}
 }

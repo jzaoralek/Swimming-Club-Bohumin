@@ -26,6 +26,7 @@ public interface ConfigurationService {
 	String getOrgContactPerson();
 	String getBankAccountNumber();
 	boolean isPaymentsAvailable();
+	boolean isAttendanceForParentsVisible();
 	List<Config> getAll();
 	void update(Config config);
 }

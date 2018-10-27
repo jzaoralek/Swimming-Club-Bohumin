@@ -65,6 +65,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	private String paymentVarSymbolFirstSemester;
 	private String paymentVarSymbolSecondSemester;
 	private int yearFrom;
+	private boolean attendanceForParentsVisible;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
@@ -80,6 +81,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.orgAccountNo = configurationService.getBankAccountNumber();
 		this.paymentVarSymbolFirstSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 1, this.courseParticipant.getVarsymbolCore());
 		this.paymentVarSymbolSecondSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 2, this.courseParticipant.getVarsymbolCore());
+		this.attendanceForParentsVisible = configurationService.isAttendanceForParentsVisible();
 	}
 	
 	protected void courseYearChangeCmdCore() {
@@ -144,6 +146,10 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	public void showAttendanceCmd(@BindingParam("course") Course course) {
 		this.lessonStats = learningLessonService.buildCourseStatistics(course.getUuid(), this.courseParticipant.getUuid());
 		this.showLessonStats = true;
+	}
+	
+	public boolean isAttendanceForParentsVisible() {
+		return this.attendanceForParentsVisible;
 	}
 	
 	public CourseParticipant getCourseParticipant() {
