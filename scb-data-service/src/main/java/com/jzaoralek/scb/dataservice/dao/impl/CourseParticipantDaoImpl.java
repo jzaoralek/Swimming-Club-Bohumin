@@ -29,6 +29,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	private static final String BIRTHDATE_PARAM = "birthdate";
 	private static final String PERSONAL_NUMBER_PARAM = "personal_number";
+	private static final String VARSYMBOL_CORE_PARAM = "varsymbol_core";
 	private static final String HEALTH_INSURANCE = "health_insurance";
 	private static final String CONTACT_PARAM = "contact_uuid";
 	private static final String HEALTH_INFO_PARAM = "health_info";
@@ -75,7 +76,8 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	private static final String SELECT_BY_PERSONAL_NO_AND_INTERVAL = "SELECT cp.* FROM course_participant cp, course_course_participant ccp, course c " + 
 			" WHERE cp.uuid = ccp.course_participant_uuid AND ccp.course_uuid = c.uuid " +
-			" AND TRIM(LEADING '0' FROM REPLACE(cp.personal_number,'/','')) =:" + PERSONAL_NUMBER_PARAM + 
+//			" AND TRIM(LEADING '0' FROM REPLACE(cp.personal_number,'/','')) =:" + PERSONAL_NUMBER_PARAM +
+			" AND TRIM(LEADING '0' FROM ccp.varsymbol_core) =:" + VARSYMBOL_CORE_PARAM +
 			" AND c.year_from = :"+DATE_FROM_PARAM+" AND c.year_to =:"+DATE_TO_PARAM;
 	
 	@Autowired
@@ -120,8 +122,8 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	}
 	
 	@Override
-	public CourseParticipant getByPersonalNumberAndInterval(String personalNumber, int yearFrom, int yearTo) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(PERSONAL_NUMBER_PARAM, personalNumber)
+	public CourseParticipant getByVarsymbolAndInterval(String varsymbolCore, int yearFrom, int yearTo) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(VARSYMBOL_CORE_PARAM, varsymbolCore)
 				.addValue(DATE_FROM_PARAM, yearFrom)
 				.addValue(DATE_TO_PARAM, yearTo);
 		try {

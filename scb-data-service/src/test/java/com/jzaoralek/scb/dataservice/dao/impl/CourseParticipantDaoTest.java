@@ -60,7 +60,7 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 	
 	@Test
 	public void testGetByPersonalNumberAndInterval() {
-		courseParticipantDao.getByPersonalNumberAndInterval(PARTIC_PERSONAL_NO, YEAR_FROM, YEAR_TO);
+		courseParticipantDao.getByVarsymbolAndInterval(PARTIC_PERSONAL_NO, YEAR_FROM, YEAR_TO);
 	}
 
 	@Test

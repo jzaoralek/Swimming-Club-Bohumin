@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<language-addon>
+    <addon-name>core-components</addon-name>
+    <language-name>xul/html</language-name>
+    
+    <!-- Popis kurzu -->
+	<component>
+		<component-name>course-description</component-name>
+		<macro-uri>/pages/common/component/course-description.zul</macro-uri>
+	</component>
+	
+	<!-- Instrukce k platbe -->
+	<component>
+		<component-name>payment-instruction</component-name>
+		<macro-uri>/pages/common/component/payment-instruction.zul</macro-uri>
+	</component>
+
+</language-addon>

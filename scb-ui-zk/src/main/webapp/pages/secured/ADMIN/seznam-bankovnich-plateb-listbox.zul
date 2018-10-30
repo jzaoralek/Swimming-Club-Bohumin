@@ -41,27 +41,27 @@
 			<auxhead height="37px">
 				<auxheader class="filter">
 					<textbox hflex="1"
-						instant="true"
 						value="@bind(vm.filter.datumPohybu)"
-						onChange="@command('filterDomCmd')" />
+						onChange="@command('filterDomCmd')"
+						onOK="@command('filterDomCmd')" />
 				</auxheader>
 				<auxheader class="filter">
 					<textbox hflex="1"
-						instant="true"
 						value="@bind(vm.filter.objem)"
-						onChange="@command('filterDomCmd')" />
+						onChange="@command('filterDomCmd')"
+						onOK="@command('filterDomCmd')" />
 				</auxheader>
 				<auxheader class="filter">
 					<textbox hflex="1"
-						instant="true"
 						value="@bind(vm.filter.varSymbol)"
-						onChange="@command('filterDomCmd')" />
+						onChange="@command('filterDomCmd')"
+						onOK="@command('filterDomCmd')" />
 				</auxheader>
 				<auxheader class="filter">
 					<textbox hflex="1"
-						instant="true"
 						value="@bind(vm.filter.nazevUctu)"
-						onChange="@command('filterDomCmd')" />
+						onChange="@command('filterDomCmd')"
+						onOK="@command('filterDomCmd')" />
 				</auxheader>
 			</auxhead>
 	

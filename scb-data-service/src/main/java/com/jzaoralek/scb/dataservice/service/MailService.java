@@ -3,7 +3,10 @@ package com.jzaoralek.scb.dataservice.service;
 import java.util.List;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Mail;
 
 public interface MailService {
 	void sendMail(String to, String subject, String text, List<Attachment> attachmentList);
+	void sendMail(Mail mail);
+	void sendMailBatch(List<Mail> mailList);
 }

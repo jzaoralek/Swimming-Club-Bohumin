@@ -28,15 +28,14 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
-import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
-import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 
 import bank.fioclient.dto.Transaction;
@@ -139,8 +138,8 @@ public class BankPaymentVM extends BaseContextVM {
 		
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
-		this.dateFrom = new GregorianCalendar(yearFrom,9,1);
-		this.dateTo = new GregorianCalendar(yearTo,6,30);
+		this.dateFrom = new GregorianCalendar(yearFrom,8,1);
+		this.dateTo = new GregorianCalendar(yearTo,7,31);
 	}
 	
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {

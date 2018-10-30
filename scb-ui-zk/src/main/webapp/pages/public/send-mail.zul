@@ -10,6 +10,8 @@
 		<center border="none" >
 			<div>
 				<button label="Send mail" onClick="@command('sendMailCmd')" />
+				<button label="Send mail - async" onClick="@command('sendMail2Cmd')" />
+				<button label="Download" onClick="@command('downloadCmd')" />
 			</div>
 		</center>
 	</borderlayout>

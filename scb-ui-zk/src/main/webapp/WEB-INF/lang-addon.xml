@@ -5,4 +5,17 @@
     <addon-name>jquery.maskedinput.min.js</addon-name>
     <javascript src="/resources/js/jquery.maskedinput.min.js"/>
     <language-name>xul/html</language-name>
+    
+    <!-- Button - disable po zmacknuti v prubehu requestu, zabranuje doubleclicku.  -->
+    <component>
+        <component-name>button</component-name>
+        <extends>button</extends>
+	    <component-class>org.zkoss.zul.Button</component-class>
+
+        <property>
+            <property-name>autodisable</property-name>
+            <property-value>self</property-value>
+        </property>    
+    </component>
+
 </language-addon>

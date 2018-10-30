@@ -24,7 +24,7 @@ import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
-import com.jzaoralek.scb.ui.common.vm.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Attachment;
 
 public final class WebUtils {
 

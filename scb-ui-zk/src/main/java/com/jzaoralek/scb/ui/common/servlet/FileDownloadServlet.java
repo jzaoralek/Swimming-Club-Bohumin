@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.vm.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Attachment;;
 
 public class FileDownloadServlet extends HttpServlet {
 

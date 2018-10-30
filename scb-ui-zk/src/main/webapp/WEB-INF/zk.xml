@@ -59,5 +59,6 @@
 	
 	<language-config>
 		<addon-uri>/WEB-INF/lang-addon.xml</addon-uri>
+		<addon-uri>/WEB-INF/core-components.xml</addon-uri>
 	</language-config>
 </zk>

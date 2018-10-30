@@ -232,7 +232,7 @@
 											emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 											class="listbox" >
 									        <auxhead>
-									            <auxheader class="header" colspan="5" >
+									            <auxheader class="header" colspan="${vm.isAttendanceForParentsVisible() ? 5 : 4}" >
 									            	<hbox hflex="1" height="42px" align="center" >
 										            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
 									            			<hbox vflex="1" align="center">
@@ -253,8 +253,9 @@
 									            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
 									            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
 									            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
-									            <listheader width="25px" />
-									            <listheader hflex="min"/>
+<!-- 									            <listheader width="35px" /> -->
+									            <listheader width="35px" />
+									            <listheader hflex="min" if="${vm.isAttendanceForParentsVisible()}" />
 									        </listhead>
 									         
 									        <template name="model" var="item">
@@ -266,19 +267,29 @@
 									                		<label value="${vm.getLessonToUi(each)}"/>
 														</vbox>
 									                </listcell>
+													<!-- Platba -->
+<!-- 									                <listcell> -->
+<!-- 										                <vbox> -->
+<!-- 										                	<a iconSclass="z-icon-credit-card" popup="paymentPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.PaymentInstruction')}" /> -->
+<!-- 										                	<popup id="paymentPopup_${item.uuid}"> -->
+<!-- 														    	<payment-instruction course="${item}"  -->
+<!-- 														    		orgAccountNumber="${vm.orgAccountNo}"  -->
+<!-- 														    		paymentVarSymbolFirstSemester="${vm.paymentVarSymbolFirstSemester}"   -->
+<!-- 														    		paymentVarSymbolSecondSemester="${vm.paymentVarSymbolSecondSemester}"  /> -->
+<!-- 														    </popup> -->
+<!-- 								                		</vbox> -->
+<!-- 									                </listcell> -->
 									                <listcell>
 										                <vbox>
 															<!-- Popis -->
 										                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
 										                	<popup id="descriptionPopup_${item.uuid}">
-														    	<vbox style="margin: 5px;">
-														    		<label value="${item.description}"/>
-														    	</vbox>
+														    	<course-description course="${item}" />
 														    </popup>
 								                		</vbox>
 									                </listcell>
-									                <listcell>
-									                	<button label="${c:l('txt.ui.common.attendance')}" onClick="@command('showAttendanceCmd', course=item)" />
+									                <listcell if="${vm.isAttendanceForParentsVisible()}" >
+										                	<button label="${c:l('txt.ui.common.attendance')}" onClick="@command('showAttendanceCmd', course=item)" />
 									                </listcell>
 									            </listitem>
 									        </template>
@@ -289,6 +300,7 @@
 										<grid sclass="grid-spreadsheet" height="480px" 
 											style="border: none; overflow:scroll; margin-top: 20px;"
 											visible="@load(vm.showLessonStats)"
+											if="${vm.isAttendanceForParentsVisible()}"
 											model="@load(vm.lessonStats.learnLessonsStatsList)">
 											
 											<columns>

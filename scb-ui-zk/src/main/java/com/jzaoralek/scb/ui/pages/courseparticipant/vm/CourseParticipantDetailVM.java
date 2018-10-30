@@ -16,24 +16,22 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.LearningLessonStatsWrapper;
-import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.service.CodeListService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
+import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
-import com.jzaoralek.scb.ui.common.vm.Attachment;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
-import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseParticipantVM;
 
 /**
  * Detail ucastnika zobrazeneho prihlasenym zakonnym zastupcem.
@@ -41,7 +39,7 @@ import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseParticipantVM;
  */
 public class CourseParticipantDetailVM extends BaseContextVM {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CourseParticipantVM.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CourseParticipantDetailVM.class);
 
 	@WireVariable
 	private CourseService courseService;
@@ -63,6 +61,11 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	private List<CourseApplication> courseApplicationList;
 	private Course courseSelected;
 	private boolean showLessonStats;
+	private String orgAccountNo;
+	private String paymentVarSymbolFirstSemester;
+	private String paymentVarSymbolSecondSemester;
+	private int yearFrom;
+	private boolean attendanceForParentsVisible;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
@@ -75,6 +78,10 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		}
 		setReturnPage(fromPage);
 		fillSwimStyleItemList();
+		this.orgAccountNo = configurationService.getBankAccountNumber();
+		this.paymentVarSymbolFirstSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 1, this.courseParticipant.getVarsymbolCore());
+		this.paymentVarSymbolSecondSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 2, this.courseParticipant.getVarsymbolCore());
+		this.attendanceForParentsVisible = configurationService.isAttendanceForParentsVisible();
 	}
 	
 	protected void courseYearChangeCmdCore() {
@@ -85,7 +92,8 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		String[] years = getYearsFromContext();
 		
 		int yearFrom = Integer.parseInt(years[0]);
-		int yearTo = Integer.parseInt(years[1]);
+		int yearTo = Integer.parseInt(years[1]);		
+		this.yearFrom = yearFrom;
 
 		List<Course> courseListAll = courseService.getByCourseParticipantUuid(this.courseParticipant.getUuid(), yearFrom, yearTo);
 		this.courseList = new ArrayList<>();
@@ -133,17 +141,15 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.swimStyleListitemSelected = this.swimStyleListitemList.get(0);
 	}
 	
-//	@NotifyChange("lessonStats")
-//	@Command
-//	public void courseOnSelectCmd() {
-//		this.lessonStats = learningLessonService.buildCourseStatistics(this.courseSelected.getUuid(), this.courseParticipant.getUuid());
-//	}
-	
 	@NotifyChange({"lessonStats","showLessonStats"})
 	@Command
 	public void showAttendanceCmd(@BindingParam("course") Course course) {
 		this.lessonStats = learningLessonService.buildCourseStatistics(course.getUuid(), this.courseParticipant.getUuid());
 		this.showLessonStats = true;
+	}
+	
+	public boolean isAttendanceForParentsVisible() {
+		return this.attendanceForParentsVisible;
 	}
 	
 	public CourseParticipant getCourseParticipant() {
@@ -189,4 +195,17 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	public boolean isShowLessonStats() {
 		return showLessonStats;
 	}
+	
+	public String getOrgAccountNo() {
+		return orgAccountNo;
+	}
+	
+	public String getPaymentVarSymbolFirstSemester() {
+		return paymentVarSymbolFirstSemester;
+	}
+
+	public String getPaymentVarSymbolSecondSemester() {
+		return paymentVarSymbolSecondSemester;
+	}
+
 }

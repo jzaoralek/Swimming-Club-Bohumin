@@ -108,4 +108,34 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public String getPersDataProcessAgreement() {
 		return configurationDao.getByName(Config.ConfigName.PERSONAL_DATA_PROCESS_AGREEMENT.name()).getValue();
 	}
+
+	@Override
+	public String getClubRulesAgreement() {
+		return configurationDao.getByName(Config.ConfigName.CLUB_RULES_AGREEMENT.name()).getValue();
+	}
+
+	@Override
+	public String getCourseApplicationEmailSpecText() {
+		return configurationDao.getByName(Config.ConfigName.COURSE_APPL_EMAIL_SPEC_TEXT.name()).getValue();
+	}
+
+	@Override
+	public String getOrgContactPerson() {
+		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_CONTACT_PERSON.name()).getValue();
+	}
+
+	@Override
+	public boolean isPaymentsAvailable() {
+		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.PAYMENTS_AVAILABLE.name()).getValue());
+	}
+
+	@Override
+	public String getBankAccountNumber() {
+		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_BANK_ACCOUNT_NUMBER.name()).getValue();
+	}
+
+	@Override
+	public boolean isAttendanceForParentsVisible() {
+		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.ATTENDANCE_FOR_PARENTS_VISIBLE.name()).getValue());
+	}
 }

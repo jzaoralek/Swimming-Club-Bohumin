@@ -1,0 +1,66 @@
+<window id="modalWindow"
+	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.payments.vm.PaymentInstructionWinVM')"
+	title="@init(vm.pageHeadline)" 
+	border="normal" 
+    width="750px"
+    position="center,center" 
+    closable="true">
+    
+    <style>
+		<!-- cut/hide the vertical borders in the grid rows -->
+		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
+		
+		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
+	</style>
+	
+    <vbox hflex="1" align="center" >
+    	
+    	<grid hflex="1" style="margin-top: 5px;margin-bottom: 5px;border: none;">
+    		<columns>
+    			<column width="195px"/>
+    			<column hflex="1" />
+    		</columns>
+    		<rows>
+    			<row style="border: none;">
+    				<label value="${c:l('txt.ui.common.PaymentDeadline')}:" />
+					<datebox value="@bind(vm.paymentDeadline)" />
+    			</row>
+    			<row style="border: none;">
+    				<label value="${c:l('txt.ui.common.MessageOptionalText')}:" />
+					<textbox value="@bind(vm.optionalText)" hflex="1" />
+    			</row>
+    		</rows>
+    	</grid>
+
+		<listbox model="@load(vm.paymentInstructionList)"
+			hflex="1"
+			height="650px"
+			emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+			class="listbox" >
+	        <listhead>
+	            <listheader label="${c:l('txt.ui.common.participant')}" sort="auto(courseParticName)" align="left" hflex="min" />
+	            <listheader label="${c:l('txt.ui.common.email')}" sort="auto(courseParticReprEmail)" align="left" hflex="min" />
+	            <listheader label="${c:l('txt.ui.common.course')}" sort="auto(courseName)" align="left" />
+	            <listheader label="${c:l('txt.ui.common.AccountNo')}" sort="auto(bankAccountNumber)" align="center" hflex="min" />	            
+	            <listheader label="${c:l('txt.ui.common.VarSymbol')}" sort="auto(varsymbol)" align="center" hflex="min" />
+	            <listheader label="${c:l('txt.ui.common.Amount')}" sort="auto(priceSemester)" align="center" hflex="min" />
+	        </listhead>
+			<template name="model">
+				<listitem>
+			    	<listcell label="${each.courseParticName}" />
+			    	<listcell label="${each.courseParticReprEmail}" />
+			        <listcell label="${each.courseName}" />
+			        <listcell label="${each.bankAccountNumber}" />
+			        <listcell label="${each.varsymbol}" />
+			        <listcell label="${each.priceSemester} ${c:l('txt.ui.common.CZK')}" />
+	            </listitem>
+	        </template>
+	    </listbox>
+		
+		<button label="${c:l('txt.ui.common.Odeslat')}"
+			onClick="@command('submitCmd', window=modalWindow)"
+			sclass="btn-warning"
+			visible="${vm.isLoggedUserInRole('ADMIN')}"
+			iconSclass="z-icon-paper-plane"  />
+    </vbox>
+</window>

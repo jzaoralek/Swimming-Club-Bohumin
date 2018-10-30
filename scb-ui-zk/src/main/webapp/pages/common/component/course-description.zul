@@ -1,0 +1,30 @@
+<zk>
+	<custom-attributes course="${arg.course}" />
+	
+	<vlayout width="440px">												
+   		<label value="${c:l('txt.ui.common.CourseDeciption')}" style="margin-left: 5px;"/>
+   		<textbox multiline="true" 
+   			readonly="true"
+   			hflex="1"
+   			style="margin: 5px;"
+   			rows="16" 
+   			value="${course.description}" />
+   		<hlayout style="margin-top: 5px;">
+   			<vlayout hflex="1">
+	    		<label value="${c:l('txt.ui.common.priceSemester1')}" style="margin-left: 5px;"/>
+	    		<hlayout>
+		    		<textbox readonly="true"  width="75px" style="margin-left: 5px;" value="${course.priceSemester1}" />
+		    		<label value="${c:l('txt.ui.common.CZK')}" style="margin-left: 2px" />
+	    		</hlayout>
+   			</vlayout>
+   			<vlayout hflex="1">
+	    		<label value="${c:l('txt.ui.common.priceSemester2')}" style="margin-left: 5px;"/>
+	    		<hlayout>
+		    		<textbox readonly="true" width="75px" style="margin-left: 5px;" value="${course.priceSemester2}" />
+		    		<label value="${c:l('txt.ui.common.CZK')}" style="margin-left: 2px" />
+	    		</hlayout>
+   			</vlayout>
+   		</hlayout>
+   	</vlayout>
+   	
+</zk>

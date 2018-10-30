@@ -15,7 +15,7 @@ public interface CourseParticipantDao {
 	 */
 	CourseParticipant getCourseParticInOneCourse(UUID courseCourseParticUuid);
 	boolean existsByPersonalNumber(String personalNumber);
-	CourseParticipant getByPersonalNumberAndInterval(String personalNumber, int yearFrom, int yearTo);
+	CourseParticipant getByVarsymbolAndInterval(String varsymbolCore, int yearFrom, int yearTo);
 	List<CourseParticipant> getByCourseUuid(UUID courseUuid);
 	List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid);
 	List<CourseParticipant> getByUserUuid(UUID userUuid);

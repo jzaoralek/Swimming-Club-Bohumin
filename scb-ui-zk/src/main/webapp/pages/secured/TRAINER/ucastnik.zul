@@ -358,7 +358,6 @@
 								            		</vbox>
 								            		<vbox hflex="1" vflex="1" align="end" pack="center" >
 								            			<hbox>
-<!-- 								            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=resultList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" /> -->
 							            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
 														</hbox>
 													</vbox>
@@ -369,10 +368,6 @@
 								        <!-- Filter -->
 										<auxhead height="37px">
 											<auxheader class="filter">
-<!-- 												<textbox hflex="1" -->
-<!-- 													instant="true" -->
-<!-- 													value="@bind(vm.filter.courseName)" -->
-<!-- 													onChange="@command('filterDomCmd')" /> -->
 											</auxheader>
 											<auxheader class="filter">
 											</auxheader>

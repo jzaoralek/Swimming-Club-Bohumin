@@ -13,6 +13,8 @@ DROP TABLE IF EXISTS  participant_learning_lesson;
 DROP TABLE IF EXISTS  bank_transaction;
 DROP TABLE IF EXISTS  payment;
 DROP TABLE IF EXISTS  course_location;
+DROP TABLE IF EXISTS  file;
+DROP TABLE IF EXISTS  course_application_file_config;
 
 CREATE TABLE contact(
 	uuid varchar(36),
@@ -88,6 +90,11 @@ CREATE TABLE course_course_participant(
 	uuid varchar(36),
 	course_participant_uuid varchar(36) REFERENCES course_participant(uuid),
 	course_uuid varchar(36) REFERENCES course(uuid),
+	VARSYMBOL_CORE INT NULL auto_increment UNIQUE,
+	individual_price_semester_1 INT NULL,
+	individual_price_semester_2 INT NULL,
+    notified_semester_1_payment_at TIMESTAMP NULL,
+    notified_semester_2_payment_at TIMESTAMP NULL,
 	PRIMARY KEY (uuid)
 );
 
@@ -110,6 +117,7 @@ CREATE TABLE configuration(
     type  ENUM('STRING','INTEGER','BOOLEAN','ENUM') NOT NULL,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
+    superadmin_config ENUM('0','1') NOT NULL DEFAULT '0',
 	PRIMARY KEY (uuid)
 );
 
@@ -194,5 +202,27 @@ CREATE TABLE course_location (
 	uuid varchar(36),
 	name VARCHAR(240) CHARACTER SET utf8,
 	description VARCHAR(1000) CHARACTER SET utf8,
+	PRIMARY KEY (uuid)
+);
+
+CREATE TABLE file (
+	uuid varchar(36),
+	name VARCHAR(240) CHARACTER SET utf8,
+	description VARCHAR(1000) CHARACTER SET utf8,
+	content LONGBLOB,
+	content_type VARCHAR(128), 
+	PRIMARY KEY (uuid)
+);
+
+CREATE TABLE course_application_file_config(
+	uuid varchar(36),
+	type ENUM('GDPR','HEALTH_INFO','HEALTH_EXAM', 'CLUB_RULES') NOT NULL UNIQUE,
+	file_uuid varchar(36) REFERENCES file(uuid),
+	page_text ENUM('0','1') NOT NULL,
+	page_attachment ENUM('0','1') NOT NULL,
+	email_attachment ENUM('0','1') NOT NULL,
+	description VARCHAR(1000) CHARACTER SET utf8,
+	modif_at TIMESTAMP NOT NULL,
+	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );

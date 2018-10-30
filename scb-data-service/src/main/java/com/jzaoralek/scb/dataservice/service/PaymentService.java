@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.Payment;
+import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 
 public interface PaymentService {
 
@@ -13,4 +14,11 @@ public interface PaymentService {
 	Payment store(Payment payment);
 	void delete(Payment payment);
 	void processPayments();
+	void processPaymentInstruction(List<PaymentInstruction> paymentInstructionList
+			, String yearFromTo
+			, String lineSeparator
+			, String paymentDeadline
+			, String optionalText
+			, String mailSignature
+			, boolean firstSemester);
 }

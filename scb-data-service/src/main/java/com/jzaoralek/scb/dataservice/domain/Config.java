@@ -16,10 +16,16 @@ public class Config implements IdentEntity {
 		ORGANIZATION_NAME,
 		ORGANIZATION_PHONE,
 		ORGANIZATION_EMAIl,
+		ORGANIZATION_CONTACT_PERSON,
+		ORGANIZATION_BANK_ACCOUNT_NUMBER,
 		WELCOME_INFO,
 		BASE_URL,
 		HEALTH_AGREEMENT,
-		PERSONAL_DATA_PROCESS_AGREEMENT;
+		PERSONAL_DATA_PROCESS_AGREEMENT,
+		CLUB_RULES_AGREEMENT,
+		COURSE_APPL_EMAIL_SPEC_TEXT,
+		PAYMENTS_AVAILABLE,
+		ATTENDANCE_FOR_PARENTS_VISIBLE;
 	}
 
 	public enum ConfigType {
@@ -36,6 +42,7 @@ public class Config implements IdentEntity {
 	private String description;
 	private String value;
 	private ConfigType type;
+	private boolean superAdminConfig;
 
 	@Override
 	public UUID getUuid() {
@@ -85,10 +92,17 @@ public class Config implements IdentEntity {
 	public void setValue(String value) {
 		this.value = value;
 	}
-
+	public boolean isSuperAdminConfig() {
+		return superAdminConfig;
+	}
+	public void setSuperAdminConfig(boolean superAdminConfig) {
+		this.superAdminConfig = superAdminConfig;
+	}
+	
 	@Override
 	public String toString() {
 		return "Config [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", name=" + name
-				+ ", description=" + description + ", value=" + value + ", type=" + type + "]";
+				+ ", description=" + description + ", value=" + value + ", type=" + type + ", superAdminConfig="
+				+ superAdminConfig + "]";
 	}
 }

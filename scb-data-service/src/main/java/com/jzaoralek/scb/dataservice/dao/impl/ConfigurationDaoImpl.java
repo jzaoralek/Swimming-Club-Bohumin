@@ -23,8 +23,8 @@ public class ConfigurationDaoImpl extends BaseJdbcDao implements ConfigurationDa
 	private static final String VALUE_PARAM = "value";
 	private static final String TYPE_PARAM = "type";
 
-	private static final String SELECT_ALL = "SELECT uuid, name, description, val, type, modif_at, modif_by FROM configuration ";
-	private static final String SELECT_BY_NAME = "SELECT uuid, name, description, val, type, modif_at, modif_by FROM configuration WHERE name = :" + NAME_PARAM;
+	private static final String SELECT_ALL = "SELECT uuid, name, description, val, type, modif_at, modif_by, superadmin_config FROM configuration ";
+	private static final String SELECT_BY_NAME = "SELECT uuid, name, description, val, type, modif_at, modif_by, superadmin_config FROM configuration WHERE name = :" + NAME_PARAM;
 	private static final String UPDATE = "UPDATE configuration SET name = :"+NAME_PARAM+", description = :"+DESCRIPTION_PARAM+", val = :"+VALUE_PARAM+", type = :"+TYPE_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid = :"+UUID_PARAM+"";
 
 
@@ -69,6 +69,7 @@ public class ConfigurationDaoImpl extends BaseJdbcDao implements ConfigurationDa
 			ret.setDescription(rs.getString("description"));
 			ret.setValue(rs.getString("val"));
 			ret.setType(Config.ConfigType.valueOf(rs.getString("type")));
+			ret.setSuperAdminConfig(rs.getInt("superadmin_config") == 1);
 
 			return ret;
 		}

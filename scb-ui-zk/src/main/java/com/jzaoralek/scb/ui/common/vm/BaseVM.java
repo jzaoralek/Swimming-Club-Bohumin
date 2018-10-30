@@ -1,17 +1,11 @@
 package com.jzaoralek.scb.ui.common.vm;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
-import javax.faces.application.Application;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
@@ -23,14 +17,19 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
+import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig.CourseApplicationFileType;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
+import com.jzaoralek.scb.dataservice.service.CourseApplicationFileConfigService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
+import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -66,6 +65,9 @@ public class BaseVM {
 	
 	@WireVariable
 	protected MailService mailService;
+	
+	@WireVariable
+	protected CourseApplicationFileConfigService courseApplicationFileConfigService;
 
 	protected String returnToPage;
 	
@@ -116,6 +118,17 @@ public class BaseVM {
 	}
 	public static int getDescriptionMaxlength() {
 		return WebConstants.DESCRIPTION_MAXLENGTH;
+	}
+	
+	/**
+	 * Sestavi variabilni symbol pro platbu ucastnika za kurz.
+	 * @param yearFrom
+	 * @param semester
+	 * @param courseParticVarsymbolCore
+	 * @return
+	 */
+	public String buildCoursePaymentVarsymbol(int yearFrom, int semester, int courseParticVarsymbolCore) {
+		return PaymentUtils.buildCoursePaymentVarsymbol(yearFrom, semester, courseParticVarsymbolCore);
 	}
 	
 	/**
@@ -241,7 +254,7 @@ public class BaseVM {
 		
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(configurationService.getOrgName());
+		mailToUser.append(buildMailSignature());
 		
 		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
 	}
@@ -297,8 +310,76 @@ public class BaseVM {
 		attachment.setName(fileName.toString());
 		return attachment;
 	}
+	
+	protected CourseApplicationFileConfig getByType(List<CourseApplicationFileConfig> cafcList, CourseApplicationFileType type) {
+		if (cafcList == null || cafcList.isEmpty()) {
+			return null;
+		}
+		
+		CourseApplicationFileConfig ret = null;
+		for (CourseApplicationFileConfig fileConfig : cafcList) {
+			if (fileConfig.getType() == type) {
+				ret = fileConfig;
+				break;
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Sestavi podlis do emailu.
+	 * @return
+	 */
+	protected String buildMailSignature() {
+		StringBuilder sb = new StringBuilder();		
+		sb.append(configurationService.getOrgName());
+		sb.append(WebConstants.LINE_SEPARATOR);
+		sb.append(Labels.getLabel("txt.ui.common.contact"));
+		sb.append(": ");
+		sb.append(configurationService.getOrgContactPerson());
+		sb.append(", ");
+		sb.append(configurationService.getOrgPhone());
+		sb.append(", ");
+		sb.append(configurationService.getOrgEmail());
+
+		return sb.toString();
+	}
 
 	public void sendMail(CourseApplication courseApplication, String headline) {
+		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
+		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
+		
+        List<com.jzaoralek.scb.dataservice.domain.Attachment> attachmentList = new ArrayList<>();
+        // attachment prihlaska
+        attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase()));
+
+        // dynamic attachments (GDPR, HEALTH_INFO, HEALTH_EXAM, CLUB_RULES)
+        List<CourseApplicationFileConfig> cafcList = courseApplicationFileConfigService.getListForEmail();
+        for (CourseApplicationFileType type : CourseApplicationFileType.values()) {
+        	CourseApplicationFileConfig gdprFileConfig = getByType(cafcList, type);
+        	if (gdprFileConfig != null && gdprFileConfig.isEmailAttachment() && gdprFileConfig.getAttachment() != null) {
+        		attachmentList.add(gdprFileConfig.getAttachment());
+        	}
+        }
+        // attachment gdpr
+//      byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
+//		if (gdprByteArray != null) {
+//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
+//		}
+//		byte[] gdprPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.pdf");
+//		if (gdprPdfByteArray != null) {
+//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprPdfByteArray,"souhlas-clena-klubu.pdf"));
+//		}
+		// attachment lekarska prohlidka
+//		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
+//		if (lekarskaProhlidkaByteArray != null) {
+//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
+//		}
+//		byte[] lekarskaProhlidkaPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.pdf");
+//		if (lekarskaProhlidkaPdfByteArray != null) {
+//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaPdfByteArray,"lekarska-prohlidka.pdf"));
+//		}
+		
 		StringBuilder mailToRepresentativeSb = new StringBuilder();
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
@@ -337,29 +418,30 @@ public class BaseVM {
 			
 		}
 		
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(configurationService.getOrgName());
-
-		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
-		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
-		
-        List<com.jzaoralek.scb.dataservice.domain.Attachment> attachmentList = new ArrayList<>();
-        // attachment prihlaska
-        attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase()));
-
-        // attachment gdpr
-        byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
-		if (gdprByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
+		// specificky text z konfigurace
+		String specText = configurationService.getCourseApplicationEmailSpecText();
+		if (StringUtils.hasText(specText)) {
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(specText);
+			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		}
 		
-		// attachment lekarska prohlidka
-		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
-		if (lekarskaProhlidkaByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
-		}
-        
+//		if (attachmentList != null && !attachmentList.isEmpty()) {
+//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+//			if (attachmentList.size() == 1) {
+//				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text5"));
+//			} else {
+//				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text6"));
+//			}
+//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+//		}
+		
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(buildMailSignature());
+
 		// mail to course participant representative
 		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
 				, Labels.getLabel("txt.ui.menu.application")
@@ -393,7 +475,7 @@ public class BaseVM {
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.reset.text3", new Object[] {user.getPassword()}));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
-		mailToUser.append(configurationService.getOrgName());
+		mailToUser.append(buildMailSignature());
 
 		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null);
 	}

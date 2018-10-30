@@ -36,6 +36,8 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO.CoursePaymentState;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
@@ -69,6 +71,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 	private boolean unregToCurrYear;
 	private String unregToCurrYearLabel;
 	private final List<Listitem> coursePaymentStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(CoursePaymentState.class));
+	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.of(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER, PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER));
+	private String bankAccountNumber;
+	private int yearFrom;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -76,7 +81,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 		initYearContext();
 
 		setPageMode();
-		loadData();
+		loadData();		
+		this.bankAccountNumber = configurationService.getBankAccountNumber();
+
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
 		eq.subscribe(new EventListener<Event>() {
@@ -228,7 +235,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text3"));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
-						mailToUser.append(configurationService.getOrgName());
+						mailToUser.append(buildMailSignature());
 						
 						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null);
 						WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
@@ -274,6 +281,88 @@ public class CourseApplicationListVM extends BaseContextVM {
 		return ret;
 	}
 
+	/**
+	 * Na emailove adresy zastupcu ybranych ucastniku odesle instrukce k platbe za dany kurz.
+	 */
+	@Command
+	public void sendPaymentInstructionCmd(@BindingParam("firstSemester") final boolean firstSemester) {
+		if (CollectionUtils.isEmpty(this.courseApplicationList)) {
+			return;
+		}
+		
+		// validace, ze v konfiguraci je vyplneno cislo bankovniho uctu
+		final String bankAccountNumber = configurationService.getBankAccountNumber();
+		if (!StringUtils.hasText(bankAccountNumber)) {
+			WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.noBankAccountInConfig"));
+			return;
+		}
+		
+		String[] years = getYearsFromContext();
+		final String yearFromTo = years[0] + "/" + years[1];
+		
+		Map<String, Object> args = new HashMap<>();
+		args.put(WebConstants.COURSE_APPLICATION_LIST_PARAM, this.courseApplicationList);
+		args.put(WebConstants.YEAR_FROM_PARAM, Integer.parseInt(years[0]));
+		args.put(WebConstants.SEMESTER_PARAM, firstSemester);
+		args.put(WebConstants.BANK_ACCOUNT_NO_PARAM, bankAccountNumber);
+		args.put(WebConstants.YEAR_FROM_TO_PARAM, yearFromTo);
+		
+		WebUtils.openModal(WebPages.PAYMENT_INSTRUCTION_WINDOW.getUrl(), null, args);
+		
+//		final int semester = firstSemester ? 1 : 2;		
+//		final List<CourseApplication> courseApplicationList = this.courseApplicationList;
+//		final int yearFrom = Integer.parseInt(years[0]);
+//		final Object[] msgParams = new Object[] {semester};
+//		MessageBoxUtils.showDefaultConfirmDialog(
+//			"msg.ui.quest.sendMailWithPaymentInstructions",
+//			"msg.ui.title.sendMail",
+//			new SzpEventListener() {
+//				@Override
+//				public void onOkEvent() {
+//					StringBuilder mailToUser = null;
+//					for (CourseApplication courseApplication : courseApplicationList) {
+//						mailToUser = new StringBuilder();
+//						mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text0"));
+//						mailToUser.append(WebConstants.LINE_SEPARATOR);
+//						mailToUser.append(WebConstants.LINE_SEPARATOR);
+//						mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text1", new Object[] {courseApplication.getCourseParticipant().getCourseName(), semester, yearFromTo}));
+//						mailToUser.append(WebConstants.LINE_SEPARATOR);
+//						mailToUser.append(WebConstants.LINE_SEPARATOR);
+//
+//						// cislo uctu
+//						mailToUser.append(Labels.getLabel("txt.ui.common.AccountNo"));
+//						mailToUser.append(": ");
+//						mailToUser.append(bankAccountNumber);
+//						mailToUser.append(WebConstants.LINE_SEPARATOR);
+//						
+//						// castka
+//						long priceForSemester = firstSemester ? courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceFirstSemester() : courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceSecondSemester();
+//						mailToUser.append(Labels.getLabel("txt.ui.common.Amount"));
+//						mailToUser.append(": ");
+//						mailToUser.append(priceForSemester);
+//						mailToUser.append(" ");
+//						mailToUser.append(Labels.getLabel("txt.ui.common.CZK"));
+//						mailToUser.append(WebConstants.LINE_SEPARATOR);
+//						
+//						// variabilni symbol
+//						mailToUser.append(Labels.getLabel("txt.ui.common.VarSymbol"));
+//						mailToUser.append(": ");
+//						mailToUser.append(buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore()));
+//						mailToUser.append(WebConstants.LINE_SEPARATOR);
+//						mailToUser.append(WebConstants.LINE_SEPARATOR);
+//						
+//						// podpis
+//						mailToUser.append(buildMailSignature());
+//						
+//						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {courseApplication.getCourseParticipant().getCourseName(), semester, yearFromTo}), mailToUser.toString(), null);
+//						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
+//					}
+//				}
+//			},
+//			msgParams
+//		);
+	}
+	
 	@SuppressWarnings("unchecked")
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
 		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
@@ -288,8 +377,8 @@ public class CourseApplicationListVM extends BaseContextVM {
 		}
 		
 		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
-			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone") + " 2";
-			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email") + " 2";			
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone");
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email");			
 			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.residence");
 		}
 		data.put("0", headerArray);
@@ -304,20 +393,18 @@ public class CourseApplicationListVM extends BaseContextVM {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
 								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
-								item.getCourseParticipant().getPersonalNo(),
 								item.getCourseParticRepresentative().getContact().getCompleteName(),
-								item.getCourseParticRepresentative().getContact().getPhone1(),
-								item.getCourseParticRepresentative().getContact().getEmail1(),
 								dateFormat.format(item.getModifAt()),
 								item.getCourseParticipant().getInCourseInfo(),
 								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
-								item.getCourseParticRepresentative().getContact().getPhone2(),
-								item.getCourseParticRepresentative().getContact().getEmail2(),
+								item.getCourseParticRepresentative().getContact().getPhone1(),
+								item.getCourseParticRepresentative().getContact().getEmail1(),
 								item.getCourseParticipant().getContact().buildResidence()});
 				} else {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
-								item.getCourseParticipant().getInCourseInfo(),
+								item.getCourseParticipant().getCourseName(),
+								buildPaymentNotifiedInfo(item.getCourseParticipant()),
 								item.getCourseParticipant().getCoursePaymentVO() != null ? getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null) : null
 								});
 				}
@@ -326,6 +413,31 @@ public class CourseApplicationListVM extends BaseContextVM {
 
 		return data;
 	}
+	
+	/**
+	 * Sestavi text s informaci o odeslani instrukci k platbe za prvni a druhe pololeti.
+	 * @param cp
+	 * @return
+	 */
+	private String buildPaymentNotifiedInfo(CourseParticipant cp) {
+		if (cp == null) {
+			return null;
+		}
+		StringBuilder ret = new StringBuilder();
+		if (cp.getNotifiedSemester1PaymentAt() != null) {
+			ret.append(Labels.getLabel("txt.ui.common.yes"));
+		} else {
+			ret.append(Labels.getLabel("txt.ui.common.no"));
+		}
+		ret.append(", ");
+		if (cp.getNotifiedSemester2PaymentAt() != null) {
+			ret.append(Labels.getLabel("txt.ui.common.yes"));
+		} else {
+			ret.append(Labels.getLabel("txt.ui.common.no"));
+		}
+
+		return ret.toString();
+	}
 
 	@SuppressWarnings("unchecked")
 	public void loadData() {
@@ -333,6 +445,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
+		this.yearFrom = yearFrom;
 		
 		this.unregToCurrYearLabel = Labels.getLabel("txt.ui.common.unregisteredFrom")+" "+String.valueOf(yearFrom-1)+"/"+String.valueOf(yearTo-1);
 
@@ -373,6 +486,18 @@ public class CourseApplicationListVM extends BaseContextVM {
 	public List<Listitem> getCoursePaymentStateListWithEmptyItem() {
 		return coursePaymentStateListWithEmptyItem;
 	}
+	
+	public List<Listitem> getPaymentNotifStateListWithEmptyItem() {
+		return paymentNotifStateListWithEmptyItem;
+	}
+	
+	public String getBankAccountNumber() {
+		return bankAccountNumber;
+	}
+	
+	public int getYearFrom() {
+		return yearFrom;
+	}
 
 	public static class CourseApplicationFilter {
 		private DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_PATTERN);
@@ -394,10 +519,34 @@ public class CourseApplicationListVM extends BaseContextVM {
 		private String courseLc;
 		private Boolean inCourse;
 		private Listitem coursePaymentState;
+		private Listitem paymentNotifSendState;
 		private Boolean newParticipant;
 
-		public boolean matches(String courseParticNameIn, String birthDateIn, String birthNoIn, String courseParticRepresentativeIn, String phoneIn, String emailIn, String modifAtIn, String courseIn, boolean inCourseIn, CoursePaymentState coursePaymentStateIn, boolean newParticipantIn, boolean emptyMatch) {
-			if (courseParticName == null && birthDate == null && birthNo == null && courseParticRepresentative == null && phone == null && email == null && modifAt == null && course == null && inCourse == null && coursePaymentState == null && newParticipant == null) {
+		public boolean matches(String courseParticNameIn
+				, String birthDateIn
+				, String birthNoIn
+				, String courseParticRepresentativeIn
+				, String phoneIn
+				, String emailIn
+				, String modifAtIn
+				, String courseIn
+				, boolean inCourseIn
+				, CoursePaymentState coursePaymentStateIn
+				, boolean newParticipantIn
+				, Set<PaymentNotifSendState> paymentNotifSendStateIn
+				, boolean emptyMatch) {
+			if (courseParticName == null
+					&& birthDate == null 
+					&& birthNo == null
+					&& courseParticRepresentative == null 
+					&& phone == null 
+					&& email == null 
+					&& modifAt == null 
+					&& course == null 
+					&& inCourse == null 
+					&& coursePaymentState == null
+					&& paymentNotifSendState == null
+					&& newParticipant == null) {
 				return emptyMatch;
 			}
 			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
@@ -430,6 +579,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 			if (coursePaymentState != null && coursePaymentState.getValue() != null && ((CoursePaymentState)coursePaymentState.getValue()) != coursePaymentStateIn) {
 				return false;
 			}
+			if (paymentNotifSendState != null && paymentNotifSendState.getValue() != null && !paymentNotifSendStateIn.contains((PaymentNotifSendState)paymentNotifSendState.getValue())) {
+				return false;
+			}
 			
 			if (newParticipant != null && (newParticipant != newParticipantIn)) {
 				return false;
@@ -445,16 +597,17 @@ public class CourseApplicationListVM extends BaseContextVM {
 			List<CourseApplication> ret = new ArrayList<CourseApplication>();
 			for (CourseApplication item : codelistModelList) {
 				if (matches(item.getCourseParticipant().getContact().getSurname() + " " + item.getCourseParticipant().getContact().getFirstname()
-						, dateFormat.format(item.getCourseParticipant().getBirthdate())
+						, item.getCourseParticipant().getBirthdate() != null ? dateFormat.format(item.getCourseParticipant().getBirthdate()) : null
 						, item.getCourseParticipant().getPersonalNo()
 						, item.getCourseParticRepresentative().getContact().getSurname() + " " + item.getCourseParticRepresentative().getContact().getFirstname()
 						, item.getCourseParticRepresentative().getContact().getPhone1()
 						, item.getCourseParticRepresentative().getContact().getEmail1()
 						, dateTimeFormat.format(item.getModifAt())
-						, item.getCourseParticipant().getInCourseInfo()
+						, item.getCourseParticipant().getCourseName()
 						, item.getCourseParticipant().inCourse()
 						, (item.getCourseParticipant().getCoursePaymentVO() != null) ? item.getCourseParticipant().getCoursePaymentVO().getStateTotal() : null
 						, !item.isCurrentParticipant()
+						, item.getCourseParticipant().getPaymentNotifSendState()
 						, true)) {
 					ret.add(item);
 				}
@@ -557,6 +710,14 @@ public class CourseApplicationListVM extends BaseContextVM {
 			this.newParticipant = newParticipant;
 		}
 
+		public Listitem getPaymentNotifSendState() {
+			return paymentNotifSendState;
+		}
+
+		public void setPaymentNotifSendState(Listitem paymentNotifSendState) {
+			this.paymentNotifSendState = paymentNotifSendState;
+		}
+		
 		public void setEmptyValues() {
 			code = null;
 			courseParticName = null;
@@ -572,6 +733,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 			courseLc = null;
 			inCourse = null;
 			coursePaymentState = null;
+			paymentNotifSendState = null;
 			newParticipant = null;
 		}
 	}

@@ -128,7 +128,7 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 
 		// nacist kurz vcetne ucastniku - nove DAO
 		Course courseDB = courseDao.getByUuid(courseUuid);
-		List<CourseParticipant> courseParticipantListFinal = new ArrayList<CourseParticipant>();
+		List<CourseParticipant> courseParticipantListFinal = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(courseDB.getParticipantList())) {
 			// courseParticipantList porovnat z puvodni mnozinou a vzbrat pouze pridane
 			for (CourseParticipant item : newCourseParticipantList) {
@@ -138,6 +138,11 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 			}
 		} else {
 			courseParticipantListFinal = newCourseParticipantList;
+		}
+		
+		// ulozeni nove pridanych ucastniku do COURSE_COURSE_PARTICIPANT
+		if (!CollectionUtils.isEmpty(courseParticipantListFinal)) {
+			courseParticipantDao.insetToCourse(courseParticipantListFinal, courseDB.getUuid());			
 		}
 
 		// pridat puvodni
