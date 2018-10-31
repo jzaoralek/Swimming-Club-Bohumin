@@ -1,10 +1,9 @@
 package com.jzaoralek.scb.ui.common.validator;
 
 import org.zkoss.bind.ValidationContext;
-import org.zkoss.bind.validator.AbstractValidator;
 import org.zkoss.util.resource.Labels;
 
-public class NotNullObjectValidator extends AbstractValidator {
+public class NotNullObjectValidator extends ScbAbstractValidator {
 
 	@Override
 	public void validate(ValidationContext ctx) {
@@ -14,5 +13,6 @@ public class NotNullObjectValidator extends AbstractValidator {
 			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.valueRequired"));
 			return;
 		}
+        removeValidationStyle(ctx);
 	}
 }

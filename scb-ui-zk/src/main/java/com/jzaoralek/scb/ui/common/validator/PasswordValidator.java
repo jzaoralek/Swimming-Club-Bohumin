@@ -4,12 +4,11 @@ import java.util.regex.Pattern;
 
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.ValidationContext;
-import org.zkoss.bind.validator.AbstractValidator;
 import org.zkoss.util.resource.Labels;
 
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
-public class PasswordValidator extends AbstractValidator {
+public class PasswordValidator extends ScbAbstractValidator {
 
 	private static final int MIN_PASSWORD_LENGTH = 6;
 	private static final Pattern NUMBER_PATTERN = Pattern.compile("([0-9])");
@@ -82,6 +81,7 @@ public class PasswordValidator extends AbstractValidator {
 				break;
 			default: throw new IllegalArgumentException("Unsupported PasswordValidatorMode: " + mode);
 		}
+        removeValidationStyle(ctx);
 	}
 
 	private boolean validateNotNull(ValidationContext ctx, String value) {

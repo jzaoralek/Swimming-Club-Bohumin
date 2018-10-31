@@ -7,12 +7,12 @@
 	<div self="@{define(mainContent)}" 
 		hflex="1"
 		vflex="1"
-		sclass="scb-view" 
+		sclass="scb-view scb-view-900" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
 		validationMessages="@id('vmsgs')"
 	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
 			
-            <hlayout spacing="0">
+            <hlayout>
                 <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
                 
                 <button onClick="@command('backCmd')" 
@@ -47,7 +47,7 @@
                         <caption label="${c:l('txt.ui.common.CourseSelection')}" />
 						
 						<!-- Vyber kurzu -->
-						<grid hflex="1" if="${vm.courseSelectionRequired}" >
+						<grid hflex="1" if="${vm.courseSelectionRequired}" style="padding-bottom:10px;">
 							<rows>
 								<row if="${!vm.securedMode}" >
 									<cell   >
@@ -161,7 +161,7 @@
 					<groupbox hflex="1" sclass="no-inner-padding">
                         <caption label="${c:l('txt.ui.common.representative')}" />
                         
-						<grid hflex="1">
+						<grid hflex="1" style="padding-bottom:10px;">
 							<rows>
 								<row>
 									<cell>
@@ -296,7 +296,7 @@
 					<groupbox hflex="1" sclass="no-inner-padding">
                         <caption label="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" />
                         
-						<grid hflex="1">
+						<grid hflex="1" style="padding-bottom:10px;">
 							<rows>
 								<row>
 									<cell  >

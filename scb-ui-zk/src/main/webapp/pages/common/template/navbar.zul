@@ -13,8 +13,13 @@
 		-->
 		
 		<div sclass="app-logo-wrapper">
+			<!--
+			<x:i xmlns:x="xhtml"/>
 			<label value="S" sclass="app-logo"/>
+			-->
 			<label value="Sportologic" sclass="app-name"/>
+			
+			<a iconSclass="z-icon-bars"></a>
 		</div>
 		
 		<div sclass="brand-logo-wrapper">

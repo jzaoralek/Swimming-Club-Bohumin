@@ -1,35 +1,30 @@
 <window id="modalWindow"
 	title="Lekce" 
 	border="normal" 
-    width="300px"
+    width="400px"
     position="center,center" 
     closable="true">
     
-    <style>
-		<!-- cut/hide the vertical borders in the grid rows -->
-		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
-		
-		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
-	</style>
-	
     <vbox align="center" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.LessonToCourseWinVM')"
     	validationMessages="@id('vmsgs')"
 	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
     	
-    	<grid hflex="1" sclass="form-grid" >
+    	<grid hflex="1">
 			<columns>
                 <column align="center" />
                 <column align="center" />
                 <column align="center" />
             </columns>
-			<rows style="background: white;" >
-				<row sclass="form-grid-row" style="border: none;" >
+            
+			<rows>
+				<row>
 					<label value="${c:l('txt.ui.common.dayOfWeek')}"/>
 					<label value="${c:l('txt.ui.common.from')}"/>
 					<label value="${c:l('txt.ui.common.to')}"/>				
 				</row>
-				<row sclass="form-grid-row" style="border: none; padding-bottom: 10px;" >
-					<cell sclass="form-grid-cell" >
+				
+				<row style="border: none; padding-bottom: 10px;" >
+					<cell>
 						<listbox selectedItem="@bind(vm.dayOfWeekSelected)" 
 							model="@load(vm.dayofWeekList)"
 							sclass="form-input-text"
@@ -39,7 +34,7 @@
 				               </template>
 						</listbox>
 					</cell>
-					<cell sclass="form-grid-cell" >
+					<cell>
 						<listbox selectedItem="@bind(vm.timeFromSelected)" 
 							model="@load(vm.timeFromList)"
 							sclass="form-input-text"
@@ -50,7 +45,7 @@
 				               </template>
 						</listbox>
 					</cell>
-					<cell sclass="form-grid-cell" >
+					<cell>
 						<listbox selectedItem="@bind(vm.timeToSelected)" 
 							model="@load(vm.timeToList)"
 							sclass="form-input-text"

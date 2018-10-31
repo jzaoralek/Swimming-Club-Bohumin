@@ -5,12 +5,11 @@ import java.text.SimpleDateFormat;
 
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.ValidationContext;
-import org.zkoss.bind.validator.AbstractValidator;
 import org.zkoss.util.resource.Labels;
 
 import com.jzaoralek.scb.ui.common.WebConstants;
 
-public class TimeIntervalValidator extends AbstractValidator {
+public class TimeIntervalValidator extends ScbAbstractValidator {
 
 	private static final String MIN_SEC_MILLIS_PATTERN = "mm:ss,SSS";
 	private static final String SEC_MILLIS_PATTERN = "ss,SSS";
@@ -39,6 +38,8 @@ public class TimeIntervalValidator extends AbstractValidator {
 			sdf.parse(value);
 		} catch (ParseException e) {
 			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidFormat"));
+            return;
 		}
+        removeValidationStyle(ctx);
 	}
 }

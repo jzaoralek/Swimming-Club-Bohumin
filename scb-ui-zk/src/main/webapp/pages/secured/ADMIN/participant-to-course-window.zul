@@ -1,7 +1,7 @@
 <window id="modalWindow"
 	title="${c:l('txt.ui.common.assignParticipantToCourse')}" 
 	border="normal" 
-    width="480px"
+    width="780px"
     position="center,center" 
     closable="true">
     
@@ -33,38 +33,35 @@
 			visible="@load(vm.courseApplicationListVisible)"
 			multiple="true"
 			checkmark="true" >
+	        
 	        <auxhead>
 	            <auxheader class="header" colspan="5" >
-	            	<hbox hflex="1" height="42px" align="center" >
-		            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-	            			<hbox>
-		            			<vbox>
-		            				<label value="${c:l('txt.ui.menu.applicationList')}" />
-								</vbox>
-	            			</hbox>
-	            		</vbox>
-	            		<vbox hflex="1" vflex="1" align="end" pack="center" >
-	            			<hbox>
-	            				<button iconSclass="z-icon-check" onClick="@command('submitCmd', window=modalWindow)" sclass="btn-success" tooltiptext="OK" />
-	           					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
-							</hbox>
-						</vbox>
-					</hbox>
+	            	<label value="${c:l('txt.ui.menu.applicationList')}" />
+	            	
+	            	<hlayout sclass="pull-right">
+            			<hbox>
+            				<button iconSclass="z-icon-check" onClick="@command('submitCmd', window=modalWindow)" sclass="toolbar-btn" tooltiptext="OK" />
+           					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" sclass="toolbar-btn" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
+						</hbox>
+					</hlayout>
 	            </auxheader>
 	        </auxhead>
 	        
 	        <!-- Filter -->
-			<auxhead height="37px">
+			<auxhead>
 				<auxheader class="filter">
 				</auxheader>
+				
 				<auxheader class="filter">
 					<textbox hflex="1"
 						value="@bind(vm.filter.courseParticName)"
 						onChange="@command('filterDomCmd')"
 						onOK="@command('filterDomCmd')" />
 				</auxheader>
+				
 				<auxheader class="filter">
 				</auxheader>
+				
 				<auxheader class="filter">
 					<textbox hflex="1" 
 						value="@bind(vm.filter.courseParticRepresentative)"
@@ -86,11 +83,11 @@
 			</auxhead>
 			
 	        <listhead>
-	            <listheader width="25px" />
+	            <listheader width="55px" />
 	            <listheader label="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" sort="auto(courseParticipant.contact.surname)" align="left" hflex="3" />
 	            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(courseParticipant.birthdate)" align="center" hflex="2" />
 	            <listheader label="${c:l('txt.ui.common.representative')}" sort="auto(courseParticRepresentative.contact.surname)" align="left" hflex="3" />
-	            <listheader label="V kurzu" align="center" width="57px" />
+	            <listheader label="V kurzu" align="center" width="100px" />
 	        </listhead>
 	         
 	        <template name="model">

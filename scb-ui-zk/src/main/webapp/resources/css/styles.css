@@ -119,6 +119,7 @@ th.z-auxheader{
 	padding: 0px 20px;
 	height: 46px;
 	line-height: 46px;
+	background-color: #f0f3f5 !important;
 }
 
 .z-listheader {
@@ -154,18 +155,54 @@ th.z-auxheader{
 	padding-bottom: 0;
 }
 
+.z-cell:HOVER, .z-row-inner:HOVER, .z-row:HOVER .z-cell, .z-row:HOVER .z-row-inner{
+	background-color: white !important;
+}
+
+.z-listheader-sorticon i{
+	color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.z-tabs li.z-tab-selected {
+	border-bottom-color: #20a8d8 !important;
+}
+
+.z-tabs .z-tab-selected .z-tab-text{
+	color: #20a8d8 !important;
+}
+
+.z-window-modal{
+	padding: 24px !important;
+}
+
+.z-window-content{
+	padding: 0px;
+}
+
+.z-window-close{
+	padding-right: 0px;
+	position: relative;
+	right: -6px;
+	top: -4px;
+}
+
 /* 
 ==========================================================
 SCB common 
 ==========================================================
 */
+
+.pull-right{
+	float: right;
+}
+
 .y-scrollable{
 	overflow-y: auto !important;
 }
 
 .scb-headline-big{
 	font-size: 35px;
-	font-weight: 300;
+	font-weight: 500;
 	margin-bottom: 20px;
 	display: block;
 }
@@ -186,6 +223,13 @@ SCB common
 	background-color: #f0f3f5;
 	color: #20a8d8;
 	box-shadow: none !important;
+	margin-left: 5px;
+}
+
+.scb-panel{
+	border: solid 1px #c8ced3;
+	border-radius: 4px;
+	overflow: hidden;
 }
 
 /* 
@@ -202,6 +246,14 @@ SCB components
 .scb-view{
 	background-color: #e4e5e6;
 	padding: 30px;
+}
+
+.scb-view-900{
+	max-width: 900px;
+}
+
+.scb-view-1100{
+	max-width: 1100px;
 }
 
 .scb-footer{
@@ -238,6 +290,7 @@ SCB components
 	line-height: 45px;
 	padding: 0px 18px; 
 	display: block;
+	transition: background-color 0.3s ;
 }
 
 .scb-side-menu a:HOVER{
@@ -296,7 +349,7 @@ SCB components
 }
 
 .scb-navbar .app-logo-wrapper{
-	width: 200px;
+	width: 230px;
 	height: 100%;
 	border-right: solid 1px #e4e7ea; 
 	display: inline-block;
@@ -329,6 +382,20 @@ SCB components
 	color: #2f353a;
 	font-size: 21px;
 	margin-left: 5px;
+}
+
+.scb-navbar .app-logo-wrapper a{
+	float: right;
+	font-size: 24px;
+	color: #2f353a;
+	position: relative;
+	top: 17px;
+	right: 15px; 
+	transition: color 0.3s;
+}
+
+.scb-navbar .app-logo-wrapper a:HOVER{
+	color: #20a8d8;
 }
 
 /* LOGIN PAGE */
@@ -544,5 +611,41 @@ span.login-failed{
 
 .form-captcha-panel .z-hlayout-inner{
 	margin-right: 5px;
+}
+
+.scb-input-invalid{
+	border-color: red !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* RESPONSIVE */
+@media screen and (max-width: 850px) {
+	
+	.login-page{
+		padding-top: 50px !important;
+	}
+	
+	.login-frame {
+		width: 390px !important;
+	}
+	
+	.login-frame .login-frame-left{
+		width: 390px;
+		border: solid 1px #c8ced3 !important;
+		border-radius: 4px !important;
+	}
+	
+	.login-frame .login-frame-right{
+		display: none !important;
+	}
 }
 

@@ -4,10 +4,9 @@ import java.util.regex.Pattern;
 
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.ValidationContext;
-import org.zkoss.bind.validator.AbstractValidator;
 import org.zkoss.util.resource.Labels;
 
-public class EmailValidator extends AbstractValidator {
+public class EmailValidator extends ScbAbstractValidator {
 
 	public static final String EMAIL_PATTERN = "[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
@@ -24,7 +23,9 @@ public class EmailValidator extends AbstractValidator {
 		Pattern emailPattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
 		if (StringUtils.hasText(value) && !emailPattern.matcher(value).matches()) {
 			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaEmail"));
+            return;
 		}
+        removeValidationStyle(ctx);
 	}
 
 }

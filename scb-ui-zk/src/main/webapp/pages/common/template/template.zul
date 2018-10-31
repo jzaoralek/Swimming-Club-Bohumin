@@ -11,7 +11,7 @@
 			<include src="/pages/common/template/navbar.zul"/>
 		</north>
 		
-		<west border="none" width="200px" splittable="false" collapsible="true">
+		<west border="none" width="230px" splittable="false" collapsible="true">
 			<include src="/pages/common/template/side-menu.zul"/>
 		</west>
 		
