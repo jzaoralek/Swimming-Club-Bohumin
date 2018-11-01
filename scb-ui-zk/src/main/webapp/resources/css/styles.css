@@ -276,6 +276,15 @@ SCB components
 }
 
 /* SIDE MENU */
+.scb-side-menu-wrapper{
+	overflow: visible !important;
+	background-color: #e4e5e6;
+}
+
+.scb-side-menu-wrapper > .z-west-body{
+	transition: width 0.5s; 
+}
+
 .scb-side-menu{
 	background-color: #2f353a;
 	color: #fff;
@@ -288,9 +297,20 @@ SCB components
 	text-decoration: none;
 	height: 45px;
 	line-height: 45px;
-	padding: 0px 18px; 
+	padding: 0px 20px; 
 	display: block;
 	transition: background-color 0.3s ;
+}
+
+.scb-side-menu a span{
+	transition: visibility 0s, opacity 1.5s ease;
+	visibility: visible;
+	opacity: 1;
+}
+
+.scb-side-menu-wrapper-folded a span{
+	visibility: hidden;
+	opacity: 0;
 }
 
 .scb-side-menu a:HOVER{
@@ -357,6 +377,12 @@ SCB components
 	padding-left: 12px;
 	position: relative;
 	top: 0px;
+	overflow: hidden;
+	transition: width 0.5s;
+}
+
+.scb-navbar .app-logo-wrapper-folded .app-name{
+	display: none;
 }
 
 .scb-navbar .app-logo-wrapper .app-logo{
@@ -382,6 +408,7 @@ SCB components
 	color: #2f353a;
 	font-size: 21px;
 	margin-left: 5px;
+	position: relative;
 }
 
 .scb-navbar .app-logo-wrapper a{

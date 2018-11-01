@@ -54,4 +54,28 @@ public class ComponentUtils {
         }
         comp.setSclass(sc);
     }
+
+    /**
+     * 
+     * @param comp
+     * @param sclass
+     * @return
+     */
+    public static boolean containsSclass(HtmlBasedComponent comp, String sclass) {
+        if (comp == null || StringUtils.isEmpty(comp.getSclass())) {
+            return false;
+        }
+
+        String sc = comp.getSclass();
+        if (!sc.contains(" ")) {
+            return sc.equals(sclass);
+        } else if (sc.startsWith(sclass + " ")) {
+            return true;
+        } else if (sc.endsWith(" " + sclass)) {
+            return true;
+        } else if (sc.contains(" " + sclass + " ")) {
+            return true;
+        }
+        return false;
+    }
 }

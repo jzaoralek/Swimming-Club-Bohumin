@@ -12,14 +12,14 @@
 		</popup>
 		-->
 		
-		<div sclass="app-logo-wrapper">
+		<div id="appLogoWrapper" sclass="app-logo-wrapper">
 			<!--
 			<x:i xmlns:x="xhtml"/>
 			<label value="S" sclass="app-logo"/>
 			-->
 			<label value="Sportologic" sclass="app-name"/>
 			
-			<a iconSclass="z-icon-bars"></a>
+			<a iconSclass="z-icon-bars" onClick="@command('menuFoldCmd')"></a>
 		</div>
 		
 		<div sclass="brand-logo-wrapper">

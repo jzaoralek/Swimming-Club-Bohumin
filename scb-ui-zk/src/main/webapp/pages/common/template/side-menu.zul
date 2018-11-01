@@ -1,94 +1,82 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
 
 <zk>
-	<div hflex="1" height="100%" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
-		<vlayout hflex="1" 
+	<div width="100%" height="100%" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
+		<vlayout width="100%" 
 				sclass="scb-side-menu" 
 				height="100%" 
 				id="menuWrapper"
 				apply="com.jzaoralek.scb.ui.common.template.SideMenuComposer">
 			
 			<!-- Dashboard -->
-			<a
-				label="Home"
-				id="menu_dashboard"
-				iconSclass="z-icon-home" 
+			<a	iconSclass="z-icon-home" 
 				visible="@load(!vm.isUserLogged())"
 				href="/" >
+				<label value="Home"/>
 			</a>
 			
 			<!-- Prihlaska -->
-			<a
-				label="${c:l('txt.ui.menu.application')}" 
-				id="menu_applicationToClub"
-				iconSclass="z-icon-file-text" 
+			<a	iconSclass="z-icon-file-text" 
 				visible="@load(!vm.isUserLogged())"
 				href="/pages/public/prihlaska-do-klubu.zul" >
+				<label value="${c:l('txt.ui.menu.application')}"/>
 			</a>
 			
 			<!-- Seznam prihlasek -->
-			<a	label="${c:l('txt.ui.menu.applications')}" 
-				id="menu_applicationToClubList"
-				iconSclass="z-icon-files-o" 
+			<a	iconSclass="z-icon-files-o" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 				href="/pages/secured/ADMIN/seznam-prihlasek.zul" >
+				<label value="${c:l('txt.ui.menu.applications')}"/>
 			</a>
 			
 			<!-- Seznam kurzu -->
-			<a	label="${c:l('txt.ui.menu.courses')}" 
-				id="menu_courseList"
-				iconSclass="z-icon-list-alt" 
+			<a	iconSclass="z-icon-list-alt" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))"
 				href="/pages/secured/TRAINER/seznam-kurzu.zul" >
+				<label value="${c:l('txt.ui.menu.courses')}"/>
 			</a>
 			
 			<!-- Seznam ucastniku - ADMIN/TRAINER -->
-			<a	label="${c:l('txt.ui.common.participants')}" 
-				id="menu_courseParticipantList"
-				iconSclass="z-icon-child" 
+			<a	iconSclass="z-icon-child" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))"
 				href="/pages/secured/TRAINER/seznam-ucastniku.zul" >
+				<label value="${c:l('txt.ui.common.participants')}"/>
 			</a>
 			
 			<!-- Seznam ucastniku - USER -->
-			<a	label="${c:l('txt.ui.common.participants')}" 
-				id="menu_userCourseParticipantList"
-				iconSclass="z-icon-child" 
+			<a	iconSclass="z-icon-child" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))"
 				href="/pages/secured/USER/seznam-ucastniku.zul" >
+				<label value="${c:l('txt.ui.common.participants')}"/>
 			</a>
 			
 			<!-- Uzivatel -->
-			<a	label="${c:l('txt.ui.menu.user')}" 
-				id="menu_participantRepresentative"
-				iconSclass="z-icon-user" 
+			<a	iconSclass="z-icon-user" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))"
 				href="/pages/secured/USER/uzivatel.zul" >
+				<label value="${c:l('txt.ui.menu.user')}"/>
 			</a>
 			
 			<!-- Seznam uzivatelu -->
-			<a 	label="${c:l('txt.ui.menu.users')}" 
-				id="menu_userList"
-				iconSclass="z-icon-users" 
+			<a 	iconSclass="z-icon-users" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 				href="/pages/secured/ADMIN/seznam-uzivatelu.zul" >
+				<label value="${c:l('txt.ui.menu.users')}"/>
 			</a>
 			
 			<!-- Platby -->
-			<a 	label="${c:l('txt.ui.menu.payments')}" 
-				id="menu_bankPaymentList"
-				iconSclass="z-icon-credit-card" 
+			<a 	iconSclass="z-icon-credit-card" 
 				tooltiptext="${c:l('txt.ui.menu.bankPayments')}"
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 				href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul" >
+				<label value="${c:l('txt.ui.menu.payments')}"/>
 			</a>
 			
 			<!-- Nastaveni -->
-			<a 	label="${c:l('txt.ui.menu.configuration')}" 
-				id="menu_configuration"
-				iconSclass="z-icon-cog" 
+			<a 	iconSclass="z-icon-cog" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 				href="/pages/secured/ADMIN/configuration.zul" >
+				<label value="${c:l('txt.ui.menu.configuration')}"/>
 			</a>
 			
 			

@@ -11,7 +11,11 @@
 			<include src="/pages/common/template/navbar.zul"/>
 		</north>
 		
-		<west border="none" width="230px" splittable="false" collapsible="true">
+		<west border="none" width="230px" 
+				sclass="scb-side-menu-wrapper"
+				splittable="false" 
+				collapsible="false" 
+				apply="com.jzaoralek.scb.ui.common.template.SideMenuFoldingComposer">
 			<include src="/pages/common/template/side-menu.zul"/>
 		</west>
 		
