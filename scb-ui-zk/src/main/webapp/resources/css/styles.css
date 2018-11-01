@@ -256,14 +256,31 @@ SCB components
 	max-width: 1100px;
 }
 
-.scb-footer{
-	text-align: center;
-}
-
 .scb-template-center > .z-center-body{
-	overflow-y: auto !important;
+	overflow: hidden;
 	background-color: #e4e5e6;
 	position: relative;
+}
+
+.scb-view-wrapper{
+	min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -50px;
+	
+}
+
+.scb-view-footer, .scb-view-push {
+    height: 50px; /* .push must be the same height as .footer */
+}
+
+.scb-view-footer{
+	overflow: hidden;
+}
+
+.scb-view-wrapper-2{
+	height: 100%;
+	overflow-y: auto !important;
 }
 
 /* FOOTER */
@@ -273,6 +290,34 @@ SCB components
 	background-color: #f0f3f5;
 	font-size: 14px;
 	border-top: solid 1px #c8ced3; 
+	text-align: center;
+}
+
+.scb-footer .app-logo{
+	font-family: 'Faster One' !important;
+	font-size: 25px;
+	text-align: center;
+	line-height: 27px;
+	width: 30px;
+	height: 30px;
+	border-radius: 3px;
+	display: inline-block;
+	vertical-align: middle;
+	border: solid 1px #20a8d8;
+	background-color: #20a8d8;
+	color: #fff;
+	position: relative;
+	top: -6px;
+}
+
+.scb-footer .app-name{
+	line-height: 55px;
+	font-family: 'Orbitron' !important;
+	color: #888;
+	font-size: 21px;
+	margin-left: 5px;
+	position: relative;
+	top: -2px;
 }
 
 /* SIDE MENU */
@@ -288,6 +333,7 @@ SCB components
 .scb-side-menu{
 	background-color: #2f353a;
 	color: #fff;
+	position: relative;
 }
 
 .scb-side-menu a{
@@ -329,6 +375,40 @@ SCB components
 
 .scb-side-menu a:HOVER i, .scb-side-menu a.scb-menu-active i{
 	color: #fff;
+}
+
+.scb-side-menu-inner-wrapper{
+	position: relative;
+}
+
+.scb-side-menu-inner-wrapper .contact{
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	color: #fff;
+	text-align: center;
+	padding: 20px 10px;
+	
+	transition: visibility 0s, opacity 3s ease;
+	visibility: visible;
+	opacity: 1;
+}
+
+.scb-side-menu-inner-wrapper .contact a{
+	color: #20a8d8;
+	padding: 10px 0px;
+	display: inline-block;
+	text-decoration: none;
+}
+
+.scb-side-menu-inner-wrapper .contact a:HOVER{
+	text-decoration: underline;
+}
+
+.scb-side-menu-wrapper-folded .contact{
+	visibility: hidden;
+	opacity: 0;
 }
 
 /* NAVBAR (app header) */
@@ -643,11 +723,6 @@ span.login-failed{
 .scb-input-invalid{
 	border-color: red !important;
 }
-
-
-
-
-
 
 
 

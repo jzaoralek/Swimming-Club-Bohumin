@@ -1,7 +1,5 @@
-<div viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.FooterVM')" sclass="scb-footer">
+<div sclass="scb-footer">
 	
-	${c:l('txt.ui.common.contact')}: 
-	<label value="${vm.orgPhone}" style="white-space: nowrap;" />, 
-	<a href="mailto:${vm.orgEmail}">${vm.orgEmail}</a>
-	
+	<label value="S" sclass="app-logo"/>
+	<label value="Sportologic" sclass="app-name"/>	
 </div>

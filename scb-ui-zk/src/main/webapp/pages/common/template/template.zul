@@ -20,13 +20,16 @@
 		</west>
 		
 		<center border="none" autoscroll="false" vflex="1" hflex="1" sclass="scb-template-center">
-			<vlayout hflex="1">
-				<div self="@{insert(mainContent)}" hflex="1" sclass="scb-content"></div>
-				
-				<div sclass="scb-footer-wrapper" >
+			<div sclass="scb-view-wrapper-2">
+				<vlayout sclass="scb-view-wrapper">
+					<div self="@{insert(mainContent)}" hflex="1" sclass="scb-content"></div>
+					<div class="scb-view-push"></div>
+				</vlayout>
+			
+				<div sclass="scb-view-footer" >
 					<include src="/pages/common/template/footer.zul"/>
 				</div>
-			</vlayout>
+			</div>
 		</center>
 		
 	</borderlayout>

@@ -1,7 +1,9 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
 
 <zk>
-	<div width="100%" height="100%" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
+	<div width="100%" height="100%" 
+			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')"
+			sclass="scb-side-menu-inner-wrapper" >
 		<vlayout width="100%" 
 				sclass="scb-side-menu" 
 				height="100%" 
@@ -78,8 +80,12 @@
 				href="/pages/secured/ADMIN/configuration.zul" >
 				<label value="${c:l('txt.ui.menu.configuration')}"/>
 			</a>
-			
-			
 		</vlayout>
+		
+		<div sclass="contact" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.FooterVM')">
+			${c:l('txt.ui.common.contact')}: 
+			<label value="${vm.orgPhone}" style="white-space: nowrap;" /> 
+			<a href="mailto:${vm.orgEmail}">${vm.orgEmail}</a>
+		</div>
 	</div>
 </zk>
