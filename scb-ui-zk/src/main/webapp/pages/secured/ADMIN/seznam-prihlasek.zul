@@ -3,72 +3,51 @@
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 
 <zk>
-	<div self="@{define(mainContent)}" hflex="1" >
+	<div self="@{define(mainContent)}" 
+			hflex="1" 
+			height="100%"
+			sclass="scb-view" 
+			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationListVM')">
 		
-		<div sclass="breadcrumb" visible="false">
-			<span sclass="home-icon z-icon-home"/>
-	    	<a label="${c:l('txt.ui.menu.dashboard')}" href="/"/>
-			<label value="${c:l('txt.ui.menu.application')}"/>
-		</div>
 		
-		<hlayout spacing="0" visible="false">
-			<vbox hflex="1" />
+		<vlayout hflex="1">
+			<label value="${c:l('txt.ui.menu.applications')}" sclass="scb-headline-big"/>
 			
-			<vbox hflex="20" pack="center">
-				<headline label="${c:l('txt.ui.menu.applications')}" menuSelected="menu_applicationToClubList" />
-			</vbox>
-			
-			<vbox hflex="1" />
-		</hlayout>
-		
-		<hlayout spacing="0">
-		
-			<vbox hflex="1" />
-			
-			<vbox hflex="20" pack="center" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationListVM')">
-				
 				<listbox model="@load(vm.courseApplicationList)"
 					id="courseApplicationList"
 					hflex="1"
-					style="margin-top: 20px;"
 					mold="paging"
 					pageSize="10"
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 					class="listbox" >
+					
 			        <auxhead>
 			            <auxheader class="header" colspan="7" >
-			            	<hbox hflex="1" height="42px" align="center" >
-				            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-			            			<hbox>
-				            			<vbox>
-				            				<label value="${c:l('txt.ui.menu.applications')}" />
-										</vbox>
-			            			</hbox>
-			            		</vbox>
-			            		<vbox vflex="1" pack="center" align="center" width="250px" sclass="header-div" >
-			            			<!-- Neprihlaseni z predchoziho rocniku -->
-			            			<hbox vflex="1" pack="center" align="center">
-			            				<label value="@load(vm.unregToCurrYearLabel)" 
-			            					style="vertical-align:middle; display:inline-block; margin-right: 5px;" />
-				            			<checkbox id="unregToCurrYearCheck" checked="@bind(vm.unregToCurrYear)" 
-				            				onCheck="@command('loadUnregisteredCurrYearCmd')"
-				            				style="vertical-align:middle; margin-right: 10px;" />
-				            			<button tooltiptext="${c:l('txt.ui.common.sendWarnMail')}" 
-				            				iconSclass="z-icon-paper-plane" 
-				            				visible="@load(vm.unregToCurrYear)"
-				            				onClick="@command('sendnMailToUnregisteredFromPrevSeasonCmd')"
-				            				sclass="btn-warning"  />			            			
-			            			</hbox>
-			            		</vbox>
-			            		<vbox hflex="1" vflex="1" align="end" pack="center" sclass="header-div" >
-			            			<hbox vflex="1" pack="center" align="center">
-			            				<!-- Rocnik -->
-			            				<include src="/pages/common/component/context-year.zul"/>
-			            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=courseApplicationList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
-		            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
-									</hbox>
-								</vbox>
-							</hbox>
+			            	<hlayout sclass="pull-left">
+			            		<label value="@load(vm.unregToCurrYearLabel)" 
+	            					style="vertical-align:middle; display:inline-block; margin-right: 5px;" />
+		            			<checkbox id="unregToCurrYearCheck" checked="@bind(vm.unregToCurrYear)" 
+		            				onCheck="@command('loadUnregisteredCurrYearCmd')"
+		            				style="vertical-align:middle; margin-right: 5px;" />
+		            			<button tooltiptext="${c:l('txt.ui.common.sendWarnMail')}" 
+		            				iconSclass="z-icon-paper-plane" 
+		            				visible="@load(vm.unregToCurrYear)"
+		            				onClick="@command('sendnMailToUnregisteredFromPrevSeasonCmd')"
+		            				sclass="toolbar-btn"  />
+			            	</hlayout>
+			            	
+			            	<hlayout sclass="pull-right">
+			            		<!-- Rocnik -->
+	            				<include src="/pages/common/component/context-year.zul"/>
+	            				<button iconSclass="z-icon-download" 
+	            					onClick="@command('exportToExcel',listbox=courseApplicationList)" 
+	            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
+	            					sclass="toolbar-btn"/>
+            					<button iconSclass="z-icon-refresh" 
+            						onClick="@command('refreshDataCmd')" 
+            						tooltiptext="${c:l('txt.ui.common.refreshData')}" 
+            						sclass="toolbar-btn"/>
+			            	</hlayout>
 			            </auxheader>
 			        </auxhead>
 			        
@@ -132,9 +111,9 @@
 			            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(courseParticipant.birthdate)" align="left" hflex="min" />
 			            <listheader label="${c:l('txt.ui.common.representative')}" sort="auto(courseParticRepresentative.contact.surname)"  align="left" />
 			            <listheader label="${c:l('txt.ui.common.createdAt')}" sort="auto(modifAt)" align="left" hflex="min" />
-			            <listheader label="${c:l('txt.ui.common.inCourse')}" align="center" width="57px" />
-			            <listheader label="${c:l('txt.ui.common.new2')}" align="center" width="57px" />
-			            <listheader width="50px" align="center" />
+			            <listheader label="${c:l('txt.ui.common.inCourse')}" align="center" width="90px" />
+			            <listheader label="${c:l('txt.ui.common.new2')}" align="center" width="90px" />
+			            <listheader width="90px" align="center" />
 			        </listhead>
 			         
 			        <template name="model">
@@ -150,11 +129,12 @@
 				                		<vbox width="30px" align="center" >
 				                			<!-- Kontakt popup -->
 						                	<a iconSclass="z-icon-info-circle" popup="contactPopup_${each.uuid}, position=after_end" style="font-size: large; margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.contact')}" />
-						                	<popup id="contactPopup_${each.uuid}">
+						                	
+						                	<popup id="contactPopup_${each.uuid}" width="400px">
 										    	<vbox style="margin: 5px;">
 										    		<grid hflex="min" vflex="min">
 														<auxhead>
-															<auxheader class="header" colspan="3" >
+															<auxheader class="header" colspan="2" >
 																<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
 																	<label value="${c:l('txt.ui.common.contact')}" />
 																</vbox>
@@ -177,6 +157,7 @@
 													</grid>
 										    	</vbox>
 										    </popup>
+										    
 				                		</vbox>
 				                	</hbox>
 			                	</hbox>
@@ -198,10 +179,7 @@
 			            </listitem>
 			        </template>
 			    </listbox>
-			</vbox>
 			
-			<vbox hflex="1" />
-			
-		</hlayout>
+		</vlayout>
 	</div>
 </zk>

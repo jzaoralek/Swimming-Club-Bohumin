@@ -6,7 +6,7 @@
 <zk>
 	<div self="@{define(mainContent)}" 
 		hflex="1"
-		vflex="1"
+		height="100%"
 		sclass="scb-view scb-view-900" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
 		validationMessages="@id('vmsgs')"
@@ -88,7 +88,7 @@
 												checkmark="true" >
 												
 										        <listhead>
-										            <listheader width="25px"  valign="top" />
+										            <listheader width="55px"  valign="top" />
 										            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="3" valign="top"/>
 										            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" valign="top" />
 										            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" valign="top" />

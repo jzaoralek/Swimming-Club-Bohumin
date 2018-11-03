@@ -12,7 +12,7 @@
 		<vlayout>
 			<vbox hflex="20" pack="center" align="center">
 				<hbox>
-					<headline label="${vm.welcomeInfo}" menuSelected="menu_dashboard" iconSclass="z-icon-tachometer" />
+					<label value="${vm.welcomeInfo}" sclass="scb-headline-big"/>
 				</hbox>
 				<button label="@load(vm.newCourseApplicationTitle)" 
 					href="/pages/public/prihlaska-do-klubu.zul"

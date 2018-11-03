@@ -5,7 +5,8 @@
 <zk>
 	<div 	self="@{define(mainContent)}" 
 			hflex="1" 
-			sclass="scb-view scb-view-1100" 
+			height="100%"
+			sclass="scb-view" 
 			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseListVM')">
 			
 		<vlayout hflex="1">

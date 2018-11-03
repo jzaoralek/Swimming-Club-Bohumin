@@ -113,6 +113,26 @@ th.z-auxheader{
 	border-left-color: #c8ced3;
 }
 
+th.z-column, th.z-auxhead-bar, th.z-columns-bar{
+	background-color: #f0f3f5;
+}
+
+th.z-columns-bar, th.z-auxhead-bar{
+	border-left-color: #c8ced3 !important;
+}
+
+.z-grid-header{
+	background-color: #f0f3f5;
+}
+
+th.z-column, .z-grid-header-border, .z-auxhead-bar{
+	border-bottom-color: #c8ced3 !important;
+}
+
+th.z-column{
+	border-left-color: #c8ced3 !important;
+}
+
 .z-listheader-content, .z-auxheader-content{
 	color: #23282c;
 	font-size: 14px;
@@ -175,6 +195,15 @@ th.z-auxheader{
 	padding: 24px !important;
 }
 
+.z-window-modal > .z-window-header{
+	color: rgba(0, 0, 0, 0.9);
+}
+
+.z-window-modal .z-cell{
+	padding: 0;
+	padding-bottom: 15px;
+}
+
 .z-window-content{
 	padding: 0px;
 }
@@ -186,6 +215,14 @@ th.z-auxheader{
 	top: -4px;
 }
 
+.z-auxheader-content > select{
+	height: 34px;
+	border: solid 1px #c8ced3;
+	border-radius: 4px;
+	font-size: 14px;
+	padding: 0px 5px;
+}
+
 /* 
 ==========================================================
 SCB common 
@@ -194,6 +231,10 @@ SCB common
 
 .pull-right{
 	float: right;
+}
+
+.pull-left{
+	float: left;
 }
 
 .y-scrollable{
@@ -224,6 +265,13 @@ SCB common
 	color: #20a8d8;
 	box-shadow: none !important;
 	margin-left: 5px;
+}
+
+.square-btn{
+	height: 36px;
+	width: 36px;
+	padding: 0;
+	text-align:center;
 }
 
 .scb-panel{

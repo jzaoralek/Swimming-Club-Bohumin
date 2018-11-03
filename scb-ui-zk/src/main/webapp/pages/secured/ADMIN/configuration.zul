@@ -3,29 +3,20 @@
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 
 <zk>
-	<div self="@{define(mainContent)}" hflex="1" >
+	<div self="@{define(mainContent)}" hflex="1" 
+			height="100%"
+			sclass="scb-view" >
 		
-		<hlayout spacing="0" visible="false">
-			<vbox hflex="1" />
-			
-			<vbox hflex="20" pack="center">
-				<headline label="${c:l('txt.ui.menu.configuration')}" menuSelected="menu_configuration" />
-			</vbox>
-			
-			<vbox hflex="1" />
-		</hlayout>
+		<vlayout>
+			<label value="${c:l('txt.ui.menu.configuration')}" sclass="scb-headline-big"/>
 		
-		<hlayout spacing="0">
-		
-			<vbox hflex="1" />
-			
-			<vbox hflex="20" pack="center" >
 				<tabbox id="tb" hflex="1" style="margin-top: 20px;">
 				    <tabs id="tabs">
 				        <tab id="courseParticipants" label="${c:l('txt.ui.common.configBasic')}" />
 				        <tab id="courseLocations" label="${c:l('txt.ui.common.courseLocations')}" />
 				        <tab id="lessons" label="${c:l('txt.ui.common.swimStyleAdmin')}"  />
 				    </tabs>
+				    
 				    <tabpanels>
 				    
 				    	<!-- Zakladni nastaveni -->
@@ -41,8 +32,11 @@
 						        <listhead>
 						            <listheader label="${c:l('txt.ui.common.name')}" align="left" />
 						            <listheader label="${c:l('txt.ui.common.value')}" align="left" />
-						            <listheader width="50px" align="center" >
-						            	<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
+						            <listheader width="90px" align="center" >
+						            	<button iconSclass="z-icon-refresh" 
+						            		onClick="@command('refreshDataCmd')" 
+						            		tooltiptext="${c:l('txt.ui.common.refreshData')}" 
+						            		sclass="toolbar-btn"/>
 						            </listheader>
 						        </listhead>
 						         
@@ -72,7 +66,9 @@
 							                <label value="@load(each.value)" visible="${each.type eq 'INTEGER'}" />
 						                </listcell>
 						                <listcell>
-						                	<button iconSclass="z-icon-check" hflex="min" width="20px" onClick="@command('updateCmd', config=each)" />
+						                	<button iconSclass="z-icon-check" 
+						                		sclass="square-btn" 
+						                		onClick="@command('updateCmd', config=each)" />
 						                </listcell>
 						            </listitem>
 						        </template>
@@ -90,25 +86,26 @@
 								class="listbox" >
 						        <auxhead>
 						            <auxheader class="header" colspan="3" >
-						            	<hbox hflex="1" height="42px" align="center" >
-							            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-						            			<hbox vflex="1" align="center">
-						            				<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" sclass="btn-warning" iconSclass="z-icon-plus" />
-						            			</hbox>
-						            		</vbox>
-						            		<vbox hflex="1" vflex="1" align="end" pack="center" >
-						            			<hbox>
-					            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
-												</hbox>
-											</vbox>
-										</hbox>
+						            	<hlayout sclass="pull-left">
+						            		<button onClick="@command('newItemCmd')" 
+						            			tooltiptext="${c:l('txt.ui.common.new')}" 
+						            			iconSclass="z-icon-plus" 
+						            			sclass="add-item-btn" />
+						            	</hlayout>
+						            	
+						            	<hlayout sclass="pull-right">
+						            		<button iconSclass="z-icon-refresh" 
+						            			onClick="@command('refreshDataCmd')" 
+						            			tooltiptext="${c:l('txt.ui.common.refreshData')}" 
+						            			sclass="toolbar-btn"/>
+						            	</hlayout>
 						            </auxheader>
 						        </auxhead>
 						        
 						        <listhead>
 						            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
 						            <listheader label="${c:l('txt.ui.common.description2')}" sort="auto(description)" align="left" hflex="2" />
-						            <listheader width="50px" align="center" />
+						            <listheader width="90px" align="center" />
 						        </listhead>
 						         
 						        <template name="model">
@@ -138,25 +135,26 @@
 								class="listbox" >
 						        <auxhead>
 						            <auxheader class="header" colspan="3" >
-						            	<hbox hflex="1" height="42px" align="center" >
-							            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-						            			<hbox vflex="1" align="center">
-						            				<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" sclass="btn-warning" iconSclass="z-icon-plus" />
-						            			</hbox>
-						            		</vbox>
-						            		<vbox hflex="1" vflex="1" align="end" pack="center" >
-						            			<hbox>
-					            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
-												</hbox>
-											</vbox>
-										</hbox>
+						            	<hlayout sclass="pull-left">
+						            		<button onClick="@command('newItemCmd')" 
+						            					tooltiptext="${c:l('txt.ui.common.new')}" 
+						            					sclass="add-item-btn"
+						            					iconSclass="z-icon-plus" />
+						            	</hlayout>
+						            	
+						            	<hlayout sclass="pull-right">
+						            		<button iconSclass="z-icon-refresh" 
+						            			onClick="@command('refreshDataCmd')" 
+						            			tooltiptext="${c:l('txt.ui.common.refreshData')}" 
+						            			sclass="toolbar-btn"/>
+						            	</hlayout>
 						            </auxheader>
 						        </auxhead>
 						        
 						        <listhead>
 						            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
 						            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" hflex="2" />
-						            <listheader width="50px" align="center" />
+						            <listheader width="90px" align="center" />
 						        </listhead>
 						         
 						        <template name="model">
@@ -176,10 +174,7 @@
 				    	</tabpanel>
 				    </tabpanels>
 				</tabbox>
-			</vbox>
 			
-			<vbox hflex="1" />
-			
-		</hlayout>
+		</vlayout>
 	</div>
 </zk>

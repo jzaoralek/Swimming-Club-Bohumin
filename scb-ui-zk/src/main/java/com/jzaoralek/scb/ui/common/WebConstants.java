@@ -15,7 +15,7 @@ public final class WebConstants {
 	public static final int HEALTH_INFO_MAXLENGTH = 524;
 	public static final int NAME_MAXLENGTH = 100;
 	public static final int DESCRIPTION_MAXLENGTH = 240;
-	public static final String DATE_COL_WIDTH = "87px";
+    public static final String DATE_COL_WIDTH = "120px";
 
 	public static final String WEB_DATE_PATTERN = "dd.MM.yyyy";
 	public static final String WEB_DATETIME_PATTERN = "dd.MM.yyyy H:mm:ss";
