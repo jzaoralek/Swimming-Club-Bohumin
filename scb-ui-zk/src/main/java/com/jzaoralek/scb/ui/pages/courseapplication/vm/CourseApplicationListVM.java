@@ -376,13 +376,19 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
 		
+		String currency = " " + Labels.getLabel("txt.ui.common.CZK");
+		
 		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
 			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone");
 			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email");			
 			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.residence");
+		} else {
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
 		}
 		data.put("0", headerArray);
 
+		
 		// rows
 		ListModel<Object> model = listbox.getListModel();
 		CourseApplication item = null;
@@ -405,7 +411,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
 								item.getCourseParticipant().getCourseName(),
 								buildPaymentNotifiedInfo(item.getCourseParticipant()),
-								item.getCourseParticipant().getCoursePaymentVO() != null ? getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null) : null
+								item.getCourseParticipant().getCoursePaymentVO() != null ? (item.getCourseParticipant().getCoursePaymentVO().isOverpayed() ? Labels.getLabel("enum.CoursePaymentState.OVERPAYED") : getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null)) : null,
+								item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getPaymentSum() : 0,
+								item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getTotalPrice() : 0
 								});
 				}
 			}
@@ -605,7 +613,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						, dateTimeFormat.format(item.getModifAt())
 						, item.getCourseParticipant().getCourseName()
 						, item.getCourseParticipant().inCourse()
-						, (item.getCourseParticipant().getCoursePaymentVO() != null) ? item.getCourseParticipant().getCoursePaymentVO().getStateTotal() : null
+						, (item.getCourseParticipant().getCoursePaymentVO() != null) ? (item.getCourseParticipant().getCoursePaymentVO().isOverpayed() ? CoursePaymentState.OVERPAYED : item.getCourseParticipant().getCoursePaymentVO().getStateTotal()) : null
 						, !item.isCurrentParticipant()
 						, item.getCourseParticipant().getPaymentNotifSendState()
 						, true)) {

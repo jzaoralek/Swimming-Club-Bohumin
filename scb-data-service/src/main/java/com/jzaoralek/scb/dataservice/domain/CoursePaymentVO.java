@@ -5,7 +5,8 @@ public class CoursePaymentVO {
 	public enum CoursePaymentState {
 		NO_PAYMENT,
 		PARTLY,
-		PAYED;
+		PAYED,
+		OVERPAYED;
 	}
 	
 	private CoursePaymentState stateFirstSemester;
