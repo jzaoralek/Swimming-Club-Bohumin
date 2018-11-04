@@ -2,20 +2,23 @@
 body{
 	padding: 0;
 	/*font-family: 'Roboto', sans-serif;*/
-	font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;
+	/*font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;*/
+	font-family: 'Open Sans', sans-serif;
 }
 
 /* ZK native override */
 .z-label, .z-button, .z-a, .z-menuitem-text, input[type=submit]{
 	/*font-family: 'Roboto', sans-serif !important;*/
-	font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;
+	/*font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important*/;
+	font-family: 'Open Sans', sans-serif;
 }
 
 .z-textbox, .z-decimalbox, .z-intbox, .z-longbox, .z-doublebox,
 .z-combobox-input, .z-bandbox-input, .z-datebox-input,
 .z-timebox-input, .z-spinner-input, .z-doublespinner-input {
 	/*font-family: 'Roboto', sans-serif !important;*/
-	font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;
+	/*font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;*/
+	font-family: 'Open Sans', sans-serif;
 	font-size: 14px;
 }
 
@@ -466,8 +469,45 @@ SCB components
 }
 
 .scb-navbar .logged-user-btn{
-	float: right;
-	margin: 7px 7px;
+	height: 54px;
+	vertical-align: middle;
+	cursor: pointer;
+	margin-right: 0px;
+	padding: 0px 15px; 
+	padding-right: 10px;
+}
+
+.scb-navbar .logged-user-btn:HOVER{
+	background-color: #f0f3f5;
+	transition: background-color 0.5s;
+}
+
+.scb-navbar .logged-user-btn .z-hlayout, .scb-navbar .logged-user-btn .z-hlayout-inner{
+	display:inline-block;
+	height: 54px;
+	vertical-align: middle;
+}
+
+.scb-navbar .logged-user-btn span{
+	display:inline-block;
+	height: 54px;
+	line-height: 54px;
+}
+
+.scb-navbar .logged-user-btn .avatar{
+	font-size: 36px;
+	vertical-align: middle;
+	position: relative;
+	top: 9px;
+	margin-right: 5px;
+}
+
+.scb-navbar .logged-user-btn .z-icon-caret-down{
+	display:inline-block;
+	height: 54px;
+	line-height: 54px;
+	font-size: 20px;
+	margin-left: 10px;
 }
 
 .scb-navbar .brand-logo-wrapper{
@@ -551,6 +591,34 @@ SCB components
 
 .scb-navbar .app-logo-wrapper a:HOVER{
 	color: #20a8d8;
+}
+
+.scb-navbar .navbar-btn{
+	height: 54px;
+	display: inline-block;
+	padding: 0 25px;
+	border-left: solid 1px #e4e7ea;
+	line-height: 54px;
+	cursor: pointer; 
+	transition: background-color 0.5s;
+	color: #2f353a;
+	text-decoration: none;
+}
+
+.scb-navbar .navbar-btn:HOVER{
+	background-color: #f0f3f5;
+}
+
+.scb-navbar .navbar-btn i{
+	font-size: 36px;
+	margin-right: 15px;
+	position: relative;
+	top: 7px;
+}
+
+.scb-navbar .navbar-btn span{
+	position: relative;
+	top: -2px;
 }
 
 /* LOGIN PAGE */

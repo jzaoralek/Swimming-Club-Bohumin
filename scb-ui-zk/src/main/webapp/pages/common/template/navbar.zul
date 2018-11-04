@@ -30,30 +30,41 @@
 			<a label="${vm.orgName}" href="/" sclass="brand-name"/>
 		</div>
 		
-		<!-- Logged user name -->
-		<button label="@load(vm.loggedUserCompleteName)"
-				sclass="logged-user-btn"
-				iconSclass="z-icon-caret-down"
-				popup="loggedUserPopup, position=after_end"
-				visible="@load(vm.isUserLogged())" />
-	
-		<!-- User menu -->
-		<menupopup id="loggedUserPopup"  >
-			<menuitem label="${c:l('txt.ui.common.changePassword')}" onClick="@command('changePasswordCmd')" />
-			<menuseparator/>
-			<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-sign-out" onClick="@command('logoutCmd')" />
-		</menupopup>
+		<hlayout sclass="pull-right">
 		
-		<button sclass="logged-user-btn"
+			<!-- Logged user name v2 -->
+			<div sclass="logged-user-btn" 
+					popup="loggedUserPopup, position=after_end"
+					xmlns:x="xhtml"
+					visible="@load(vm.isUserLogged())">
+				<hlayout>
+					<x:i class="pe-7s-user avatar"></x:i>
+					<label value="@load(vm.loggedUserCompleteName)"/> 
+					<x:i class="z-icon-caret-down"></x:i>
+				</hlayout>
+			</div>
+			
+			<!-- User menu -->
+			<menupopup id="loggedUserPopup"  >
+				<menuitem label="${c:l('txt.ui.common.changePassword')}" onClick="@command('changePasswordCmd')" />
+				<menuseparator/>
+				<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-sign-out" onClick="@command('logoutCmd')" />
+			</menupopup>
+			
+			<a sclass="navbar-btn"
+				href="/pages/public/prihlaska-do-klubu.zul" 
+				visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())" xmlns:x="xhtml">
+				<x:i class="pe-7s-note2"></x:i>
+				<label value="${c:l('txt.ui.menu.application')}"/>
+			</a>
+			
+			<a sclass="navbar-btn" 
 				tooltiptext="${c:l('txt.ui.login')}"
 				href="/pages/common/login.zul"
-				iconSclass="z-icon-sign-in"
-				visible="@load(!vm.isUserLogged())"/>
-		
-		<button label="${c:l('txt.ui.menu.application')}" 
-				sclass="logged-user-btn"
-				href="/pages/public/prihlaska-do-klubu.zul" 
-				iconSclass="z-icon-file-text"
-				visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())"/>
+				visible="@load(!vm.isUserLogged())" xmlns:x="xhtml">
+				<x:i class="pe-7s-key"></x:i>
+				<label value="${c:l('txt.ui.login')}"/>
+			</a>
+		</hlayout>
 	
 </div>
