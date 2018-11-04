@@ -3,16 +3,18 @@
 	<custom-attributes participantMode="${arg.participantMode}" />
 	
 	<style src="/resources/css/spreadsheet_grid.css" />
-	<grid sclass="grid-spreadsheet" height="480px" hflex="1"
-		style="border: none; overflow:scroll;"
+	
+	<grid sclass="lesson-stats" height="480px" hflex="1"
+		style="border: none; y-overflow:scroll;"
 		model="@load(lessonStats.learnLessonsStatsList)">
+		
 		<columns>
-			<column align="left" sclass="header" width="80px" />
-			<column align="center" sclass="header" width="60px" />
-			<column align="center" sclass="header" width="80px" />
-			<column align="center" sclass="header last" width="80px" />
+			<column align="left" sclass="header" width="120px" />
+			<column align="center" sclass="header" width="120px" />
+			<column align="center" sclass="header" width="120px" />
+			<column align="center" sclass="header last" width="120px" />
 			<column align="center" sclass="header last"
-				style="white-space: normal;" width="80px"
+				style="white-space: normal;" width="120px"
 				forEach="${lessonStats.getParticipantStatsList()}">
 				<vbox vflex="1" align="center">
 					<hbox height="40px" align="start" pack="center">
@@ -29,6 +31,7 @@
 				</vbox>
 			</column>
 		</columns>
+		
 		<template name="model">
 			<row hflex="1">
 				<cell sclass="years" style="margin: 10px;">

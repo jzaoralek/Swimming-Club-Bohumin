@@ -1,7 +1,7 @@
 <zk>
 	<custom-attributes vmsg="${arg.vmsg}" />
 	<custom-attributes elem="${arg.elem}" />
-	<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsg[elem])" >
+	<span sclass="scb-valid-msg" visible="@load(not empty vmsg[elem])" >
 		<label value="@bind(vmsg[elem])" />
 	</span>
 </zk>

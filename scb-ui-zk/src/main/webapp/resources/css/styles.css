@@ -226,6 +226,10 @@ th.z-column{
 	padding: 0px 5px;
 }
 
+.z-tabpanel{
+	padding: 20px 20px;
+}
+
 /* 
 ==========================================================
 SCB common 
@@ -281,6 +285,16 @@ SCB common
 	border: solid 1px #c8ced3;
 	border-radius: 4px;
 	overflow: hidden;
+}
+
+.scb-form-grid{
+	border: solid 1px #c8ced3;
+	border-radius: 4px;
+}
+
+.scb-valid-msg{
+	float: right;
+	color: red;
 }
 
 /* 
@@ -838,6 +852,16 @@ span.login-failed{
 
 .scb-input-invalid{
 	border-color: red !important;
+}
+
+/* FORM */
+.scb-form-grid-2 .z-cell{
+	padding: 10px 0px;
+}
+
+/* OTHER */
+.lesson-stats th span{
+	color: #23282c;
 }
 
 
