@@ -371,7 +371,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 
 		// header
 		Listhead lh = listbox.getListhead();
-		Object[] headerArray = new Object[lh.getChildren().size() + 2];
+		Object[] headerArray = new Object[lh.getChildren().size() + 3];
 		for (int i = 0; i < lh.getChildren().size(); i++) {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
@@ -379,9 +379,10 @@ public class CourseApplicationListVM extends BaseContextVM {
 		String currency = " " + Labels.getLabel("txt.ui.common.CZK");
 		
 		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
-			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone");
-			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email");			
-			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.residence");
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.birthNumber");
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.phone");
+			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.email");			
+			headerArray[lh.getChildren().size()+2] = Labels.getLabel("txt.ui.common.residence");
 		} else {
 			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
 			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
@@ -403,6 +404,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 								dateFormat.format(item.getModifAt()),
 								item.getCourseParticipant().getInCourseInfo(),
 								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
+								item.getCourseParticipant().getPersonalNo(),
 								item.getCourseParticRepresentative().getContact().getPhone1(),
 								item.getCourseParticRepresentative().getContact().getEmail1(),
 								item.getCourseParticipant().getContact().buildResidence()});
