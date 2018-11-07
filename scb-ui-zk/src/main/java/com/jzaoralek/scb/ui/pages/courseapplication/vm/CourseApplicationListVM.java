@@ -408,7 +408,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 								dateFormat.format(item.getModifAt()),
 								item.getCourseParticipant().getInCourseInfo(),
 								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
-								item.getCourseParticipant().getPersonalNo(),
+								item.getCourseParticipant().getPersonalNo().replace("/", ""),
 								item.getCourseParticRepresentative().getContact().getPhone1(),
 								item.getCourseParticRepresentative().getContact().getEmail1(),								
 								getNotNullString(item.getCourseParticipant().getContact().getStreet()),
