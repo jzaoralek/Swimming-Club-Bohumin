@@ -111,29 +111,29 @@
 			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
 			                	<hbox popup="paymentInstructionPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" hflex="1" pack="center">
 				                	<!-- Instrukce prvni pololeti -->
-				                	<a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;"
+				                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: green;"
 				                		visible="@load(!empty(each.courseParticipant.notifiedSemester1PaymentAt))"
 				                		tooltiptext="${each.courseParticipant.notifiedSemester1PaymentAt}"/>
-				                	<a iconSclass="z-icon-check-circle" style="font-size: 20px; color: grey;"
+				                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: grey;"
 				                		visible="@load(empty(each.courseParticipant.notifiedSemester1PaymentAt))"
 				                		tooltiptext="${each.courseParticipant.notifiedSemester1PaymentAt}"/>
 				                	<!-- Instrukce druhe pololeti -->
-				                	<a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
+				                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: green;" 
 				                		visible="@load(!empty(each.courseParticipant.notifiedSemester2PaymentAt))"
 				                		tooltiptext="${each.courseParticipant.notifiedSemester2PaymentAt}" />
-				                	<a iconSclass="z-icon-check-circle" style="font-size: 20px; color: grey;" 
+				                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: grey;" 
 				                		visible="@load(empty(each.courseParticipant.notifiedSemester2PaymentAt))"
 				                		tooltiptext="${each.courseParticipant.notifiedSemester2PaymentAt}" />
 			                	</hbox>
 			                </listcell>
 			                <listcell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
-									<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+									<a sclass="big-icon" iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
 										visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'NO_PAYMENT')"
 										popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
-								    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
+								    <a sclass="big-icon" iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
 								    	visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PARTLY')"
 								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
-								    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
+								    <a sclass="big-icon" iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
 								    	visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PAYED')"
 								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
 								    <popup id="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}">

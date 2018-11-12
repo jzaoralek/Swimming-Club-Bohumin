@@ -299,17 +299,47 @@ SCB common
 
 /* 
 ==========================================================
+SCB Buttons 
+==========================================================
+*/
+
+.btn-success{
+	background-color: #4dbd74 !important;
+}
+
+.btn-success:HOVER{
+	background-color: #3a9d5d !important;
+}
+
+.btn-warning{
+	background-color: #ffc107 !important;
+}
+
+.btn-warning:HOVER{
+	background-color: #d39e00 !important;
+}
+
+.btn-danger{
+	background-color: #f86c6b !important;
+}
+
+.btn-danger:HOVER{
+	background-color: #f63c3a !important;
+}
+
+/* 
+==========================================================
 SCB components 
 ==========================================================
 */
 
 .scb-content{
-	background-color: #e4e5e6;
+	background-color: #eee;
 	padding: 0px;
 }
 
 .scb-view{
-	background-color: #e4e5e6;
+	background-color: #eee;
 	padding: 30px;
 }
 
@@ -323,7 +353,7 @@ SCB components
 
 .scb-template-center > .z-center-body{
 	overflow: hidden;
-	background-color: #e4e5e6;
+	background-color: #eee;
 	position: relative;
 }
 
@@ -388,7 +418,7 @@ SCB components
 /* SIDE MENU */
 .scb-side-menu-wrapper{
 	overflow: visible !important;
-	background-color: #e4e5e6;
+	background-color: #eee;
 }
 
 .scb-side-menu-wrapper > .z-west-body{
@@ -535,8 +565,8 @@ SCB components
 
 .scb-navbar .brand-name{
 	color: #2f353a;
-	font-size: 18px;
-	font-weight: 300;
+	font-size: 20px;
+	font-weight: 400;
 	line-height: 55px;
 	text-decoration: none;
 }
@@ -637,7 +667,7 @@ SCB components
 
 /* LOGIN PAGE */
 .login-page{
-	background-color: #e4e5e6;
+	background-color: #eee;
 	padding-top: 150px;
 }
 
@@ -864,7 +894,13 @@ span.login-failed{
 	color: #23282c;
 }
 
+.big-icon i{
+	font-size: 26px !important;
+}
 
+.z-window-modal{
+	background-color: white !important;
+}
 
 
 

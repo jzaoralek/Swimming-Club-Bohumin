@@ -128,7 +128,7 @@
 				                		</vbox>
 				                		<vbox width="30px" align="center" >
 				                			<!-- Kontakt popup -->
-						                	<a iconSclass="z-icon-info-circle" popup="contactPopup_${each.uuid}, position=after_end" style="font-size: large; margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.contact')}" />
+						                	<a sclass="big-icon" iconSclass="z-icon-info-circle" popup="contactPopup_${each.uuid}, position=after_end" style="margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.contact')}" />
 						                	
 						                	<popup id="contactPopup_${each.uuid}" width="400px">
 										    	<vbox style="margin: 5px;">
@@ -163,10 +163,10 @@
 			                	</hbox>
 			                </listcell>
 			                <listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />			                	
-		            		<listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.getInCourseInfo()}" />
+		            		<listcell sclass="big-icon" iconSclass="z-icon-check-circle" style="color: #87B87F;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.getInCourseInfo()}" />
                 			<listcell visible="${!each.courseParticipant.inCourse()}" />
                 			
-                			<listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" visible="${!each.currentParticipant}"  />
+                			<listcell sclass="big-icon" iconSclass="z-icon-check-circle" style="color: #87B87F;" visible="${!each.currentParticipant}"  />
                 			<listcell visible="${each.currentParticipant}" />
                 			
 			                <listcell>

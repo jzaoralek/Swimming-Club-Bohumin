@@ -566,8 +566,10 @@
 								<button label="Odeslat" tabindex="21"
 									onClick="@command('submit')" 
 									iconSclass="z-icon-check" 
+									sclass="btn-success"
 									visible="@load(vm.editMode and !vm.securedMode)" />
 								<button label="Uložit"
+									sclass="btn-success"
 									onClick="@command('submit')" 
 									iconSclass="z-icon-check" 
 									visible="@load(vm.editMode and vm.securedMode)" />

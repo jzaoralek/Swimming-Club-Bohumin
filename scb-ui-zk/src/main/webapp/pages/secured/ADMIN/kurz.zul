@@ -176,7 +176,8 @@
 				<hlayout style="margin-top: 20px;">
 					<button label="Uložit"
 						onClick="@command('submit')" 
-						iconSclass="z-icon-check" />
+						iconSclass="z-icon-check" 
+						sclass="btn-success"/>
 				</hlayout>
 				
 				<tabbox id="tb" hflex="1" visible="@load(vm.updateMode)" style="margin-top: 20px; margin-bottom: 20px;">

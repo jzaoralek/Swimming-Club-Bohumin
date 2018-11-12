@@ -13,7 +13,8 @@
 			<!-- Dashboard -->
 			<a	iconSclass="z-icon-home" 
 				visible="@load(!vm.isUserLogged())"
-				href="/" >
+				href="/" 
+				tooltiptext="Home">
 				<label value="Home"/>
 			</a>
 			

@@ -21,7 +21,7 @@
 		        <auxhead>
 		            <auxheader class="header" colspan="4" >
 		            	<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
-		            					sclass="add-item-btn" 
+		            					sclass="add-item-btn btn-warning" 
 		            					iconSclass="z-icon-plus"
 		            					visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
 		            					

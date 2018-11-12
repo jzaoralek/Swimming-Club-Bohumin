@@ -85,7 +85,7 @@
 							                	<label value="@load(each.timeFrom) @converter(vm.timeConverter)" /> - 
 							                	<label value="@load(each.timeTo) @converter(vm.timeConverter)" />
 							                </listcell>              	
-							                <listcell iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" tooltiptext="${c:l('txt.ui.common.yes')}" visible="${each.uuid ne null}" />
+							                <listcell sclass="big-icon" iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" tooltiptext="${c:l('txt.ui.common.yes')}" visible="${each.uuid ne null}" />
 			                				<listcell visible="${each.uuid eq null}" />
 							                <listcell>
 							                	<button iconSclass="z-icon-pencil" onClick="@command('lessonDetailCmd', item=each)" 

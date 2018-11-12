@@ -170,6 +170,7 @@
 			<button label="Uložit"
 				onClick="@command('submit')" 
 				iconSclass="z-icon-check"
+				sclass="btn-success"
 				style="margin-top: 25px;"/>
 		</vlayout>
 		
