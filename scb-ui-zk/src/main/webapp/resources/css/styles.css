@@ -251,7 +251,7 @@ SCB common
 .scb-headline-big{
 	font-size: 35px;
 	font-weight: 500;
-	margin-bottom: 20px;
+	margin-bottom: 30px;
 	display: block;
 }
 
@@ -281,10 +281,19 @@ SCB common
 	text-align:center;
 }
 
+.round-btn{
+	height: 36px;
+	width: 36px;
+	padding: 0;
+	text-align:center;
+	border-radius: 18px;
+}
+
 .scb-panel{
 	border: solid 1px #c8ced3;
 	border-radius: 4px;
 	overflow: hidden;
+	background-color: white;
 }
 
 .scb-form-grid{
@@ -325,6 +334,16 @@ SCB Buttons
 
 .btn-danger:HOVER{
 	background-color: #f63c3a !important;
+}
+
+.btn-light{
+	background-color: #f0f3f5 !important;
+	color: #2f353a;
+}
+
+.btn-light:HOVER{
+	background-color: #d1dbe1 !important;
+	color: #2f353a;
 }
 
 /* 
@@ -376,6 +395,21 @@ SCB components
 .scb-view-wrapper-2{
 	height: 100%;
 	overflow-y: auto !important;
+}
+
+/* PAGE TOOLBAR */
+.scb-page-toolbar{
+	background-color: white;
+	height: 50px !important;
+	overflow: hidden;
+	border-bottom: solid 1px #c8ced3;
+	padding-left: 30px;
+	line-height: 50px;
+}
+
+.scb-page-toolbar button{
+	position: relative;
+	top: -3px;
 }
 
 /* FOOTER */
@@ -558,7 +592,7 @@ SCB components
 	display: inline-block;
 	height: 100%;
 	float: left;
-	margin-left: 30px;
+	margin-left: 18px;
 	position: relative;
 	top: -3px;
 }
@@ -634,6 +668,19 @@ SCB components
 }
 
 .scb-navbar .app-logo-wrapper a:HOVER{
+	color: #20a8d8;
+}
+
+a.menu-toggle-btn{
+	font-size: 24px;
+	color: #2f353a;
+	position: relative;
+	top: 0px;
+	transition: color 0.3s;
+	margin-right: 13px;
+}
+
+a.menu-toggle-btn:HOVER{
 	color: #20a8d8;
 }
 
@@ -898,11 +945,22 @@ span.login-failed{
 	font-size: 26px !important;
 }
 
+i.big-icon{
+	font-size: 26px !important;
+}
+
 .z-window-modal{
 	background-color: white !important;
 }
 
+.fix-btn-icon i{
+	position: relative;
+	top: 2px;
+}
 
+.tab-no-padding{
+	padding: 0 !important;
+}
 
 
 /* RESPONSIVE */

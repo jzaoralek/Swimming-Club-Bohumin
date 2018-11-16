@@ -6,7 +6,7 @@
 	signature="com.jzaoralek.scb.ui.common.vm.BaseVM getOrgNameStatic()"?>
      
 <zk>
-	<borderlayout sclass="scb-bl-main" >
+	<borderlayout sclass="scb-bl-main" apply="com.jzaoralek.scb.ui.common.template.TemplateComposer">
 		<north border="none" >
 			<include src="/pages/common/template/navbar.zul"/>
 		</north>
@@ -22,6 +22,7 @@
 		<center border="none" autoscroll="false" vflex="1" hflex="1" sclass="scb-template-center">
 			<div sclass="scb-view-wrapper-2">
 				<vlayout sclass="scb-view-wrapper">
+					<div self="@{insert(pageToolbar)}" hflex="1" sclass="scb-page-toolbar-wrapper"></div>
 					<div self="@{insert(mainContent)}" hflex="1" sclass="scb-content"></div>
 					<div class="scb-view-push"></div>
 				</vlayout>

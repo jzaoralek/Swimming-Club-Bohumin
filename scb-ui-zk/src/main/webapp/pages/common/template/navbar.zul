@@ -1,6 +1,6 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
 
-<div sclass="scb-navbar" height="55px" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">
+<div xmlns:x="xhtml" sclass="scb-navbar" height="55px" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.template.MenuVM')">
 		<!-- Mobile menu -->
 		<!--
 		<a id="mobileMenu"
@@ -12,17 +12,18 @@
 		</popup>
 		-->
 		
+		<!--
 		<div id="appLogoWrapper" sclass="app-logo-wrapper">
-			<!--
-			<x:i xmlns:x="xhtml"/>
 			<label value="S" sclass="app-logo"/>
-			-->
-			<label value="Sportologic" sclass="app-name"/>
 			
+			<label value="Sportologic" sclass="app-name"/>
 			<a iconSclass="z-icon-bars" onClick="@command('menuFoldCmd')"></a>
 		</div>
+		-->
 		
 		<div sclass="brand-logo-wrapper">
+			<a sclass="menu-toggle-btn" iconSclass="z-icon-bars" onClick="@command('menuFoldCmd')"></a>
+			
 			<!-- Brand logo -->
 			<image src="/resources/img/brand_logo.jpg" sclass="brand-logo"/>
 			

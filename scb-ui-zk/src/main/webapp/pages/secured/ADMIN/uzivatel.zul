@@ -16,11 +16,8 @@
 		sclass="scb-view scb-view-900" >
 		
 		<hlayout>
+			<page-toolbar width="100%" self="@{define(pageToolbar)}"/>
             <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
-            
-            <button onClick="@command('backCmd')" 
-					label="${c:l('txt.ui.common.Back')}"
-					iconSclass="z-icon-arrow-left" />
         </hlayout>
 	    
 		<vlayout>

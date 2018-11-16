@@ -5,40 +5,21 @@
 <?component name="lesson-stats" macroURI="/pages/common/component/lesson-stats.zul"?>
 
 <zk>
-	<borderlayout self="@{define(mainContent)}" hflex="1" 
-		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseparticipant.vm.CourseParticipantDetailVM')"
-		validationMessages="@id('vmsgs')"
-	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
-		<center border="none" 
-			autoscroll="true" >
-			<div>
-				<hlayout spacing="0">
-					<vbox hflex="1" />
-					
-					<vbox hflex="20" pack="center" align="center" >
-						<hbox hflex="1" pack="end" align="center" >
-							<vbox hflex="1" align="center" >
-								<headline label="${vm.courseParticipant.contact.completeName}" menuSelected="menu_userCourseParticipantList" />
-							</vbox>
-						</hbox>
-						<vbox hflex="1" vflex="1" align="end" pack="center">
-							<button onClick="@command('backCmd')" 
-								label="${c:l('txt.ui.common.Back')}" 
-								visible="@load(vm.isBackButtonVisible())"
-								iconSclass="z-icon-arrow-left" />
-						</vbox>
-					</vbox>
-					
-					<vbox hflex="1" />
-				</hlayout>
-				
-				<hlayout spacing="0">
-				
-					<vbox hflex="1" />
+	<div self="@{define(mainContent)}" 
+			hflex="1" 
+			sclass="scb-view" 
+			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseparticipant.vm.CourseParticipantDetailVM')"
+			validationMessages="@id('vmsgs')"
+		    form="@id('fx') @load(vm) @save(vm, before='submit')" >
+		    
+		    <vlayout>
+				<page-toolbar width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())"/>
+	            <label value="${vm.courseParticipant.contact.completeName}" sclass="scb-headline-big"/>
+	        </vlayout>
+        
+				<vlayout spacing="0">
 		
 					<!-- Formular -->
-					<vbox hflex="20" pack="center" align="center" sclass="vbox-content" >
-						
 						<tabbox id="tb" hflex="1"  >
 						    <tabs id="tabs">
 						        <tab id="courseParticipant" label="${c:l('txt.ui.common.dataBasic')}" />
@@ -47,15 +28,15 @@
 						        <tab id="courseParticipantResult" visible="false" label="${c:l('txt.ui.common.results')}" />
 						    </tabs>
 						    <tabpanels>
-						    	<tabpanel>
+						    	<tabpanel sclass="tab-no-padding">
 						    		<!-- Ucastnik -->
-									<grid hflex="1" sclass="form-grid" style="border: none;" >
+									<grid>
 										<columns>
 							                <column align="center" hflex="1" />
 							            </columns>
 										<rows style="background: white;" >
-											<row sclass="form-grid-row" style="border: none; padding: 20px 30px 10px 30px;" >
-												<cell sclass="form-grid-cell" >
+											<row>
+												<cell>
 													<vbox hflex="1">
 														<label value="${c:l('txt.ui.common.firstname')}"/>
 														<textbox id="particFirstname" 
@@ -74,8 +55,8 @@
 													</vbox>
 												</cell>
 											</row>
-											<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;;">
-												<cell sclass="form-grid-cell">
+											<row>
+												<cell>
 													<vbox hflex="1">
 														<label value="${c:l('txt.ui.common.surname')}"/>
 														<textbox id="particSurname"
@@ -94,8 +75,8 @@
 													</vbox>
 												</cell>
 											</row>
-											<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
-												<cell sclass="form-grid-cell">
+											<row>
+												<cell>
 													<vbox hflex="1">
 														<label value="${c:l('txt.ui.common.birthDate')}"/>
 														<datebox id="particBirthdate"
@@ -113,8 +94,8 @@
 													</vbox>
 												</cell>
 											</row>
-											<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;" visible="@load(vm.isLoggedUserInRole('ADMIN'))" >
-												<cell sclass="form-grid-cell">
+											<row visible="@load(vm.isLoggedUserInRole('ADMIN'))" >
+												<cell>
 													<vbox hflex="1">
 														<label value="${c:l('txt.ui.common.birthNumber')}"/>
 														<textbox id="particBirthNumber"
@@ -133,8 +114,8 @@
 													</vbox>
 												</cell>
 											</row>
-											<row sclass="form-grid-row" style="border: none; padding: 0px 30px 10px 30px;">
-												<cell sclass="form-grid-cell">
+											<row>
+												<cell >
 													<vbox hflex="1">
 														<label value="${c:l('txt.ui.common.healthInsurance')}"/>
 														<textbox id="particHealthInsurance"
@@ -153,8 +134,8 @@
 													</vbox>
 												</cell>
 											</row>
-											<row sclass="form-grid-row" style="border: none; padding: 0px 30px 30px 30px;">
-												<cell sclass="form-grid-cell">
+											<row>
+												<cell>
 													<vbox hflex="1">
 														<label value="${c:l('txt.ui.application.healthInfo')}"/>
 														<textbox rows="3" hflex="3" multiline="true"
@@ -166,12 +147,12 @@
 											</row>
 										</rows>
 									</grid>
-									<hbox style="margin-bottom: 10px;">
-										<vbox>
-											<button label="Uložit"
+									
+									<hbox style="margin: 5px 10px 15px 20px;">
+										<button label="Uložit"
 												onClick="@command('submit')" 
-												iconSclass="z-icon-check" />
-										</vbox>
+												iconSclass="z-icon-check" 
+												sclass="btn-success"/>
 									</hbox>
 						    	</tabpanel>
 						    	
@@ -201,7 +182,7 @@
 								        <listhead >
 								            <listheader label="${c:l('txt.ui.common.year')}" sort="auto(courseParticipant.contact.surname)" align="left" />
 								            <listheader label="${c:l('txt.ui.common.createdAt')}" sort="auto(modifAt)" align="left" />
-								            <listheader width="50px" align="center" />
+								            <listheader width="90px" align="center" />
 								        </listhead>
 								         
 								        <template name="model">
@@ -214,8 +195,6 @@
 								            </listitem>
 								        </template>
 								    </listbox>
-						    		
-						    		
 						    	</tabpanel>
 						    	
 						    	<tabpanel hflex="1" fulfill="courses.onSelect" vflex="1">
@@ -254,7 +233,7 @@
 									            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
 									            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
 <!-- 									            <listheader width="35px" /> -->
-									            <listheader width="35px" />
+									            <listheader width="60px" />
 									            <listheader hflex="min" if="${vm.isAttendanceForParentsVisible()}" />
 									        </listhead>
 									         
@@ -282,7 +261,7 @@
 									                <listcell>
 										                <vbox>
 															<!-- Popis -->
-										                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
+										                	<a iconSclass="z-icon-info-circle big-icon" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
 										                	<popup id="descriptionPopup_${item.uuid}">
 														    	<course-description course="${item}" />
 														    </popup>
@@ -425,7 +404,6 @@
 						    	</tabpanel>
 						    </tabpanels>
 					    </tabbox>
-					</vbox>
 											    
 					<script type="text/javascript">
 				        zk.afterMount(function() {
@@ -433,16 +411,6 @@
 				        });
 				    </script>
 		    
-					<vbox hflex="1" />
-				</hlayout>
+				</vlayout>
 			</div>
-		</center>
-	</borderlayout>
-	
-	
-	
-	
 </zk>
-
-
-

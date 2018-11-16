@@ -13,12 +13,8 @@
 	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
 			
             <hlayout>
+            	<page-toolbar width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())"/>
                 <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
-                
-                <button onClick="@command('backCmd')" 
-                            label="${c:l('txt.ui.common.Back')}" 
-                            visible="@load(vm.isBackButtonVisible())"
-                            iconSclass="z-icon-arrow-left" />
             </hlayout>
 			
 				
@@ -92,7 +88,7 @@
 										            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="3" valign="top"/>
 										            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" valign="top" />
 										            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" valign="top" />
-										            <listheader width="50px" align="center" valign="top" />
+										            <listheader width="70px" align="center" valign="top" />
 										        </listhead>
 										         
 										        <template name="model" var="item" >
@@ -108,7 +104,7 @@
 										                <listcell>
 											                <vbox>
 																<!-- Popis -->
-											                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
+											                	<a iconSclass="z-icon-info-circle big-icon" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
 											                	<popup id="descriptionPopup_${item.uuid}" >
 															    	<course-description course="${item}" />
 															    </popup>
@@ -178,7 +174,7 @@
 													onChange="@command('validateUniqueUsernameCmd', email=self.value, fx=fx)"
 													tabindex="1"
 													hflex="1" />
-												<a iconSclass="z-icon-info-circle" popup="emailPopup" style="margin-left: 5px; font-size: large;" />
+												<a iconSclass="z-icon-info-circle big-icon" popup="emailPopup" style="margin-left: 5px; position:relative;top: 5px" />
 											</hbox>
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >

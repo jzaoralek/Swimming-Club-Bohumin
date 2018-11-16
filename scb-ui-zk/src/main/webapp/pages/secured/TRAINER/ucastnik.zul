@@ -14,15 +14,10 @@
 		sclass="scb-view scb-view-900">
 			
 			<hlayout>
+				<page-toolbar width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())"/>
 	            <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
-	            
-	            <button onClick="@command('backCmd')" 
-						label="${c:l('txt.ui.common.Back')}" 
-						visible="@load(vm.isBackButtonVisible())"
-						iconSclass="z-icon-arrow-left" />
 	        </hlayout>
 	    
-				
 			<vlayout spacing="0">
 	
 				<!-- Formular -->

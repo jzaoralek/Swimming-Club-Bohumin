@@ -1,0 +1,8 @@
+<zk>
+	<hlayout sclass="scb-page-toolbar" width="100%">
+		<button onClick="@command('backCmd')" 
+				label="${c:l('txt.ui.common.Back')}" 
+				iconSclass="z-icon-arrow-left" 
+				sclass="btn-light fix-btn-icon"/>
+	</hlayout>
+</zk>

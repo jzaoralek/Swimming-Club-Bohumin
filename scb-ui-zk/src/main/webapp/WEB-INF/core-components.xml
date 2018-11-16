@@ -16,5 +16,12 @@
 		<component-name>payment-instruction</component-name>
 		<macro-uri>/pages/common/component/payment-instruction.zul</macro-uri>
 	</component>
+	
+	<!-- Toolbar pro detail stránku -->
+	<component>
+	    <component-name>page-toolbar</component-name>    
+	    <macro-uri>/pages/common/component/page-toolbar.zul</macro-uri>
+		<component-class>com.jzaoralek.scb.ui.common.template.PageToolbarMacro</component-class>
+	</component>
 
 </language-addon>

@@ -3,29 +3,17 @@
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 
 <zk>
-	<div self="@{define(mainContent)}" hflex="1" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseparticipant.vm.PaymentListVM')">
+	<div self="@{define(mainContent)}" 
+		sclass="scb-view scb-view-900"
+		hflex="1" 
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseparticipant.vm.PaymentListVM')">
 		
-		<div sclass="breadcrumb" visible="false">
-			<span sclass="home-icon z-icon-home"/>
-	    	<a label="${c:l('txt.ui.menu.dashboard')}" href="/"/>
-			<label value="${c:l('txt.ui.menu.application')}"/>
-		</div>
+		<vlayout>
+			<page-toolbar width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())"/>
+            <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
+        </vlayout>
 		
-		<hlayout spacing="0">
-			<vbox hflex="1" />
-			
-			<vbox hflex="20" pack="center" align="center" >
-				<hbox hflex="1" pack="end" align="center" >
-					<vbox hflex="4" align="start" >
-						<headline label="${vm.pageHeadline}" menuSelected="menu_courseParticipantList" />
-					</vbox>
-					<hbox hflex="1" vflex="1" align="center" pack="end" >				
-						<button onClick="@command('backCmd')" 
-							label="${c:l('txt.ui.common.Back')}" 
-							visible="@load(vm.isBackButtonVisible())"
-							iconSclass="z-icon-arrow-left" />
-					</hbox>
-				</hbox>
+		<vlayout spacing="0" sclass="scb-panel">
 				<vbox hflex="1" vflex="1" align="center" pack="center">
 					<!-- Souhrn plateb -->
 					<grid hflex="1">
@@ -137,16 +125,9 @@
 						</rows>
 					</grid>
 				</vbox>
-			</vbox>
-					
-			<vbox hflex="1" />
-		</hlayout>
+		</vlayout>
 		
-		<hlayout spacing="0">
-		
-			<vbox hflex="1" />
-			
-			<vbox hflex="20" pack="center">
+		<vlayout spacing="0" sclass="scb-panel">
 				<listbox model="@load(vm.paymentList)"
 					id="paymentList"
 					hflex="1"
@@ -227,10 +208,7 @@
 <!-- 				    	<label value="@load(vm.coursePaymentVO.priceSecondSemester)" visible="false" /> -->
 <!-- 				    </hbox> -->
 <!-- 			    </vlayout> -->
-			</vbox>
 			
-			<vbox hflex="1" />
-			
-		</hlayout>
+		</vlayout>
 	</div>
 </zk>

@@ -18,10 +18,8 @@
 		<vlayout spacing="0">
 		
 			<hlayout>
+				<page-toolbar width="100%" self="@{define(pageToolbar)}"/>
 				<label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
-				<button onClick="@command('backCmd')" 
-								label="${c:l('txt.ui.common.Back')}" 
-								iconSclass="z-icon-arrow-left" />
 			</hlayout>
 			
 					<tabbox id="tb" hflex="1">

@@ -8,19 +8,15 @@
 <zk>
 	<div self="@{define(mainContent)}" 
 			hflex="1" 
-			vflex="1"
 			sclass="scb-view scb-view-900" 
 			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseVM')"
 			validationMessages="@id('vmsgs')"
        		form="@id('fx') @load(vm) @save(vm, before='submit')" >
 		
-		<hlayout>
+		<vlayout>
+			<page-toolbar width="100%" self="@{define(pageToolbar)}"/>
             <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
-            
-            <button onClick="@command('backCmd')" 
-				label="${c:l('txt.ui.common.Back')}" 
-				iconSclass="z-icon-arrow-left" />
-        </hlayout>
+        </vlayout>
 
 			<!-- Formular -->
 			<vlayout>	    
@@ -214,7 +210,7 @@
 <!-- 						        	<listheader width="25px" /> -->
 						            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(contact.surname)" align="left" />
 						            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(birthdate)" align="left" />
-						            <listheader width="50px" align="center" />
+						            <listheader width="70px" align="center" />
 						        </listhead>
 						         
 						        <template name="model">
@@ -223,9 +219,11 @@
 						                <listcell label="${each.contact.surname} ${each.contact.firstname}" />
 						                <listcell label="@load(each.birthdate) @converter(vm.dateConverter)" />	                	
 						                <listcell>
-						                	<button sclass="btn-danger" iconSclass="z-icon-times" tooltiptext="${c:l('txt.ui.common.remove')}" 
+						                	<button sclass="btn-danger round-btn" 
+						                		iconSclass="z-icon-times" 
+						                		tooltiptext="${c:l('txt.ui.common.remove')}" 
 						                		onClick="@command('courseParticipantDeleteCmd', uuid=each.uuid)" 
-						                		hflex="min" width="20px" />
+						                		 />
 <!-- 						                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}" /> -->
 <!-- 						                	<menupopup id="menuCourse_${each.uuid}" > -->
 <!-- 												<menuitem label="${c:l('txt.ui.common.detail')}" onClick="@command('courseParticipantDetailCmd', uuid=each.uuid)" /> -->
@@ -259,7 +257,7 @@
 						        <listhead>
 						            <listheader label="${c:l('txt.ui.common.dayOfWeek')}" align="left" />
 						            <listheader label="${c:l('txt.ui.common.time')}" align="left" />
-						            <listheader width="80px" align="center" />
+						            <listheader width="70px" align="center" />
 						        </listhead>
 						         
 						        <template name="model">
@@ -270,7 +268,9 @@
 						                	<label value="@load(each.timeTo) @converter(vm.timeConverter)" />
 						                </listcell>	                	
 						                <listcell>
-						                	<button  sclass="btn-danger" iconSclass="z-icon-times" tooltiptext="${c:l('txt.ui.common.remove')}" onClick="@command('lessonDeleteCmd', uuid=each.uuid)" hflex="min" width="20px" />
+						                	<button  sclass="btn-danger round-btn" iconSclass="z-icon-times" 
+						                		tooltiptext="${c:l('txt.ui.common.remove')}"
+						                		onClick="@command('lessonDeleteCmd', uuid=each.uuid)" />
 						                </listcell>
 						            </listitem>
 						        </template>
