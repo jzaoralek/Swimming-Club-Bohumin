@@ -102,7 +102,7 @@
 			                <listcell label="${each.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="${each.contact.phone1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />	                	
 			                <listcell>
-			                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
+			                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourse_${each.uuid}, position=after_end" />
 			                	<menupopup id="menuCourse_${each.uuid}" >
 									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
 									<menuitem label="${c:l('txt.ui.common.resetPassword')}" onClick="@command('resetPwdCmd', uuid=each.uuid)" />

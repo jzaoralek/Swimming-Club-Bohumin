@@ -7,8 +7,11 @@
 	<div viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.DashboardVM')" 
 			hflex="1" 
 			self="@{define(mainContent)}" 
-			sclass="scb-view" >
+			sclass="scb-view">
 		
+		<!-- 
+		style="background:#dfe8f6 url('${pageContext.request.contextPath}/resources/img/background2014Full.jpg') no-repeat center center;"
+		-->
 		<vlayout>
 			<vbox hflex="20" pack="center" align="center">
 				<hbox>

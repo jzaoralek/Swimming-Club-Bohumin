@@ -62,7 +62,7 @@
 									onClick="@command('createNewCourseApplicationCmd', uuid=each.uuid)"
 									visible="@load(vm.newCourseApplicationAllowed(each))" />
 			                	<button tooltiptext="${c:l('txt.ui.common.detail')}"
-			                		iconSclass="z-icon-pencil" hflex="min" width="20px"
+			                		iconSclass="z-icon-pencil" 
 			                		onClick="@command('detailCmd', uuid=each.uuid)" />
 			                </listcell>
 			            </listitem>

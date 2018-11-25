@@ -4,6 +4,7 @@ body{
 	/*font-family: 'Roboto', sans-serif;*/
 	/*font-family: -apple-system, system-ui,B linkMacSystemFont, "Segoe UI", Roboto," Helvetica Neue", Arial,s ans-serif !important;*/
 	font-family: 'Open Sans', sans-serif;
+	background-color: #eeeeee;
 }
 
 /* ZK native override */
@@ -195,20 +196,23 @@ th.z-column{
 }
 
 .z-window-modal{
+	padding: 0px !important;
+}
+
+.z-window-modal .z-window-content{
 	padding: 24px !important;
 }
 
 .z-window-modal > .z-window-header{
 	color: rgba(0, 0, 0, 0.9);
+	padding: 14px 24px;
+	background-color: #f5f5f5;
+	border-bottom: solid 1px #cccccc;
 }
 
 .z-window-modal .z-cell{
 	padding: 0;
 	padding-bottom: 15px;
-}
-
-.z-window-content{
-	padding: 0px;
 }
 
 .z-window-close{
@@ -249,7 +253,7 @@ SCB common
 }
 
 .scb-headline-big{
-	font-size: 35px;
+	font-size: 30px;
 	font-weight: 500;
 	margin-bottom: 30px;
 	display: block;
@@ -399,7 +403,7 @@ SCB components
 
 /* PAGE TOOLBAR */
 .scb-page-toolbar{
-	background-color: white;
+	background-color: #eeeeee;
 	height: 50px !important;
 	overflow: hidden;
 	border-bottom: solid 1px #c8ced3;
@@ -466,7 +470,7 @@ SCB components
 }
 
 .scb-side-menu a{
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 400;
 	color: #fff !important;
 	text-decoration: none;
@@ -478,6 +482,7 @@ SCB components
 }
 
 .scb-side-menu a span{
+	font-size: 16px;
 	transition: visibility 0s, opacity 1.5s ease;
 	visibility: visible;
 	opacity: 1;
@@ -594,15 +599,17 @@ SCB components
 	float: left;
 	margin-left: 18px;
 	position: relative;
-	top: -3px;
+	top: 0px;
 }
 
 .scb-navbar .brand-name{
 	color: #2f353a;
 	font-size: 20px;
-	font-weight: 400;
+	font-weight: 600;
 	line-height: 55px;
 	text-decoration: none;
+	position: relative;
+	left: -2px;
 }
 
 .scb-navbar .brand-logo{
@@ -716,11 +723,14 @@ a.menu-toggle-btn:HOVER{
 .login-page{
 	background-color: #eee;
 	padding-top: 150px;
+	padding-bottom: 50px;
+	clear: both;
 }
 
 .login-page .login-frame{
 	width: 712px;
 	margin: 0 auto;
+	clear: both;
 }
 
 .login-page .login-frame-left{
@@ -747,15 +757,16 @@ a.menu-toggle-btn:HOVER{
 	text-align: center;
 }
 
-.login-page .login-frame-right button{
+button.lpp{
 	box-shadow: none;
 	background-color: #1985ac;
 	border: solid 1px #187da0;
 	font-size: 14px;
 }
 
-.login-page .login-frame-right button:HOVER{
-	background-color: #20a8d8;
+button.lpp:HOVER{
+	background-color: #20a8d8 !important;
+	border: solid 1px #187da0;
 }
 
 .login-page .login-frame h1{
@@ -908,6 +919,29 @@ span.login-failed{
 	text-decoration: underline;
 }
 
+.clear{
+	display: block;
+	clear: both;
+}
+
+.login-mobile-info{
+	width: 390px;
+	margin: 0 auto;
+	text-align: center;
+	clear: both;
+	padding-top: 30px;
+	display: none;
+}
+
+.login-mobile-info .frame{
+	border: solid 1px #187da0;
+	background-color: #20a8d8;
+	color: white;
+	border-radius: 4px;
+	padding: 20px;
+	text-align: center;
+}
+
 /* VALIDATION */
 .form-grid-validation-hbox .alert-danger, .alert-danger span{
 	color: red;
@@ -962,8 +996,43 @@ i.big-icon{
 	padding: 0 !important;
 }
 
+.sp-popup-headline{
+	padding-left: 3px !important;
+	background-color: #e8f5ff !important;
+	display: block;
+	padding: 12px 15px !important;
+}
 
-/* RESPONSIVE */
+.logged-user-menu-user-info a{
+	color: white !important;
+	background-color: #20a8d8 !important;
+	text-align: center !important;
+	display: block !important;
+	border-radius: 3px !important;
+	cursor: auto;
+}
+
+.logged-user-menu-user-info .z-menuitem-image{
+	display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===== RESPONSIVE ===== */
+
+.only-on-mobile-platform{
+	display: none !important;
+}
+
 @media screen and (max-width: 850px) {
 	
 	.login-page{
@@ -982,6 +1051,18 @@ i.big-icon{
 	
 	.login-frame .login-frame-right{
 		display: none !important;
+	}
+	
+	.login-mobile-info{
+		display: block;
+	}
+	
+	.hide-on-mobile-platform{
+		display: none !important;
+	}
+	
+	.only-on-mobile-platform{
+		display: block !important;
 	}
 }
 

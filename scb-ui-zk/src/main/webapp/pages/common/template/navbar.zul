@@ -25,7 +25,9 @@
 			<a sclass="menu-toggle-btn" iconSclass="z-icon-bars" onClick="@command('menuFoldCmd')"></a>
 			
 			<!-- Brand logo -->
+			<!--
 			<image src="/resources/img/brand_logo.jpg" sclass="brand-logo"/>
+			-->
 			
 			<!-- Brand Name -->
 			<a label="${vm.orgName}" href="/" sclass="brand-name"/>
@@ -40,13 +42,14 @@
 					visible="@load(vm.isUserLogged())">
 				<hlayout>
 					<x:i class="pe-7s-user avatar"></x:i>
-					<label value="@load(vm.loggedUserCompleteName)"/> 
+					<label value="@load(vm.loggedUserCompleteName)" sclass="hide-on-mobile-platform"/> 
 					<x:i class="z-icon-caret-down"></x:i>
 				</hlayout>
 			</div>
 			
 			<!-- User menu -->
 			<menupopup id="loggedUserPopup"  >
+				<menuitem label="@load(vm.loggedUserCompleteName)" sclass="logged-user-menu-user-info only-on-mobile-platform"/>
 				<menuitem label="${c:l('txt.ui.common.changePassword')}" onClick="@command('changePasswordCmd')" />
 				<menuseparator/>
 				<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-sign-out" onClick="@command('logoutCmd')" />

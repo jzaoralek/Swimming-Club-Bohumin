@@ -8,8 +8,7 @@
 	
 	<div viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')"
 		sclass="login-page"
-		hflex="1"
-		vflex="1"
+		width="100%"
 		form="@id('fx') @load(vm) @save(vm, before={'loginCmd'})" >
 	
 		<div sclass="login-frame">
@@ -74,7 +73,16 @@
 			<div sclass="login-frame-right">
 				<a label="Sportologic" sclass="brand" href="/"/>
 				<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
-				<button label="Přihláška" href="/pages/public/prihlaska-do-klubu.zul"/>
+				<button label="Přihláška" href="/pages/public/prihlaska-do-klubu.zul" sclass="lpp"/>
+			</div>
+		</div>
+		
+		<div sclass="login-mobile-info">
+			<div sclass="clear"></div>
+			<div sclass="frame">
+				<a label="Sportologic" sclass="brand" href="/"/>
+				<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
+				<button label="Přihláška" href="/pages/public/prihlaska-do-klubu.zul" sclass="lpp"/>
 			</div>
 		</div>
 	</div>

@@ -21,7 +21,7 @@
 		        <auxhead>
 		            <auxheader class="header" colspan="4" >
 		            	<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
-		            					sclass="add-item-btn btn-warning" 
+		            					sclass="add-item-btn" 
 		            					iconSclass="z-icon-plus"
 		            					visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
 		            					
@@ -71,7 +71,7 @@
 		                <listcell label="${each.participantListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 		                <listcell>
 		                	<button label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
-		                	<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuCourse_${each.uuid}, position=after_end" />
+		                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourse_${each.uuid}, position=after_end" />
 		                	<menupopup id="menuCourse_${each.uuid}" >
 								<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" visible="${vm.isLoggedUserInRole('ADMIN')}" />
 								<menuitem label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
