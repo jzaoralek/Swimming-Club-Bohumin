@@ -5,7 +5,7 @@
 
 <zk>
 	<div self="@{define(mainContent)}" 
-		hflex="1"
+		width="100%"
 		height="100%"
 		sclass="scb-view scb-view-900" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
@@ -36,14 +36,14 @@
 				</vbox>
 		
 				<!-- Formular -->
-				<vlayout visible="@load(vm.editMode)" >	  
+				<vlayout visible="@load(vm.editMode)" width="100%">	  
 				
 					<!-- Vyber kurzu -->
-                    <groupbox hflex="1" sclass="no-inner-padding" if="${vm.courseSelectionRequired}">
+                    <groupbox width="100%" sclass="no-inner-padding" if="${vm.courseSelectionRequired}">
                         <caption label="${c:l('txt.ui.common.CourseSelection')}" />
 						
 						<!-- Vyber kurzu -->
-						<grid hflex="1" if="${vm.courseSelectionRequired}" style="padding-bottom:10px;">
+						<grid width="100%" if="${vm.courseSelectionRequired}" style="padding-bottom:10px;">
 							<rows>
 								<row if="${!vm.securedMode}" >
 									<cell   >

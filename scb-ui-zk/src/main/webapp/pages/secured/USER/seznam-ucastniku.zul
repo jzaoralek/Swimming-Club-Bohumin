@@ -71,23 +71,11 @@
 			    
 			    <popup id="newParticipantPopup">
 					<!-- Ucastnik -->
+					<label value="${c:l('txt.ui.common.CourseSelection')}" sclass="sp-popup-headline"/>
 					<grid width="550px" sclass="form-grid" style="border: none;" if="${vm.courseSelectionRequired}" >
 						<columns>
 			                <column align="left" hflex="1" />
 			            </columns>
-			            <auxhead>
-			            	<auxheader colspan="2" style="background: #428CCD;">
-			            		<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-			            			<hbox hflex="1" height="28px" align="center" >
-						            	<vbox hflex="min" vflex="1" sclass="header-div" pack="center" >
-					            			<hbox vflex="1" align="center">
-					            				<label value="${c:l('txt.ui.common.CourseSelection')}"/>
-					            			</hbox>
-					            		</vbox>
-									</hbox>
-			            		</vbox>
-			            	</auxheader>
-			            </auxhead>
 			            
 						<rows style="background: white;" >
 							<row sclass="form-grid-row" 
@@ -134,7 +122,7 @@
 											checkmark="true" >
 											
 									        <listhead>
-									            <listheader width="25px"  valign="top" />
+									            <listheader width="55px"  valign="top" />
 									            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="3" valign="top"/>
 									            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" valign="top" />
 									            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" valign="top" />
@@ -169,22 +157,13 @@
 						</rows>
 					</grid>
 					
+					<label value="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" sclass="sp-popup-headline"/>
+					
 					<!-- Ucastnik -->
 					<grid width="550px" sclass="form-grid" style="border: none;" >
 						<columns>
 			                <column align="center" hflex="1" />
 			            </columns>
-						<auxhead>
-			            	<auxheader colspan="2" style="background: #428CCD;">
-			            		<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-			            			<hbox>
-				            			<vbox>
-				            				<label value="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" />
-										</vbox>
-			            			</hbox>
-			            		</vbox>
-			            	</auxheader>
-			            </auxhead>
 						<rows style="background: white;" >
 							<row sclass="form-grid-row" style="border: none; padding: 10px 10px 10px 10px;" >
 								<cell sclass="form-grid-cell">

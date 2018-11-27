@@ -59,7 +59,6 @@
 				
 		        <listhead>
 		            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
-		            <listheader label="${c:l('txt.ui.common.description2')}" sort="auto(description)" align="left" hflex="1" />
 		            <listheader label="${c:l('txt.ui.common.participantCount')}" sort="auto(participantListCount)" align="center" hflex="min"  />
 		            <listheader width="210px" align="center" />
 		        </listhead>
@@ -67,7 +66,6 @@
 		        <template name="model">
 		            <listitem>
 		                <listcell label="${each.name}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
-		                <listcell label="${each.description}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 		                <listcell label="${each.participantListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 		                <listcell>
 		                	<button label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />

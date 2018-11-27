@@ -55,12 +55,15 @@
 				<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-sign-out" onClick="@command('logoutCmd')" />
 			</menupopup>
 			
+			<!--
 			<a sclass="navbar-btn"
 				href="/pages/public/prihlaska-do-klubu.zul" 
 				visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())" xmlns:x="xhtml">
 				<x:i class="pe-7s-note2"></x:i>
 				<label value="${c:l('txt.ui.menu.application')}"/>
 			</a>
+			
+			-->
 			
 			<a sclass="navbar-btn" 
 				tooltiptext="${c:l('txt.ui.login')}"

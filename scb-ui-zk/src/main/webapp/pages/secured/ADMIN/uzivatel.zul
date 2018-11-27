@@ -140,7 +140,7 @@
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 										tabindex="16"
 										hflex="1" />
-									<a iconSclass="z-icon-info-circle" popup="emailPopup" style="margin-left: 5px; font-size: large;" />
+									<a iconSclass="z-icon-info-circle big-icon" popup="emailPopup" style="margin-left: 5px; font-size: large;" />
 								</hbox>
 								<validMsg  hflex="1"  vmsg="${vmsgs}" elem="${representativeEmail1}" />
 							</vlayout>
