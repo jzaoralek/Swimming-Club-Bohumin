@@ -371,18 +371,29 @@ public class CourseApplicationListVM extends BaseContextVM {
 
 		// header
 		Listhead lh = listbox.getListhead();
-		Object[] headerArray = new Object[lh.getChildren().size() + 2];
+		Object[] headerArray = new Object[lh.getChildren().size() + 7];
 		for (int i = 0; i < lh.getChildren().size(); i++) {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
 		
+		String currency = " " + Labels.getLabel("txt.ui.common.CZK");
+		
 		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
-			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.phone");
-			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.email");			
-			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.residence");
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.birthNumber");
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.phone");
+			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.email");
+			headerArray[lh.getChildren().size()+2] = Labels.getLabel("txt.ui.common.street");
+			headerArray[lh.getChildren().size()+3] = Labels.getLabel("txt.ui.common.landRegNo");
+			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.houseNo");
+			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.city");
+			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.zipCode");			
+		} else {
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
 		}
 		data.put("0", headerArray);
 
+		
 		// rows
 		ListModel<Object> model = listbox.getListModel();
 		CourseApplication item = null;
@@ -397,15 +408,23 @@ public class CourseApplicationListVM extends BaseContextVM {
 								dateFormat.format(item.getModifAt()),
 								item.getCourseParticipant().getInCourseInfo(),
 								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
+								item.getCourseParticipant().getPersonalNo().replace("/", ""),
 								item.getCourseParticRepresentative().getContact().getPhone1(),
-								item.getCourseParticRepresentative().getContact().getEmail1(),
-								item.getCourseParticipant().getContact().buildResidence()});
+								item.getCourseParticRepresentative().getContact().getEmail1(),								
+								getNotNullString(item.getCourseParticipant().getContact().getStreet()),
+								getNotNullLong(item.getCourseParticipant().getContact().getLandRegistryNumber()),
+								getNotNullShort(item.getCourseParticipant().getContact().getHouseNumber()),
+								getNotNullString(item.getCourseParticipant().getContact().getCity()),
+								getNotNullString(item.getCourseParticipant().getContact().getZipCode())
+					});
 				} else {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
 								item.getCourseParticipant().getCourseName(),
 								buildPaymentNotifiedInfo(item.getCourseParticipant()),
-								item.getCourseParticipant().getCoursePaymentVO() != null ? getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null) : null
+								item.getCourseParticipant().getCoursePaymentVO() != null ? (item.getCourseParticipant().getCoursePaymentVO().isOverpayed() ? Labels.getLabel("enum.CoursePaymentState.OVERPAYED") : getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null)) : null,
+								item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getPaymentSum() : 0,
+								item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getTotalPrice() : 0
 								});
 				}
 			}
@@ -605,7 +624,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						, dateTimeFormat.format(item.getModifAt())
 						, item.getCourseParticipant().getCourseName()
 						, item.getCourseParticipant().inCourse()
-						, (item.getCourseParticipant().getCoursePaymentVO() != null) ? item.getCourseParticipant().getCoursePaymentVO().getStateTotal() : null
+						, (item.getCourseParticipant().getCoursePaymentVO() != null) ? (item.getCourseParticipant().getCoursePaymentVO().isOverpayed() ? CoursePaymentState.OVERPAYED : item.getCourseParticipant().getCoursePaymentVO().getStateTotal()) : null
 						, !item.isCurrentParticipant()
 						, item.getCourseParticipant().getPaymentNotifSendState()
 						, true)) {

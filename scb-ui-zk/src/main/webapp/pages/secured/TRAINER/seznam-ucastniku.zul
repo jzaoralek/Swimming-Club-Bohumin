@@ -26,8 +26,10 @@
 		            			<button label="${c:l('txt.ui.common.Messaging')}" 
 		            				iconSclass="z-icon-envelope"
 		            				popup="messagePopup, position=after_start"
+				            				if="${vm.isLoggedUserInRole('ADMIN')}"
 		            				visible="${vm.isLoggedUserInRole('ADMIN')}"/>
-			                	<menupopup id="messagePopup" width="355px" >
+			                	
+					                	<menupopup id="messagePopup" width="255px" if="${vm.isLoggedUserInRole('ADMIN')}" >
 		            				<!-- Nova zprava zobrazenym ucastnikum. -->
 									<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('openModalToSendEmailCmd')" />
 									<!-- Odeslani instrukci k platbe za prvni pololeti. -->
@@ -43,6 +45,7 @@
 	            				<button iconSclass="z-icon-download" 
 	            					onClick="@command('exportToExcel',listbox=courseApplicationList)" 
 	            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
+	            					if="${vm.isLoggedUserInRole('ADMIN')}" 
 	            					sclass="toolbar-btn"/>
             					<button iconSclass="z-icon-refresh" 
             						onClick="@command('refreshDataCmd')" 
@@ -100,7 +103,7 @@
 			            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(courseParticipant.contact.surname)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.course')}" sort="auto(courseParticipant.inCourseInfo)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.paymentInstructionSent')}" align="center" hflex="min" />
-			            <listheader label="${c:l('txt.ui.common.payed')}" align="center" hflex="min" />
+			            <listheader label="${c:l('txt.ui.common.paymentState')}" align="center" hflex="min" />
 			            <listheader width="90px" align="center" />
 			        </listhead>
 			         
@@ -126,8 +129,10 @@
 				                		tooltiptext="${each.courseParticipant.notifiedSemester2PaymentAt}" />
 			                	</hbox>
 			                </listcell>
-			                <listcell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
-									<a sclass="big-icon" iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+			                <!-- Stav plateb -->
+			                <listcell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)" 
+			                	onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+<a sclass="big-icon" iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
 										visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'NO_PAYMENT')"
 										popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
 								    <a sclass="big-icon" iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
@@ -136,6 +141,10 @@
 								    <a sclass="big-icon" iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
 								    	visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'PAYED')"
 								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
+								    <a iconSclass="z-icon-exclamation" style="font-size: 20px; color: red;" 
+								    	visible="@load(each.courseParticipant.coursePaymentVO.overpayed)"
+								    	tooltiptext="${c:l('txt.ui.common.overpayed')}"
+								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end"  />
 								    <popup id="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}">
 								    	<vbox style="margin: 5px;">											
 									    	<payment-instruction orgAccountNumber="${vm.bankAccountNumber}" 
@@ -224,7 +233,7 @@
 			                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourseApplication_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
 			                	<menupopup id="menuCourseApplication_${each.uuid}_${each.courseParticipant.courseUuid}" >
 									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
-									<menuitem label="${c:l('txt.ui.common.Payments')}" onClick="@command('paymentsCmd', item=each)" />
+									<menuitem label="${c:l('txt.ui.common.Payments')}" onClick="@command('paymentsCmd', item=each)" if="${vm.isLoggedUserInRole('ADMIN')}" />
 						       	</menupopup>
 			                </listcell>
 			            </listitem>
