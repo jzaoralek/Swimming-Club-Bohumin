@@ -18,7 +18,7 @@
             </hlayout>
 			
 				
-			<hlayout spacing="0">
+			<vlayout spacing="0">
 					
 				<!-- Potvrzujici info -->
 				<vbox hflex="20" pack="center" align="center" sclass="vbox-content" visible="@load(vm.showNotification)">
@@ -545,16 +545,16 @@
 						
 						<!-- Captcha -->
 	                    <div sclass="form-captcha-panel" visible="@load(vm.editMode and !vm.securedMode)">
-							<hlayout>
+							<vlayout>
 							    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
-							    <bw.captcha id="cap1" />
-							    <textbox id="captcha" style="margin-bottom: 15px;" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1, validate=(vm.editMode and !vm.securedMode))" tabindex="20" />
-							    <hbox height="20px">
-								    <span style="margin-left: 10px;" sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[captcha])" >
+							    <bw.captcha id="cap1" style="margin-top: 10px;"/>
+							    <textbox id="captcha" style="margin-bottom: 15px; margin-top: 10px;" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1, validate=(vm.editMode and !vm.securedMode))" tabindex="20" />
+							    <hbox height="20px" visible="@load(not empty vmsgs[captcha])">
+								    <span style="margin-top: 10px;" sclass="alert alert-danger" hflex="min"  >
 										<label value="@bind(vmsgs[captcha])" />
 									</span>
 								</hbox>
-							</hlayout>
+							</vlayout>
 						</div>
 						
 						<hlayout style="margin-bottom: 20px;margin-top: 10px;">
@@ -583,7 +583,7 @@
 				        });
 				    </script>
 		    
-				</hlayout>
+				</vlayout>
 				
 	</div>
 	
