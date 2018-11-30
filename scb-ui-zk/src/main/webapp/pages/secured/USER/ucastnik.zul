@@ -275,21 +275,20 @@
 									    </listbox>
 									    
 									    <!-- Dochazka -->
-									    <style src="/resources/css/spreadsheet_grid.css" />
-										<grid sclass="grid-spreadsheet" height="480px" 
-											style="border: none; overflow:scroll; margin-top: 20px;"
+										<grid sclass="dochazka-t" height="480px" 
+											style="border: none; margin-top: 20px;"
 											visible="@load(vm.showLessonStats)"
 											if="${vm.isAttendanceForParentsVisible()}"
 											model="@load(vm.lessonStats.learnLessonsStatsList)">
 											
 											<columns>
-												<column align="left" sclass="header" width="80px" >
-													<label value="${c:l('txt.ui.common.attendance')}" /> 
+												<column align="left" sclass="header" width="110px" >
+													<label value="${c:l('txt.ui.common.attendance')}" style="color: black"/> 
 												</column>
-												<column align="center" sclass="header" width="80px" />
-												<column align="center" sclass="header last" width="80px" />
+												<column align="center" sclass="header" width="110px" />
+												<column align="center" sclass="header last" width="110px" />
 												
-												<column align="center" hflex="1" sclass="header last"
+												<column align="center" hflex="1" sclass="header last d-users"
 													style="white-space: normal;" >
 													<hbox children="@load(vm.lessonStats.getParticipantStatsList())">
 														<template name="children">

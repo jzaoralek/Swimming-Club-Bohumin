@@ -721,6 +721,13 @@ a.menu-toggle-btn:HOVER{
 	top: -2px;
 }
 
+.scb-navbar .right-side{
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	background-color: #fff;
+}
+
 /* LOGIN PAGE */
 .login-page{
 	background-color: #eee;
@@ -745,6 +752,7 @@ a.menu-toggle-btn:HOVER{
 	padding: 45px 40px 40px 40px;
 	border-radius: 4px 0px 0px 4px; 
 	float: left;
+	position: relative;
 }
 
 .login-page .login-frame-right{
@@ -904,6 +912,8 @@ span.login-failed{
 	padding: 5px;
 	margin-bottom: 20px;
 	border-radius: 4px;
+	position: absolute;
+	top: 15px;
 }
 
 .login-page a.fp{
@@ -1018,6 +1028,29 @@ i.big-icon{
 	display: none;
 }
 
+.dashboar-public{
+	text-align: center;
+}
+
+.dochazka-t{
+	border: solid 1px #d9d9d9 !important;
+}
+
+.dochazka-t .d-users span{
+	color: black;
+}
+
+.dochazka-t .years{
+	
+}
+
+.dochazka-t .season{
+	background-color: #e4e7ea;
+}
+
+.dochazka-t .month{
+	background-color: #c8ced3;
+}
 
 
 
@@ -1036,6 +1069,23 @@ i.big-icon{
 }
 
 @media screen and (max-width: 850px) {
+	
+	.z-button{
+		white-space: normal !important;
+		line-height: 20px !important;
+		height: inherit !important;
+		min-height: inherit !important;
+		padding-top: 5px !important;
+		padding-bottom: 5px !important;
+	}
+	
+	.add-item-btn{
+		height: 36px !important;
+		width: 36px !important;
+		border-radius: 18px !important;
+		text-align:center !important;
+		padding: 0 !important;
+	}
 	
 	.login-page{
 		padding-top: 50px !important;
@@ -1065,6 +1115,107 @@ i.big-icon{
 	
 	.only-on-mobile-platform{
 		display: block !important;
+	}
+}
+
+
+
+@media screen and (max-width: 500px) {
+	.login-page{
+		padding-top: 0px !important;
+		width: 100% !important;
+		clear: both;
+	}
+	
+	.login-frame {
+		display: block;
+		width: 100% !important;
+		padding: 15px !important;
+		margin: 0px !important;
+		clear: both;
+	}
+	
+	.login-frame .login-frame-left{
+		width: inherit !important;
+		height: inherit !important;
+		display: block;
+		clear: both;
+		padding: 25px;
+	}
+	
+	.z-html{
+		display: block; 
+	}
+	
+	.login-mobile-info{
+		padding: 15px !important;
+		width: 100% !important;
+	}
+	
+	.login-mobile-info .frame{
+		width: 100% !important;
+	}
+	
+	.scb-side-menu a {
+		height: inherit !important;
+		text-align: center;
+		padding: 5px 2px;
+		line-height: 25px;
+	}
+
+	.scb-side-menu a i{
+		display: block;
+		display: inline-block;
+		margin: 0;
+		height: 25px;
+	}
+
+	.scb-side-menu a span{
+		visibility: visible !important;
+		display: block !important;
+		opacity: 1 !important;
+		font-size: 10px;
+	}
+	
+	.scb-view{
+		padding: 15px;
+	}
+	
+	.scb-headline-big{
+		font-size: 20px;
+		margin-bottom: 15px;
+	}
+	
+	.brand-name{
+		font-size: 15px !important;
+	}
+	
+	.listbox{
+		min-width: 800px !important;
+	}
+	
+	.listbox-mobile-width-1000 .listbox{
+		min-width: 1000px !important;
+	}
+	
+	.listbox-wrapper .z-vlayout-inner{
+		overflow-x: auto; 
+	}
+	
+	div.listbox-wrapper{
+		overflow-x: auto; 
+	}
+	
+	.z-listbox{
+		margin-bottom: 0 !important;
+	}
+	
+	.mobile-width-1200 .z-tabpanel {
+		overflow-x: auto;
+	}
+
+	.mobile-width-1200 .z-tabpanel div{
+		min-width: 1200px !important;
 	}
 }
 

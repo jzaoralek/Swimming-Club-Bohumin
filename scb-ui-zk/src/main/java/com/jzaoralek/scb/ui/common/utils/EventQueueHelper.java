@@ -41,7 +41,9 @@ public final class EventQueueHelper {
         RELOAD_LEARNIN_LESSON_LIST_DATA_EVENT(null),
         RELOAD_PAYMENT_DATA_EVENT(null),
         RELOAD_COURSE_LOCATION_DATA_EVENT(null),
-        SIDE_MENU_FOLD_EVENT(ScbEventQueues.SIDE_MENU_QUEUE);
+        SIDE_MENU_FOLD_EVENT(ScbEventQueues.SIDE_MENU_QUEUE),
+        MOBILE_MODE_EVENT(ScbEventQueues.SIDE_MENU_QUEUE),
+        SET_MENU_SELECTED(ScbEventQueues.SIDE_MENU_QUEUE);
 
         private ScbEventQueues queue;
 

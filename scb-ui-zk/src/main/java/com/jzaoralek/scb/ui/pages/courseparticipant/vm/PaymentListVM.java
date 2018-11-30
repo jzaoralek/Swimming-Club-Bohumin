@@ -31,6 +31,7 @@ import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -66,6 +67,7 @@ public class PaymentListVM extends BaseVM {
 	public void init(@QueryParam(WebConstants.COURSE_PARTIC_UUID_PARAM) String courseParticUuid
 			, @QueryParam(WebConstants.COURSE_UUID_PARAM) String courseUuid
 			, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
+        setMenuSelected(ScbMenuItem.PLATBY);
 		this.courseParticUuid = UUID.fromString(courseParticUuid);
 		this.courseUuid = UUID.fromString(courseUuid);
 		// build header

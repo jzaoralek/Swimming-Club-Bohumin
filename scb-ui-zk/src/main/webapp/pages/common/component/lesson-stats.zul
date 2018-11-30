@@ -4,7 +4,7 @@
 	
 	<style src="/resources/css/spreadsheet_grid.css" />
 	
-	<grid sclass="lesson-stats" height="480px" hflex="1"
+	<grid sclass="lesson-stats dochazka-t" height="480px" hflex="1"
 		style="border: none; y-overflow:scroll;"
 		model="@load(lessonStats.learnLessonsStatsList)">
 		

@@ -10,7 +10,7 @@
 		<vlayout>
 			<label value="${c:l('txt.ui.menu.configuration')}" sclass="scb-headline-big"/>
 		
-				<tabbox id="tb" hflex="1" style="margin-top: 20px;">
+				<tabbox id="tb" hflex="1" style="margin-top: 20px;" sclass="mobile-width-1200">
 				    <tabs id="tabs">
 				        <tab id="courseParticipants" label="${c:l('txt.ui.common.configBasic')}" />
 				        <tab id="courseLocations" label="${c:l('txt.ui.common.courseLocations')}" />

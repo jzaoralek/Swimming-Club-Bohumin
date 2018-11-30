@@ -4,7 +4,8 @@
 	<custom-attributes coursePartic="${arg.coursePartic}" />
 	<custom-attributes course="${arg.course}" />
 	
-	<div viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.payments.vm.BankPaymentVM', selectMode=selectMode)">	
+	<div viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.payments.vm.BankPaymentVM', selectMode=selectMode)"
+		sclass="listbox-wrapper">	
 		<listbox model="@load(vm.transactionList)"
 			id="transactionList"
 			hflex="1"
@@ -88,21 +89,13 @@
 		                		</vbox>
 		                		<vbox width="30px" align="center" >
 		                			<!-- Z uctu popup -->
-				                	<a iconSclass="z-icon-info-circle" popup="paymentPopup_${each.idPohybu}, position=after_end" style="font-size: large; margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.Podrobnosti')}" />
-				                	<popup id="paymentPopup_${each.idPohybu}">
+				                	<a iconSclass="z-icon-info-circle big-icon" popup="paymentPopup_${each.idPohybu}, position=after_end" style="font-size: large; margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.Podrobnosti')}" />
+				                	
+				                	<popup id="paymentPopup_${each.idPohybu}" width="400px">
 								    	<vbox style="margin: 5px;">
+								    		<label value="${c:l('txt.ui.common.Podrobnosti')}" sclass="sp-popup-headline"/>
+								    		
 								    		<grid hflex="min" vflex="min">
-												<auxhead>
-													<auxheader class="header" colspan="3" >
-														<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-															<label value="${c:l('txt.ui.common.Podrobnosti')}" />
-														</vbox>
-													</auxheader>
-												</auxhead>
-												<columns>
-													<column />
-													<column align="left"/>
-												</columns>
 												<rows>
 													<row>
 														<label value="${c:l('txt.ui.common.CisloUctu')}"/>

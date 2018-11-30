@@ -29,6 +29,7 @@ import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
@@ -69,7 +70,8 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
-		initYearContext();
+        setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_U);
+        initYearContext();
 		if (StringUtils.hasText(uuid)) {
 			UUID courseParticipantUuid = UUID.fromString(uuid);
 			this.courseParticipant = courseService.getCourseParticipantByUuid(courseParticipantUuid);

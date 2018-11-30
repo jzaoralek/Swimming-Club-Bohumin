@@ -16,9 +16,9 @@ import org.zkoss.zul.Listitem;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
-import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -36,7 +36,8 @@ public class UserVM extends BaseVM {
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) final String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
-		if (StringUtils.hasText(uuid)) {
+        setMenuSelected(ScbMenuItem.SENAM_UZIVATELU);
+        if (StringUtils.hasText(uuid)) {
 			this.user = scbUserService.getByUuid(UUID.fromString(uuid));
 			this.roleSelected = getRoleListItem(this.user.getRole());
 			this.updateMode = true;

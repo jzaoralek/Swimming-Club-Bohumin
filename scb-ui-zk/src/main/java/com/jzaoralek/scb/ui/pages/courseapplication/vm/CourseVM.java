@@ -29,6 +29,7 @@ import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -58,7 +59,8 @@ public class CourseVM extends BaseVM {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) final String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
-		Course course = null;
+        setMenuSelected(ScbMenuItem.SEZNAM_KURZU);
+        Course course = null;
 		if (StringUtils.hasText(uuid)) {
 			course = courseService.getByUuid(UUID.fromString(uuid));
 		}

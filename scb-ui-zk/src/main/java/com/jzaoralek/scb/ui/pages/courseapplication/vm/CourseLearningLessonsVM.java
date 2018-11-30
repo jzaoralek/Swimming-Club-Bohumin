@@ -29,6 +29,7 @@ import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -64,6 +65,7 @@ public class CourseLearningLessonsVM extends BaseVM {
 	public void init(@QueryParam(WebConstants.UUID_PARAM) final String uuid
 			, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage
 			, @QueryParam(WebConstants.TAB_PARAM) String tabSelected) {
+        setMenuSelected(ScbMenuItem.SEZNAM_KURZU);
 		if (!StringUtils.hasText(uuid)) {
 			throw new IllegalArgumentException("uuid is null");
 		}

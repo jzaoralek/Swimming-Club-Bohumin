@@ -22,7 +22,7 @@
 				<label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
 			</hlayout>
 			
-					<tabbox id="tb" hflex="1">
+					<tabbox id="tb" hflex="1" sclass="mobile-width-1200">
 					    <tabs id="tabs">
 <!-- 					        selected="@load(vm.tabSelected eq 'LESSONS')" -->
 <!-- 					        onSelect="@command('redirectToTab', tab='LESSONS')" -->
@@ -95,20 +95,18 @@
 							        </template>
 							    </listbox>
 					    	</tabpanel>
+					    	
 					    	<tabpanel>
-<!-- 					    		<lesson-stats lessonStats="${vm.lessonStats}" participantMode="false" /> -->
-					    		
-					    		<style src="/resources/css/spreadsheet_grid.css" />
-								<grid sclass="grid-spreadsheet" height="480px" hflex="1"
-									style="border: none; overflow:scroll;"
+								<grid sclass="dochazka-t" 
+									height="480px" 
+									hflex="1"
 									model="@load(vm.lessonStats.learnLessonsStatsList)">
+									
 									<columns>
 										<column align="left" sclass="header" width="80px" />
-<!-- 										<column align="center" sclass="header" width="60px" /> -->
-										<column align="center" sclass="header" width="80px" />
-										<column align="center" sclass="header last" width="80px" />
-										
-										<column align="center" hflex="1" sclass="header last"
+										<column align="center" sclass="header" width="110px" />
+										<column align="center" sclass="header last" width="110px" />
+										<column align="center" hflex="1" sclass="header last d-users"
 											style="white-space: normal;" >
 											<hbox children="@load(vm.lessonStats.getParticipantStatsList())">
 												<template name="children">
@@ -129,8 +127,8 @@
 												</template>
 											</hbox>
 										</column>
-										
 									</columns>
+									
 									<template name="model">
 										<row hflex="1">
 											<cell sclass="years" style="margin: 10px;">

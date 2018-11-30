@@ -7,6 +7,9 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.A;
 
 import com.jzaoralek.scb.ui.common.utils.ComponentUtils;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
 /**
@@ -23,10 +26,33 @@ public class SideMenuComposer extends SelectorComposer<Component> {
     @Wire
     private HtmlBasedComponent menuWrapper;
 
+    public enum ScbMenuItem {
+        HOME,
+        PRIHLASKA,
+        SEZNAM_PRIHLASEK,
+        SEZNAM_KURZU,
+        SEZNAM_UCASTNIKU_AT,
+        SEZNAM_UCASTNIKU_U,
+        UZIVATEL,
+        SENAM_UZIVATELU,
+        PLATBY,
+        NASTAVENI;
+    }
+
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
+        init();
 
+        EventQueueHelper.queueLookup(ScbEventQueues.SIDE_MENU_QUEUE).subscribe(ScbEvent.SET_MENU_SELECTED, data -> {
+            selectMenu((ScbMenuItem) data);
+        });
+    }
+
+    /**
+     * 
+     */
+    private void init() {
         String path = WebUtils.getRequestPath();
         for (Component child : menuWrapper.getChildren()) {
             if (child instanceof A) {
@@ -37,6 +63,21 @@ public class SideMenuComposer extends SelectorComposer<Component> {
                 }
             }
         }
-        
+    }
+
+    /**
+     * 
+     * @param menuItemId
+     */
+    private void selectMenu(ScbMenuItem menuItem) {
+        for (Component child : menuWrapper.getChildren()) {
+            if (child instanceof A) {
+                A anchor = (A) child;
+                if (menuItem.name().equals(anchor.getId())) {
+                    ComponentUtils.addSclass(anchor, "scb-menu-active");
+                    return;
+                }
+            }
+        }
     }
 }

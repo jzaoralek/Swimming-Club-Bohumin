@@ -16,7 +16,7 @@
             <label value="${c:l('txt.ui.common.participants')}" sclass="scb-headline-big"/>
         </vlayout>
 		
-		<vlayout spacing="0">
+		<vlayout spacing="0" sclass="listbox-wrapper">
 				<listbox model="@load(vm.courseParticipantList)"
 					id="courseParticipantList"
 					hflex="1"

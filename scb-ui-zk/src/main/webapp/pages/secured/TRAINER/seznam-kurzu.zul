@@ -9,7 +9,7 @@
 			sclass="scb-view" 
 			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseListVM')">
 			
-		<vlayout hflex="1">
+		<vlayout hflex="1" sclass="listbox-wrapper">
 			<label value="${c:l('txt.ui.menu.courses')}" sclass="scb-headline-big"/>
 			
 			<listbox model="@load(vm.courseList)"

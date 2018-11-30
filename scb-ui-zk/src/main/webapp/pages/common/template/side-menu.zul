@@ -11,7 +11,8 @@
 				apply="com.jzaoralek.scb.ui.common.template.SideMenuComposer">
 			
 			<!-- Dashboard -->
-			<a	iconSclass="z-icon-home" 
+			<a	id="HOME"
+				iconSclass="z-icon-home" 
 				visible="@load(!vm.isUserLogged())"
 				href="/" 
 				tooltiptext="Home">
@@ -19,56 +20,64 @@
 			</a>
 			
 			<!-- Prihlaska -->
-			<a	iconSclass="z-icon-file-text" 
+			<a	id="PRIHLASKA"
+				iconSclass="z-icon-file-text" 
 				visible="@load(!vm.isUserLogged())"
 				href="/pages/public/prihlaska-do-klubu.zul" >
 				<label value="${c:l('txt.ui.menu.application')}"/>
 			</a>
 			
 			<!-- Seznam prihlasek -->
-			<a	iconSclass="z-icon-files-o" 
+			<a	id="SEZNAM_PRIHLASEK"
+				iconSclass="z-icon-files-o" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 				href="/pages/secured/ADMIN/seznam-prihlasek.zul" >
 				<label value="${c:l('txt.ui.menu.applications')}"/>
 			</a>
 			
 			<!-- Seznam kurzu -->
-			<a	iconSclass="z-icon-list-alt" 
+			<a	id="SEZNAM_KURZU" 
+				iconSclass="z-icon-list-alt" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))"
 				href="/pages/secured/TRAINER/seznam-kurzu.zul" >
 				<label value="${c:l('txt.ui.menu.courses')}"/>
 			</a>
 			
 			<!-- Seznam ucastniku - ADMIN/TRAINER -->
-			<a	iconSclass="z-icon-child" 
+			<a	id="SEZNAM_UCASTNIKU_AT" 
+				iconSclass="z-icon-child" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))"
 				href="/pages/secured/TRAINER/seznam-ucastniku.zul" >
 				<label value="${c:l('txt.ui.common.participants')}"/>
 			</a>
 			
 			<!-- Seznam ucastniku - USER -->
-			<a	iconSclass="z-icon-child" 
+			<a	id="SEZNAM_UCASTNIKU_U" 
+				iconSclass="z-icon-child" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))"
 				href="/pages/secured/USER/seznam-ucastniku.zul" >
 				<label value="${c:l('txt.ui.common.participants')}"/>
 			</a>
 			
 			<!-- Uzivatel -->
-			<a	iconSclass="z-icon-user" 
+			<a	id="UZIVATEL" 
+				iconSclass="z-icon-user" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))"
 				href="/pages/secured/USER/uzivatel.zul" >
 				<label value="${c:l('txt.ui.menu.user')}"/>
 			</a>
 			
 			<!-- Seznam uzivatelu -->
-			<a 	iconSclass="z-icon-users" 
+			<a 	id="SENAM_UZIVATELU" 
+				iconSclass="z-icon-users" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 				href="/pages/secured/ADMIN/seznam-uzivatelu.zul" >
 				<label value="${c:l('txt.ui.menu.users')}"/>
 			</a>
 			
 			<!-- Platby -->
-			<a 	iconSclass="z-icon-credit-card" 
+			<a 	id="PLATBY" 
+				iconSclass="z-icon-credit-card" 
 				tooltiptext="${c:l('txt.ui.menu.bankPayments')}"
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 				href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul" >
@@ -76,7 +85,8 @@
 			</a>
 			
 			<!-- Nastaveni -->
-			<a 	iconSclass="z-icon-cog" 
+			<a 	id="NASTAVENI" 
+				iconSclass="z-icon-cog" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 				href="/pages/secured/ADMIN/configuration.zul" >
 				<label value="${c:l('txt.ui.menu.configuration')}"/>

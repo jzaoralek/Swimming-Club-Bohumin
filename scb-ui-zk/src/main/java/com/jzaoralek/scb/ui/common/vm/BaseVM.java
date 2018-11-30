@@ -34,7 +34,10 @@ import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.converter.Converters;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.ManifestSolver;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
@@ -81,10 +84,18 @@ public class BaseVM {
 		orgName = ConfigUtil.getOrgName(configurationService);		
 	}
 
-	
 	public static String getOrgNameStatic() {
 		return orgName;
 	}
+
+    /**
+     * Dodatečně označí položku hlavního menu
+     * 
+     * @param menuId
+     */
+    protected void setMenuSelected(ScbMenuItem menuItem) {
+        EventQueueHelper.publish(ScbEvent.SET_MENU_SELECTED, menuItem);
+    }
 
 	public String getDateFormat() {
 		return WebConstants.DATE_FORMAT;

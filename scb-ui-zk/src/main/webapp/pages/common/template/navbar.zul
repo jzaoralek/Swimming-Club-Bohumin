@@ -33,7 +33,7 @@
 			<a label="${vm.orgName}" href="/" sclass="brand-name"/>
 		</div>
 		
-		<hlayout sclass="pull-right">
+		<hlayout sclass="right-side">
 		
 			<!-- Logged user name v2 -->
 			<div sclass="logged-user-btn" 
@@ -70,7 +70,7 @@
 				href="/pages/common/login.zul"
 				visible="@load(!vm.isUserLogged())" xmlns:x="xhtml">
 				<x:i class="pe-7s-key"></x:i>
-				<label value="${c:l('txt.ui.login')}"/>
+				<label value="${c:l('txt.ui.login')}"  sclass="hide-on-mobile-platform"/>
 			</a>
 		</hlayout>
 	

@@ -5,9 +5,9 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zul.Borderlayout;
 
+import com.jzaoralek.scb.ui.common.template.SideMenuFoldingComposer.DisplayMode;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
-import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
 /**
  * Project: scb-ui-zk
@@ -23,7 +23,8 @@ public class TemplateComposer extends SelectorComposer<Borderlayout>{
     /**
      * šířka prohlížeče pro zobrazení mobilného menu
      */
-    private static final int MOBILE_VIEW_THRESHOLD_WIDTH = 1100;
+    private static final int SMALL_VIEW_THRESHOLD_WIDTH = 1100;
+    private static final int MOBILE_VIEW_THRESHOLD_WIDTH = 500;
 
     @Override
     public void doAfterCompose(Borderlayout comp) throws Exception {
@@ -37,8 +38,15 @@ public class TemplateComposer extends SelectorComposer<Borderlayout>{
      */
     private void onAfterSizeEvent(AfterSizeEvent e) {
         if (e.getWidth() < MOBILE_VIEW_THRESHOLD_WIDTH) {
-            WebUtils.setSessAtribute(MenuVM.SIDE_MENU_FOLDED, true);
-            EventQueueHelper.publish(ScbEvent.SIDE_MENU_FOLD_EVENT, true);
+            EventQueueHelper.publish(ScbEvent.MOBILE_MODE_EVENT, DisplayMode.MOBILE);
+        }
+
+        if (e.getWidth() < SMALL_VIEW_THRESHOLD_WIDTH && e.getWidth() >= MOBILE_VIEW_THRESHOLD_WIDTH) {
+            EventQueueHelper.publish(ScbEvent.MOBILE_MODE_EVENT, DisplayMode.SMALL);
+        }
+
+        if (e.getWidth() >= SMALL_VIEW_THRESHOLD_WIDTH) {
+            EventQueueHelper.publish(ScbEvent.MOBILE_MODE_EVENT, DisplayMode.FULL);
         }
     }
 }

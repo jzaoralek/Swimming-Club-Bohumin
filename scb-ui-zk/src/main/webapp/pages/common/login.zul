@@ -12,6 +12,7 @@
 		form="@id('fx') @load(vm) @save(vm, before={'loginCmd'})" >
 	
 		<div sclass="login-frame">
+			<div sclass="clear"></div>
 			<div sclass="login-frame-left">
 			
 				<label value="${c:l('msg.ui.warn.BadCredentials')}"  visible="@load(vm.loginFailure)" sclass="login-failed"/>

@@ -34,6 +34,7 @@ import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -73,6 +74,7 @@ public class CourseApplicationVM extends BaseVM {
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
 		super.init();
+
 		// kontrola zda-li prihlasky povolene
 		if (!isSecuredPage() && !isCourseApplicationAllowed()) {
 			this.editMode = false;
@@ -80,6 +82,8 @@ public class CourseApplicationVM extends BaseVM {
 			this.errotText = Labels.getLabel("msg.ui.warn.courseApplicationsNotAllowed");
 			return;
 		}
+
+        setMenuSelected(ScbMenuItem.SEZNAM_PRIHLASEK);
 
 		CourseApplication courseApplication = null;
 		if (StringUtils.hasText(uuid)) {

@@ -4,7 +4,7 @@
 
 <zk>
 	<div self="@{define(mainContent)}" 
-		sclass="scb-view scb-view-900"
+		sclass="scb-view"
 		hflex="1" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseparticipant.vm.PaymentListVM')">
 		
@@ -13,8 +13,8 @@
             <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
         </vlayout>
 		
-		<vlayout spacing="0" sclass="scb-panel">
-				<vbox hflex="1" vflex="1" align="center" pack="center">
+		<vlayout spacing="0">
+				<vbox hflex="1" vflex="1" align="center" pack="center" sclass="scb-panel">
 					<!-- Souhrn plateb -->
 					<grid hflex="1">
 						<auxhead>
@@ -127,7 +127,7 @@
 				</vbox>
 		</vlayout>
 		
-		<vlayout spacing="0" sclass="scb-panel">
+		<vlayout spacing="0" >
 				<listbox model="@load(vm.paymentList)"
 					id="paymentList"
 					hflex="1"

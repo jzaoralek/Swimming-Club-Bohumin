@@ -40,6 +40,7 @@ import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -81,6 +82,8 @@ public class CourseParticipantVM extends BaseVM {
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid
 			, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage
 			, @QueryParam(WebConstants.COURSE_UUID_PARAM) String courseUuid) {
+        setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_AT);
+        setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_U);
 		if (StringUtils.hasText(uuid)) {
 			this.participant = courseApplicationService.getByUuid(UUID.fromString(uuid));
 			this.pageHeadline = this.participant.getCourseParticipant().getContact().getCompleteName();
