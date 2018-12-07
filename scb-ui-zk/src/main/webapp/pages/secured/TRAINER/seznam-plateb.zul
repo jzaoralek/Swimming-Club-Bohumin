@@ -127,7 +127,7 @@
 				</vbox>
 		</vlayout>
 		
-		<vlayout spacing="0" >
+		<vlayout spacing="0" sclass="mobile-overflow-x-auto">
 				<listbox model="@load(vm.paymentList)"
 					id="paymentList"
 					hflex="1"

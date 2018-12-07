@@ -1034,6 +1034,7 @@ i.big-icon{
 
 .dochazka-t{
 	border: solid 1px #d9d9d9 !important;
+	min-width: 1000px;
 }
 
 .dochazka-t .d-users span{
@@ -1116,6 +1117,14 @@ i.big-icon{
 	.only-on-mobile-platform{
 		display: block !important;
 	}
+	
+	.z-tabpanel{
+		overflow-x: auto;
+	}
+	
+	.mobile-overflow-x-auto,  .mobile-overflow-x-auto > .z-vlayout-inner{
+		overflow-y: auto !important; 
+	}
 }
 
 
@@ -1194,6 +1203,10 @@ i.big-icon{
 		min-width: 800px !important;
 	}
 	
+	.mobile-inherit-width{
+		min-width: inherit !important;
+	}
+	
 	.listbox-mobile-width-1000 .listbox{
 		min-width: 1000px !important;
 	}
@@ -1216,6 +1229,19 @@ i.big-icon{
 
 	.mobile-width-1200 .z-tabpanel div{
 		min-width: 1200px !important;
+	}
+	
+	.z-tabpanel{
+		overflow-x: auto;
+	}
+	
+	.mobile-overflow-x-auto,  .mobile-overflow-x-auto > .z-vlayout-inner{
+		overflow-y: auto !important; 
+	}
+	
+	.login-failed{
+		position: relative !important;
+		top: 0px !important;
 	}
 }
 

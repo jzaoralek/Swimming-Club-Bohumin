@@ -392,7 +392,7 @@
 				    	
 				    	<tabpanel>
 				    		<!-- Dochazka -->
-				    		<vlayout>
+				    		<vlayout sclass="mobile-overflow-x-auto">
 				    			<hlayout style="margin-top: 10px;margin-bottom: 10px;" 
 				    					visible="@init(vm.courseListStatsVisible)">
 				    				<label value="${c:l('txt.ui.common.course')}: " style="margin-right: 5px;"/>
