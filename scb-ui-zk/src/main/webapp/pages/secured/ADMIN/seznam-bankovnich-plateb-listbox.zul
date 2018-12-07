@@ -29,7 +29,7 @@
            				<include src="/pages/common/component/context-year.zul"/>
            				<button iconSclass="z-icon-download" 
            					onClick="@command('exportToExcel',listbox=transactionList)" 
-           					if="${!selectMode}"  
+           					
            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
            					sclass="toolbar-btn"/>
       					<button iconSclass="z-icon-refresh" 
