@@ -25,6 +25,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 
 public final class WebUtils {
 
@@ -200,5 +202,16 @@ public final class WebUtils {
 		} 
 		
 		return ret;
+	}
+	
+	// ***********************************
+	// *** SCB util methods
+	// ***********************************
+	
+	/**
+	 * Redirect to new course page.
+	 */
+	public static void redirectToNewCourse() {
+		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 	}
 }

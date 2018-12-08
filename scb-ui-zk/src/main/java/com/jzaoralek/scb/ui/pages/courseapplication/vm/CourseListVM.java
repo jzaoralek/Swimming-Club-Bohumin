@@ -149,7 +149,7 @@ public class CourseListVM extends BaseContextVM {
 
 	@Command
 	public void newItemCmd() {
-		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+		WebUtils.redirectToNewCourse();
 	}
 
 	public void loadData() {

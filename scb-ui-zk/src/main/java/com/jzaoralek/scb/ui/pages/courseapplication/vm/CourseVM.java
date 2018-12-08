@@ -10,10 +10,12 @@ import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
@@ -29,6 +31,7 @@ import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -68,7 +71,7 @@ public class CourseVM extends BaseVM {
 		this.courseLocationList = courseService.getCourseLocationAll();
 		if (course != null) {
 			this.course = course;
-			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseDetail");
+//			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseDetail");
 			this.updateMode = true;
 			this.courseYearSelected = course.getYear();
 			// misto kurzu
@@ -81,7 +84,7 @@ public class CourseVM extends BaseVM {
 			}
 		} else {
 			this.course = new Course();
-			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseNew");
+//			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseNew");
 			this.updateMode = false;
 			this.courseYearSelected = configurationService.getCourseApplicationYear();
 			// misto kurzu
@@ -101,6 +104,16 @@ public class CourseVM extends BaseVM {
 				}
 			}
 		});
+	}
+	
+	@Override
+	@DependsOn("course")
+	public String getPageHeadline() {
+		if (this.course == null || this.course.getUuid() == null) {
+			return Labels.getLabel("txt.ui.menu.courseNew");
+		} else {
+			return this.course.getName();
+		}
 	}
 
 	public void loadData(UUID uuid) {
@@ -206,6 +219,11 @@ public class CourseVM extends BaseVM {
 	public void detailCmd(@BindingParam("lesson") final Lesson lesson) {
 		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.LESSON_DETAIL_DATA_EVENT, null, lesson);
 		WebUtils.openModal("/pages/secured/ADMIN/lesson-to-course-window.zul");
+	}
+	
+	@Command
+	public void newItemCmd() {
+		WebUtils.redirectToNewCourse();
 	}
 
 	public Course getCourse() {
