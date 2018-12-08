@@ -29,7 +29,7 @@
 	            				<button label="${c:l('txt.ui.common.Zparovat')}" if="${!selectMode}" sclass="btn-warning" onClick="@command('pairPaymentsCmd')" style="margin-right: 5px; "/>
 	            				<!-- Rocnik -->
 	            				<include src="/pages/common/component/context-year.zul"/>
-	            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=transactionList)" if="${!selectMode}"  tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
+	            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=transactionList)" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
 	           					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" if="${!selectMode}" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
 							</hbox>
 						</vbox>
