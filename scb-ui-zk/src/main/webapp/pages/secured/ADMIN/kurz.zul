@@ -41,7 +41,7 @@
 				    <tabpanels>
 				        <tabpanel >
 				        	<!-- Zakladni informace -->
-				        	<grid hflex="1" sclass="scb-panel" >
+				        	<grid sclass="scb-panel" >
 								<columns>
 					                <column align="left" hflex="1" />
 					            </columns>
