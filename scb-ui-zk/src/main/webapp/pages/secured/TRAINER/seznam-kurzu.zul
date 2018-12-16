@@ -17,7 +17,7 @@
 					hflex="1"
 					style="margin-top: 20px;"
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-					class="listbox mobile-inherit-width" >
+					class="listbox-300 mobile-inherit-width" >
 		        <auxhead>
 		            <auxheader class="header" colspan="4" >
 		            	<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
@@ -59,8 +59,12 @@
 				
 		        <listhead>
 		            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
-		            <listheader label="${c:l('txt.ui.common.participantCount')}" sort="auto(participantListCount)" align="center" hflex="min"  />
-		            <listheader width="195px" align="center" />
+		            <listheader label="${c:l('txt.ui.common.participantCountAbbr')}" 
+		            	tooltiptext="${c:l('txt.ui.common.participantCount')}" 
+		            	sort="auto(participantListCount)" 
+		            	align="center" 
+		            	hflex="min"  />
+		            <listheader width="180px" align="center" />
 		        </listhead>
 		         
 		        <template name="model">

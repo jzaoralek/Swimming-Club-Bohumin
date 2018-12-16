@@ -5,7 +5,7 @@
 	form="@id('fx') @load(vm) @save(vm, before='submitCmd')"
 	title="@init(vm.pageHeadline)" 
 	border="normal" 
-    width="430px"
+    width="360px"
     position="center,center" 
     closable="true">
     

@@ -1203,6 +1203,14 @@ i.big-icon{
 		min-width: 800px !important;
 	}
 	
+	.listbox-400{
+		min-width: 400px !important;
+	}
+	
+	.listbox-300{
+		min-width: 300px !important;
+	}
+	
 	.mobile-inherit-width{
 		min-width: inherit !important;
 	}

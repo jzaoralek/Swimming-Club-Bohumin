@@ -203,7 +203,8 @@
 								pageSize="10"
 								visible="@load(vm.updateMode)"
 								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-								class="listbox" >
+								class="listbox-400" >
+<!-- 							nova class	listbox-ucatsnici do styles.css, nastavit jinou sirku pro rozliseni-->
 						        <auxhead>
 						            <auxheader colspan="3" >
 						            	<button tooltiptext="${c:l('txt.ui.common.new')}" 
@@ -220,8 +221,8 @@
 								
 						        <listhead>
 <!-- 						        	<listheader width="25px" /> -->
-						            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(contact.surname)" align="left" />
-						            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(birthdate)" align="left" />
+						            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(contact.surname)" hflex="1" align="left" />
+						            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(birthdate)" hflex="min" align="left" />
 						            <listheader width="70px" align="center" />
 						        </listhead>
 						         
@@ -256,7 +257,7 @@
 								pageSize="10"
 								visible="@load(vm.updateMode)"
 								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-								class="listbox" >
+								class="listbox-300" >
 						        <auxhead>
 						            <auxheader colspan="3" >
 						            	<button onClick="@command('newLessonCmd')" 

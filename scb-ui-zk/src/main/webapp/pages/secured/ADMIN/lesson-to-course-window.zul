@@ -1,7 +1,7 @@
 <window id="modalWindow"
 	title="Lekce" 
 	border="normal" 
-    width="400px"
+    width="360px"
     position="center,center" 
     closable="true">
     
