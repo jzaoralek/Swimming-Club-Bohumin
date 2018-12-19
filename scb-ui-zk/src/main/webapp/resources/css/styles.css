@@ -1125,6 +1125,22 @@ i.big-icon{
 	.mobile-overflow-x-auto,  .mobile-overflow-x-auto > .z-vlayout-inner{
 		overflow-y: auto !important; 
 	}
+	
+	.listbox-mobile-2-width-1000 .listbox{
+		min-width: 1000px !important;
+	}
+	
+	.listbox-wrapper .z-vlayout-inner{
+		overflow-x: auto; 
+	}
+	
+	div.listbox-wrapper{
+		overflow-x: auto; 
+	}
+	
+	.z-listbox{
+		margin-bottom: 0 !important;
+	}
 }
 
 
@@ -1231,12 +1247,16 @@ i.big-icon{
 		margin-bottom: 0 !important;
 	}
 	
-	.mobile-width-1200 .z-tabpanel {
+	.mobile-width-1200 .z-tabpanel,  .mobile-width-800 .z-tabpanel{
 		overflow-x: auto;
 	}
 
-	.mobile-width-1200 .z-tabpanel div{
+	.mobile-width-1200 .z-tabpanel > div{
 		min-width: 1200px !important;
+	}
+
+	.mobile-width-800 .z-tabpanel > div{
+		min-width: 800px !important;
 	}
 	
 	.z-tabpanel{
