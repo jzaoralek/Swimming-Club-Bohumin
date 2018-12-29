@@ -4,7 +4,7 @@
 	form="@id('fx') @load(vm.learningLesson) @save(vm.learningLesson, before='submitCmd')"
 	title="@load(vm.pageHeadline)" 
 	border="normal" 
-    width="440px"
+    width="370px"
     position="center,center" 
     closable="true">
     
@@ -15,7 +15,7 @@
                 <column align="right" hflex="1" valign="middle"/>
             </columns>
 			<rows style="background: white;" hflex="1" >
-				<row sclass="form-grid-row" style="border: none; padding: 10px 30px 10px 30px;" >
+				<row sclass="form-grid-row" style="border: none; padding: 10px 0px 10px 0px;" >
 					<cell sclass="form-grid-cell" hflex="1" >
 						<vbox hflex="1">
 							<hbox hflex="1" sclass="form-grid-validation-hbox">
@@ -28,12 +28,13 @@
 					</cell>
 					<cell sclass="form-grid-cell" hflex="1" >
 						<vbox hflex="1">
-							<hbox hflex="1" sclass="form-grid-validation-hbox">
+							<hbox hflex="1" pack="end" sclass="form-grid-validation-hbox">
 								<datebox id="lessonDate"
 									value="@bind(fx.lessonDate) @validator(vm.notNullObjectValidator)"
 	                           		format="@load(vm.dateFormat)" 
 	                           		maxlength="@load(vm.getDateMaxlength())"
 	                           		placeholder="*"
+	                           		width="130px"
 	                           		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 	                           		tabindex="1" />
 								<span sclass="alert alert-danger" visible="@load(not empty vmsgs[lessonDate])" >
@@ -43,7 +44,7 @@
 						</vbox>
 					</cell>
 				</row>
-				<row sclass="form-grid-row" style="border: none; padding: 0px 30px 0px 30px;" hflex="1" >
+				<row sclass="form-grid-row" style="border: none; padding: 0px 0px 0px 0px;" hflex="1" >
 					<cell sclass="form-grid-cell" hflex="1" colspan="2" >
 						<!-- Seznam ucastniku -->
 						<listbox model="@load(vm.allCourseParticList)"
@@ -67,12 +68,12 @@
 					    </listbox>
 					</cell>
 				</row>
-				<row sclass="form-grid-row" style="border: none; padding: 10px 30px 10px 30px;" hflex="1" >
+				<row sclass="form-grid-row" style="border: none; padding: 10px 0px 10px 0px;" hflex="1" >
 					<cell sclass="form-grid-cell" hflex="1" colspan="2" >
 						<intbox placeholder="${c:l('txt.ui.common.swimingMeters')}" value="@bind(fx.additionalColumnInt)" hflex="1" />
 					</cell>
 				</row>
-				<row sclass="form-grid-row" style="border: none; padding: 10px 30px 10px 30px;" hflex="1" >
+				<row sclass="form-grid-row" style="border: none; padding: 10px 0px 10px 0px;" hflex="1" >
 					<cell sclass="form-grid-cell" hflex="1" colspan="2" >
 						<textbox multiline="true" placeholder="${c:l('txt.ui.common.description')}" value="@bind(fx.description)" rows="5" hflex="1"/>
 					</cell>
