@@ -38,6 +38,7 @@ public class CourseParticipant implements IdentEntity {
 	private int varsymbolCore;
 	private Date notifiedSemester1PaymentAt;
 	private Date notifiedSemester2PaymentAt;
+	private Date courseParticipationInterruptedAt; 
 
 	/*
 	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
@@ -205,6 +206,14 @@ public class CourseParticipant implements IdentEntity {
 		this.notifiedSemester2PaymentAt = notifiedSemester2PaymentAt;
 	}
 	
+	public Date getCourseParticipationInterruptedAt() {
+		return courseParticipationInterruptedAt;
+	}
+
+	public void setCourseParticipationInterruptedAt(Date courseParticipationInterruptedAt) {
+		this.courseParticipationInterruptedAt = courseParticipationInterruptedAt;
+	}
+	
 	public String getInCourseInfo() {
 		String ret = null;
 		String DELIMITER = ", ";
@@ -246,8 +255,7 @@ public class CourseParticipant implements IdentEntity {
 				+ courseList + ", representativeUuid=" + representativeUuid + ", courseUuid=" + courseUuid
 				+ ", courseName=" + courseName + ", coursePaymentVO=" + coursePaymentVO + ", varsymbolCore="
 				+ varsymbolCore + ", notifiedSemester1PaymentAt=" + notifiedSemester1PaymentAt
-				+ ", notifiedSemester2PaymentAt=" + notifiedSemester2PaymentAt + ", lessonAttendance="
-				+ lessonAttendance + "]";
+				+ ", notifiedSemester2PaymentAt=" + notifiedSemester2PaymentAt + ", courseParticipationInterruptedAt="
+				+ courseParticipationInterruptedAt + ", lessonAttendance=" + lessonAttendance + "]";
 	}
-
 }

@@ -95,6 +95,7 @@ CREATE TABLE course_course_participant(
 	individual_price_semester_2 INT NULL,
     notified_semester_1_payment_at TIMESTAMP NULL,
     notified_semester_2_payment_at TIMESTAMP NULL,
+    course_partic_interrupted_at TIMESTAMP NULL,
 	PRIMARY KEY (uuid)
 );
 

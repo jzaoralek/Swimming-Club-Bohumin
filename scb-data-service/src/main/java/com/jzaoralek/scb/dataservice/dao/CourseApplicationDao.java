@@ -19,5 +19,6 @@ public interface CourseApplicationDao {
 	void update(CourseApplication courseApplication);
 	void updatePayed(CourseApplication courseApplication, boolean payed);
 	void updateNotifiedPayment(List<UUID> courseParticUuidList, Date notifiedAt, boolean firstSemester);
+	void updateCourseParticInterruption(List<UUID> courseCourseParticUuidList, Date interrupetdAt);
 	void delete(CourseApplication courseApplication);
 }

@@ -59,6 +59,11 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 	}
 	
 	@Test
+	public void testGetCourseCourseParticipantVO() {
+		courseParticipantDao.getCourseCourseParticipantVO(UUID.randomUUID(), UUID.randomUUID());
+	}
+	
+	@Test
 	public void testGetByPersonalNumberAndInterval() {
 		courseParticipantDao.getByVarsymbolAndInterval(PARTIC_PERSONAL_NO, YEAR_FROM, YEAR_TO);
 	}

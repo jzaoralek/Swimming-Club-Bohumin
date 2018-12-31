@@ -3,6 +3,7 @@ package com.jzaoralek.scb.dataservice.dao;
 import java.util.List;
 import java.util.UUID;
 
+import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 
 public interface CourseParticipantDao {
@@ -14,9 +15,11 @@ public interface CourseParticipantDao {
 	 * @return
 	 */
 	CourseParticipant getCourseParticInOneCourse(UUID courseCourseParticUuid);
+	CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid);
 	boolean existsByPersonalNumber(String personalNumber);
 	CourseParticipant getByVarsymbolAndInterval(String varsymbolCore, int yearFrom, int yearTo);
 	List<CourseParticipant> getByCourseUuid(UUID courseUuid);
+	List<CourseParticipant> getByCourseIncInterruptedUuid(UUID courseUuid);
 	List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid);
 	List<CourseParticipant> getByUserUuid(UUID userUuid);
 	void insertToLearningLesson(UUID learningLessonUuid, List<CourseParticipant> participantList);

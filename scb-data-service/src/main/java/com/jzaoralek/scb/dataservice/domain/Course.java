@@ -25,6 +25,7 @@ public class Course implements IdentEntity {
 	private List<Lesson> lessonList;
 	private CourseLocation courseLocation;
 	private Integer maxParticipantCount;
+	private CourseCourseParticipantVO courseCourseParticipantVO;
 
 	public String getOccupancy() {
 		return getParticipantListCount() + " / " + (this.maxParticipantCount != null ? this.maxParticipantCount : 0);
@@ -149,6 +150,12 @@ public class Course implements IdentEntity {
 	}
 	public void setMaxParticipantCount(Integer maxParticipantCount) {
 		this.maxParticipantCount = maxParticipantCount;
+	}
+	public CourseCourseParticipantVO getCourseCourseParticipantVO() {
+		return courseCourseParticipantVO;
+	}
+	public void setCourseCourseParticipantVO(CourseCourseParticipantVO courseCourseParticipantVO) {
+		this.courseCourseParticipantVO = courseCourseParticipantVO;
 	}
 	
 	@Override
