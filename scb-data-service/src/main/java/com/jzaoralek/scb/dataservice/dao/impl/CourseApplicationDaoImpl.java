@@ -397,6 +397,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", ccp.varsymbol_core  " +
 			", ccp.notified_semester_1_payment_at  " +
 			", ccp.notified_semester_2_payment_at " +
+			", ccp.course_partic_interrupted_at " +
 			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
 			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " + 
 			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\"  " +
@@ -407,6 +408,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", course c " +
 			"where " +
 			"c.uuid = ccp.course_uuid " +
+			"AND ccp.course_partic_interrupted_at is null " +
 			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
 			"AND c.year_to = :"+YEAR_TO_PARAM;
 			
@@ -416,6 +418,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	private static final String UPDATE_PAYED = "UPDATE course_application SET modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", payed = :"+PAYED_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER1 = "UPDATE course_course_participant SET notified_semester_1_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
 	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER2 = "UPDATE course_course_participant SET notified_semester_2_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
+	private static final String UPDATE_COURSE_PARTIC_INTERRUPTED_AT = "UPDATE course_course_participant SET course_partic_interrupted_at = :course_partic_interrupted_at where uuid IN ( :uuids ) ";
 	
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
@@ -469,6 +472,19 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		} else  {
 			namedJdbcTemplate.update(UPDATE_NOTIFIED_PAYMENT_SEMESTER2, paramMap);			
 		}
+	}
+	
+	@Override
+	public void updateCourseParticInterruption(List<UUID> courseCourseParticUuidList, Date interrupetdAt) {
+		List<String> uuidList = new ArrayList<>();
+		for (UUID item : courseCourseParticUuidList) {
+			uuidList.add(item.toString());
+		}
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("uuids", uuidList);
+		paramMap.addValue("course_partic_interrupted_at", interrupetdAt);
+		namedJdbcTemplate.update(UPDATE_COURSE_PARTIC_INTERRUPTED_AT, paramMap);
 	}
 	
 	@Override
@@ -533,8 +549,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		
 		// spojit do vysledneho seznamu obsahujiciho ucastniky zarazene do kurzu v danem roce
 		List<CourseApplication> ret = new  ArrayList<>();
-		List<CourseParticipant> courseParticipantInCourseList = null;
-		CourseParticipant courseParticipant = null;
+//		List<CourseParticipant> courseParticipantInCourseList = null;
+//		CourseParticipant courseParticipant = null;
 		
 		CourseApplication courseApplication = null;
 		for (CourseParticipant courseParticInCourse : courseCourseParticipantAllByYear) {
@@ -681,6 +697,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipant.setVarsymbolCore(rs.getInt("varsymbol_core"));
 			courseParticipant.setNotifiedSemester1PaymentAt(rs.getTimestamp("notified_semester_1_payment_at"));
 			courseParticipant.setNotifiedSemester2PaymentAt(rs.getTimestamp("notified_semester_2_payment_at"));
+			courseParticipant.setCourseParticipationInterruptedAt(rs.getTimestamp("course_partic_interrupted_at"));
 			 String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
 			 String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");				
 			 if (StringUtils.hasText(courseCourseParticipantUuid)) {

@@ -68,7 +68,7 @@ public class LearningLessonDetailWinVM extends BaseVM {
 		}
 
 		this.learningLesson = learningLesson.getUuid() != null ? learningLessonService.getByUUID(learningLesson.getUuid()) : learningLesson;
-		this.allCourseParticList = courseService.getByCourseParticListByCourseUuid(this.learningLesson.getLesson().getCourseUuid());
+		this.allCourseParticList = courseService.getByCourseParticListByCourseUuid(this.learningLesson.getLesson().getCourseUuid(), false);
 
 		// selected vybrat zvsech ucastniku
 		if (!CollectionUtils.isEmpty(this.learningLesson.getParticipantList())) {

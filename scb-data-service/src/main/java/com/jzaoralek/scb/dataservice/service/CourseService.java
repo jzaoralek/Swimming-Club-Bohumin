@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
@@ -12,7 +13,7 @@ public interface CourseService {
 
 	List<Course> getAll(int yearFrom, int yearTo, boolean withLessons);
 	List<Course> getAllExceptCourse(UUID courseUuid);
-	List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid);
+	List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid, boolean inclInterrupted);
 	List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid, int yearFrom, int yearTo);
 	/**
 	 * Get all participants for participant representative.
@@ -39,4 +40,6 @@ public interface CourseService {
 	CourseLocation store(CourseLocation courseLocatiom);
 	void deleteCourseLocation(CourseLocation courseLocatiom);
 	boolean existsByCourseLocation(UUID courseLocationUuid);
+	
+	CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid);
 }

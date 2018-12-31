@@ -1,0 +1,1 @@
+ALTER TABLE  course_course_participant ADD course_partic_interrupted_at TIMESTAMP NULL;

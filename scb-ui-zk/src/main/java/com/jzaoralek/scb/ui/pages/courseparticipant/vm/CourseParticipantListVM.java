@@ -94,8 +94,12 @@ public class CourseParticipantListVM extends BaseVM {
 	@NotifyChange("*")
 	@Command
     public void createNewCourseApplicationCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
-		CourseParticipant courseParticipant = courseService.getCourseParticipantByUuid(uuid);
-		createNewCourseApplication(courseParticipant);
+		if (this.courseSelectionRequired) {
+			
+		} else {
+			CourseParticipant courseParticipant = courseService.getCourseParticipantByUuid(uuid);
+			createNewCourseApplication(courseParticipant);			
+		}
 	}
 	
 	@NotifyChange("*")
@@ -113,6 +117,53 @@ public class CourseParticipantListVM extends BaseVM {
 			this.courseLocationSelected = null;
 		}
 		popup.close();
+	}
+	
+	@NotifyChange("*")
+	@Command
+	public void logToCourseCmd(@BindingParam("courseParticipant") CourseParticipant courseParticipant, @BindingParam("popup") Popup popup) {
+		Course courseSelected = this.courseSelected.iterator().next();
+		if (courseSelected == null) {
+			return;
+		}
+		// kontrola zda-li jit neni ucastnik zarazen do kurzu
+		List<CourseParticipant> courseParticipantInCourseList = courseService.getByCourseParticListByCourseUuid(courseSelected.getUuid(), true);
+		for (CourseParticipant item : courseParticipantInCourseList) {
+			if (item.getUuid().toString().equals(courseParticipant.getUuid().toString())) {
+				WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.participantAlreadyInCourse", new Object[] {courseSelected.getName()}));
+				return;
+			}
+		}
+		createNewCourseApplication(courseService.getCourseParticipantByUuid(courseParticipant.getUuid()));	
+		WebUtils.setSessAtribute("notificationMessage", Labels.getLabel("msg.ui.warn.participantLoggedToCourse", new Object[] {courseParticipant.getContact().getCompleteName(), courseSelected.getName()}));
+		detailCmd(courseParticipant.getUuid());
+		
+//		try {
+//			Course courseSelected = this.courseSelected.iterator().next();
+//			if (courseSelected == null) {
+//				return;
+//			}
+//			// kontrola zda-li jit neni ucastnik zarazen do kurzu
+//			List<CourseParticipant> courseParticipantInCourseList = courseService.getByCourseParticListByCourseUuid(courseSelected.getUuid(), true);
+//			for (CourseParticipant item : courseParticipantInCourseList) {
+//				if (item.getUuid().toString().equals(courseParticipant.getUuid().toString())) {
+//					WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.participantAlreadyInCourse", new Object[] {courseSelected.getName()}));
+//					return;
+//				}
+//			}
+//			
+//			// prihlaseni rovnou do kurzu
+//			if (this.courseSelected != null && !this.courseSelected.isEmpty()) {
+//				courseService.storeCourseParticipants(Arrays.asList(courseParticipant), courseSelected.getUuid());
+//			}
+//			popup.close();
+//			// sendMail(courseApplication, this.pageHeadline);
+//			WebUtils.setSessAtribute("notificationMessage", Labels.getLabel("msg.ui.warn.participantLoggedToCourse", new Object[] {courseParticipant.getContact().getCompleteName(), courseSelected.getName()}));
+//			detailCmd(courseParticipant.getUuid());
+//		} catch (ScbValidationException e) {
+//			LOG.warn("ScbValidationException caught for courseParticipant: " + courseParticipant.getUuid(), e);
+//			WebUtils.showNotificationError(e.getMessage());
+//		}
 	}
 	
 	/**
@@ -229,11 +280,14 @@ public class CourseParticipantListVM extends BaseVM {
 	 * @return
 	 */
 	public boolean newCourseApplicationAllowed(CourseParticipant courseParticipant) {
-		List<CourseApplication> courseApplicationList = courseApplicationService.getByCourseParticipantUuid(courseParticipant.getUuid());
-		for (CourseApplication item : courseApplicationList) {
-			if (item.getYearFrom() == this.yearFromTo.getValue0()) {
-				return false;
-			}
+		if (!this.courseSelectionRequired) {
+			// kontrola zda-li neni uz prihlaseny jen pokud neni povolen vyber kurzu, pokud ano, muze se ucastnik prihlasit do vice kurzu
+			List<CourseApplication> courseApplicationList = courseApplicationService.getByCourseParticipantUuid(courseParticipant.getUuid());
+			for (CourseApplication item : courseApplicationList) {
+				if (item.getYearFrom() == this.yearFromTo.getValue0()) {
+					return false;
+				}
+			}			
 		}
 		return this.courseApplicationAllowed;
 	}
@@ -243,7 +297,11 @@ public class CourseParticipantListVM extends BaseVM {
 	}
 
 	private String buildNewCourseApplicationButtonText() {
-		return Labels.getLabel("txt.ui.menu.application") + " - " + String.valueOf(this.yearFromTo.getValue0()) + "/" + String.valueOf(this.yearFromTo.getValue1());
+		if (configurationService.isCourseSelectionRequired()) {
+			return Labels.getLabel("txt.ui.common.LogToCourse");
+		} else {
+			return Labels.getLabel("txt.ui.menu.application") + " - " + String.valueOf(this.yearFromTo.getValue0()) + "/" + String.valueOf(this.yearFromTo.getValue1());			
+		}
 	}
 	
 	private String buildNewCourseParticipantButtonText() {

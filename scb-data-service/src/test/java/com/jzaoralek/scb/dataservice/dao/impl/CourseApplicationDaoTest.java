@@ -90,8 +90,14 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 		assertList(courseApplicationDao.getAssignedToCourse(YEAR_FROM, YEAR_TO), 0, ITEM_UUID);
 	}
 	
+	@Test
 	public void testUpdateNotifiedPayment() {
 		courseApplicationDao.updateNotifiedPayment(Arrays.asList(COURSE_PARTICIPANT_UUID), Calendar.getInstance().getTime(), true);
+	}
+	
+	@Test
+	public void testUpdateCourseParticInterruption() {
+		courseApplicationDao.updateCourseParticInterruption(Arrays.asList(COURSE_PARTICIPANT_UUID), Calendar.getInstance().getTime());
 	}
 	
 	@Test
