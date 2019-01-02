@@ -70,7 +70,7 @@
 					        </listhead>
 					         
 					        <template name="model" var="item" >
-					            <listitem style="${vm.getCourseRowColor(item)}" disabled="${item.fullOccupancy}" >
+					            <listitem style="${vm.getCourseRowColor(item)}" visible="${!item.fullOccupancy}" >
 					                <listcell></listcell>
 					                <listcell label="${item.name}" style="font-weight: bold;" />
 					                <listcell>

@@ -60,7 +60,7 @@
 											emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 											class="listbox" >
 									        <auxhead>
-									            <auxheader class="header" colspan="${vm.isAttendanceForParentsVisible() ? 6 : 5}" >
+									            <auxheader class="header" colspan="${vm.isAttendanceForParentsVisible() ? 5 : 4}" >
 									            	<hbox hflex="1" height="42px" align="center" >
 										            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
 									            			<hbox vflex="1" align="center">
@@ -83,7 +83,7 @@
 									            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
 <!-- 									            <listheader width="35px" /> -->
 									            <listheader hflex="min" />
-									            <listheader label="${c:l('txt.ui.common.participancy')}" hflex="min" />
+<!-- 									            <listheader label="${c:l('txt.ui.common.participancy')}" hflex="min" /> -->
 									            <listheader hflex="min" if="${vm.isAttendanceForParentsVisible()}" />
 									        </listhead>
 									         
@@ -117,22 +117,22 @@
 														    </popup>
 								                		</hlayout>
 									                </listcell>
-									                <listcell>
-									                	<hbox align="center">
-										                	<!-- Zrusit ucast -->
-										                	<button label="${c:l('txt.ui.common.cancelParticipancy')}" 
-										                		iconSclass="z-icon-times"
-										                		sclass="btn-danger"
-										                		width="105px"
-										                		visible="@load(vm.cancelParticipancyAllowed(item))"
-										                		onClick="@command('cancelParticipancyCmd', course=item)" />
-										                	<!-- Obnovit ucast -->
-										                	<button label="${c:l('txt.ui.common.renewParticipancy')}" 
-										                		iconSclass="z-icon-arrow-right"
-										                		visible="@load(!vm.cancelParticipancyAllowed(item))"
-										                		onClick="@command('renewParticipancyCmd', course=item)" />
-										                </hbox>
-									                </listcell>
+<!-- 									                <listcell> -->
+<!-- 									                	<hbox align="center"> -->
+<!-- 										                	Zrusit ucast -->
+<!-- 										                	<button label="${c:l('txt.ui.common.cancelParticipancy')}"  -->
+<!-- 										                		iconSclass="z-icon-times" -->
+<!-- 										                		sclass="btn-danger" -->
+<!-- 										                		width="105px" -->
+<!-- 										                		visible="@load(vm.cancelParticipancyAllowed(item))" -->
+<!-- 										                		onClick="@command('cancelParticipancyCmd', course=item)" /> -->
+<!-- 										                	Obnovit ucast -->
+<!-- 										                	<button label="${c:l('txt.ui.common.renewParticipancy')}"  -->
+<!-- 										                		iconSclass="z-icon-arrow-right" -->
+<!-- 										                		visible="@load(!vm.cancelParticipancyAllowed(item))" -->
+<!-- 										                		onClick="@command('renewParticipancyCmd', course=item)" /> -->
+<!-- 										                </hbox> -->
+<!-- 									                </listcell> -->
 									                <listcell if="${vm.isAttendanceForParentsVisible()}" >
 										                	<button label="${c:l('txt.ui.common.attendance')}" onClick="@command('showAttendanceCmd', course=item)" />
 									                </listcell>
