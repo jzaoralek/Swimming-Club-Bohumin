@@ -230,7 +230,7 @@
 						        <listhead>
 <!-- 						        	<listheader width="25px" /> -->
 						            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(contact.surname)" hflex="1" align="left" />
-						            <listheader label="${c:l('txt.ui.common.birthDate')}" sort="auto(birthdate)" hflex="min" align="left" />
+						            <listheader label="Datum nar." sort="auto(birthdate)" hflex="min" align="left" />
 						            <listheader width="70px" align="center" />
 						        </listhead>
 						         

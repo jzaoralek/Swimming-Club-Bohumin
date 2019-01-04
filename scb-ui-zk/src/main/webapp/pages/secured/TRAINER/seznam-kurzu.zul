@@ -15,7 +15,6 @@
 			<listbox model="@load(vm.courseList)"
 					id="courseList"
 					hflex="1"
-					style="margin-top: 20px;"
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 					class="listbox-300 mobile-inherit-width" >
 		        <auxhead>
