@@ -20,11 +20,19 @@
 						iconSclass="z-icon-arrow-left" 
 						sclass="btn-light fix-btn-icon"/>
 		            					
-				<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}"
+				<button onClick="@command('newItemCmd')"
 						label="${c:l('txt.ui.common.new')}" 
         				iconSclass="z-icon-plus"
         				style="margin-left: 10px;"
         				visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
+        		
+        		<button onClick="@command('deleteCmd')"
+						label="Odstranit" 
+						sclass="btn-danger" 
+        				iconSclass="z-icon-times"
+        				style="margin-left: 10px;"
+        				visible="@load(vm.isLoggedUserInRole('ADMIN') and vm.updateMode)" />		
+        				
 			</hlayout>
 			
             <label value="@load(vm.pageHeadline)" sclass="scb-headline-big"/>

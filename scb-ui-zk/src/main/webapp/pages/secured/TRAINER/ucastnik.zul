@@ -330,7 +330,7 @@
 								mold="paging"
 								pageSize="10"
 								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-								class="listbox" >
+								class="listbox-500" >
 						        <auxhead>
 						            <auxheader class="header" colspan="5" >
 						            	<button onClick="@command('newResultCmd')" 

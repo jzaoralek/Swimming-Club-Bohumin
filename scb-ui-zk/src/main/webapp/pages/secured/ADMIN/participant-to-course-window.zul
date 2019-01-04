@@ -8,7 +8,7 @@
     <vlayout viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.ParticipantToCourseWinVM')">
     	
     	<!-- Vyber z jineho kurzu -->
-    	<hbox visible="@load(vm.selectCourseVisible)" align="center" >
+    	<hbox visible="@load(vm.selectCourseVisible)" align="center" hflex="1" >
 		    <label value="${c:l('txt.ui.common.course')}: " />
 		    <listbox selectedItem="@bind(vm.courseSelected)" 
 				model="@load(vm.courseList)"
@@ -40,7 +40,6 @@
 	            	
 	            	<hlayout sclass="pull-right">
             			<hbox>
-            				<button iconSclass="z-icon-check" onClick="@command('submitCmd', window=modalWindow)" sclass="toolbar-btn" tooltiptext="OK" />
            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" sclass="toolbar-btn" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
 						</hbox>
 					</hlayout>
@@ -101,6 +100,12 @@
 	            </listitem>
 	        </template>
 	    </listbox>
+	    
+	    <button label="OK"
+			onClick="@command('submitCmd', window=modalWindow)"
+			sclass="btn-success"
+			style="margin-top: 10px"
+			iconSclass="z-icon-check"  />
 	    
     </vlayout>
 </window>

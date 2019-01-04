@@ -1219,6 +1219,10 @@ i.big-icon{
 		min-width: 800px !important;
 	}
 	
+	.listbox-500{
+		min-width: 500px !important;
+	}
+	
 	.listbox-400{
 		min-width: 400px !important;
 	}

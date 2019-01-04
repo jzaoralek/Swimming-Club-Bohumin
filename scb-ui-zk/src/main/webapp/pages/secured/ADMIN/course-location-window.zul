@@ -1,7 +1,7 @@
 <window id="modalWindow"
 	title="${c:l('txt.ui.common.courseLocation')}" 
 	border="normal" 
-    width="475px"
+    width="375px"
     position="center,center" 
     closable="true">
     

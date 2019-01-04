@@ -7,10 +7,10 @@
 			height="100%"
 			sclass="scb-view" >
 		
-		<vlayout>
+		<vlayout hflex="1">
 			<label value="${c:l('txt.ui.menu.configuration')}" sclass="scb-headline-big"/>
 		
-				<tabbox id="tb" hflex="1" style="margin-top: 20px;" sclass="mobile-width-800">
+				<tabbox id="tb" hflex="1" style="margin-top: 20px;">
 				    <tabs id="tabs">
 				        <tab id="courseParticipants" label="${c:l('txt.ui.common.configBasic')}" />
 				        <tab id="courseLocations" label="${c:l('txt.ui.common.courseLocations')}" />
@@ -76,16 +76,16 @@
 				        </tabpanel>
 				        
 				        <!-- Mista konani kurzu -->
-				        <tabpanel  viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.configuration.vm.CourseLocationAdminVM')">
+				        <tabpanel viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.configuration.vm.CourseLocationAdminVM')">
 				    		<listbox model="@load(vm.courseLocationList)"
 								id="courseLocationList"
 								hflex="1"
 								mold="paging"
 								pageSize="10"
 								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-								class="listbox" >
+								class="listbox-300" >
 						        <auxhead>
-						            <auxheader class="header" colspan="3" >
+						            <auxheader colspan="2" >
 						            	<hlayout sclass="pull-left">
 						            		<button onClick="@command('newItemCmd')" 
 						            			tooltiptext="${c:l('txt.ui.common.new')}" 
@@ -104,14 +104,32 @@
 						        
 						        <listhead>
 						            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
-						            <listheader label="${c:l('txt.ui.common.description2')}" sort="auto(description)" align="left" hflex="2" />
-						            <listheader width="90px" align="center" />
+						            <listheader hflex="min" align="center" />
 						        </listhead>
 						         
 						        <template name="model">
 						            <listitem>
-						                <listcell label="${each.name}" onDoubleClick="@command('detailCmd', item=each)" />
-						                <listcell label="${each.description}" onDoubleClick="@command('detailCmd', item=each)" />                	
+						                <listcell onDoubleClick="@command('detailCmd', item=each)" >
+						                	<hbox hflex="1" vflex="1" align="center" >
+						                		<vlayout hflex="1">
+								                	<label value="${each.name}" />
+						                		</vlayout>
+						                		<vbox width="30px" >
+								                	<!-- Description popup -->
+								                	<a sclass="big-icon" iconSclass="z-icon-info-circle" popup="descriptionPopup_${each.uuid}, position=after_end" style="margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.description2')}" />							                	
+								                	<popup id="descriptionPopup_${each.uuid}" width="365px" >
+												    	<vbox style="margin: 5px;" hflex="1">
+												    		<label value="${c:l('txt.ui.common.description2')}" hflex="1" sclass="sp-popup-headline"/>
+												    		<textbox multiline="true"  
+												    			width="325px"
+												    			value="${each.description}"
+												    			sclass="form-input-text"
+												    			height="115px" />
+												    	</vbox>
+												    </popup>
+						                		</vbox>
+						                	</hbox>
+						                </listcell>
 						                <listcell>
 						                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourse_${each.uuid}, position=after_end" />
 						                	<menupopup id="menuCourse_${each.uuid}" >
@@ -132,9 +150,9 @@
 								mold="paging"
 								pageSize="10"
 								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-								class="listbox" >
+								class="listbox-300" >
 						        <auxhead>
-						            <auxheader class="header" colspan="3" >
+						            <auxheader class="header" colspan="2" >
 						            	<hlayout sclass="pull-left">
 						            		<button onClick="@command('newItemCmd')" 
 						            					tooltiptext="${c:l('txt.ui.common.new')}" 
@@ -153,14 +171,32 @@
 						        
 						        <listhead>
 						            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
-						            <listheader label="${c:l('txt.ui.common.description')}" sort="auto(description)" align="left" hflex="2" />
 						            <listheader width="90px" align="center" />
 						        </listhead>
 						         
 						        <template name="model">
 						            <listitem>
-						                <listcell label="${each.name}" onDoubleClick="@command('detailCmd', item=each)" />
-						                <listcell label="${each.description}" onDoubleClick="@command('detailCmd', item=each)" />                	
+						                <listcell onDoubleClick="@command('detailCmd', item=each)" >
+						                	<hbox hflex="1" vflex="1" align="center" >
+						                		<vlayout hflex="1">
+								                	<label value="${each.name}" />
+						                		</vlayout>
+						                		<vbox width="30px" >
+								                	<!-- Description popup -->
+								                	<a sclass="big-icon" iconSclass="z-icon-info-circle" popup="styleDescriptionPopup_${each.uuid}, position=after_end" style="margin-left: 5px;" tooltiptext="${c:l('txt.ui.common.description2')}" />							                	
+								                	<popup id="styleDescriptionPopup_${each.uuid}" width="365px" >
+												    	<vbox style="margin: 5px;" hflex="1">
+												    		<label value="${c:l('txt.ui.common.description2')}" hflex="1" sclass="sp-popup-headline"/>
+												    		<textbox multiline="true"  
+												    			width="325px"
+												    			value="${each.description}"
+												    			sclass="form-input-text"
+												    			height="115px" />
+												    	</vbox>
+												    </popup>
+						                		</vbox>
+						                	</hbox>
+						                </listcell>
 						                <listcell>
 						                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourse_${each.uuid}, position=after_end" />
 						                	<menupopup id="menuCourse_${each.uuid}" >

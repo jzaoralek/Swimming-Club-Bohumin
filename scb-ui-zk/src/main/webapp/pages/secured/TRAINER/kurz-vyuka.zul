@@ -22,7 +22,7 @@
 				<label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
 			</hlayout>
 			
-					<tabbox id="tb" hflex="1" sclass="mobile-width-1200">
+					<tabbox id="tb" hflex="1">
 					    <tabs id="tabs">
 <!-- 					        selected="@load(vm.tabSelected eq 'LESSONS')" -->
 <!-- 					        onSelect="@command('redirectToTab', tab='LESSONS')" -->
@@ -42,9 +42,9 @@
 									hflex="1"
 									style="margin-bottom: 20px;"
 									emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-									class="listbox" >
+									class="listbox-500" >
 							        <auxhead>
-							            <auxheader class="header" colspan="5" >
+							            <auxheader class="header" colspan="4" >
 							            	<hbox hflex="1" height="42px" align="center" >
 								            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
 							            			<hbox vflex="1" align="center">
@@ -68,17 +68,21 @@
 							        </auxhead>
 							        
 							        <listhead>
-							        	<listheader label="${c:l('txt.ui.common.dayOfWeek')}" align="left" sort="auto(lesson.dayOfWeek)" />
-							        	<listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(lessonDate)" />
+							        	<listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(lessonDate)" hflex="1" />
 										<listheader label="${c:l('txt.ui.common.time')}" align="left" />
-							            <listheader label="${c:l('txt.ui.common.lessonProcessed')}" align="center" />
+							            <listheader label="Proběhla" align="center" hflex="min" />
 							            <listheader width="90px" align="center" />
 							        </listhead>
 							         
 							        <template name="model">
 							            <listitem>
-							            	<listcell label="@load(each.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" height="50px" />
-							            	<listcell label="@load(each.lessonDate) @converter(vm.dateConverter)" />
+							            	<listcell>
+							            		<hlayout>
+								            		<label value="@load(each.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" />
+								            		<label value="&#160;&#160;&#160;" />
+								            		<label value="@load(each.lessonDate) @converter(vm.dateConverter)" />
+							            		</hlayout>
+							            	</listcell>
 							                <listcell>
 							                	<label value="@load(each.timeFrom) @converter(vm.timeConverter)" /> - 
 							                	<label value="@load(each.timeTo) @converter(vm.timeConverter)" />

@@ -29,7 +29,7 @@
 				            				if="${vm.isLoggedUserInRole('ADMIN')}"
 		            				visible="${vm.isLoggedUserInRole('ADMIN')}"/>
 			                	
-					                	<menupopup id="messagePopup" width="255px" if="${vm.isLoggedUserInRole('ADMIN')}" >
+					                	<menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
 		            				<!-- Nova zprava zobrazenym ucastnikum. -->
 									<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('openModalToSendEmailCmd')" />
 									<!-- Odeslani instrukci k platbe za prvni pololeti. -->

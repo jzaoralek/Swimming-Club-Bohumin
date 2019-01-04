@@ -32,8 +32,10 @@ import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
@@ -224,6 +226,35 @@ public class CourseVM extends BaseVM {
 	@Command
 	public void newItemCmd() {
 		WebUtils.redirectToNewCourse();
+	}
+	
+	@Command
+    public void deleteCmd() {
+		if (!getUpdateMode()) {
+			return;
+		}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Deleting course with uuid: " + this.course.getUuid());
+		}
+		final Object[] msgParams = new Object[] {this.course.getName()};
+		final UUID uuid = this.course.getUuid();
+		MessageBoxUtils.showDefaultConfirmDialog(
+			"msg.ui.quest.deleteCourse",
+			"msg.ui.title.deleteRecord",
+			new SzpEventListener() {
+				@Override
+				public void onOkEvent() {
+					try {
+						courseService.delete(uuid);
+						Executions.sendRedirect(WebPages.COURSE_LIST.getUrl());
+					} catch (ScbValidationException e) {
+						LOG.warn("ScbValidationException caught for course with uuid: " + uuid);
+						WebUtils.showNotificationError(e.getMessage());
+					}
+				}
+			},
+			msgParams
+		);
 	}
 
 	public Course getCourse() {
