@@ -6,6 +6,9 @@
 
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 
+<?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
+<?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
+
 <zk>
 	<div viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.UserVM')"
 		self="@{define(mainContent)}"

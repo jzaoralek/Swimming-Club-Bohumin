@@ -2,6 +2,9 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 <?page title="${c:l('txt.ui.common.version')}"?>
 
+<?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
+<?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
+
 <zk>
 	<vlayout viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.vm.VersionVM')" style="background: white;" hflex="1" vflex="1">
 		<hbox>
