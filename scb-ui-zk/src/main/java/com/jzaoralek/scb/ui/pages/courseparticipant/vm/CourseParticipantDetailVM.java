@@ -1,6 +1,8 @@
 package com.jzaoralek.scb.ui.pages.courseparticipant.vm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +23,7 @@ import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.LearningLessonStatsWrapper;
 import com.jzaoralek.scb.dataservice.service.CodeListService;
@@ -84,6 +87,13 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.paymentVarSymbolFirstSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 1, this.courseParticipant.getVarsymbolCore());
 		this.paymentVarSymbolSecondSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 2, this.courseParticipant.getVarsymbolCore());
 		this.attendanceForParentsVisible = configurationService.isAttendanceForParentsVisible();
+		
+		// zobrazeni notifikace po redirectu
+		String notifMessage = (String)WebUtils.getSessAtribute("notificationMessage");
+		if (StringUtils.hasText(notifMessage)) {
+			WebUtils.showNotificationInfo(notifMessage);
+			WebUtils.removeSessAtribute("notificationMessage");
+		}
 	}
 	
 	protected void courseYearChangeCmdCore() {
@@ -102,6 +112,14 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		for (Course item : courseListAll) {
 			if (item.getYearFrom() == yearFrom && item.getYearTo() == yearTo) {
 				this.courseList.add(item);
+			}
+		}
+		
+		CourseCourseParticipantVO courseCourseParticipantVO = null;
+		for (Course item : this.courseList) {
+			courseCourseParticipantVO = courseService.getCourseCourseParticipantVO(this.courseParticipant.getUuid(), item.getUuid());
+			if (courseCourseParticipantVO != null) {
+				item.setCourseCourseParticipantVO(courseCourseParticipantVO);
 			}
 		}
 	}
@@ -150,8 +168,47 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.showLessonStats = true;
 	}
 	
+	@NotifyChange("courseList")
+	@Command
+	public void cancelParticipancyCmd(@BindingParam("course") Course course) {
+		courseApplicationService.updateCourseParticInterruption(Arrays.asList(course.getCourseCourseParticipantVO().getUuid()), Calendar.getInstance().getTime());
+		loadCourseListData();
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseParticipationCanceled"));
+	}
+	
+	@NotifyChange("courseList")
+	@Command
+	public void renewParticipancyCmd(@BindingParam("course") Course course) {
+		// potreba zkontrolovat zda-li uz neni zaplnen
+		Course selectedCourseDb = courseService.getByUuid(course.getUuid());
+		if (selectedCourseDb.isFullOccupancy()) {
+			WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.courseIsFull", new Object[] {course.getName()}));
+			return;
+		}
+		
+		courseApplicationService.updateCourseParticInterruption(Arrays.asList(course.getCourseCourseParticipantVO().getUuid()), null);
+		loadCourseListData();
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseParticipationRenewed"));
+	}
+	
 	public boolean isAttendanceForParentsVisible() {
 		return this.attendanceForParentsVisible;
+	}
+	
+	public boolean cancelParticipancyAllowed(Course course) {
+		if (course == null || course.getCourseCourseParticipantVO() == null) {
+			return false;
+		}
+		
+		return course.getCourseCourseParticipantVO().getCourseParticipationInterruptedAt() == null;
+	}
+	
+	public String getRowColorStyleByParticipancy(Course course) {
+		if (course == null || course.getCourseCourseParticipantVO() == null) {
+			return "";
+		}
+		
+		return course.getCourseCourseParticipantVO().getCourseParticipationInterruptedAt() == null ? "background: #DCFEDD;" : "background: #F0F0F0";
 	}
 	
 	public CourseParticipant getCourseParticipant() {

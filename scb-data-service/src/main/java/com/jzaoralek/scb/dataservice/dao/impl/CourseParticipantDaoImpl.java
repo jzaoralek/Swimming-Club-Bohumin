@@ -22,6 +22,7 @@ import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
+import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 
 @Repository
@@ -43,6 +44,13 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	private static final String SELECT_BY_UUID = "SELECT uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by, user_uuid FROM course_participant WHERE uuid= :"+UUID_PARAM;
 
 	private static final String SELECT_BY_COURSE_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid FROM course_participant cp, course_course_participant ccp, contact c "
+			+ "WHERE cp.uuid = ccp.course_participant_uuid "
+			+ "AND cp.contact_uuid = c.uuid "
+			+ "AND ccp.course_uuid = :"+COURSE_UUID_PARAM+" "
+			+ "AND ccp.course_partic_interrupted_at is null "
+			+ "ORDER BY c.surname ";
+	
+	private static final String SELECT_BY_COURSE_INCLUDE_INTERRUPTED_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid FROM course_participant cp, course_course_participant ccp, contact c "
 			+ "WHERE cp.uuid = ccp.course_participant_uuid "
 			+ "AND cp.contact_uuid = c.uuid "
 			+ "AND ccp.course_uuid = :"+COURSE_UUID_PARAM+" "
@@ -73,7 +81,8 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	private static final String DELETE = "DELETE FROM course_participant where uuid = :" + UUID_PARAM;
 	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + ", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", user_uuid=:"+USER_UUID_PARAM+" WHERE uuid=:"+UUID_PARAM;
 	private static final String SELECT_COURSE_COURSE_PARTIC_BY_UUID = "select uuid, course_participant_uuid, course_uuid from course_course_participant where uuid = :"+UUID_PARAM;
-
+	private static final String SELECT_COURSE_COURSE_PARTIC_BY_PARTIC_AND_COURSE = "select * from course_course_participant where course_participant_uuid = :"+COURSE_PARTICIPANT_UUID_PARAM+" AND course_uuid = :"+COURSE_UUID_PARAM;
+	
 	private static final String SELECT_BY_PERSONAL_NO_AND_INTERVAL = "SELECT cp.* FROM course_participant cp, course_course_participant ccp, course c " + 
 			" WHERE cp.uuid = ccp.course_participant_uuid AND ccp.course_uuid = c.uuid " +
 //			" AND TRIM(LEADING '0' FROM REPLACE(cp.personal_number,'/','')) =:" + PERSONAL_NUMBER_PARAM +
@@ -187,11 +196,29 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			namedJdbcTemplate.update(INSERT_COURSE_COURSE_PARTICIPANT, paramMap);
 		}
 	}
+	
+	@Override
+	public CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid) {
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource();
+			paramMap.addValue(COURSE_PARTICIPANT_UUID_PARAM, courseParticUuid.toString());
+			paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
+			return namedJdbcTemplate.queryForObject(SELECT_COURSE_COURSE_PARTIC_BY_PARTIC_AND_COURSE, paramMap, new CourseCourseParticipantRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
 
 	@Override
 	public List<CourseParticipant> getByCourseUuid(UUID courseUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
 		return namedJdbcTemplate.query(SELECT_BY_COURSE_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
+	}
+	
+	@Override
+	public List<CourseParticipant> getByCourseIncInterruptedUuid(UUID courseUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_INCLUDE_INTERRUPTED_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
 	}
 
 	@Override
@@ -260,6 +287,23 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			UUID courseUuid = UUID.fromString(rs.getString("course_uuid"));
 			
 			return new Pair<>(courseParticUuid, courseUuid);
+		}
+	}
+	
+	public static final class CourseCourseParticipantRowMapper implements RowMapper<CourseCourseParticipantVO> {
+
+		@Override
+		public CourseCourseParticipantVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+			CourseCourseParticipantVO ret = new CourseCourseParticipantVO();
+			ret.setUuid(UUID.fromString(rs.getString("uuid")));
+			ret.setCourseParticUuid(UUID.fromString(rs.getString("course_participant_uuid")));
+			ret.setCourseUuid(UUID.fromString(rs.getString("course_uuid")));
+			ret.setVarsymbolCore(rs.getInt("varsymbol_core"));
+			ret.setNotifiedSemester1PaymentAt(rs.getTimestamp("notified_semester_1_payment_at"));
+			ret.setNotifiedSemester2PaymentAt(rs.getTimestamp("notified_semester_2_payment_at"));
+			ret.setCourseParticipationInterruptedAt(rs.getTimestamp("course_partic_interrupted_at"));
+			
+			return ret;
 		}
 	}
 }

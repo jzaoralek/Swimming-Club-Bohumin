@@ -15,6 +15,7 @@ import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseLocationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
@@ -81,8 +82,12 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 
 	@Override
-	public List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid) {
-		return courseParticipantDao.getByCourseUuid(courseUuid);
+	public List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid, boolean inclInterrupted) {
+		if (!inclInterrupted) {
+			return courseParticipantDao.getByCourseUuid(courseUuid);
+		} else {
+			return courseParticipantDao.getByCourseIncInterruptedUuid(courseUuid);
+		}
 	}
 
 	@Override
@@ -222,7 +227,11 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		return courseLocatiom;
 	}
 
-
+	@Override
+	public CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid) {
+		return courseParticipantDao.getCourseCourseParticipantVO(courseParticUuid, courseUuid);
+	}
+	
 	@Override
 	public void deleteCourseLocation(CourseLocation courseLocatiom) {
 		courseLocationDao.delete(courseLocatiom);

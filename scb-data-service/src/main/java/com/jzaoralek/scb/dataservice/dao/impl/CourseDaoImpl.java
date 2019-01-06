@@ -54,7 +54,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	private static final String SELECT_ALL = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by, c.price_semester_1, c.price_semester_2, c.max_participant_count, "
 			+ "cl.uuid \"course_location_uuid\" , cl.name \"course_location_name\", cl.description  \"course_location_description\", "
 			+ "(select count(*) FROM course_course_participant ccp "
-					+ "WHERE ccp.course_uuid = c.uuid) \"participant_count\"  "
+					+ "WHERE ccp.course_uuid = c.uuid AND ccp.course_partic_interrupted_at is null) \"participant_count\"  "
 			+ "FROM course c "
 			+ "LEFT JOIN course_location cl ON (c.course_location_uuid = cl.uuid) "
 			+ "WHERE year_from = :"+YEAR_FROM_PARAM+" AND year_to = :"+YEAR_TO_PARAM 

@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -119,7 +120,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	public void updatePayed(UUID uuid, boolean payed) throws ScbValidationException {
 		CourseApplication courseApplication = courseApplicationDao.getByUuid(uuid, true);
 		if (courseApplication == null) {
-			LOG.warn("CourseApplication not found, uuid: " + uuid);
+			LOG.warn("CourseApplication not found, uuid: {}", uuid);
 			throw new ScbValidationException(messageSource.getMessage("msg.validation.warn.courseApplication.notExistsInDB", null, Locale.getDefault()));
 		}
 
@@ -134,13 +135,21 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		courseApplicationDao.updateNotifiedPayment(courseParticUuidList, Calendar.getInstance().getTime(), firstSemester);
 		
 	}
+	
+	@Override
+	public void updateCourseParticInterruption(List<UUID> courseParticUuidList, Date interrupetdAt) {
+		if (CollectionUtils.isEmpty(courseParticUuidList)) {
+			return;
+		}
+		courseApplicationDao.updateCourseParticInterruption(courseParticUuidList, interrupetdAt);
+	}
 
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public void delete(UUID uuid) throws ScbValidationException {
 		CourseApplication courseApplication = courseApplicationDao.getByUuid(uuid, true);
 		if (courseApplication == null) {
-			LOG.warn("CourseApplication not found, uuid: " + uuid);
+			LOG.warn("CourseApplication not found, uuid: {}", uuid);
 			throw new ScbValidationException(messageSource.getMessage("msg.validation.warn.courseApplication.notExistsInDB", null, Locale.getDefault()));
 		}
 

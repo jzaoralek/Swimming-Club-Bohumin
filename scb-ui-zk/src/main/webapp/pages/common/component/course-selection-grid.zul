@@ -1,0 +1,86 @@
+<zk>
+	<grid width="550px" sclass="form-grid" style="border: none;" if="${vm.courseSelectionRequired}" >
+		<columns>
+               <column align="left" hflex="1" />
+           </columns>
+           
+		<rows style="background: white;" >
+			<row sclass="form-grid-row" 
+				style="border: none; padding: 10px 20px 20px 20px;">
+				<cell sclass="form-grid-cell" >
+					<vbox hflex="1">
+						<label value="${c:l('txt.ui.common.SelectCourseLocation')}"/>
+						<!-- Vyber mista konani kurzu -->
+						<combobox model="@init(vm.courseLocationList)"
+							onSelect="@command('courseLocationSelectCmd')"
+							selectedItem="@bind(vm.courseLocationSelected)"
+							placeholder="${c:l('txt.ui.common.courseLocation2')}"
+							style="background: white;"
+							focus="${vm.courseSelectionRequired}"
+							hflex="1"
+							readonly="true" >
+							<template name="model">
+				            	<comboitem label="${each.name}"/>
+							</template>
+						</combobox>
+					</vbox>
+				</cell>
+			</row>
+			<row sclass="form-grid-row" 
+				style="border: none; padding: 0px 20px 20px 20px;"
+				visible="@load(vm.courseList ne null and vm.courseList.isEmpty())" >
+				<!-- Nenalezen zadky kurz -->
+				<cell sclass="form-grid-cell" >
+					<label value="${c:l('txt.ui.common.NoCourseFoundForLocation')}"/>
+				</cell>
+			</row>		
+			<row sclass="form-grid-row" visible="@load(!empty(vm.courseList))" style="border: none; padding: 0px 20px 20px 20px;" >
+				<!-- Vyber kurzu -->
+				<cell sclass="form-grid-cell">
+					<vbox hflex="1">
+						<label value="${c:l('txt.ui.common.SelectCourse')}"/>	
+						<listbox model="@load(vm.courseList)" 
+							hflex="1"
+							selectedItems="@bind(vm.courseSelected)"
+							emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+							class="listbox"
+							if="${vm.courseSelectionRequired}"
+							multiple="false"
+							checkmark="true" >
+							
+					        <listhead>
+					            <listheader width="25px"  valign="top" />
+					            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="3" valign="top"/>
+					            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" valign="top" />
+					            <listheader label="${c:l('txt.ui.common.Occupancy')}" align="center" hflex="min" valign="top" />
+					            <listheader width="50px" align="center" valign="top" />
+					        </listhead>
+					         
+					        <template name="model" var="item" >
+					            <listitem style="${vm.getCourseRowColor(item)}" visible="${!item.fullOccupancy}" >
+					                <listcell></listcell>
+					                <listcell label="${item.name}" style="font-weight: bold;" />
+					                <listcell>
+					                	<vbox vflex="1" align="start" forEach="${item.lessonList}" >
+					                		<label value="${vm.getLessonToUi(each)}" />
+										</vbox>
+					                </listcell>
+					                <listcell label="${item.fullOccupancy ? c:l('txt.ui.common.occupied') : item.occupancy}" />
+					                <listcell>
+						                <vbox>
+											<!-- Popis -->
+						                	<a iconSclass="z-icon-info-circle" popup="descriptionPopup_${item.uuid}, position=after_end" style="font-size: large;" tooltiptext="${c:l('txt.ui.common.description2')}" />
+						                	<popup id="descriptionPopup_${item.uuid}">
+						                		<course-description course="${item}" />
+										    </popup>
+				                		</vbox>
+					                </listcell>
+					            </listitem>
+					        </template>
+					    </listbox>
+				    </vbox>
+			    </cell>
+			</row>
+		</rows>
+	</grid>
+</zk>

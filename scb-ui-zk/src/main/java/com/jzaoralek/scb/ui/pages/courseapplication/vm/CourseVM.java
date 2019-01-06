@@ -83,7 +83,7 @@ public class CourseVM extends BaseVM {
 						this.course.setCourseLocation(item);
 					}
 				}
-			}
+			}			
 		} else {
 			this.course = new Course();
 //			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseNew");
