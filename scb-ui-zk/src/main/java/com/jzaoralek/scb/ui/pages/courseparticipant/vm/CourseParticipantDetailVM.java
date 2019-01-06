@@ -87,13 +87,6 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.paymentVarSymbolFirstSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 1, this.courseParticipant.getVarsymbolCore());
 		this.paymentVarSymbolSecondSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 2, this.courseParticipant.getVarsymbolCore());
 		this.attendanceForParentsVisible = configurationService.isAttendanceForParentsVisible();
-		
-		// zobrazeni notifikace po redirectu
-		String notifMessage = (String)WebUtils.getSessAtribute("notificationMessage");
-		if (StringUtils.hasText(notifMessage)) {
-			WebUtils.showNotificationInfo(notifMessage);
-			WebUtils.removeSessAtribute("notificationMessage");
-		}
 	}
 	
 	protected void courseYearChangeCmdCore() {

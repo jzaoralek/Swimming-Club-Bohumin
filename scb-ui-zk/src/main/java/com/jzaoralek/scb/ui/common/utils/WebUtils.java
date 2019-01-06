@@ -45,6 +45,10 @@ public final class WebUtils {
 	public static void showNotificationWarning(String msg) {
 		Clients.showNotification(msg, Clients.NOTIFICATION_TYPE_WARNING, null, null, 6000, true);
 	};
+	
+	public static void showNotificationInfoAfterRedirect(String msg) {
+		WebUtils.setSessAtribute(WebConstants.NOTIFICATION_MESSAGE, msg);
+	};
 
 	/**
 	 * Vraci url za domenou

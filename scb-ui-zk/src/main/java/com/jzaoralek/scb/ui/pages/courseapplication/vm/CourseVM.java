@@ -246,6 +246,7 @@ public class CourseVM extends BaseVM {
 				public void onOkEvent() {
 					try {
 						courseService.delete(uuid);
+						WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseDeleted", msgParams));
 						Executions.sendRedirect(WebPages.COURSE_LIST.getUrl());
 					} catch (ScbValidationException e) {
 						LOG.warn("ScbValidationException caught for course with uuid: " + uuid);

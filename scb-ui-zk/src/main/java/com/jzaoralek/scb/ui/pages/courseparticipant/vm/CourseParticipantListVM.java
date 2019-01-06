@@ -135,7 +135,7 @@ public class CourseParticipantListVM extends BaseVM {
 			}
 		}
 		createNewCourseApplication(courseService.getCourseParticipantByUuid(courseParticipant.getUuid()));	
-		WebUtils.setSessAtribute("notificationMessage", Labels.getLabel("msg.ui.warn.participantLoggedToCourse", new Object[] {courseParticipant.getContact().getCompleteName(), courseSelected.getName()}));
+		WebUtils.setSessAtribute(WebConstants.NOTIFICATION_MESSAGE, Labels.getLabel("msg.ui.warn.participantLoggedToCourse", new Object[] {courseParticipant.getContact().getCompleteName(), courseSelected.getName()}));
 		detailCmd(courseParticipant.getUuid());
 		
 //		try {

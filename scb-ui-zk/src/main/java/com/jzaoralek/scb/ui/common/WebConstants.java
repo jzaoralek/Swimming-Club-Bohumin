@@ -55,4 +55,5 @@ public final class WebConstants {
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
 	public static final String SECURED_PAGE_URL = "/pages/secured/ADMIN";
+	public static final String NOTIFICATION_MESSAGE = "notificationMessage";
 }

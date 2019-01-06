@@ -39,6 +39,9 @@
 	<listener>
         <listener-class>com.jzaoralek.scb.ui.monitoring.performance.PerformanceMonitor</listener-class>
     </listener>
+    <listener>
+        <listener-class>com.jzaoralek.scb.ui.common.listener.BaseIniciator</listener-class>
+    </listener>
     
 	<!-- labels -->
 	<system-config>
