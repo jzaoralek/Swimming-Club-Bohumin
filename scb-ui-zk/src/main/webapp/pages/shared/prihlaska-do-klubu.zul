@@ -79,7 +79,7 @@
 											<!-- Verejna cast -->
 											<listbox model="@load(vm.courseList)" 
 												hflex="1"
-												sclass="listbox"
+												sclass="listbox-400"
 												selectedItems="@bind(vm.courseSelected)"
 												multiple="false"
 												checkmark="true" >
