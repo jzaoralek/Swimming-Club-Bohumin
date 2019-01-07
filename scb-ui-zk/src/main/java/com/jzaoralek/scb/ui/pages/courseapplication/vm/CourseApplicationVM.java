@@ -33,7 +33,9 @@ import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
@@ -61,6 +63,7 @@ public class CourseApplicationVM extends BaseVM {
 	private CourseApplicationFileConfig clubRulesAgreementConfig;
 	private CourseApplicationFileConfig healthInfoAgreementConfig;
 	private CourseApplicationFileConfig gdprAgreementConfig;
+	private boolean loggedByParticRepr;
 	
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -83,7 +86,12 @@ public class CourseApplicationVM extends BaseVM {
 			return;
 		}
 
-        setMenuSelected(ScbMenuItem.SEZNAM_PRIHLASEK);
+		this.loggedByParticRepr = isLoggedUserInRole(ScbUserRole.USER.name());
+		if (this.loggedByParticRepr) {
+			setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_U);
+		} else {
+			setMenuSelected(ScbMenuItem.SEZNAM_PRIHLASEK);			
+		}
 
 		CourseApplication courseApplication = null;
 		if (StringUtils.hasText(uuid)) {
@@ -187,8 +195,15 @@ public class CourseApplicationVM extends BaseVM {
 					}
 				}
 				
-				// zjistit zda-li pred zalozenim objednavky uz uzivatel v aplikaci existoval
-				ScbUser scbUserBeforeApplicationSave = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
+				ScbUser scbUserBeforeApplicationSave = null;
+				if (this.loggedByParticRepr) {
+					// prihlaseny v rodicovske zone
+					scbUserBeforeApplicationSave = SecurityUtils.getLoggedUser();
+					application.setCourseParticRepresentative(scbUserBeforeApplicationSave);
+				} else {					
+					// verejna prihlaska, zjistit zda-li pred zalozenim objednavky uz uzivatel v aplikaci existoval
+					scbUserBeforeApplicationSave = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
+				}
 				
 				CourseApplication courseApplication = courseApplicationService.store(application);
 				this.editMode = false;
@@ -207,6 +222,12 @@ public class CourseApplicationVM extends BaseVM {
 				if (scbUserBeforeApplicationSave == null) {
 					ScbUser user = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
 					sendMailToNewUser(user);
+				}
+				
+				if (this.loggedByParticRepr) {
+					// rodicovska zona, redirect na seznam ucastniku
+					WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.applicationSend"));
+					Executions.sendRedirect(WebPages.USER_PARTICIPANT_LIST.getUrl());
 				}
 			}
 		} catch (ScbValidationException e) {
@@ -497,5 +518,7 @@ public class CourseApplicationVM extends BaseVM {
 	public void setGdprAgreementConfig(CourseApplicationFileConfig gdprAgreementConfig) {
 		this.gdprAgreementConfig = gdprAgreementConfig;
 	}
-	
+	public boolean isLoggedByParticRepr() {
+		return loggedByParticRepr;
+	}
 }

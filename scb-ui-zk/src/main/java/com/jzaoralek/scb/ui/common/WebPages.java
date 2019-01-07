@@ -8,6 +8,7 @@ public enum WebPages {
 	PARTICIPANT_LIST("/pages/secured/TRAINER/seznam-ucastniku.zul"),
 	PARTICIPANT_DETAIL("/pages/secured/TRAINER/ucastnik.zul"),
 	USER_PARTICIPANT_LIST("/pages/secured/USER/seznam-ucastniku.zul"),
+	USER_APPLICATION_DETAIL("/pages/secured/USER/prihlaska-do-klubu.zul"),
 	USER_PARTICIPANT_DETAIL("/pages/secured/USER/ucastnik.zul"),
 	USER_LIST("/pages/secured/ADMIN/seznam-uzivatelu.zul"),
 	USER_DETAIL("/pages/secured/ADMIN/uzivatel.zul"),

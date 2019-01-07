@@ -34,7 +34,7 @@
 			            			<hbox vflex="1" align="center">
 			            				<button label="${c:l('txt.ui.common.newCourseParticipant')}" 
 			            					tooltiptext="@load(vm.newCourseParticipantButtonText)"
-			            					popup="newParticipantPopup" 
+			            					onClick="@command('newCourseParticipantCmd')"
 			            					sclass="btn-warning" 
 			            					iconSclass="z-icon-plus"
 			            					visible="@load(vm.courseApplicationAllowed)" />
@@ -47,7 +47,7 @@
 			        <listhead>
 			            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(contact.surname)" align="left" />
 			            <listheader label="Datum nar." sort="auto(birthdate)" align="left" hflex="min" />
-			            <listheader align="left" width="310px" />
+			            <listheader align="left" width="295px" />
 			        </listhead>
 			         
 			        <template name="model">
@@ -59,14 +59,14 @@
 				                	<!-- Prihlasit na konkretni kurz -->
 				                	<button label="@load(vm.newCourseApplicationButtonText)" 
 				                		tooltiptext="@load(vm.newCourseApplicationButtonTooltipText)"
-										sclass="btn-warning" iconSclass="z-icon-file-text"
+										sclass="btn-warning"
 										popup="${each.uuid}_newCourseLoginPopup, position=after_end"
 										visible="@load(vm.newCourseApplicationAllowed(each))"
 										if="${vm.courseSelectionRequired}" />
 									<!-- Prihlasit na dalsi rocnik bez vyberu kurzu -->
 									<button label="@load(vm.newCourseApplicationButtonText)" 
 				                		tooltiptext="@load(vm.newCourseApplicationButtonTooltipText)"
-										sclass="btn-warning" iconSclass="z-icon-file-text"
+										sclass="btn-warning"
 										onClick="@command('createNewCourseApplicationCmd', uuid=each.uuid)"
 										visible="@load(vm.newCourseApplicationAllowed(each))"
 										if="${!vm.courseSelectionRequired}" />
@@ -78,9 +78,12 @@
 				                	<popup id="${each.uuid}_newCourseLoginPopup">
 										<!-- Ucastnik -->
 										<include src="/pages/common/component/course-selection-grid.zul" />
-										
-										<hbox style="margin-bottom: 5px;margin-left: 10px;" hflex="1" pack="center" >
-											<button label="Odeslat" onClick="@command('logToCourseCmd', courseParticipant=each, popup=newParticipantPopup)" iconSclass="z-icon-check" />
+										<hbox style="margin-bottom: 5px;margin-left: 15px;" hflex="1" pack="center" >
+											<button label="Odeslat" 
+												onClick="@command('logToCourseCmd', courseParticipant=each, popup=newCourseLoginPopup)" 
+												disabled="@load(empty(vm.courseSelected))" 
+												sclass="btn-success"
+												iconSclass="z-icon-check" />
 										</hbox>
 									</popup>		                	
 			                	</hlayout>
@@ -88,144 +91,6 @@
 			            </listitem>
 			        </template>
 			    </listbox>
-			    
-			    <popup id="newParticipantPopup">
-					<!-- Ucastnik -->
-					<label value="${c:l('txt.ui.common.CourseSelection')}" sclass="sp-popup-headline"/>
-					<include src="/pages/common/component/course-selection-grid.zul" />
-					
-					<label value="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" sclass="sp-popup-headline"/>
-					
-					<!-- Ucastnik -->
-					<grid width="550px" sclass="form-grid" style="border: none;" >
-						<columns>
-			                <column align="center" hflex="1" />
-			            </columns>
-						<rows style="background: white;" >
-							<row sclass="form-grid-row" style="border: none; padding: 10px 10px 10px 10px;" >
-								<cell sclass="form-grid-cell">
-									<vbox hflex="1">
-										<label value="${c:l('txt.ui.common.birthNumber')}"/>
-										<textbox id="particBirthNumber"
-											value="@bind(fx.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
-		                            		maxlength="@load(vm.getBirthNumberMaxlength())"
-		                            		placeholder="*"
-		                            		sclass="form-input-text"
-		                            		focus="${!vm.courseSelectionRequired}"
-		                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-		                            		onChange="@command('validateUniquePersonalNumberCmd', personal_number=self.value, fx=fx)"
-		                            		tabindex="1"
-		                            		hflex="1" />
-										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
-												<label value="@bind(vmsgs[particBirthNumber])" />
-											</span>
-										</hbox>
-									</vbox>
-								</cell>
-							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;" >
-								<cell sclass="form-grid-cell" >
-									<vbox hflex="1">
-										<label value="${c:l('txt.ui.common.firstname')}"/>
-										<textbox id="particFirstname" 
-											maxlength="@load(vm.getFirstnameMaxlength())"
-											value="@bind(fx.contact.firstname) @validator(vm.notNullValidator)"
-											placeholder="*"
-											sclass="form-input-text"
-											tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-											tabindex="2"
-											hflex="1" />
-										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-											<span sclass="alert alert-danger" visible="@load(not empty vmsgs[particFirstname])" >
-												<label value="@bind(vmsgs[particFirstname])" />
-											</span>
-										</hbox>
-									</vbox>
-								</cell>
-							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;">
-								<cell sclass="form-grid-cell">
-									<vbox hflex="1">
-										<label value="${c:l('txt.ui.common.surname')}"/>
-										<textbox id="particSurname"
-											value="@bind(fx.contact.surname) @validator(vm.notNullValidator)"
-											maxlength="@load(vm.getSurnameMaxlength())"
-											placeholder="*"
-											sclass="form-input-text"
-											tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-											tabindex="3"
-											hflex="1" />
-										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particSurname])" >
-												<label value="@bind(vmsgs[particSurname])" />
-											</span>
-										</hbox>
-									</vbox>
-								</cell>
-							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;">
-								<cell sclass="form-grid-cell">
-									<vbox hflex="1">
-										<label value="${c:l('txt.ui.common.birthDate')}"/>
-										<datebox id="particBirthdate"
-											value="@bind(fx.birthdate) @validator(vm.notNullObjectValidator)"
-		                            		format="@load(vm.dateFormat)" 
-		                            		maxlength="@load(vm.getDateMaxlength())"
-		                            		placeholder="*"
-		                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-		                            		tabindex="4" />
-										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
-													<label value="@bind(vmsgs[particBirthdate])" />
-												</span>
-										</hbox>
-									</vbox>
-								</cell>
-							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;">
-								<cell sclass="form-grid-cell">
-									<vbox hflex="1">
-										<label value="${c:l('txt.ui.common.healthInsurance')}"/>
-										<textbox id="particHealthInsurance"
-											value="@bind(fx.healthInsurance) @validator(vm.notNullValidator)"
-											maxlength="@load(vm.getHealthInsuranceMaxlength())"
-											placeholder="*"
-											sclass="form-input-text"
-											tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-											tabindex="5"
-											hflex="1" />
-										<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-											<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particHealthInsurance])" >
-												<label value="@bind(vmsgs[particHealthInsurance])" />
-											</span>
-										</hbox>
-									</vbox>
-								</cell>
-							</row>
-							<row sclass="form-grid-row" style="border: none; padding: 0px 10px 10px 10px;">
-								<cell sclass="form-grid-cell">
-									<vbox hflex="1">
-										<label value="${c:l('txt.ui.application.healthInfo')}"/>
-										<textbox rows="3" hflex="3" multiline="true"
-											value="@bind(fx.healthInfo)" tabindex="6"
-											sclass="form-input-textarea"
-											maxlength="@load(vm.getHealthInfoMaxlength())" />
-									</vbox>
-								</cell>
-							</row>
-						</rows>
-					</grid>
-					<hbox style="margin-bottom: 5px;margin-left: 10px;" hflex="1" pack="center" >
-						<button label="Odeslat" onClick="@command('submit', popup=newParticipantPopup)" iconSclass="z-icon-check" />
-					</hbox>
-					<script type="text/javascript">
-				        zk.afterMount(function() {
-				            jq("$particBirthNumber").mask("999999/9999");
-				        });
-				    </script>
-				</popup>
-			
 		</vlayout>
 	</div>
 </zk>

@@ -155,7 +155,7 @@
                     </groupbox>
 						
 					<!-- Zakonny zastupce -->
-					<groupbox hflex="1" sclass="no-inner-padding">
+					<groupbox hflex="1" sclass="no-inner-padding" if="${!vm.loggedByParticRepr}">
                         <caption label="${c:l('txt.ui.common.representative')}" />
                         
 						<grid hflex="1" style="padding-bottom:10px;">
@@ -545,7 +545,7 @@
 						</hbox>
 						
 						<!-- Captcha -->
-	                    <div sclass="form-captcha-panel" visible="@load(vm.editMode and !vm.securedMode)">
+	                    <div sclass="form-captcha-panel" if="${vm.editMode and !vm.securedMode and !vm.loggedByParticRepr}">
 							<vlayout>
 							    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
 							    <bw.captcha id="cap1" style="margin-top: 10px;"/>

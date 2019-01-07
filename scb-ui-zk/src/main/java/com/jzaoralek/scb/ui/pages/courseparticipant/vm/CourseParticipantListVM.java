@@ -102,22 +102,27 @@ public class CourseParticipantListVM extends BaseVM {
 		}
 	}
 	
-	@NotifyChange("*")
 	@Command
-	public void submit(@BindingParam("popup") Popup popup) {
-		createNewCourseApplication(this.newCourseParticipant);
-		this.newCourseParticipant = new CourseParticipant();
-		if (this.courseSelectionRequired) {
-			if (this.courseList != null) {
-				this.courseList.clear();			
-			}
-			if (this.courseSelected != null) {
-				this.courseSelected.clear();			
-			}
-			this.courseLocationSelected = null;
-		}
-		popup.close();
+	public void newCourseParticipantCmd() {
+		Executions.sendRedirect(WebPages.USER_APPLICATION_DETAIL.getUrl());
 	}
+	
+//	@NotifyChange("*")
+//	@Command
+//	public void submit(@BindingParam("popup") Popup popup) {
+//		createNewCourseApplication(this.newCourseParticipant);
+//		this.newCourseParticipant = new CourseParticipant();
+//		if (this.courseSelectionRequired) {
+//			if (this.courseList != null) {
+//				this.courseList.clear();			
+//			}
+//			if (this.courseSelected != null) {
+//				this.courseSelected.clear();			
+//			}
+//			this.courseLocationSelected = null;
+//		}
+//		popup.close();
+//	}
 	
 	@NotifyChange("*")
 	@Command
