@@ -8,12 +8,12 @@
 		width="100%"
 		height="100%"
 		sclass="scb-view scb-view-900" 
-		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationUserVM')"
 		validationMessages="@id('vmsgs')"
 	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
 			
             <hlayout>
-            	<page-toolbar width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())"/>
+            	<page-toolbar width="100%" self="@{define(pageToolbar)}" visible="true"/>
                 <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
             </hlayout>
 			
@@ -27,7 +27,8 @@
 				<hlayout style="margin-bottom: 20px;margin-top: 10px;">
 						<button label="Odeslat" tabindex="21"
 							onClick="@command('submit')" 
-							iconSclass="z-icon-check" 
+							iconSclass="z-icon-check"
+							disabled="@load(empty(vm.courseSelected))"
 							sclass="btn-success" />
 				</hlayout>
 			</vlayout>

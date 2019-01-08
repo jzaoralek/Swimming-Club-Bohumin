@@ -38,7 +38,7 @@ import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM;
 
 public class CourseParticipantListVM extends BaseVM {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CourseApplicationVM.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CourseParticipantListVM.class);
 	
 	@WireVariable
 	private CourseService courseService;
@@ -91,6 +91,16 @@ public class CourseParticipantListVM extends BaseVM {
 		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
 	}
 	
+	@Command
+    public void logToCourseCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
+		if (uuid ==  null) {
+			throw new IllegalArgumentException("uuid is null");
+		}
+		String targetPage = WebPages.USER_LOG_TO_COURSE.getUrl();
+		WebPages fromPage = WebPages.USER_PARTICIPANT_LIST;
+		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
+	}
+	
 	@NotifyChange("*")
 	@Command
     public void createNewCourseApplicationCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid) {
@@ -123,53 +133,6 @@ public class CourseParticipantListVM extends BaseVM {
 //		}
 //		popup.close();
 //	}
-	
-	@NotifyChange("*")
-	@Command
-	public void logToCourseCmd(@BindingParam("courseParticipant") CourseParticipant courseParticipant, @BindingParam("popup") Popup popup) {
-		Course courseSelected = this.courseSelected.iterator().next();
-		if (courseSelected == null) {
-			return;
-		}
-		// kontrola zda-li jit neni ucastnik zarazen do kurzu
-		List<CourseParticipant> courseParticipantInCourseList = courseService.getByCourseParticListByCourseUuid(courseSelected.getUuid(), true);
-		for (CourseParticipant item : courseParticipantInCourseList) {
-			if (item.getUuid().toString().equals(courseParticipant.getUuid().toString())) {
-				WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.participantAlreadyInCourse", new Object[] {courseSelected.getName()}));
-				return;
-			}
-		}
-		createNewCourseApplication(courseService.getCourseParticipantByUuid(courseParticipant.getUuid()));	
-		WebUtils.setSessAtribute(WebConstants.NOTIFICATION_MESSAGE, Labels.getLabel("msg.ui.warn.participantLoggedToCourse", new Object[] {courseParticipant.getContact().getCompleteName(), courseSelected.getName()}));
-		detailCmd(courseParticipant.getUuid());
-		
-//		try {
-//			Course courseSelected = this.courseSelected.iterator().next();
-//			if (courseSelected == null) {
-//				return;
-//			}
-//			// kontrola zda-li jit neni ucastnik zarazen do kurzu
-//			List<CourseParticipant> courseParticipantInCourseList = courseService.getByCourseParticListByCourseUuid(courseSelected.getUuid(), true);
-//			for (CourseParticipant item : courseParticipantInCourseList) {
-//				if (item.getUuid().toString().equals(courseParticipant.getUuid().toString())) {
-//					WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.participantAlreadyInCourse", new Object[] {courseSelected.getName()}));
-//					return;
-//				}
-//			}
-//			
-//			// prihlaseni rovnou do kurzu
-//			if (this.courseSelected != null && !this.courseSelected.isEmpty()) {
-//				courseService.storeCourseParticipants(Arrays.asList(courseParticipant), courseSelected.getUuid());
-//			}
-//			popup.close();
-//			// sendMail(courseApplication, this.pageHeadline);
-//			WebUtils.setSessAtribute("notificationMessage", Labels.getLabel("msg.ui.warn.participantLoggedToCourse", new Object[] {courseParticipant.getContact().getCompleteName(), courseSelected.getName()}));
-//			detailCmd(courseParticipant.getUuid());
-//		} catch (ScbValidationException e) {
-//			LOG.warn("ScbValidationException caught for courseParticipant: " + courseParticipant.getUuid(), e);
-//			WebUtils.showNotificationError(e.getMessage());
-//		}
-	}
 	
 	/**
 	 * Kontroluje pouziti emailu jako defaultniho prihlasovaciho jmena, pokud je jiz evidovano, nabidne predvyplneni hodnot zakonneho zastupce.

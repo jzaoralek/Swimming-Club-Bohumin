@@ -47,7 +47,7 @@
 			        <listhead>
 			            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(contact.surname)" align="left" />
 			            <listheader label="Datum nar." sort="auto(birthdate)" align="left" hflex="min" />
-			            <listheader align="left" width="295px" />
+			            <listheader align="left" hflex="min" />
 			        </listhead>
 			         
 			        <template name="model">
@@ -60,7 +60,7 @@
 				                	<button label="@load(vm.newCourseApplicationButtonText)" 
 				                		tooltiptext="@load(vm.newCourseApplicationButtonTooltipText)"
 										sclass="btn-warning"
-										popup="${each.uuid}_newCourseLoginPopup, position=after_end"
+										onClick="@command('logToCourseCmd', uuid=each.uuid)"
 										visible="@load(vm.newCourseApplicationAllowed(each))"
 										if="${vm.courseSelectionRequired}" />
 									<!-- Prihlasit na dalsi rocnik bez vyberu kurzu -->
@@ -74,18 +74,7 @@
 				                		label="Detail" 
 				                		hflex="min"
 				                		style="margin-left: 2px;"
-				                		onClick="@command('detailCmd', uuid=each.uuid)" />
-				                	<popup id="${each.uuid}_newCourseLoginPopup">
-										<!-- Ucastnik -->
-										<include src="/pages/common/component/course-selection-grid.zul" />
-										<hbox style="margin-bottom: 5px;margin-left: 15px;" hflex="1" pack="center" >
-											<button label="Odeslat" 
-												onClick="@command('logToCourseCmd', courseParticipant=each, popup=newCourseLoginPopup)" 
-												disabled="@load(empty(vm.courseSelected))" 
-												sclass="btn-success"
-												iconSclass="z-icon-check" />
-										</hbox>
-									</popup>		                	
+				                		onClick="@command('detailCmd', uuid=each.uuid)" />	                	
 			                	</hlayout>
 			                </listcell>
 			            </listitem>

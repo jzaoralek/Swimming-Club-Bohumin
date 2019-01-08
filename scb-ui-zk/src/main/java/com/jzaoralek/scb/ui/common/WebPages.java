@@ -11,6 +11,7 @@ public enum WebPages {
 	USER_APPLICATION_DETAIL("/pages/secured/USER/prihlaska-do-klubu.zul"),
 	USER_PARTICIPANT_DETAIL("/pages/secured/USER/ucastnik.zul"),
 	USER_LIST("/pages/secured/ADMIN/seznam-uzivatelu.zul"),
+	USER_LOG_TO_COURSE("/pages/secured/USER/prihlaseni-na-kurz.zul"),
 	USER_DETAIL("/pages/secured/ADMIN/uzivatel.zul"),
 	PAYMENT_LIST("/pages/secured/TRAINER/seznam-plateb.zul"),
 	EMAIL_DETAIL_WINDOW("/pages/secured/ADMIN/email-detail-window.zul"),
