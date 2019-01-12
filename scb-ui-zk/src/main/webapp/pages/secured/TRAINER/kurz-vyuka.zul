@@ -45,9 +45,9 @@
 									hflex="1"
 									style="margin-bottom: 20px;"
 									emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-									class="listbox-500" >
+									class="listbox-400" >
 							        <auxhead>
-							            <auxheader class="header" colspan="4" >
+							            <auxheader class="header" colspan="3" >
 							            	<hbox hflex="1" height="42px" align="center" >
 								            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
 							            			<hbox vflex="1" align="center">
@@ -71,19 +71,19 @@
 							        </auxhead>
 							        
 							        <listhead>
-							        	<listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(lessonDate)" hflex="1" />
+							        	<listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(lessonDate)" hflex="min" />
 										<listheader label="${c:l('txt.ui.common.time')}" align="left" />
 							            <listheader label="Proběhla" align="center" hflex="min" />
-							            <listheader width="90px" align="center" />
 							        </listhead>
 							         
 							        <template name="model">
 							            <listitem>
-							            	<listcell>
+							            	<listcell onClick="@command('lessonDetailCmd', item=each)" >
 							            		<hlayout>
-								            		<label value="@load(each.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" />
-								            		<label value="&#160;&#160;&#160;" />
-								            		<label value="@load(each.lessonDate) @converter(vm.dateConverter)" />
+							            			<custom-attributes linkStyle="${!each.inFuture ? 'text-decoration: underline !important' : ''}"/>
+								            		<label value="@load(each.lesson.dayOfWeek) @converter(vm.enumLabelConverter)" style="${linkStyle}" />
+								            		<label value="&#160;&#160;&#160;" style="${linkStyle}" />
+								            		<label value="@load(each.lessonDate) @converter(vm.dateConverter)" style="${linkStyle}" />
 							            		</hlayout>
 							            	</listcell>
 							                <listcell>
@@ -92,12 +92,6 @@
 							                </listcell>              	
 							                <listcell sclass="big-icon" iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" tooltiptext="${c:l('txt.ui.common.yes')}" visible="${each.uuid ne null}" />
 			                				<listcell visible="${each.uuid eq null}" />
-							                <listcell>
-							                	<button iconSclass="z-icon-pencil" onClick="@command('lessonDetailCmd', item=each)" 
-							                		hflex="min" 
-							                		width="20px" 
-							                		visible="@load(!each.inFuture)" />
-							                </listcell>
 							            </listitem>
 							        </template>
 							    </listbox>

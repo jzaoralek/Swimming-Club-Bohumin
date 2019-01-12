@@ -5,6 +5,8 @@ public enum WebPages {
 	APPLICATION_DETAIL("/pages/secured/ADMIN/prihlaska-do-klubu.zul"),
 	COURSE_LIST("/pages/secured/TRAINER/seznam-kurzu.zul"),
 	COURSE_DETAIL("/pages/secured/ADMIN/kurz.zul"),
+	COURSE_LESSONS("/pages/secured/TRAINER/kurz-vyuka.zul"),
+	LEARNING_LESSON("/pages/secured/TRAINER/learning-lesson.zul"),
 	PARTICIPANT_LIST("/pages/secured/TRAINER/seznam-ucastniku.zul"),
 	PARTICIPANT_DETAIL("/pages/secured/TRAINER/ucastnik.zul"),
 	USER_PARTICIPANT_LIST("/pages/secured/USER/seznam-ucastniku.zul"),

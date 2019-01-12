@@ -56,4 +56,5 @@ public final class WebConstants {
 
 	public static final String SECURED_PAGE_URL = "/pages/secured/ADMIN";
 	public static final String NOTIFICATION_MESSAGE = "notificationMessage";
+	public static final String FROM_PAGE_URL = "fromPageUrl";
 }

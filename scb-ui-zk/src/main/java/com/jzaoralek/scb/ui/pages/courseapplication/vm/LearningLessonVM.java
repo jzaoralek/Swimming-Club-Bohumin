@@ -5,27 +5,23 @@ import java.util.List;
 
 import org.springframework.util.CollectionUtils;
 import org.zkoss.bind.BindUtils;
-import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
-import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.LearningLesson;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
+import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.converter.Converters;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-public class LearningLessonDetailWinVM extends BaseVM {
+public class LearningLessonVM extends BaseVM {
 
 	@WireVariable
 	private CourseService courseService;
@@ -37,29 +33,26 @@ public class LearningLessonDetailWinVM extends BaseVM {
 	private List<CourseParticipant> allCourseParticList;
 	private List<CourseParticipant> lessonParticipantList;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
 	@Init
 	public void init() {
-		final EventQueue eq = EventQueues.lookup(ScbEventQueues.LEARNING_LESSON_QUEUE.name() , EventQueues.DESKTOP, true);
-		eq.subscribe(new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) {
-				if (event.getName().equals(ScbEvent.LEARNIN_LESSON_DETAIL_DATA_EVENT.name())) {
-					initData((LearningLesson)event.getData());
-					eq.unsubscribe(this);
-				}
-			}
-		});
+        setMenuSelected(ScbMenuItem.SEZNAM_KURZU);
+        this.returnToUrl = (String)WebUtils.getSessAtribute(WebConstants.FROM_PAGE_URL);
+        
+        if (this.learningLesson == null) {
+        	LearningLesson item = (LearningLesson)WebUtils.getSessAtribute(WebConstants.ITEM_PARAM);
+        	if (item != null) {
+        		initData(item);
+        		WebUtils.removeSessAtribute(WebConstants.ITEM_PARAM);
+        	}        	
+        }
 	}
 
 	@Command
-	public void submitCmd(@BindingParam("window") Window window) {
+	public void submitCmd() {
 		this.learningLesson.setParticipantList(this.lessonParticipantList);
 		learningLessonService.store(this.learningLesson);
-
-		EventQueueHelper.publish(ScbEventQueues.LEARNING_LESSON_QUEUE, ScbEvent.RELOAD_LEARNIN_LESSON_LIST_DATA_EVENT, null, this.learningLesson);
-
-		window.detach();
+		Executions.sendRedirect(this.returnToUrl);
 	}
 
 	private void initData(LearningLesson learningLesson) {
@@ -92,7 +85,8 @@ public class LearningLessonDetailWinVM extends BaseVM {
 	}
 
 	private String buildPageHeadline(LearningLesson learningLesson) {
-		return Converters.getEnumlabelconverter().coerceToUi(learningLesson.getLesson().getDayOfWeek(), null, null) + ", "
+		return Labels.getLabel("txt.ui.common.lessons") + " - "
+			+ Converters.getEnumlabelconverter().coerceToUi(learningLesson.getLesson().getDayOfWeek(), null, null) + ", "
 			+ Converters.getDateconverter().coerceToUi(learningLesson.getLessonDate(), null, null) + ", "
 			+ Converters.getTimeconverter().coerceToUi(learningLesson.getTimeFrom(), null, null) + "-"
 			+ Converters.getTimeconverter().coerceToUi(learningLesson.getTimeTo(), null, null);

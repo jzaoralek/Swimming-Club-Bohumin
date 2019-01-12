@@ -37,8 +37,6 @@ public final class EventQueueHelper {
         RESULT_DETAIL_DATA_EVENT(null),
         RESULT_NEW_DATA_EVENT(null),
         RELOAD_USER_DATA_EVENT(null),
-        LEARNIN_LESSON_DETAIL_DATA_EVENT(null),
-        RELOAD_LEARNIN_LESSON_LIST_DATA_EVENT(null),
         RELOAD_PAYMENT_DATA_EVENT(null),
         RELOAD_COURSE_LOCATION_DATA_EVENT(null),
         SIDE_MENU_FOLD_EVENT(ScbEventQueues.SIDE_MENU_QUEUE),

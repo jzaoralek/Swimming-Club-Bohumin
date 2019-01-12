@@ -73,6 +73,7 @@ public class BaseVM {
 	protected CourseApplicationFileConfigService courseApplicationFileConfigService;
 
 	protected String returnToPage;
+	protected String returnToUrl;
 	
 	private ExistingUsernameValidator existingUsernameValidator;
 	
@@ -223,7 +224,9 @@ public class BaseVM {
 
 	@Command
     public void backCmd() {
-		if (StringUtils.hasText(this.returnToPage)) {
+		if (StringUtils.hasText(this.returnToUrl)) {
+			Executions.sendRedirect(this.returnToUrl);
+		} else if (StringUtils.hasText(this.returnToPage)) {
 			Executions.sendRedirect(this.returnToPage);
 		}
 	}

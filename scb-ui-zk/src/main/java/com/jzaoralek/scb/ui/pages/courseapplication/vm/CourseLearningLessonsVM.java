@@ -16,10 +16,7 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
@@ -29,10 +26,8 @@ import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -60,7 +55,6 @@ public class CourseLearningLessonsVM extends BaseVM {
 	private LearningLessonStatsWrapper lessonStats;
 	private CourseLearnLessonTab tabSelected;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) final String uuid
 			, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage
@@ -85,24 +79,6 @@ public class CourseLearningLessonsVM extends BaseVM {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		this.monthSelected = cal;
 		buildLessonList(this.monthSelected);
-		
-//		if (StringUtils.isEmpty(tabSelected) || CourseLearnLessonTab.valueOf(tabSelected) == CourseLearnLessonTab.LESSONS) {
-//			
-//		} else if (CourseLearnLessonTab.valueOf(tabSelected) == CourseLearnLessonTab.ATTENDANCE) {
-//			// statistika dochazky
-//			this.tabSelected = CourseLearnLessonTab.ATTENDANCE;
-//			this.lessonStats = learningLessonService.buildCourseStatistics(this.course.getUuid(), null);			
-//		}
-		
-		final EventQueue eq = EventQueues.lookup(ScbEventQueues.LEARNING_LESSON_QUEUE.name() , EventQueues.DESKTOP, true);
-		eq.subscribe(new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) {
-				if (event.getName().equals(ScbEvent.RELOAD_LEARNIN_LESSON_LIST_DATA_EVENT.name())) {
-					realoadLessonList((LearningLesson)event.getData());
-				}
-			}
-		});
 	}
 
 	public void realoadLessonList(LearningLesson lesson) {
@@ -135,26 +111,22 @@ public class CourseLearningLessonsVM extends BaseVM {
 
 	@Command
 	public void lessonDetailCmd(@BindingParam(WebConstants.ITEM_PARAM) LearningLesson item) {
-		 EventQueueHelper.publish(ScbEventQueues.LEARNING_LESSON_QUEUE, ScbEvent.LEARNIN_LESSON_DETAIL_DATA_EVENT, null, item);
-		 WebUtils.openModal("/pages/secured/TRAINER/learning-lesson-window.zul");
+		if (item.isInFuture()) {
+			return;
+		}
+		
+		WebUtils.setSessAtribute(WebConstants.ITEM_PARAM, item);
+		WebUtils.setSessAtribute(WebConstants.FROM_PAGE_URL, WebPages.COURSE_LESSONS.getUrl() + "?" + WebConstants.UUID_PARAM+"="+this.course.getUuid() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+		Executions.sendRedirect(WebPages.LEARNING_LESSON.getUrl());
 	}
-	
-//	@Command
-//	public void redirectToTab(@BindingParam(WebConstants.TAB_PARAM) String tab) {
-//		if (!StringUtils.hasText(tab)) {
-//			throw new IllegalArgumentException("tab is null");
-//		}
-//		
-//		CourseLearnLessonTab tabSelected = CourseLearnLessonTab.valueOf(tab);
-//		Executions.sendRedirect("/pages/secured/TRAINER/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+this.course.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST + "&" + WebConstants.TAB_PARAM + "=" + tabSelected);
-//	}
+
 	
 	@NotifyChange("lessonStats")
 	@Command
 	public void lessonAttendanceTabOnSelect() {
 		this.lessonStats = learningLessonService.buildCourseStatistics(this.course.getUuid(), null);	
 	}
-
+	
 	/**
 	 * Vygeneruje seznam lekci pro dany mesic
 	 */

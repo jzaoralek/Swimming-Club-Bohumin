@@ -1,0 +1,100 @@
+<?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
+<?page title="${common:getOrgNameStatic()}" ?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+<?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
+<?component name="lesson-stats" macroURI="/pages/common/component/lesson-stats.zul"?>
+
+<?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
+<?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
+
+<zk>
+	<div self="@{define(mainContent)}" 
+		hflex="1" 
+		height="100%"
+		sclass="scb-view" 
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.LearningLessonVM')"
+		validationMessages="@id('vmsgs')"
+		form="@id('fx') @load(vm.learningLesson) @save(vm.learningLesson, before='submitCmd')">
+		
+		
+		<vlayout spacing="0">
+		
+			<hlayout>
+				<page-toolbar width="100%" self="@{define(pageToolbar)}"/>
+				<label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
+			</hlayout>
+			
+			<vbox hflex="1" >
+		    	<grid hflex="1" sclass="form-grid" >
+					<columns>
+		                <column align="left" hflex="1" valign="middle"/>
+		            </columns>
+					<rows style="background: white;" hflex="1" >
+						<row sclass="form-grid-row" style="border: none; padding: 10px 10px 10px 10px;" >
+							<cell sclass="form-grid-cell" hflex="1" >
+								<vbox hflex="1">
+									<hbox hflex="1" sclass="form-grid-validation-hbox">
+										<datebox id="lessonDate"
+											value="@bind(fx.lessonDate) @validator(vm.notNullObjectValidator)"
+			                           		format="@load(vm.dateFormat)" 
+			                           		maxlength="@load(vm.getDateMaxlength())"
+			                           		placeholder="*"
+			                           		width="130px"
+			                           		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+			                           		tabindex="1" />
+										<span sclass="alert alert-danger" visible="@load(not empty vmsgs[lessonDate])" >
+											<label value="@bind(vmsgs[lessonDate])" />
+										</span>
+									</hbox>
+								</vbox>
+							</cell>
+						</row>
+						<row sclass="form-grid-row" style="border: none; padding: 10px 10px 10px 10px;" hflex="1" >
+							<cell sclass="form-grid-cell" hflex="1" >
+								<!-- Seznam ucastniku -->
+								<listbox model="@load(vm.allCourseParticList)"
+									selectedItems="@bind(vm.lessonParticipantList)"
+									id="lessonParticipantList"
+									multiple="true"
+									checkmark="true"
+									hflex="1"
+									emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+									class="listbox-300"  >
+							        
+							        <listhead>
+							        	<listheader label="${c:l('txt.ui.common.participant')}" sort="auto(contact.completeName)" hflex="1" />
+							        </listhead>
+							         
+							        <template name="model">
+							            <listitem label="@load(each.contact.completeName)" hflex="1" />
+							        </template>
+							    </listbox>
+							</cell>
+						</row>
+						<row sclass="form-grid-row" style="border: none; padding: 10px 10px 10px 10px;" hflex="1" >
+							<cell sclass="form-grid-cell" hflex="1" >
+								<intbox placeholder="${c:l('txt.ui.common.swimingMeters')}" value="@bind(fx.additionalColumnInt)" hflex="1" />
+							</cell>
+						</row>
+						<row sclass="form-grid-row" style="border: none; padding: 10px 10px 10px 10px;" hflex="1" >
+							<cell sclass="form-grid-cell" hflex="1" >
+								<textbox multiline="true" placeholder="${c:l('txt.ui.common.description')}" value="@bind(fx.description)" rows="5" hflex="1"/>
+							</cell>
+						</row>
+					</rows>
+				</grid>
+				
+				<button label="OK"
+					onClick="@command('submitCmd')"
+					sclass="btn-success"
+					tabindex="5"
+					style="margin-top: 10px; margin-left: 10px;"
+					iconSclass="z-icon-check" />
+		    </vbox>
+		</vlayout>
+	</div>
+</zk>
+
+
+
