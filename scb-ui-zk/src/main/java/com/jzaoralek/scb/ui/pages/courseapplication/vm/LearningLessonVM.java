@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
@@ -37,7 +38,12 @@ public class LearningLessonVM extends BaseVM {
 	@Init
 	public void init() {
         setMenuSelected(ScbMenuItem.SEZNAM_KURZU);
-        this.returnToUrl = (String)WebUtils.getSessAtribute(WebConstants.FROM_PAGE_URL);
+        
+        String returnToUrl = (String)WebUtils.getSessAtribute(WebConstants.FROM_PAGE_URL);
+        if (StringUtils.hasText(returnToUrl)) {
+        	this.returnToUrl = returnToUrl;
+        	WebUtils.removeSessAtribute(WebConstants.FROM_PAGE_URL);
+        }
         
         if (this.learningLesson == null) {
         	LearningLesson item = (LearningLesson)WebUtils.getSessAtribute(WebConstants.ITEM_PARAM);
