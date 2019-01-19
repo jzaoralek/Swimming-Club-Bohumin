@@ -122,8 +122,9 @@ public class CourseParticipantListVM extends BaseVM {
 	@NotifyChange("*")
 	@Command
 	public void logToCourseCmd(@BindingParam("courseParticipant") CourseParticipant courseParticipant, @BindingParam("popup") Popup popup) {
-		Course courseSelected = this.courseSelected.iterator().next();
+		Course courseSelected = this.courseSelected != null ? this.courseSelected.iterator().next() : null;
 		if (courseSelected == null) {
+			WebUtils.showNotificationWarning("Vyberte prosím jeden z kurzů.");
 			return;
 		}
 		// kontrola zda-li jit neni ucastnik zarazen do kurzu
