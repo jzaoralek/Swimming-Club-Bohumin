@@ -14,8 +14,8 @@
 	</parent>
 	
 	<properties>
-<!-- 		<zk.version>8.5.0</zk.version> -->
-		<zk.version>8.6.0</zk.version>
+		<zk.version>8.5.0</zk.version>
+<!-- 		<zk.version>8.6.0</zk.version> -->
 		<warPluginVersion>2.6</warPluginVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
