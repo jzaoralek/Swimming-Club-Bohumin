@@ -71,7 +71,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 	private boolean unregToCurrYear;
 	private String unregToCurrYearLabel;
 	private final List<Listitem> coursePaymentStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(CoursePaymentState.class));
-	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.of(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER, PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER));
+	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.of(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER, PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER, PaymentNotifSendState.SENT_FIRST_SEMESTER, PaymentNotifSendState.SENT_SECOND_SEMESTER));
 	private String bankAccountNumber;
 	private int yearFrom;
 

@@ -17,6 +17,8 @@ public class CourseParticipant implements IdentEntity {
 		NO_NOTIFICATION,
 		NOT_SENT_FIRST_SEMESTER,
 		NOT_SENT_SECOND_SEMESTER,
+		SENT_FIRST_SEMESTER,
+		SENT_SECOND_SEMESTER,
 		BOTH;
 	}
 	
@@ -241,6 +243,15 @@ public class CourseParticipant implements IdentEntity {
 		if (this.notifiedSemester1PaymentAt == null && this.notifiedSemester2PaymentAt == null) {
 			ret.add(PaymentNotifSendState.NO_NOTIFICATION);
 		}
+		
+		if (this.notifiedSemester1PaymentAt != null) {
+			ret.add(PaymentNotifSendState.SENT_FIRST_SEMESTER);			
+		}
+		
+		if (this.notifiedSemester2PaymentAt != null) {
+			ret.add(PaymentNotifSendState.SENT_SECOND_SEMESTER);
+		}
+		
 		if (this.notifiedSemester1PaymentAt != null && this.notifiedSemester2PaymentAt != null) {
 			ret.add(PaymentNotifSendState.BOTH);			
 		}
