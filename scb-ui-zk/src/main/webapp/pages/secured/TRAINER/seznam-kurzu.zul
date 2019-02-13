@@ -22,12 +22,35 @@
 					class="listbox-300 mobile-inherit-width" >
 		        <auxhead>
 		            <auxheader class="header" colspan="4" >
-		            	<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
-		            					sclass="add-item-btn" 
-		            					iconSclass="z-icon-plus"
-		            					visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
+		            	<hlayout sclass="pull-left">	
+			            	<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
+            					sclass="add-item-btn" 
+            					iconSclass="z-icon-plus"
+            					style="margin-right: 35px;"
+            					visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
+			            					
+		            		<hbox if="${vm.showCourseFilter}" >
+			            		<label value="${c:l('txt.ui.common.courseLocation2')}:"/>
+								<listbox id="courseLocation" 
+									selectedItem="@bind(vm.courseLocationSelected)" 
+									model="@load(vm.courseLocationList)"
+									onSelect="@command('filterByCourseLocationCmd')"
+									mold="select"
+									style="margin-left: 5px;"
+									height="30px"
+									hflex="1" >
+									<template name="model">
+						           		<listitem label="${each.name}" value="${each}" />
+									</template>
+								</listbox>
+		            		</hbox>
+		            		
+		            	</hlayout>
 		            					
-		            	<hlayout sclass="pull-right">
+	            		
+		            	<hlayout sclass="pull-right">		            		
+		            		
+		            		
 		            		<!-- Rocnik -->
             				<include src="/pages/common/component/context-year.zul"/>
             				
