@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>reCAPTCHA demo: Simple page</title>
+     <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+       	async defer>
+   	 </script>
+    
+     <script type="text/javascript">
+     
+	  var verifyCallback = function(response) {
+	        if (response != null) {
+	        	submitBtn.disabled = false;
+	        }
+	      };
+	      
+      var widgetId1;
+      var submitBtn;
+      var onloadCallback = function() {
+    	  
+    	var contactForm = this.document.getElementById("contactForm");
+		contactForm.action = getContextPath() + "/sendEmail"
+    	
+		submitBtn = this.document.getElementById("submitBtn");
+		submitBtn.disabled = true;
+		
+        // Renders the HTML element with id 'example1' as a reCAPTCHA widget.
+        // The id of the reCAPTCHA widget is assigned to 'widgetId1'.
+        widgetId1 = grecaptcha.render('captchaDiv', {
+          'sitekey' : '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+          'theme' : 'light',
+          'callback' : verifyCallback
+        });
+      };
+      
+      function getContextPath() {
+		   return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+		}
+	</script>
+  </head>
+  <body>
+    <form id="contactForm" action="javascript:alert(grecaptcha.getResponse(widgetId1));" method="POST">
+      <div id="captchaDiv"></div>
+      <input id="submitBtn" type="submit" value="Submit">
+    </form>
+  </body>
+</html>
