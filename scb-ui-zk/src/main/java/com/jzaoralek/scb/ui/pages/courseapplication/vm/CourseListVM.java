@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseService;
@@ -52,6 +54,9 @@ public class CourseListVM extends BaseContextVM {
 	private List<Course> courseList;
 	private List<Course> courseListBase;
 	private final CourseApplicationFilter filter = new CourseApplicationFilter();
+	private List<CourseLocation> courseLocationList;
+	private boolean showCourseFilter;
+	private CourseLocation courseLocationSelected;
 
 	@WireVariable
 	private CourseService courseService;
@@ -151,6 +156,26 @@ public class CourseListVM extends BaseContextVM {
 	public void newItemCmd() {
 		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 	}
+	
+	@NotifyChange("courseList")
+	@Command
+	public void filterByCourseLocationCmd() {
+		this.courseList = filterByLocation(this.courseLocationSelected);
+	}
+	
+	private List<Course> filterByLocation(CourseLocation location) {
+//		return this.courseListBase.stream()
+//				.filter(line -> location.getUuid().toString().equals(line.getCourseLocation().getUuid().toString()))
+//				.collect(Collectors.toList());
+		List<Course> ret = new ArrayList<>();
+		for (Course line : this.courseListBase) {
+			if (location.getUuid().toString().equals(line.getCourseLocation().getUuid().toString())) {
+				ret.add(line);
+			}
+		}
+		
+		return ret;
+	}
 
 	public void loadData() {
 		String[] years = getYearsFromContext();
@@ -160,6 +185,15 @@ public class CourseListVM extends BaseContextVM {
 
 		this.courseList = courseService.getAll(yearFrom, yearTo, false);
 		this.courseListBase = this.courseList;
+		
+		this.courseLocationList = courseService.getCourseLocationAll();
+		if (this.courseLocationList != null && this.courseLocationList.size() > 1) {
+			// pokud vice nez jedno misto konani, zobrazit vyber mist konani
+			this.showCourseFilter = true;
+			this.courseLocationSelected = this.courseLocationList.get(0);
+			this.courseList = filterByLocation(this.courseLocationSelected);
+		}
+		
 		BindUtils.postNotifyChange(null, null, this, "courseList");
 	}
 
@@ -195,6 +229,21 @@ public class CourseListVM extends BaseContextVM {
 
 	public CourseApplicationFilter getFilter() {
 		return filter;
+	}
+	
+	public List<CourseLocation> getCourseLocationList() {
+		return courseLocationList;
+	}
+	public boolean isShowCourseFilter() {
+		return showCourseFilter;
+	}
+
+	public CourseLocation getCourseLocationSelected() {
+		return courseLocationSelected;
+	}
+
+	public void setCourseLocationSelected(CourseLocation courseLocationSelected) {
+		this.courseLocationSelected = courseLocationSelected;
 	}
 
 	public static class CourseApplicationFilter {
