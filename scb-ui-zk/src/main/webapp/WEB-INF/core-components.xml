@@ -23,5 +23,12 @@
 	    <macro-uri>/pages/common/component/page-toolbar.zul</macro-uri>
 		<component-class>com.jzaoralek.scb.ui.common.template.PageToolbarMacro</component-class>
 	</component>
+	
+	<!-- Tabulka docházky -->
+	<component>
+	    <component-name>dochazka-grid</component-name>    
+	    <macro-uri>/pages/common/component/dochazka-grid.zul</macro-uri>
+		<component-class>com.jzaoralek.scb.ui.common.template.DochazkaGridMacro</component-class>
+	</component>
 
 </language-addon>

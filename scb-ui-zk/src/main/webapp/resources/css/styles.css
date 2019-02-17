@@ -1034,7 +1034,6 @@ i.big-icon{
 
 .dochazka-t{
 	border: solid 1px #d9d9d9 !important;
-	min-width: 1000px;
 }
 
 .dochazka-t .d-users span{
@@ -1053,8 +1052,17 @@ i.big-icon{
 	background-color: #c8ced3;
 }
 
+.dochazka-wrapper{
+	overflow-x: auto; 
+}
 
+.dochazka-wrapper .header-name{
+	font-weight: bold;
+}
 
+.dochazka-wrapper th{
+	vertical-align: top;
+}
 
 
 
