@@ -47,6 +47,7 @@ public class MailServiceImpl implements MailService {
     @Value("${smtp.pwd}")
     private String mailSmtpPassword;
 
+    @Async
     @Override
     public void sendMail(String to, String subject, String text, List<Attachment> attachmentList) {
         if (LOG.isDebugEnabled()) {
@@ -123,6 +124,7 @@ public class MailServiceImpl implements MailService {
         }
     }
 
+    @Async
     @Override
 	public void sendMail(Mail mail) {
     	if (mail == null) {
