@@ -89,21 +89,21 @@
 		            	sort="auto(participantListCount)" 
 		            	align="center" 
 		            	hflex="min"  />
-		            <listheader width="180px" align="center" />
+		            <listheader hflex="min" align="center" />
 		        </listhead>
 		         
 		        <template name="model">
 		            <listitem>
-		                <listcell label="${each.name}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+		                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+		                	<label value="${each.name}" onClick="@command('detailCmd', uuid=each.uuid)" style="text-decoration: underline !important" />
+		                </listcell>
 		                <listcell label="${each.participantListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 		                <listcell>
 		                	<button label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
-		                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourse_${each.uuid}, position=after_end" />
-		                	<menupopup id="menuCourse_${each.uuid}" >
-								<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" visible="${vm.isLoggedUserInRole('ADMIN')}" />
-								<menuitem label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
-								<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)" visible="${vm.isLoggedUserInRole('ADMIN')}"  />
-					       	</menupopup>
+<!-- 		                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourse_${each.uuid}, position=after_end" sclass="hide-on-mobile-platform" /> -->
+<!-- 		                	<menupopup id="menuCourse_${each.uuid}" > -->
+<!-- 								<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)" visible="${vm.isLoggedUserInRole('ADMIN')}"  /> -->
+<!-- 					       	</menupopup> -->
 		                </listcell>
 		            </listitem>
 		        </template>
