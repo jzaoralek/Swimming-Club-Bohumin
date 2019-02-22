@@ -371,7 +371,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 
 		// header
 		Listhead lh = listbox.getListhead();
-		Object[] headerArray = new Object[lh.getChildren().size() + 7];
+		Object[] headerArray = new Object[lh.getChildren().size() + 10];
 		for (int i = 0; i < lh.getChildren().size(); i++) {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
@@ -390,6 +390,13 @@ public class CourseApplicationListVM extends BaseContextVM {
 		} else {
 			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
 			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
+			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.phone");
+			headerArray[lh.getChildren().size()+2] = Labels.getLabel("txt.ui.common.email");
+			headerArray[lh.getChildren().size()+3] = Labels.getLabel("txt.ui.common.street");
+			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.landRegNo");
+			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.houseNo");
+			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.city");
+			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.zipCode");	
 		}
 		data.put("0", headerArray);
 
@@ -424,7 +431,14 @@ public class CourseApplicationListVM extends BaseContextVM {
 								buildPaymentNotifiedInfo(item.getCourseParticipant()),
 								item.getCourseParticipant().getCoursePaymentVO() != null ? (item.getCourseParticipant().getCoursePaymentVO().isOverpayed() ? Labels.getLabel("enum.CoursePaymentState.OVERPAYED") : getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null)) : null,
 								item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getPaymentSum() : 0,
-								item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getTotalPrice() : 0
+								item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getTotalPrice() : 0,
+								item.getCourseParticRepresentative().getContact().getPhone1(),
+								item.getCourseParticRepresentative().getContact().getEmail1(),	
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getStreet()),
+								getNotNullLongEmptyChar(item.getCourseParticipant().getContact().getLandRegistryNumber()),
+								getNotNullShortEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode())
 								});
 				}
 			}
