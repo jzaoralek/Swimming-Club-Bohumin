@@ -65,6 +65,14 @@ public abstract class BaseContextVM extends BaseVM {
 		}
 	}
 	
+	protected String getNotNullStringEmptyChar(String value) {
+		if (StringUtils.hasText(value)) {
+			return value;
+		} else {
+			return "-";
+		}
+	}
+	
 	protected String getNotNullLong(Long value) {
 		if (value != null && value != 0) {
 			return String.valueOf(value);
@@ -73,11 +81,27 @@ public abstract class BaseContextVM extends BaseVM {
 		}
 	}
 	
+	protected String getNotNullLongEmptyChar(Long value) {
+		if (value != null && value != 0) {
+			return String.valueOf(value);
+		} else {
+			return "-";
+		}
+	}
+	
 	protected String getNotNullShort(Short value) {
 		if (value != null && value != 0) {
 			return String.valueOf(value);
 		} else {
 			return "";
+		}
+	}
+	
+	protected String getNotNullShortEmptyChar(Short value) {
+		if (value != null && value != 0) {
+			return String.valueOf(value);
+		} else {
+			return "-";
 		}
 	}
 }

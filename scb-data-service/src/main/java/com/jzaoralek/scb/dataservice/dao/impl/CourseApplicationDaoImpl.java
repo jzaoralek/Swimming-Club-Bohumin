@@ -367,8 +367,14 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	private static final String SELECT_COURSE_APPLICATION_BY_YEAR_FROM_TO_MIN = 
 			"select " +
 			"con_part.firstname " +
-			", con_part.surname " + 
+			", con_part.surname " +
+			", con_part.city " +
+			", con_part.street " +
+			", con_part.land_registry_number " +
+			", con_part.house_number " +
+			", con_part.zip_code " +
 			", cp.uuid \"participant_uuid\" " +
+			", con_repr.phone1 " +
 			", con_repr.email1 " + 
 			", usr.uuid  \"representative_uuid\" " +
 			", ca.uuid " +
@@ -671,6 +677,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			Contact courseParticipantContact = new Contact();
 			courseParticipantContact.setFirstname(rs.getString("firstname"));
 			courseParticipantContact.setSurname(rs.getString("surname"));
+			courseParticipantContact.setCity(rs.getString("city"));
+			courseParticipantContact.setStreet(rs.getString("street"));
+			courseParticipantContact.setLandRegistryNumber(rs.getLong("land_registry_number"));
+			courseParticipantContact.setHouseNumber(rs.getShort("house_number"));
+			courseParticipantContact.setZipCode(rs.getString("zip_code"));
 			courseParticipant.setContact(courseParticipantContact);
 
 			ret.setCourseParticipant(courseParticipant);
@@ -678,6 +689,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			ScbUser courseParticRepresentative = new ScbUser();
 			Contact courseParticRepresentativeContact = new Contact();
 			courseParticRepresentativeContact.setEmail1(rs.getString("email1"));
+			courseParticRepresentativeContact.setPhone1(rs.getString("phone1"));
 			courseParticRepresentative.setContact(courseParticRepresentativeContact);
 			courseParticRepresentative.setUuid(UUID.fromString(rs.getString("representative_uuid")));
 			ret.setCourseParticRepresentative(courseParticRepresentative);
