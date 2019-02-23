@@ -89,7 +89,7 @@
 		            	sort="auto(participantListCount)" 
 		            	align="center" 
 		            	hflex="min"  />
-		            <listheader hflex="min" align="center" />
+		            <listheader width="115px" align="center" />
 		        </listhead>
 		         
 		        <template name="model">
