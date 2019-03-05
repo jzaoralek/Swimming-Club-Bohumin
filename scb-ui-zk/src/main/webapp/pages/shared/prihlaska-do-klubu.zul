@@ -3,7 +3,10 @@
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 
-<zk>
+<zk xmlns:c="client" xmlns:x="xhtml">
+	
+	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
+	
 	<borderlayout self="@{define(mainContent)}" hflex="1"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
 		validationMessages="@id('vmsgs')"
@@ -595,24 +598,26 @@
 						</hbox>
 						
 						<!-- Captcha -->
-						<hbox style="margin-bottom: 10px; margin-top: 20px" visible="@load(vm.editMode and !vm.securedMode)">
-							<vbox align="center">
-							    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
-							    <bw.captcha id="cap1" />
-							    <textbox id="captcha" style="margin-bottom: 15px;" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1, validate=(vm.editMode and !vm.securedMode))" tabindex="20" />
-							    <hbox height="20px">
-								    <span style="margin-left: 10px;" sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[captcha])" >
-										<label value="@bind(vmsgs[captcha])" />
-									</span>
-								</hbox>
-							</vbox>
-						</hbox>
-						
 						<hlayout style="margin-bottom: 20px;margin-top: 10px;">
-							<vlayout>
-								<button label="Odeslat" tabindex="21"
+							<vlayout apply="com.jzaoralek.scb.ui.common.recaptcha.RecaptchaComposer">
+								<script><![CDATA[ 
+								        function afterValidate(response){
+								        	zk.Widget.$('$recaptcha').fire('onUserRespond',{'response':response}, {toServer:true});
+								        s} 
+								    ]]>
+							    </script>
+							    
+							    <!-- test: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI -->
+								<x:div id="recaptcha" class="g-recaptcha"
+									data-sitekey="6LftpX8UAAAAAOKelMkZVkoGcWUyWRC0LbtpcO1Y"
+							        data-callback="afterValidate"
+							        visible="@load(vm.editMode and !vm.securedMode)" />
+							    
+								<button id="submit" label="Odeslat" tabindex="21"
 									onClick="@command('submit')" 
-									iconSclass="z-icon-check" 
+									iconSclass="z-icon-check"
+									disabled="true"
+									style="margin-top: 10px;"
 									visible="@load(vm.editMode and !vm.securedMode)" />
 								<button label="Uložit"
 									onClick="@command('submit')" 
