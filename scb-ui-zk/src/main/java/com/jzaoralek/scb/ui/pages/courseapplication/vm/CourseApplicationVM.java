@@ -53,7 +53,6 @@ public class CourseApplicationVM extends BaseVM {
 	private boolean showNotification;
 	private String confirmText;
 	private String errotText;
-	private String captcha;
 	private List<Course> courseList;
 	private List<Course> courseListAll;
 	private Set<Course> courseSelected;
@@ -472,12 +471,6 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public String getBorderLayoutCenterStyle() {
 		return !this.securedMode ? "background:#dfe8f6 url('"+Executions.getCurrent().getContextPath()+"/resources/img/background2014Full.jpg') no-repeat center center;" : "";
-	}
-	public String getCaptcha() {
-		return captcha;
-	}
-	public void setCaptcha(String captcha) {
-		this.captcha = captcha;
 	}
 	public Set<Course> getCourseSelected() {
 		return courseSelected;

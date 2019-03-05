@@ -1,9 +1,11 @@
-<?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.menu.application')}" contentType="text/html;charset=UTF-8" ?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 
-<zk>
+<zk xmlns:c="client" xmlns:x="xhtml">
+	
+	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
+	
 	<div self="@{define(mainContent)}" 
 		width="100%"
 		height="100%"
@@ -11,7 +13,7 @@
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
 		validationMessages="@id('vmsgs')"
 	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
-			
+		
             <hlayout>
             	<page-toolbar width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())"/>
                 <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
@@ -432,25 +434,29 @@
 						</hbox>
 						
 						<!-- Captcha -->
-	                    <div sclass="form-captcha-panel" if="${vm.editMode and !vm.securedMode and !vm.loggedByParticRepr}">
-							<vlayout>
-							    <button label="jiný obrázek" onClick="cap1.randomValue();"/>
-							    <bw.captcha id="cap1" style="margin-top: 10px;"/>
-							    <textbox id="captcha" style="margin-bottom: 15px; margin-top: 10px;" value="@bind(fx.captcha) @validator(vm.captchaValidator, catpt=cap1, validate=(vm.editMode and !vm.securedMode))" tabindex="20" />
-							    <hbox height="20px" visible="@load(not empty vmsgs[captcha])">
-								    <span style="margin-top: 10px;" sclass="alert alert-danger" hflex="min"  >
-										<label value="@bind(vmsgs[captcha])" />
-									</span>
-								</hbox>
-							</vlayout>
-						</div>
-						
 						<hlayout style="margin-bottom: 20px;margin-top: 10px;">
-							<vlayout>
-								<button label="Odeslat" tabindex="21"
+							<vlayout apply="com.jzaoralek.scb.ui.common.recaptcha.RecaptchaComposer">
+								<script><![CDATA[ 
+								        function afterValidate(response){
+								        	zk.Widget.$('$recaptcha').fire('onUserRespond',{'response':response}, {toServer:true});
+								        s} 
+								    ]]>
+							    </script>
+							    
+							    <!-- test: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI -->
+	    						<x:div id="recaptcha" class="g-recaptcha"
+									data-sitekey="6LftpX8UAAAAAOKelMkZVkoGcWUyWRC0LbtpcO1Y"
+							        data-callback="afterValidate"
+							        visible="@load(vm.editMode and !vm.securedMode)" />
+
+								<button id="submit" 
+									label="Odeslat" 
+									tabindex="21"
 									onClick="@command('submit')" 
-									iconSclass="z-icon-check" 
+									iconSclass="z-icon-check"
+									style="margin-top: 20px;"
 									sclass="btn-success"
+									disabled="true"
 									visible="@load(vm.editMode and !vm.securedMode)" />
 								<button label="Uložit"
 									sclass="btn-success"
@@ -470,7 +476,7 @@
 				            jq("$particBirthNumber").mask("999999/9999");
 				        });
 				    </script>
-		    
+			
 				</vlayout>
 				
 	</div>

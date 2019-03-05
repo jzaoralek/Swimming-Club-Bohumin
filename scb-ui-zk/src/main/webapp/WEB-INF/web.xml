@@ -103,7 +103,7 @@
 	</filter-mapping>
 
 	<welcome-file-list>
-		<welcome-file>/pages/index.zul</welcome-file>
+		<welcome-file>/pages/common/login.zul</welcome-file>
 	</welcome-file-list>
 
 </web-app>

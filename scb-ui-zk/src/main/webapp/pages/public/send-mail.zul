@@ -4,16 +4,29 @@
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 
-<zk>
-	<borderlayout self="@{define(mainContent)}" hflex="1"
+<zk xmlns:c="client" xmlns:x="xhtml">
+	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
+	
+	<div self="@{define(mainContent)}" hflex="1"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.security.vm.SendMailVM')" >
-		<center border="none" >
-			<div>
-				<button label="Send mail" onClick="@command('sendMailCmd')" />
-				<button label="Send mail - async" onClick="@command('sendMail2Cmd')" />
-				<button label="Download" onClick="@command('downloadCmd')" />
-			</div>
-		</center>
-	</borderlayout>
+		<div apply="com.jzaoralek.scb.ui.common.recaptcha.RecaptchaComposer">
+			<button label="Send mail" onClick="@command('sendMailCmd')" />
+			<button label="Send mail - async" onClick="@command('sendMail2Cmd')" />
+			<button label="Download" onClick="@command('downloadCmd')" />
+			
+			<script><![CDATA[ 
+			        function afterValidate(response){
+			            zk.Widget.$('$recaptcha').fire('onUserRespond',{'response':response}, {toServer:true}); 
+			        } 
+			    ]]>
+		    </script>
+		    
+			<x:div id="recaptcha" class="g-recaptcha"
+				data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+				data-callback="afterValidate" />
+			
+			<button id="submit" label="Submit" disabled="true" />
+		</div>
+	</div>
 	
 </zk>

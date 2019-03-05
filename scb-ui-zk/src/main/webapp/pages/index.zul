@@ -1,6 +1,12 @@
+<?page title="${common:getOrgNameStatic()}" contentType="text/html;charset=UTF-8" ?>
 <?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
 <?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
 
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+<?xel-method prefix="common" name="getOrgNameStatic"
+	class="com.jzaoralek.scb.ui.common.vm.BaseVM"
+	signature="com.jzaoralek.scb.ui.common.vm.BaseVM getOrgNameStatic()"?>
+	
 <zk>
 	<include src="/pages/public/dashboard.zul"/>
 </zk>

@@ -1,10 +1,15 @@
+<?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.login')}" contentType="text/html;charset=UTF-8" ?>
 <?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
-<?page title="${c:l('txt.Login')}"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
-
+<?xel-method prefix="common" name="getOrgNameStatic"
+	class="com.jzaoralek.scb.ui.common.vm.BaseVM"
+	signature="com.jzaoralek.scb.ui.common.vm.BaseVM getOrgNameStatic()"?>
+	
 <?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
 <?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
+
+
 
 <zk>
 	<script src="/resources/js/scb-login.js"></script>

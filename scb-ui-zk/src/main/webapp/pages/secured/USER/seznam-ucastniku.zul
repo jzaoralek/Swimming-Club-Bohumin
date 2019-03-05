@@ -52,7 +52,9 @@
 			         
 			        <template name="model">
 			            <listitem>
-			                <listcell label="${each.contact.completeName}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.contact.completeName}" 
+			                	onClick="@command('detailCmd', uuid=each.uuid)" style="text-decoration: underline !important"
+			                	onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="@load(each.birthdate) @converter(vm.dateConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />	                
 			                <listcell>
 			                	<hlayout>
@@ -70,11 +72,11 @@
 										onClick="@command('createNewCourseApplicationCmd', uuid=each.uuid)"
 										visible="@load(vm.newCourseApplicationAllowed(each))"
 										if="${!vm.courseSelectionRequired}" />
-				                	<button tooltiptext="${c:l('txt.ui.common.detail')}"
-				                		label="Detail" 
-				                		hflex="min"
-				                		style="margin-left: 2px;"
-				                		onClick="@command('detailCmd', uuid=each.uuid)" />	                	
+<!-- 				                	<button tooltiptext="${c:l('txt.ui.common.detail')}" -->
+<!-- 				                		label="Detail"  -->
+<!-- 				                		hflex="min" -->
+<!-- 				                		style="margin-left: 2px;" -->
+<!-- 				                		onClick="@command('detailCmd', uuid=each.uuid)" />	                	 -->
 			                	</hlayout>
 			                </listcell>
 			            </listitem>

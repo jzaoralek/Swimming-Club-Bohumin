@@ -14,7 +14,7 @@
 			<a	id="HOME"
 				iconSclass="z-icon-home" 
 				visible="@load(!vm.isUserLogged())"
-				href="/" 
+				href="/pages/index.zul" 
 				tooltiptext="Home">
 				<label value="Home"/>
 			</a>
