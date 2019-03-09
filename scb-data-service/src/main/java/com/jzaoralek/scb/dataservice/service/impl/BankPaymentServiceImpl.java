@@ -20,13 +20,11 @@ import com.jzaoralek.scb.dataservice.dao.PaymentDao;
 import com.jzaoralek.scb.dataservice.dao.TransactionDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
-import com.jzaoralek.scb.dataservice.domain.IdentEntity;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
-import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 import bank.fioclient.dto.AccountStatement;
 import bank.fioclient.dto.AuthToken;

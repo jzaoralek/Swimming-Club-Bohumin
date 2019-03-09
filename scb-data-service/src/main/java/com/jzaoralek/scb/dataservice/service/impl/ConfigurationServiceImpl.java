@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jzaoralek.scb.dataservice.dao.ConfigurationDao;
@@ -21,6 +22,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Autowired
 	private ConfigurationDao configurationDao;
+	
+	@Value("${recaptcha.sitekey}")
+    private String recaptchaSitekey;
+	
+	@Value("${recaptcha.secretkey}")
+    private String recaptchaSecredkey;
 
 	@Override
 	public String getCourseApplicationYear() {
@@ -137,5 +144,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public boolean isAttendanceForParentsVisible() {
 		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.ATTENDANCE_FOR_PARENTS_VISIBLE.name()).getValue());
+	}
+
+	@Override
+	public String getRecaptchaSitekey() {
+		return this.recaptchaSitekey;
+	}
+
+	@Override
+	public String getRecaptchaSecredkey() {
+		return this.recaptchaSecredkey;
 	}
 }

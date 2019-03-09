@@ -445,7 +445,7 @@
 							    
 							    <!-- test: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI -->
 	    						<x:div id="recaptcha" class="g-recaptcha"
-									data-sitekey="6LftpX8UAAAAAOKelMkZVkoGcWUyWRC0LbtpcO1Y"
+									data-sitekey="${vm.recaptchaSitekey}"
 							        data-callback="afterValidate"
 							        visible="@load(vm.editMode and !vm.securedMode)" />
 

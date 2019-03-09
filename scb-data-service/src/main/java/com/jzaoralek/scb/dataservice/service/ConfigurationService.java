@@ -29,4 +29,18 @@ public interface ConfigurationService {
 	boolean isAttendanceForParentsVisible();
 	List<Config> getAll();
 	void update(Config config);
+	
+	/**
+	 * Return recaptcha.sitekey from property file;
+	 * @param key
+	 * @return
+	 */
+	String getRecaptchaSitekey();
+	
+	/**
+	 * Return recaptcha.secretkey from property file;
+	 * @param key
+	 * @return
+	 */
+	String getRecaptchaSecredkey();
 }

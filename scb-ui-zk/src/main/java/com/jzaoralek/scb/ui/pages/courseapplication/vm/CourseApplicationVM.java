@@ -63,6 +63,7 @@ public class CourseApplicationVM extends BaseVM {
 	private CourseApplicationFileConfig healthInfoAgreementConfig;
 	private CourseApplicationFileConfig gdprAgreementConfig;
 	private boolean loggedByParticRepr;
+	private String recaptchaSitekey;
 	
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -131,6 +132,8 @@ public class CourseApplicationVM extends BaseVM {
 		} else {
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {String.valueOf(courseApplication.getYearFrom())});
 		}
+		
+		this.recaptchaSitekey = configurationService.getRecaptchaSitekey();
 	}
 	
 	/**
@@ -513,5 +516,8 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public boolean isLoggedByParticRepr() {
 		return loggedByParticRepr;
+	}
+	public String getRecaptchaSitekey() {
+		return recaptchaSitekey;
 	}
 }
