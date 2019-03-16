@@ -83,7 +83,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	private static final String SELECT_COURSE_COURSE_PARTIC_BY_UUID = "select uuid, course_participant_uuid, course_uuid from course_course_participant where uuid = :"+UUID_PARAM;
 	private static final String SELECT_COURSE_COURSE_PARTIC_BY_PARTIC_AND_COURSE = "select * from course_course_participant where course_participant_uuid = :"+COURSE_PARTICIPANT_UUID_PARAM+" AND course_uuid = :"+COURSE_UUID_PARAM;
 	
-	private static final String SELECT_BY_PERSONAL_NO_AND_INTERVAL = "SELECT cp.* FROM course_participant cp, course_course_participant ccp, course c " + 
+	private static final String SELECT_BY_PERSONAL_NO_AND_INTERVAL = "SELECT cp.*, ccp.* FROM course_participant cp, course_course_participant ccp, course c " + 
 			" WHERE cp.uuid = ccp.course_participant_uuid AND ccp.course_uuid = c.uuid " +
 //			" AND TRIM(LEADING '0' FROM REPLACE(cp.personal_number,'/','')) =:" + PERSONAL_NUMBER_PARAM +
 			" AND TRIM(LEADING '0' FROM ccp.varsymbol_core) =:" + VARSYMBOL_CORE_PARAM +
@@ -104,7 +104,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	public CourseParticipant getByUuid(UUID uuid, boolean deep) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
 		try {
-			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
+			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new CourseParticipantRowMapper(contactDao, false));
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
@@ -126,7 +126,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	@Override
 	public boolean existsByPersonalNumber(String personalNumber) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(PERSONAL_NUMBER_PARAM, personalNumber);
-		List<CourseParticipant> courseParticipantList = namedJdbcTemplate.query(SELECT_BY_PERSONAL_NUMBER, paramMap, new CourseParticipantRowMapper(contactDao));
+		List<CourseParticipant> courseParticipantList = namedJdbcTemplate.query(SELECT_BY_PERSONAL_NUMBER, paramMap, new CourseParticipantRowMapper(contactDao, false));
 		return !courseParticipantList.isEmpty();
 	}
 	
@@ -136,7 +136,7 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 				.addValue(DATE_FROM_PARAM, yearFrom)
 				.addValue(DATE_TO_PARAM, yearTo);
 		try {
-			return namedJdbcTemplate.queryForObject(SELECT_BY_PERSONAL_NO_AND_INTERVAL, paramMap, new CourseParticipantRowMapper(contactDao));
+			return namedJdbcTemplate.queryForObject(SELECT_BY_PERSONAL_NO_AND_INTERVAL, paramMap, new CourseParticipantRowMapper(contactDao, true));
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
@@ -212,25 +212,25 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	@Override
 	public List<CourseParticipant> getByCourseUuid(UUID courseUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_COURSE_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_UUID, paramMap, new CourseParticipantRowMapper(contactDao, false));
 	}
 	
 	@Override
 	public List<CourseParticipant> getByCourseIncInterruptedUuid(UUID courseUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_COURSE_INCLUDE_INTERRUPTED_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_INCLUDE_INTERRUPTED_UUID, paramMap, new CourseParticipantRowMapper(contactDao, false));
 	}
 
 	@Override
 	public List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(LEARNING_LESSON_UUID_PARAM, learningLessonUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_LEARNING_LESSON_UUID, paramMap, new CourseParticipantRowMapper(contactDao));
+		return namedJdbcTemplate.query(SELECT_BY_LEARNING_LESSON_UUID, paramMap, new CourseParticipantRowMapper(contactDao, false));
 	}
 	
 	@Override
 	public List<CourseParticipant> getByUserUuid(UUID userUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(USER_UUID_PARAM, userUuid.toString());
-		return namedJdbcTemplate.query(SELECT_BY_USERID, paramMap, new CourseParticipantRowMapper(contactDao));
+		return namedJdbcTemplate.query(SELECT_BY_USERID, paramMap, new CourseParticipantRowMapper(contactDao, false));
 	}
 
 	@Override
@@ -254,9 +254,12 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 
 	public static final class CourseParticipantRowMapper implements RowMapper<CourseParticipant> {
 		private ContactDao contactDao;
+		/** Indikator urcujici zda-li naplnit atributy z COURSE_COURSE_PARTICIPANT, potreba aby byly atributy soucastni dotazu. */
+		private boolean includeCourseCoursePartic;
 
-		public CourseParticipantRowMapper(ContactDao contactDao) {
+		public CourseParticipantRowMapper(ContactDao contactDao, boolean includeCourseCoursePartic) {
 			this.contactDao = contactDao;
+			this.includeCourseCoursePartic = includeCourseCoursePartic;
 		}
 
 		@Override
@@ -274,6 +277,14 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			}
 
 			ret.setRepresentativeUuid(rs.getString("user_uuid") != null ? UUID.fromString(rs.getString("user_uuid")) : null);
+			
+			if (includeCourseCoursePartic) {
+				ret.setCourseUuid(UUID.fromString(rs.getString("course_uuid")));
+				ret.setVarsymbolCore(rs.getInt("varsymbol_core"));
+				ret.setNotifiedSemester1PaymentAt(rs.getTimestamp("notified_semester_1_payment_at"));
+				ret.setNotifiedSemester2PaymentAt(rs.getTimestamp("notified_semester_2_payment_at"));
+				ret.setCourseParticipationInterruptedAt(rs.getTimestamp("course_partic_interrupted_at"));				
+			}
 			
 			return ret;
 		}

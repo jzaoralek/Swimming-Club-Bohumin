@@ -20,13 +20,11 @@ import com.jzaoralek.scb.dataservice.dao.PaymentDao;
 import com.jzaoralek.scb.dataservice.dao.TransactionDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
-import com.jzaoralek.scb.dataservice.domain.IdentEntity;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
-import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 import bank.fioclient.dto.AccountStatement;
 import bank.fioclient.dto.AuthToken;
@@ -146,18 +144,24 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 		// projit bankovni transakce ke zparovani a v danem rocniku vyhledat ucastniky k nimz transakce patri a vytvorit seznam plateb ke zpracovani
 		List<Payment> paymentToProcessList = new ArrayList<>();
 		Payment payment = null;
-		List<Course> courseList = null;
+//		List<Course> courseList = null;
 		for (Transaction transaction : unpairedTransactionList) {
 			// vyhledat zda-li v danem rocniku existuje courseParticipant s personalNo = varSymbol
 			if (StringUtils.hasText(transaction.getVariabilniSymbol())) {
 				CourseParticipant courseParticipant = courseParticipantDao.getByVarsymbolAndInterval(PaymentUtils.getVarsymbolCore(transaction.getVariabilniSymbol(), String.valueOf(dateFrom.get(Calendar.YEAR))), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
+				Course course = null;
 				if (courseParticipant != null) {
 					// dotahnout kurz do nehoz ucastnik parti, pocita se s tim ze v danem rocniku muze byt ucastnik pouze v jednom kurzu!!!
-					courseList = courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
-					// na zaklade transaction a courseParticipant vytvorit payment pro zpracovani
-					payment = new Payment(transaction, courseList.get(0), courseParticipant, PaymentProcessType.AUTOMATIC);
-					fillPaymentIdentEntity(payment);
-					paymentToProcessList.add(payment);
+					// courseList = courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), dateFrom.get(Calendar.YEAR), dateTo.get(Calendar.YEAR));
+					course = courseDao.getByUuid(courseParticipant.getCourseUuid());
+					if (course != null) {
+						// na zaklade transaction a courseParticipant vytvorit payment pro zpracovani
+						payment = new Payment(transaction, course, courseParticipant, PaymentProcessType.AUTOMATIC);
+						fillPaymentIdentEntity(payment);
+						paymentToProcessList.add(payment);						
+					} else {
+						LOG.warn("No course found for uuid: " + courseParticipant.getCourseUuid());
+					}
 				}				
 			}
 		}
