@@ -112,7 +112,11 @@
 			         
 			        <template name="model">
 			            <listitem>
-			                <listcell label="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+			                	<label value="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}"
+			                		onClick="@command('detailCmd', uuid=each.uuid, newTab=true)" 
+			                		style="text-decoration: underline !important" />
+			                </listcell>
 			                <listcell label="${each.courseParticipant.courseName}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
 			                	<hbox popup="paymentInstructionPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" hflex="1" pack="center">
