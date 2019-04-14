@@ -150,7 +150,7 @@ CREATE TABLE learning_lesson (
 	lesson_date DATE NOT NULL,
 	time_from time NOT NULL,
 	time_to time NOT NULL,
-	description varchar(240) CHARACTER SET utf8,
+	description varchar(1000) CHARACTER SET utf8,
 	additional_column_int INT,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,

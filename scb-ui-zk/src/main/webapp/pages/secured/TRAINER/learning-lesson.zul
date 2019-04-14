@@ -1,3 +1,4 @@
+
 <?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
 <?page title="${common:getOrgNameStatic()}" ?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
@@ -79,7 +80,7 @@
 						</row>
 						<row sclass="form-grid-row" style="border: none; padding: 10px 10px 10px 10px;" hflex="1" >
 							<cell sclass="form-grid-cell" hflex="1" >
-								<textbox multiline="true" placeholder="${c:l('txt.ui.common.description')}" value="@bind(fx.description)" rows="5" hflex="1"/>
+								<textbox multiline="true" placeholder="${c:l('txt.ui.common.description')}" value="@bind(fx.description)" maxlength="1000" rows="5" hflex="1"/>
 							</cell>
 						</row>
 					</rows>
