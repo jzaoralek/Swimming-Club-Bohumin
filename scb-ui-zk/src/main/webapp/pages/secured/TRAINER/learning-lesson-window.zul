@@ -74,7 +74,7 @@
 				</row>
 				<row sclass="form-grid-row" style="border: none; padding: 10px 30px 10px 30px;" hflex="1" >
 					<cell sclass="form-grid-cell" hflex="1" colspan="2" >
-						<textbox multiline="true" placeholder="${c:l('txt.ui.common.description')}" value="@bind(fx.description)" rows="5" hflex="1"/>
+						<textbox multiline="true" placeholder="${c:l('txt.ui.common.description')}" value="@bind(fx.description)" maxlength="1000" rows="5" hflex="1"/>
 					</cell>
 				</row>
 			</rows>
