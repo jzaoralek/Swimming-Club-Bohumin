@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ public interface LearningLessonService {
 
 	List<LearningLesson> getByLesson(UUID lessonUuid);
 	List<LearningLesson> getByCourse(UUID courseUuid);
+	List<LearningLesson> getByCourseInterval(UUID courseUuid, Date from, Date to);
 	LearningLesson getByUUID(UUID uuid);
 	LearningLesson store(LearningLesson lesson);
 	void delete(LearningLesson lesson);
