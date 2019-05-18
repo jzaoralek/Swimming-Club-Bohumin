@@ -93,7 +93,7 @@
 							<textbox id="resultTime"
 								value="@bind(fx.resultTimeStr) @validator(vm.timeIntervalValidator)"
                            		placeholder="*"
-                           		maxlength="9"
+                           		maxlength="8"
                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
                            		tabindex="4"
                            		hflex="1" />

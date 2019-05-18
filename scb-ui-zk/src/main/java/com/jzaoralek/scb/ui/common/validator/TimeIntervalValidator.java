@@ -32,6 +32,11 @@ public class TimeIntervalValidator extends ScbAbstractValidator {
 		} else if (value.indexOf(WebConstants.MINUTE_SECOND_DELIM) < 0 && value.indexOf(WebConstants.SECOND_MILISECOND_DELIM) < 0) {
 			pattern = SEC_PATTERN;
 		}
+		
+		if (pattern == null) {
+			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidFormat"));
+            return;
+		}
 
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 		try {
