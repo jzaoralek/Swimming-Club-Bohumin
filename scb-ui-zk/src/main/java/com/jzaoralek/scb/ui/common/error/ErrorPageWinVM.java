@@ -44,7 +44,9 @@ public class ErrorPageWinVM extends BaseVM {
 			this.errorReport = buildErrorReport();
 
 			// mail to administrator
-			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, Labels.getLabel("txt.ui.internalError"), this.errorReport, null);
+			if (mailService != null) {
+				mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, Labels.getLabel("txt.ui.internalError"), this.errorReport, null);				
+			}
 		}
 	}
 

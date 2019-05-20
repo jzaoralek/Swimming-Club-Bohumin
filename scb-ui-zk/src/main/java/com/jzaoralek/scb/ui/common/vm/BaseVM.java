@@ -58,13 +58,12 @@ public class BaseVM {
 	protected String orgEmail;
 	protected String orgPhone;
 	protected String welcomeInfo;
-	
 
 	@WireVariable
 	protected ConfigurationService configurationService;
 	
 	@WireVariable
-	private ScbUserService scbUserService;
+	protected ScbUserService scbUserService;
 	
 	@WireVariable
 	protected MailService mailService;
@@ -82,7 +81,9 @@ public class BaseVM {
 		this.existingUsernameValidator = new ExistingUsernameValidator(scbUserService);
 		
 		// naplneni cashovanych hodnot z konfigurace
-		orgName = ConfigUtil.getOrgName(configurationService);		
+		if (configurationService != null) {
+			orgName = ConfigUtil.getOrgName(configurationService);			
+		}
 	}
 
 	public static String getOrgNameStatic() {

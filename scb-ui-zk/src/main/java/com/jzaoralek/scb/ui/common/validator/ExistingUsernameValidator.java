@@ -3,6 +3,7 @@ package com.jzaoralek.scb.ui.common.validator;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.ValidationContext;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
@@ -13,6 +14,7 @@ import com.jzaoralek.scb.dataservice.service.ScbUserService;
  */
 public class ExistingUsernameValidator extends ScbAbstractValidator {
 
+	@WireVariable
 	private ScbUserService scbUserService;
 	
 	public ExistingUsernameValidator(ScbUserService scbUserService) {

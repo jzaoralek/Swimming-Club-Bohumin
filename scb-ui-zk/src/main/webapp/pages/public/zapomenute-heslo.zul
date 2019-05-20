@@ -1,82 +1,80 @@
 <?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.forgottenPassword')}" contentType="text/html;charset=UTF-8" ?>
 <?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
-<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
 
+<?xel-method prefix="common" name="getOrgNameStatic"
+	class="com.jzaoralek.scb.ui.common.vm.BaseVM"
+	signature="com.jzaoralek.scb.ui.common.vm.BaseVM getOrgNameStatic()"?>
+	
 <?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
 <?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
 
 <zk>
 
-	<div self="@{define(mainContent)}" 
-			hflex="1" 
-			sclass="scb-view scb-view-900" 
-			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.security.vm.ForgottenPasswordVM')"
-			validationMessages="@id('vmsgs')"
-		    form="@id('fx') @load(vm) @save(vm, before='submit')" >
-		
-		<vlayout>
-            <label value="${c:l('txt.ui.forgottenPassword')}" sclass="scb-headline-big"/>
-        </vlayout>
-
+	<div sclass="login-page"
+		width="100%"
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.security.vm.ForgottenPasswordVM')"
+		validationMessages="@id('vmsgs')"
+	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
+	    
+	    <div sclass="login-frame">
+			<div sclass="clear"></div>
+			<div sclass="login-frame-left">
+				
+				<html>
+					<h1>${c:l('txt.ui.forgottenPassword')}</h1>
+					<h2>Zadejte email/uživatelské jméno.</h2>
+				</html>
+				
 				<vlayout xmlns:h="xhtml" >
 					
-					<!-- Potvrzujici info -->
-					<vbox hflex="20" pack="center" align="center" sclass="vbox-content" visible="@load(vm.showNotification)">
-						<window closable="false" border="normal" sclass="alert alert-success" >
-							<caption iconSclass="z-icon-check">
-								<label value="@load(vm.confirmText)"/>
-							</caption>
-						</window>
+					<vbox hflex="1" height="90px">
+						<hbox hflex="1">
+							<textbox id="username"
+								value="@bind(fx.username) @validator(vm.existingusernameValidator, notNull=true)"
+								maxlength="@load(vm.getEmailMaxlength())"
+								placeholder="*"
+								focus="true"
+								onOK="@command('submit')"
+								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+								tabindex="1"
+								hflex="1" />
+							<a iconSclass="z-icon-info-circle big-icon" popup="emailPopup" style="margin-left: 5px; font-size: large;" />
+							<popup id="emailPopup" >
+						        <label value="${c:l('txt.ui.common.email.info')}" />
+						    </popup>
+						</hbox>
+						<hbox hflex="1" align="start" pack="start" sclass="form-grid-validation-hbox">
+							<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[username])" >
+								<label value="@bind(vmsgs[username])" />
+							</span>	
+						</hbox>
 					</vbox>
 					
-					<vlayout visible="@load(!vm.showNotification)" sclass="scb-panel">
-						
-						<grid hflex="1" style="margin-bottom: 20px;" >
-							<columns>
-				                <column align="center" hflex="1" />
-				            </columns>
-				            
-							<rows style="background: white;">
-								<row sclass="form-grid-row" style="border: none; padding: 20px 30px 15px 30px;" >
-									<cell sclass="form-grid-cell" >
-										<vbox hflex="1">
-											<label value="${c:l('txt.ui.common.email')} / ${c:l('txt.ui.common.Username')}" />
-											<label value="" />
-											<hbox hflex="1">
-												<textbox id="username"
-													value="@bind(fx.username) @validator(vm.existingusernameValidator, notNull=true)"
-													maxlength="@load(vm.getEmailMaxlength())"
-													placeholder="*"
-													sclass="form-input-text"
-													focus="true"
-													tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-													tabindex="1"
-													hflex="1" />
-												<a iconSclass="z-icon-info-circle big-icon" popup="emailPopup" style="margin-left: 5px; font-size: large;" />
-												<popup id="emailPopup" >
-											        <label value="${c:l('txt.ui.common.email.info')}" />
-											    </popup>
-											</hbox>
-											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[username])" >
-													<label value="@bind(vmsgs[username])" />
-												</span>	
-											</hbox>
-										</vbox>
-									</cell>
-								</row>
-							</rows>
-						</grid>
-					</vlayout>
-					
 					<button label="Odeslat"
-							onClick="@command('submit')" 
-							iconSclass="z-icon-check" 
+							onClick="@command('submit')"
 							style="margin-top: 30px;"
-							sclass="btn-success"/>
+							sclass="btn-default"/>
 					
 				</vlayout>
 			</div>
+			
+			<div sclass="login-frame-right">
+				<a label="Sportologic" sclass="brand" href="/"/>
+				<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
+				<button label="Přihláška" href="/pages/public/prihlaska-do-klubu.zul" sclass="lpp"/>
+			</div>
+		</div>
+		
+		<div sclass="login-mobile-info">
+			<div sclass="clear"></div>
+			<div sclass="frame">
+				<a label="Sportologic" sclass="brand" href="/"/>
+				<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
+				<button label="Přihláška" href="/pages/public/prihlaska-do-klubu.zul" sclass="lpp"/>
+			</div>
+		</div>			
+	</div>
 </zk>
