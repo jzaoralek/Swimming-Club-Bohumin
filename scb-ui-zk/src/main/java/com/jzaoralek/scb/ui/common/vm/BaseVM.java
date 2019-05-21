@@ -539,4 +539,16 @@ public class BaseVM {
     public String getDateColWidth() {
     	return WebConstants.DATE_COL_WIDTH;
     }
+    
+    public String getOrgEmail() {
+		return ConfigUtil.getOrgEmail(configurationService);
+	}
+	
+	public String getOrgPhone() {
+		return ConfigUtil.getOrgPhone(configurationService);
+	}
+	
+	public String getOrgName2() {
+		return ConfigUtil.getOrgName(configurationService);
+	}
 }

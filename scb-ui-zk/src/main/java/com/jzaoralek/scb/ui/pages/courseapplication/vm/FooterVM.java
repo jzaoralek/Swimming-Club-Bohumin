@@ -11,12 +11,4 @@ public class FooterVM extends BaseVM {
 	public void init() {
 		super.init();
 	}
-	
-	public String getOrgEmail() {
-		return ConfigUtil.getOrgEmail(configurationService);
-	}
-	
-	public String getOrgPhone() {
-		return ConfigUtil.getOrgPhone(configurationService);
-	}
 }

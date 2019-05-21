@@ -817,6 +817,14 @@ button.lpp:HOVER{
 	margin: 30px 0px;
 }
 
+.login-page .footer {
+	display: block;
+	text-align: center;
+	color: #73818f;
+	line-height: 15px;
+	margin: 22px 0px;
+}
+
 scb-input{
 	display: flex;
 	flex-wrap: wrap;

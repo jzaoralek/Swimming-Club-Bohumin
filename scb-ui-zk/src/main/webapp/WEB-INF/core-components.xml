@@ -30,5 +30,23 @@
 	    <macro-uri>/pages/common/component/dochazka-grid.zul</macro-uri>
 		<component-class>com.jzaoralek.scb.ui.common.template.DochazkaGridMacro</component-class>
 	</component>
+	
+	<!-- Prihlasovaci stranka - sportologic info -->
+	<component>
+	    <component-name>login-frame-right</component-name>    
+	    <macro-uri>/pages/common/component/login-frame-right.zul</macro-uri>
+	</component>
+	
+	<!-- Prihlasovaci stranka - sportologic info mobile -->
+	<component>
+	    <component-name>login-mobile-info</component-name>    
+	    <macro-uri>/pages/common/component/login-mobile-info.zul</macro-uri>
+	</component>
+	
+	<!-- Prihlasovaci stranka - contact -->
+	<component>
+	    <component-name>login-footer</component-name>    
+	    <macro-uri>/pages/common/component/login-footer.zul</macro-uri>
+	</component>
 
 </language-addon>

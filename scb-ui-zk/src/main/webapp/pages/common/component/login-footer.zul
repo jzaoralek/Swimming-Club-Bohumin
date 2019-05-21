@@ -1,0 +1,5 @@
+<vlayout>
+	<label style="font-weight: bold;" value="${vm.orgName2}"/>
+	<label value="${vm.orgPhone}"/>
+	<label value="${vm.orgEmail}"/>
+</vlayout>
