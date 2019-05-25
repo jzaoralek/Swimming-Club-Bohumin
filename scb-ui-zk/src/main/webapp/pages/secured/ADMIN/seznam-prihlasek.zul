@@ -1,3 +1,4 @@
+
 <?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.menu.applications')}"?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
@@ -121,7 +122,11 @@
 		         
 		        <template name="model">
 		            <listitem>
-		                <listcell label="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+		                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+		                	<label value="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}"
+		                		onClick="@command('detailCmd', uuid=each.uuid)"
+		                		style="text-decoration: underline !important" />
+		                </listcell>
 		                <listcell label="@load(each.courseParticipant.birthdate) @converter(vm.dateConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 		                <listcell label="" onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
 		                	<hbox hflex="1" vflex="1" align="center">
@@ -164,11 +169,11 @@
                			<listcell visible="${each.currentParticipant}" />
                			
 		                <listcell>
-		                	<button iconSclass="z-icon-ellipsis-h" popup="menuCourseApplication_${each.uuid}, position=after_end" />
-		                	<menupopup id="menuCourseApplication_${each.uuid}" >
-								<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
-								<menuitem label="Odstranit" disabled="${each.courseParticipant.inCourse()}" onClick="@command('deleteCmd', item=each)"  />
-					       	</menupopup>
+					       	<button sclass="btn-danger round-btn" 
+					       		iconSclass="z-icon-times" 
+								tooltiptext="${c:l('txt.ui.common.remove')}"
+								if="${!each.courseParticipant.inCourse()}"
+								onClick="@command('deleteCmd', item=each)" />
 		                </listcell>
 		            </listitem>
 		        </template>

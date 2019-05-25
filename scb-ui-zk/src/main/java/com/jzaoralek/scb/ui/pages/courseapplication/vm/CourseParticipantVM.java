@@ -73,7 +73,6 @@ public class CourseParticipantVM extends BaseVM {
 	private String pageHeadline;
 	private CourseApplication participant;
 	private LearningLessonStatsWrapper lessonStats;
-	private boolean courseListStatsVisible;
 	private boolean attendanceTabSelected;
 	private UUID courseUuidSelected;
 
@@ -207,17 +206,19 @@ public class CourseParticipantVM extends BaseVM {
 	
 	private void buildCourseStatistics() {
 		Course course = null;
+		this.courseItemList = new ArrayList<>();
 		if (participant.getCourseParticipant().getCourseList().size() == 1) {
 			// ucastnik prirazen na jeden kurz, statistika primo zobrazena
 			course = participant.getCourseParticipant().getCourseList().get(0);
+			Listitem itemCourse = new Listitem(course.getName(), course.getUuid().toString());
+			courseItemList.add(itemCourse);
+			this.courseListitemSelected = itemCourse;
 			buildCourseStatsByCourse(course.getUuid());
 		} else {
 			// ucastnik prirazen na vice kurzu, zobrazena nabidka
-			this.courseItemList = new ArrayList<>();
 			for (Course item : participant.getCourseParticipant().getCourseList()) {
 				courseItemList.add(new Listitem(item.getName(), item.getUuid().toString()));
 			}
-			this.courseListStatsVisible = true;
 			
 			if (!CollectionUtils.isEmpty(participant.getCourseParticipant().getCourseList())) {
 				if (this.courseUuidSelected != null) {
@@ -288,10 +289,6 @@ public class CourseParticipantVM extends BaseVM {
 
 	public LearningLessonStatsWrapper getLessonStats() {
 		return lessonStats;
-	}
-	
-	public boolean isCourseListStatsVisible() {
-		return courseListStatsVisible;
 	}
 	
 	public boolean isAttendanceTabSelected() {

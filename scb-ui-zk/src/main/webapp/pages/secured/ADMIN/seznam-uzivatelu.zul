@@ -99,7 +99,11 @@
 			         
 			        <template name="model">
 			            <listitem>
-			                <listcell label="${each.username}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+			                	<label value="${each.username}" 
+			                		onClick="@command('detailCmd', uuid=each.uuid)"
+			                		style="text-decoration: underline !important" />
+			                </listcell>
 			                <listcell label="@load(each.role) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 			                <listcell label="${each.contact.getCompleteName()}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />	
 			                <listcell label="${each.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
@@ -107,7 +111,6 @@
 			                <listcell>
 			                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourse_${each.uuid}, position=after_end" />
 			                	<menupopup id="menuCourse_${each.uuid}" >
-									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
 									<menuitem label="${c:l('txt.ui.common.resetPassword')}" onClick="@command('resetPwdCmd', uuid=each.uuid)" />
 									<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)" visible="@load(vm.canDelete(each.uuid))"  />
 						       	</menupopup>

@@ -482,8 +482,7 @@
 				    	<tabpanel>
 				    		<!-- Dochazka -->
 				    		<vlayout sclass="mobile-overflow-x-auto">
-				    			<hlayout style="margin-top: 10px;margin-bottom: 10px;" 
-				    					visible="@init(vm.courseListStatsVisible)">
+				    			<hlayout style="margin-bottom: 20px; margin-top: 10px;" >
 				    				<label value="${c:l('txt.ui.common.course')}: " style="margin-right: 5px;"/>
 					    			<listbox selectedItem="@bind(vm.courseListitemSelected)"
 										onSelect="@command('loadLessonStatsByCourseCmd')"

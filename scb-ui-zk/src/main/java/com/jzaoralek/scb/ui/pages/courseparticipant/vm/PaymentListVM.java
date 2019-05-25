@@ -153,7 +153,7 @@ public class PaymentListVM extends BaseVM {
 	private String buildPageHeadline(CourseParticipant coursePartic, Course course) {
 		return Labels.getLabel("txt.ui.common.ParticipantPayments"
 				, new String[]{coursePartic.getContact().getCompleteName()
-				, course.getName() + " " + course.getYearFrom() + "/" + course.getYearTo()});
+				, course.getName(), course.getYearFrom() + "/" + course.getYearTo()});
 	}
 	
 	private void buildPaymentsState() {
