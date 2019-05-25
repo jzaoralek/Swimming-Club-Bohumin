@@ -107,7 +107,7 @@
 			            <listheader label="${c:l('txt.ui.common.course')}" sort="auto(courseParticipant.courseName)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.paymentInstructionSent')}" align="center" hflex="min" />
 			            <listheader label="${c:l('txt.ui.common.paymentState')}" align="center" hflex="min" />
-			            <listheader width="90px" align="center" />
+			            <listheader hflex="min" align="center" />
 			        </listhead>
 			         
 			        <template name="model">
@@ -237,11 +237,14 @@
 								    </popup>
 		            		</listcell>		                	
 			                <listcell>
+			                	<button label="${c:l('txt.ui.common.Payments')}" onClick="@command('paymentsCmd', item=each)" if="${vm.isLoggedUserInRole('ADMIN')}" />
+			                	<!-- 
 			                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourseApplication_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
 			                	<menupopup id="menuCourseApplication_${each.uuid}_${each.courseParticipant.courseUuid}" >
 									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
 									<menuitem label="${c:l('txt.ui.common.Payments')}" onClick="@command('paymentsCmd', item=each)" if="${vm.isLoggedUserInRole('ADMIN')}" />
 						       	</menupopup>
+						       	 -->
 			                </listcell>
 			            </listitem>
 			        </template>
