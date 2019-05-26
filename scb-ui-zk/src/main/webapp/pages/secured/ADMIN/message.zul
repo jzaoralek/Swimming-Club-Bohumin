@@ -1,0 +1,125 @@
+<?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.common.NovaZprava')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+
+<?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
+<?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
+
+<zk>
+	<div self="@{define(mainContent)}" 
+		sclass="scb-view"
+		hflex="1" 
+		vflex="1"
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.email.EmailDetailWinVM')">
+		
+        <vlayout>
+			<hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}">
+				<button onClick="@command('backCmd')" 
+					label="${c:l('txt.ui.common.Back')}" 
+					iconSclass="z-icon-arrow-left" 
+					sclass="btn-light fix-btn-icon"/>
+			</hlayout>
+        </vlayout>
+        
+        
+		<vlayout spacing="0" >
+	        <groupbox hflex="1" sclass="no-inner-padding" >            
+	            <vlayout>
+		            <grid hflex="1" vflex="1" >
+						<auxhead>
+							<auxheader class="header" >
+								<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+									<label value="${c:l('txt.ui.common.NovaZprava')}" />
+								</vbox>
+							</auxheader>
+						</auxhead>
+						<columns>
+							<column valign="middle" />
+						</columns>
+						<rows>
+							<row>
+								<cell>
+									<vlayout hflex="1" style="margin-top: 5px;">
+										<hlayout hflex="1" style="margin-bottom: 5px;">
+											<vbox align="start" hflex="1">
+												<label value="Komu" />
+											</vbox>
+											<vbox align="end" hflex="min">
+												<a label="${c:l('txt.ui.common.Copy')}" onClick="ccTxt.setVisible(true)" style="margin-right: 5px;" />
+											</vbox>
+										</hlayout>									
+										<bandbox id="representativeEmail1" hflex="1" 
+											sclass="form-input-text"
+											focus="true"
+											value="@bind(vm.mailTo)"
+											placeholder="${c:l('txt.ui.common.Recipients')}" 
+											mold="rounded"
+											style="margin-bottom: 10px;"
+											autodrop="true" />
+										<bandbox id="ccTxt" hflex="1" 
+											sclass="form-input-text"
+											value="@bind(vm.mailCc)"
+											placeholder="${c:l('txt.ui.common.Copy')}"
+											visible="false"
+											tabindex="2" 
+											mold="rounded" 
+											autodrop="true" />
+									</vlayout>
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<vlayout hflex="1">
+										<hbox hflex="1">
+											<textbox sclass="form-input-text"
+												placeholder="${c:l('txt.ui.common.Predmet')}"
+												value="@bind(vm.messageSubject)"
+												hflex="1" />
+										</hbox>
+									</vlayout>
+								</cell>
+							</row>
+							<row vflex="1">
+								<cell vflex="1">
+									<textbox sclass="form-input-text"
+										multiline="true"
+										value="@bind(vm.messageText)"
+										rows="20"
+										vflex="1"
+										hflex="1" />
+								</cell>
+							</row>
+						</rows>
+					</grid>
+					
+		            <vlayout children="@load(vm.attachmentList)" hflex="1" style="margin-left: 10px;">
+						<template name="children">
+							<vbox align="start" pack="center" hflex="1" style="margin-left: 10px;margin-top: 5px;">
+								<hbox align="center" >
+									<a label="@load(each.name)" 
+										onClick="@command('downloadAttachmentCmd', item=each)" />
+									<a onClick="@command('removeAttachmentCmd', item=each)" 
+										iconSclass="z-icon-times"
+										tooltiptext="${c:l('txt.ui.common.remove')}" />
+								</hbox>
+							</vbox>
+						</template>
+					</vlayout>
+					
+					<hbox align="start" pack="start" hflex="1" style="margin-left: 10px; margin-top: 15px; margin-bottom: 10px;">
+						<button onClick="@command('sendCmd')"
+							label="${c:l('txt.ui.common.Odeslat')}" 
+		       				iconSclass="z-icon-paper-plane"
+		       				style="margin-left: 10px;margin-bottom: 10px;" />
+		       			<button upload="true,native"
+		       				onUpload="@command('uploadCmd', event=event)"
+		       				iconSclass="z-icon-paperclip" 
+		       				tooltiptext="${c:l('txt.ui.common.FileAttachments')}"
+							sclass="btn-light fix-btn-icon"
+							style="margin-left: 10px;" />
+					</hbox>
+	            </vlayout>
+	        </groupbox>
+		</vlayout>
+	</div>
+</zk>

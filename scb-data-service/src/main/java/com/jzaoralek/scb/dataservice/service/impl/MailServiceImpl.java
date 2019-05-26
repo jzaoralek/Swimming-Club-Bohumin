@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
@@ -49,7 +50,7 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendMail(String to, String subject, String text, List<Attachment> attachmentList) {
+    public void sendMail(String to, String cc, String subject, String text, List<Attachment> attachmentList) {
         if (LOG.isDebugEnabled()) {
         	LOG.debug("Send email '" + subject + "' to '" + to + "'.");
         }
@@ -74,6 +75,10 @@ public class MailServiceImpl implements MailService {
           message.setFrom(new InternetAddress(mailSmtpUser));
           // Set To: header field of the header.
           message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+          // Set Cc: header field of the header.
+          if (StringUtils.hasText(cc)) {
+        	  message.addRecipient(Message.RecipientType.CC, new InternetAddress(cc));        	  
+          }
           // Set Subject: header field
           message.setSubject(subject, "UTF-8");
           // Now set the actual message
@@ -135,7 +140,7 @@ public class MailServiceImpl implements MailService {
         	LOG.debug("Send email: " + mail);
         }
 		
-		sendMail(mail.getTo(), mail.getSubject(), mail.getText(), mail.getAttachmentList());
+		sendMail(mail.getTo(), mail.getCc(), mail.getSubject(), mail.getText(), mail.getAttachmentList());
 	}
     
     @Async

@@ -1,4 +1,4 @@
-<?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.menu.applications')}"?>
+<?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.menu.payments')}"?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
 

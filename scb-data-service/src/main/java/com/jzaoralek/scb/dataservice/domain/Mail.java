@@ -5,13 +5,15 @@ import java.util.List;
 public class Mail {
 	
 	private String to;
+	private String cc;
 	private String subject;
 	private String text;
 	private List<Attachment> attachmentList;
 	
-	public Mail(String to, String subject, String text, List<Attachment> attachmentList) {
+	public Mail(String to, String cc, String subject, String text, List<Attachment> attachmentList) {
 		super();
 		this.to = to;
+		this.cc = cc;
 		this.subject = subject;
 		this.text = text;
 		this.attachmentList = attachmentList;
@@ -22,6 +24,12 @@ public class Mail {
 	}
 	public void setTo(String to) {
 		this.to = to;
+	}
+	public String getCc() {
+		return cc;
+	}
+	public void setCc(String cc) {
+		this.cc = cc;
 	}
 	public String getSubject() {
 		return subject;

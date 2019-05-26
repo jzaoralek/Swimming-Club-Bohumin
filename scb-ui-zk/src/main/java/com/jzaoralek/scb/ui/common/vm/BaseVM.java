@@ -271,7 +271,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 		
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
 	}
 	
 	public List<Boolean> getBooleanListItem() {
@@ -459,6 +459,7 @@ public class BaseVM {
 
 		// mail to course participant representative
 		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
+				, null
 				, Labels.getLabel("txt.ui.menu.application")
 				, mailToRepresentativeSb.toString()
 				, attachmentList);
@@ -474,7 +475,7 @@ public class BaseVM {
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
 
 		// mail to club
-		mailService.sendMail(ConfigUtil.getOrgEmail(configurationService), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null);
+		mailService.sendMail(ConfigUtil.getOrgEmail(configurationService), null, Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null);
 	}
 	
 	protected void sendMailWithResetpassword(ScbUser user) {
@@ -492,7 +493,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null);
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null);
 	}
 	
 	@Command

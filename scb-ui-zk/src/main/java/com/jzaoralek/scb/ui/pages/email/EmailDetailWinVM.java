@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.ui.pages.email;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -12,9 +13,12 @@ import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Window;
 
+import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
@@ -31,6 +35,9 @@ public class EmailDetailWinVM extends BaseVM {
 	private Set<String> emailAddressSetBase;
 	private String messageSubject;
 	private String messageText;
+	private String mailTo;
+	private String mailCc;
+	private List<Attachment> attachmentList;
 	private final EmailAddressFilter filter = new EmailAddressFilter();
 
 	@SuppressWarnings("unchecked")
@@ -39,7 +46,6 @@ public class EmailDetailWinVM extends BaseVM {
 	public void init() {
 		this.emailAddressSet = (Set<String>) WebUtils.getArg(WebConstants.COURSE_PARTIC_CONTACT_LIST_PARAM);
 		this.emailAddressSetBase = this.emailAddressSet;
-		this.pageHeadline = Labels.getLabel("txt.ui.common.NovaZprava");
 	}
 	
 	@Command
@@ -50,7 +56,7 @@ public class EmailDetailWinVM extends BaseVM {
 		
 		List<Mail> mailList = new ArrayList<>();
 		for (String item : this.emailAddressSet) {
-			mailList.add(new Mail(item, this.messageSubject, this.messageText, null));
+			mailList.add(new Mail(item, null,  this.messageSubject, this.messageText, this.attachmentList));
 		}
 		
 		mailService.sendMailBatch(mailList);
@@ -60,10 +66,55 @@ public class EmailDetailWinVM extends BaseVM {
 	}
 	
 	@Command
+	public void sendCmd() {
+		mailService.sendMailBatch(Arrays.asList(new Mail(this.mailTo, this.mailCc,  this.messageSubject, this.messageText, this.attachmentList)));
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
+	}
+	
+	@Command
 	@NotifyChange("emailAddressSet")
 	public void filterDomCmd() {
 		this.emailAddressSet = filter.getEmailListFiltered(this.emailAddressSetBase);
 	}
+	
+	/**
+	 * Add attachment
+	 */
+	@NotifyChange("attachmentList")
+	@Command
+	public void uploadCmd(@BindingParam("event") UploadEvent event) {
+		Media media = event.getMedia();
+		
+		Attachment attachment = new Attachment();
+		attachment.setByteArray(media.getByteData());
+		attachment.setContentType(media.getContentType());
+		attachment.setName(media.getName());
+		
+		if (this.attachmentList == null) {
+			this.attachmentList = new ArrayList<>();
+		}
+		
+		this.attachmentList.add(attachment);		
+	}
+	
+	@Command
+	public void downloadAttachmentCmd(@BindingParam(WebConstants.ITEM_PARAM) Attachment item) {
+		WebUtils.downloadAttachment(item);
+	}
+	
+	/**
+	 * Add attachment
+	 */
+	@NotifyChange("attachmentList")
+	@Command
+	public void removeAttachmentCmd(@BindingParam(WebConstants.ITEM_PARAM) Attachment item) {
+		if (this.attachmentList == null) {
+			return;
+		}
+		
+		this.attachmentList.remove(item);
+	}
+	
 	
 	public int getEmailAddressCount() {
 		if (CollectionUtils.isEmpty(this.emailAddressSet)) {
@@ -76,29 +127,38 @@ public class EmailDetailWinVM extends BaseVM {
 	public String getMessageSubject() {
 		return messageSubject;
 	}
-
 	public void setMessageSubject(String messageSubject) {
 		this.messageSubject = messageSubject;
 	}
-
 	public String getMessageText() {
 		return messageText;
 	}
-
 	public void setMessageText(String messageText) {
 		this.messageText = messageText;
 	}
-
 	public Set<String> getEmailAddressSet() {
 		return emailAddressSet;
 	}
-	
 	public void setEmailAddressSet(Set<String> emailAddressSet) {
 		this.emailAddressSet = emailAddressSet;
 	}
-	
 	public EmailAddressFilter getFilter() {
 		return filter;
+	}
+	public List<Attachment> getAttachmentList() {
+		return attachmentList;
+	}
+	public String getMailTo() {
+		return mailTo;
+	}
+	public void setMailTo(String mailTo) {
+		this.mailTo = mailTo;
+	}
+	public String getMailCc() {
+		return mailCc;
+	}
+	public void setMailCc(String mailCc) {
+		this.mailCc = mailCc;
 	}
 	
 	public static class EmailAddressFilter {
