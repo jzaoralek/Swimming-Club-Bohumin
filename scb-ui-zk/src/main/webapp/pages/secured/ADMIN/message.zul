@@ -18,6 +18,12 @@
 					label="${c:l('txt.ui.common.Back')}" 
 					iconSclass="z-icon-arrow-left" 
 					sclass="btn-light fix-btn-icon"/>
+				
+				<button onClick="@command('clearMessageCmd')"
+					label="${c:l('txt.ui.common.ThrowOut')}" 
+					sclass="btn-default" 
+       				iconSclass="z-icon-trash"
+       				style="margin-left: 10px;" />	
 			</hlayout>
         </vlayout>
         
@@ -25,7 +31,7 @@
 		<vlayout spacing="0" >
 	        <groupbox hflex="1" sclass="no-inner-padding" >            
 	            <vlayout>
-		            <grid hflex="1" vflex="1" >
+		            <grid hflex="1" >
 						<auxhead>
 							<auxheader class="header" >
 								<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
@@ -40,19 +46,11 @@
 							<row>
 								<cell>
 									<vlayout hflex="1" style="margin-top: 5px;">
-										<hlayout hflex="1" style="margin-bottom: 5px;">
-											<vbox align="start" hflex="1">
-												<label value="Komu" />
-											</vbox>
-											<vbox align="end" hflex="min">
-												<a label="${c:l('txt.ui.common.Copy')}" onClick="ccTxt.setVisible(true)" style="margin-right: 5px;" />
-											</vbox>
-										</hlayout>									
 										<bandbox id="representativeEmail1" hflex="1" 
 											sclass="form-input-text"
 											focus="true"
 											value="@bind(vm.mailTo)"
-											placeholder="${c:l('txt.ui.common.Recipients')}" 
+											placeholder="${c:l('txt.ui.common.To')}" 
 											mold="rounded"
 											style="margin-bottom: 10px;"
 											autodrop="true" />
@@ -60,7 +58,6 @@
 											sclass="form-input-text"
 											value="@bind(vm.mailCc)"
 											placeholder="${c:l('txt.ui.common.Copy')}"
-											visible="false"
 											tabindex="2" 
 											mold="rounded" 
 											autodrop="true" />
@@ -92,9 +89,9 @@
 						</rows>
 					</grid>
 					
-		            <vlayout children="@load(vm.attachmentList)" hflex="1" style="margin-left: 10px;">
+		            <vlayout children="@load(vm.attachmentList)" style="margin-left: 10px;" >
 						<template name="children">
-							<vbox align="start" pack="center" hflex="1" style="margin-left: 10px;margin-top: 5px;">
+							<vbox align="start" pack="center" style="margin-left: 10px;margin-top: 5px;">
 								<hbox align="center" >
 									<a label="@load(each.name)" 
 										onClick="@command('downloadAttachmentCmd', item=each)" />

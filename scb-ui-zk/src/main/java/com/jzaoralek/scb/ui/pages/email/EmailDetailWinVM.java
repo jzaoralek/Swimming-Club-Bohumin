@@ -9,18 +9,25 @@ import java.util.Set;
 
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Mail;
+import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -68,6 +75,7 @@ public class EmailDetailWinVM extends BaseVM {
 	@Command
 	public void sendCmd() {
 		mailService.sendMailBatch(Arrays.asList(new Mail(this.mailTo, this.mailCc,  this.messageSubject, this.messageText, this.attachmentList)));
+		clearMessage();
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
 	}
 	
@@ -115,6 +123,34 @@ public class EmailDetailWinVM extends BaseVM {
 		this.attachmentList.remove(item);
 	}
 	
+	@Command
+	public void clearMessageCmd() {
+		if (isMessageEmpty()) {
+			return;
+		}
+		
+		MessageBoxUtils.showDefaultConfirmDialog(
+			"msg.ui.quest.MessageThrowOut",
+			"msg.ui.title.MessageThrowOut",
+			new SzpEventListener() {
+				@Override
+				public void onOkEvent() {
+					clearMessage();
+				}
+			},
+			null
+		);
+	}
+	
+	private void clearMessage() {
+		this.messageSubject = "";
+		this.messageText = "";
+		this.mailTo = "";
+		this.mailCc = "";
+		this.attachmentList = null;
+		
+		BindUtils.postNotifyChange(null, null, this, "*");
+	}
 	
 	public int getEmailAddressCount() {
 		if (CollectionUtils.isEmpty(this.emailAddressSet)) {
@@ -122,6 +158,15 @@ public class EmailDetailWinVM extends BaseVM {
 		}
 		
 		return this.emailAddressSet.size();
+	}
+	
+	@DependsOn({"messageSubject", "messageText", "mailTo", "mailCc", "attachmentList"})
+	public boolean isMessageEmpty() {
+		return !StringUtils.hasText(this.messageSubject)
+			&& !StringUtils.hasText(this.messageText)
+			&& !StringUtils.hasText(this.mailTo)
+			&& !StringUtils.hasText(this.mailCc)
+			&& this.attachmentList == null;
 	}
 	
 	public String getMessageSubject() {
