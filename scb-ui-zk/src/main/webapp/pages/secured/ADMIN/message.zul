@@ -10,7 +10,9 @@
 		sclass="scb-view"
 		hflex="1" 
 		vflex="1"
-		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.email.EmailDetailWinVM')">
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.email.EmailDetailWinVM')"
+		validationMessages="@id('vmsgs')"
+       	form="@id('fx') @load(vm) @save(vm, before='sendCmd')">
 		
         <vlayout>
 			<hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}">

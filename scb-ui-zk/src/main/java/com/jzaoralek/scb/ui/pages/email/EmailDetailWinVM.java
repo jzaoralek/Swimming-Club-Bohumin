@@ -17,15 +17,12 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Mail;
-import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
@@ -74,9 +71,51 @@ public class EmailDetailWinVM extends BaseVM {
 	
 	@Command
 	public void sendCmd() {
+		// validations
+		// valid at least one to email address
+		if (!StringUtils.hasText(this.mailTo)) {
+			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageEnterToAddress", "msg.ui.quest.title.messageSendConfirm", null);
+			return;
+		}
+		
+		// not valid to email address
+		// not valid cc email address
+		
+		// confirmations
+		// not filled subject
+		boolean emptySubject = !StringUtils.hasText(this.messageSubject);
+		// not filled text
+		boolean emptyText = !StringUtils.hasText(this.messageText);
+		
+		String confirmMessage = null;
+		if (emptySubject && emptyText) {
+			confirmMessage = "msg.ui.quest.MessageSendWithoutSubjectAndText";
+		} else if (emptySubject) {
+			confirmMessage = "msg.ui.quest.MessageSendWithoutSubject";
+		} else if (emptyText) {
+			confirmMessage = "msg.ui.quest.MessageSendWithoutText";
+		}
+		
+		if (StringUtils.hasText(confirmMessage)) {
+			MessageBoxUtils.showDefaultConfirmDialog(
+					confirmMessage,
+					"msg.ui.quest.title.messageSendConfirm",
+					new SzpEventListener() {
+						@Override
+						public void onOkEvent() {
+							sendMessage();
+						}
+					}
+				);
+		} else {
+			sendMessage();
+		}
+	}
+	
+	private void sendMessage() {
 		mailService.sendMailBatch(Arrays.asList(new Mail(this.mailTo, this.mailCc,  this.messageSubject, this.messageText, this.attachmentList)));
-		clearMessage();
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
+		clearMessage();
 	}
 	
 	@Command
@@ -137,8 +176,7 @@ public class EmailDetailWinVM extends BaseVM {
 				public void onOkEvent() {
 					clearMessage();
 				}
-			},
-			null
+			}
 		);
 	}
 	
