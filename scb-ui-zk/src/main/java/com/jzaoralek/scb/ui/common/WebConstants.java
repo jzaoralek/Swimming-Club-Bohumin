@@ -59,4 +59,7 @@ public final class WebConstants {
 	public static final String SECURED_PAGE_URL = "/pages/secured/ADMIN";
 	public static final String NOTIFICATION_MESSAGE = "notificationMessage";
 	public static final String FROM_PAGE_URL = "fromPageUrl";
+	
+	public static final String EMAIL_PATTERN = "[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	public static final String EMAIL_LIST_SEPARATOR = ";";
 }

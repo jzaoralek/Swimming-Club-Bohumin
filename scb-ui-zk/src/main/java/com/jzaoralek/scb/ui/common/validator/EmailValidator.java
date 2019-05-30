@@ -6,9 +6,9 @@ import org.springframework.util.StringUtils;
 import org.zkoss.bind.ValidationContext;
 import org.zkoss.util.resource.Labels;
 
-public class EmailValidator extends ScbAbstractValidator {
+import com.jzaoralek.scb.ui.common.WebConstants;
 
-	public static final String EMAIL_PATTERN = "[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+public class EmailValidator extends ScbAbstractValidator {
 
 	@Override
 	public void validate(ValidationContext ctx) {
@@ -20,7 +20,7 @@ public class EmailValidator extends ScbAbstractValidator {
 			return;
 		}
 
-		Pattern emailPattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
+		Pattern emailPattern = Pattern.compile(WebConstants.EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
 		if (StringUtils.hasText(value) && !emailPattern.matcher(value).matches()) {
 			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaEmail"));
             return;
