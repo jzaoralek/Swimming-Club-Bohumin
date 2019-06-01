@@ -103,6 +103,24 @@ public class MessageBoxUtils {
 				null,
 				new SzpClickEventAdapter(szpEventListener));
 	}
+	
+	/**
+	 * Zobrazí dialogové okno s vykřičníkem a tlačítkem "OK"
+	 *
+	 * @param messageKey
+	 * @param titleKey
+	 * @param szpEventListener
+	 */
+	public static void showOkWarningDialog(String messageKey, String titleKey, SzpEventListener szpEventListener, Object... msgParam) {
+		Messagebox.show(
+				Labels.getLabel(messageKey, msgParam),
+				Labels.getLabel(titleKey),
+				new Messagebox.Button[] {Messagebox.Button.OK},
+				new String[] {BTN_OK_WARNING_DIALOG_LABEL},
+				Messagebox.EXCLAMATION,
+				null,
+				new SzpClickEventAdapter(szpEventListener));
+	}
 
 	/**
 	 * Zobrazí dialogové okno s vykřičníkem a tlačítkem "OK" (viz showOkWarningDialog) s nastaveným popiskem a titlkem

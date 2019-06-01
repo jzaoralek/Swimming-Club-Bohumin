@@ -73,14 +73,14 @@ public class EmailDetailWinVM extends BaseVM {
 	@Command
 	public void sendCmd() {
 		// validations
-		// valid at least one to email address
+		// at least one mailTo email address
 		if (!StringUtils.hasText(this.mailTo)) {
 			// zadna emailova adresa neni zadana
 			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageEnterToAddress", "msg.ui.quest.title.messageSendConfirm", null);
 			return;
 		}
 		
-		// not valid to email address
+		// no mailTo addresses valid
 		Pair<List<String>, List<String>> mailToValidResult = WebUtils.validateEmailList(this.mailTo);
 		if (CollectionUtils.isEmpty(mailToValidResult.getValue0())) {
 			// zadna ze zadanych adres neni platna
@@ -90,15 +90,16 @@ public class EmailDetailWinVM extends BaseVM {
 		List<String> invalidEmailList = mailToValidResult.getValue1();
 		if (!CollectionUtils.isEmpty(invalidEmailList)) {
 			// neplatne adresy prijemcu
-			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidToAddress", "msg.ui.quest.title.messageSendConfirm", null);
+			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidToAddress", "msg.ui.quest.title.messageSendConfirm", null, invalidEmailList);
 			return;
 		}
 		
-		// not valid cc email address
+		// no mailCc addresses valid
 		Pair<List<String>, List<String>> mailCcValidResult = WebUtils.validateEmailList(this.mailCc);
-		if (!CollectionUtils.isEmpty(mailCcValidResult.getValue1())) {
+		invalidEmailList = mailCcValidResult.getValue1();
+		if (!CollectionUtils.isEmpty(invalidEmailList)) {
 			// neplatne adresy prijemcu
-			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidCcAddress", "msg.ui.quest.title.messageSendConfirm", null);
+			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidCcAddress", "msg.ui.quest.title.messageSendConfirm", null, invalidEmailList);
 			return;
 		}
 		

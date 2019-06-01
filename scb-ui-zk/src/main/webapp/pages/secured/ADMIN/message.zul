@@ -51,6 +51,7 @@
 										<bandbox id="representativeEmail1" hflex="1" 
 											sclass="form-input-text"
 											focus="true"
+											tabindex="1"
 											value="@bind(vm.mailTo)"
 											placeholder="${c:l('txt.ui.common.To')}" 
 											mold="rounded"
@@ -73,6 +74,7 @@
 											<textbox sclass="form-input-text"
 												placeholder="${c:l('txt.ui.common.Predmet')}"
 												value="@bind(vm.messageSubject)"
+												tabindex="3"
 												hflex="1" />
 										</hbox>
 									</vlayout>
@@ -84,6 +86,7 @@
 										multiline="true"
 										value="@bind(vm.messageText)"
 										rows="20"
+										tabindex="4"
 										vflex="1"
 										hflex="1" />
 								</cell>
@@ -109,12 +112,14 @@
 						<button onClick="@command('sendCmd')"
 							label="${c:l('txt.ui.common.Odeslat')}" 
 		       				iconSclass="z-icon-paper-plane"
+		       				tabindex="5"
 		       				style="margin-left: 10px;margin-bottom: 10px;" />
 		       			<button upload="true,native"
 		       				onUpload="@command('uploadCmd', event=event)"
 		       				iconSclass="z-icon-paperclip" 
 		       				tooltiptext="${c:l('txt.ui.common.FileAttachments')}"
 							sclass="btn-light fix-btn-icon"
+							tabindex="6"
 							style="margin-left: 10px;" />
 					</hbox>
 	            </vlayout>

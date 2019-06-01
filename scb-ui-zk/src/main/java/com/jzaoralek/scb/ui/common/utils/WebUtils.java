@@ -213,9 +213,9 @@ public final class WebUtils {
 	}
 	
 	/**
-	 * Z retezce emailovych adres na vstupu vraci Pair obsahujici list validnich a nevalidnich adres.
-	 * @param value
-	 * @return
+	 * Validace retezce emailovych adres na vstupu.
+	 * @param value Retezec emailovych adres, oddelovac ";"
+	 * @return Pair obsahujici list validnich a nevalidnich adres.
 	 */
 	public static Pair<List<String>, List<String>> validateEmailList(String value) {
 		if (!StringUtils.hasText(value)) {
@@ -228,11 +228,13 @@ public final class WebUtils {
 	    List<String> invalidEmailList = new ArrayList<>();
 	    
 	    Pattern emailPattern = Pattern.compile(WebConstants.EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
+	    String emailItem;
 	    for (String item : emailList) {
-	    	if (emailPattern.matcher(item).matches()) {
-	    		validEmailList.add(item);
+	    	emailItem = item.trim();
+	    	if (emailPattern.matcher(emailItem).matches()) {
+	    		validEmailList.add(emailItem.trim());
 	    	} else {
-	    		invalidEmailList.add(item);
+	    		invalidEmailList.add(emailItem.trim());
 	    	}
 	    }
 	    
