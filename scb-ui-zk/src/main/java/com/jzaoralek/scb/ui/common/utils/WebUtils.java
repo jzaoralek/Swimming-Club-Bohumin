@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.javatuples.Pair;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Execution;
@@ -221,8 +223,8 @@ public final class WebUtils {
 		if (!StringUtils.hasText(value)) {
 			return null;
 		}
-		String[] emailArr = value.split(WebConstants.EMAIL_LIST_SEPARATOR);
-	    List<String> emailList = Arrays.stream(emailArr).collect(Collectors.toList());
+		
+		List<String> emailList = emailAddressStrToList(value);
 	    
 	    List<String> validEmailList = new ArrayList<>();
 	    List<String> invalidEmailList = new ArrayList<>();
@@ -240,6 +242,34 @@ public final class WebUtils {
 	    
 		return new Pair<>(validEmailList, invalidEmailList);
 	}
+	
+	/**
+	 * Prevede retezec emailovych adres na list.
+	 * @param value
+	 * @return
+	 */
+	public static List<String> emailAddressStrToList(String value) {
+		if (!StringUtils.hasText(value)) {
+			return Collections.emptyList();
+		}
+		
+		String[] emailArr = value.split(WebConstants.EMAIL_LIST_SEPARATOR);
+		return Arrays.stream(emailArr).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Prevede retezec emailovych adres na list.
+	 * @param value
+	 * @return
+	 */
+	public static String emailAddressListToStr(List<String> value) {
+		if (CollectionUtils.isEmpty(value)) {
+			return null;
+		}
+		
+		return value.stream().collect(Collectors.joining(WebConstants.EMAIL_LIST_SEPARATOR));
+	}
+	
 	
 	// ***********************************
 	// *** SCB util methods

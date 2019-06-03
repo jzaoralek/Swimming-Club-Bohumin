@@ -3,9 +3,12 @@ package com.jzaoralek.scb.ui.pages.email;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
@@ -36,6 +39,7 @@ import com.jzaoralek.scb.ui.common.vm.BaseVM;
  */
 public class EmailDetailWinVM extends BaseVM {
 
+	private static final String MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY = "msg.ui.quest.title.messageSendConfirm";
 	private Set<String> emailAddressSet;
 	private Set<String> emailAddressSetBase;
 	private String messageSubject;
@@ -76,7 +80,7 @@ public class EmailDetailWinVM extends BaseVM {
 		// at least one mailTo email address
 		if (!StringUtils.hasText(this.mailTo)) {
 			// zadna emailova adresa neni zadana
-			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageEnterToAddress", "msg.ui.quest.title.messageSendConfirm", null);
+			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageEnterToAddress", MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY, null);
 			return;
 		}
 		
@@ -84,13 +88,13 @@ public class EmailDetailWinVM extends BaseVM {
 		Pair<List<String>, List<String>> mailToValidResult = WebUtils.validateEmailList(this.mailTo);
 		if (CollectionUtils.isEmpty(mailToValidResult.getValue0())) {
 			// zadna ze zadanych adres neni platna
-			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageEnterValidToAddress", "msg.ui.quest.title.messageSendConfirm", null);
+			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageEnterValidToAddress", MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY, null);
 			return;
 		}
 		List<String> invalidEmailList = mailToValidResult.getValue1();
 		if (!CollectionUtils.isEmpty(invalidEmailList)) {
 			// neplatne adresy prijemcu
-			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidToAddress", "msg.ui.quest.title.messageSendConfirm", null, invalidEmailList);
+			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidToAddress", MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY, null, invalidEmailList);
 			return;
 		}
 		
@@ -99,7 +103,7 @@ public class EmailDetailWinVM extends BaseVM {
 		invalidEmailList = mailCcValidResult.getValue1();
 		if (!CollectionUtils.isEmpty(invalidEmailList)) {
 			// neplatne adresy prijemcu
-			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidCcAddress", "msg.ui.quest.title.messageSendConfirm", null, invalidEmailList);
+			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidCcAddress", MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY, null, invalidEmailList);
 			return;
 		}
 		
@@ -121,7 +125,7 @@ public class EmailDetailWinVM extends BaseVM {
 		if (StringUtils.hasText(confirmMessage)) {
 			MessageBoxUtils.showDefaultConfirmDialog(
 					confirmMessage,
-					"msg.ui.quest.title.messageSendConfirm",
+					MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY,
 					new SzpEventListener() {
 						@Override
 						public void onOkEvent() {
@@ -212,6 +216,39 @@ public class EmailDetailWinVM extends BaseVM {
 		BindUtils.postNotifyChange(null, null, this, "*");
 	}
 	
+	@Command
+	public void addMailToAddressCmd() {
+		Consumer<String> callback = this::addMailToAddress;
+		
+		Map<String, Object> args = new HashMap<>();
+		args.put(WebConstants.CALLBACK_PARAM, callback);
+		
+//		WebUtils.openModal(WebPages.RECIPIENT_SELECTION_WINDOW.getUrl(), null, args);
+	}
+	
+	/**
+	 * Prida emailove adresy z retezce do seznamu adresatu.
+	 * @param mailTo
+	 */
+	private void addMailToAddress(String mailTo) {
+		if (!StringUtils.hasText(mailTo)) {
+			return;
+		}
+		
+		List<String> emailList = WebUtils.emailAddressStrToList(mailTo);
+		if (!CollectionUtils.isEmpty(emailList)) {
+			if (this.emailAddressSet == null) {
+				this.emailAddressSet = new HashSet<>();
+			}
+			this.emailAddressSet.addAll(emailList);
+			
+			if (this.mailTo == null) {
+				this.mailTo = "";
+			}
+			this.mailTo = this.mailTo.concat(WebUtils.emailAddressListToStr(emailList));
+		}
+	}
+	
 	public int getEmailAddressCount() {
 		if (CollectionUtils.isEmpty(this.emailAddressSet)) {
 			return 0;
@@ -275,10 +312,7 @@ public class EmailDetailWinVM extends BaseVM {
 			if (address == null) {
 				return emptyMatch;
 			}
-			if (address != null && !addressIn.toLowerCase().contains(addressLc)) {
-				return false;
-			}
-			return true;
+			return addressIn.toLowerCase().contains(addressLc);
 		}
 
 		public Set<String> getEmailListFiltered(Set<String> courseList) {
