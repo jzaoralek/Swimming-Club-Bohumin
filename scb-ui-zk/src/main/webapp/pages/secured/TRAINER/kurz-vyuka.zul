@@ -45,7 +45,7 @@
 									hflex="1"
 									style="margin-bottom: 20px;"
 									emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-									class="listbox-400" >
+									class="listbox-500" >
 							        <auxhead>
 							            <auxheader class="header" colspan="3" >
 							            	<hbox hflex="1" height="42px" align="center" >
@@ -72,8 +72,8 @@
 							        
 							        <listhead>
 							        	<listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(lessonDate)" hflex="min" />
-										<listheader label="${c:l('txt.ui.common.time')}" align="left" hflex="1" />
-										<listheader label="${c:l('txt.ui.common.Output')}" align="min" />										
+										<listheader label="${c:l('txt.ui.common.time')}" align="left" width="125px;" />
+										<listheader label="${c:l('txt.ui.common.Output')}" align="center" hflex="1" />										
 							            <listheader label="Proběhla" align="center" hflex="min" />
 							        </listhead>
 							         
