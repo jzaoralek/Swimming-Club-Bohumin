@@ -28,8 +28,12 @@ import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 /**
@@ -55,6 +59,10 @@ public class EmailDetailWinVM extends BaseVM {
 	public void init() {
 		this.emailAddressSet = (Set<String>) WebUtils.getArg(WebConstants.COURSE_PARTIC_CONTACT_LIST_PARAM);
 		this.emailAddressSetBase = this.emailAddressSet;
+		
+		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, data -> {
+			addMailToAddress((List<String>) data);
+        });
 	}
 	
 	@Command
@@ -206,6 +214,12 @@ public class EmailDetailWinVM extends BaseVM {
 		);
 	}
 	
+	@NotifyChange("mailTo")
+	@Command
+	public void updateValueCmd() {
+		this.mailTo = "asasas";
+	}
+	
 	private void clearMessage() {
 		this.messageSubject = "";
 		this.messageText = "";
@@ -247,6 +261,29 @@ public class EmailDetailWinVM extends BaseVM {
 			}
 			this.mailTo = this.mailTo.concat(WebUtils.emailAddressListToStr(emailList));
 		}
+	}
+	
+	/**
+	 * Prida emailove adresy do seznamu adresatu.
+	 * @param mailToList
+	 */
+	private void addMailToAddress(List<String> emailList) {
+		if (CollectionUtils.isEmpty(emailList)) {
+			return;
+		}
+		
+		if (this.emailAddressSet == null) {
+			this.emailAddressSet = new HashSet<>();
+		}
+		this.emailAddressSet.addAll(emailList);
+		
+		if (this.mailTo == null) {
+			this.mailTo = "";
+		}
+		this.mailTo = this.mailTo.concat(WebUtils.emailAddressListToStr(emailList));
+		
+		BindUtils.postNotifyChange(null, null, this,"emailAddressSet");
+		BindUtils.postNotifyChange(null, null, this,"mailTo");
 	}
 	
 	public int getEmailAddressCount() {

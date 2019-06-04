@@ -1,7 +1,6 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,7 +23,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
@@ -34,8 +32,6 @@ import org.zkoss.zul.Listitem;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
-import com.jzaoralek.scb.dataservice.service.MailService;
-import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.dataservice.utils.vo.Cover;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -53,12 +49,6 @@ import com.jzaoralek.scb.ui.common.vm.BaseVM;
 public class UserListVM extends BaseVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserListVM.class);
-
-	@WireVariable
-	private ScbUserService scbUserService;
-
-	@WireVariable
-	private MailService mailService;
 
 	private List<ScbUser> userList;
 	private List<ScbUser> userListBase;

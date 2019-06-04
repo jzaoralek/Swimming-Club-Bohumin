@@ -48,5 +48,11 @@
 	    <component-name>login-footer</component-name>    
 	    <macro-uri>/pages/common/component/login-footer.zul</macro-uri>
 	</component>
+	
+	<!-- Vyber prijemcu emailu -->
+	<component>
+	    <component-name>mail-recipient-selection</component-name>    
+	    <macro-uri>/pages/common/component/mail-recipient-selection.zul</macro-uri>
+	</component>
 
 </language-addon>
