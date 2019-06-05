@@ -31,6 +31,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 
@@ -280,5 +282,25 @@ public final class WebUtils {
 	 */
 	public static void redirectToNewCourse() {
 		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+	}
+	
+	/**
+	 * Filter course by loaction.
+	 * @param location
+	 * @param courseListBase
+	 * @return
+	 */
+	public static List<Course> filterByLocation(CourseLocation location, List<Course> courseListBase) {
+		if (CollectionUtils.isEmpty(courseListBase)) {
+			return Collections.emptyList();
+		}
+		
+		if (location == null) {
+			return courseListBase;
+		}
+		
+		return courseListBase.stream()
+                .filter(line -> location.getUuid().toString().equals(line.getCourseLocation().getUuid().toString()))
+                .collect(Collectors.toList());
 	}
 }

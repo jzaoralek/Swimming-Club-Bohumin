@@ -1,23 +1,95 @@
 <zk>
-	<custom-attributes popupId="${arg.popupId}" />
-	
-	<label value="@load(popupId)" />
-	
-	<tabbox id="tb" height="530px" >
+	<tabbox id="tb" height="530px" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM')" >
 	    <tabs id="tabs" vflex="1" >
-	        <tab id="coursesSelectionTab" label="${c:l('txt.ui.menu.courses')}" />
-	        <tab id="usersSelectionTab" label="${c:l('txt.ui.menu.users')}" />
+	        <tab id="coursesSelectionTab" label="${c:l('txt.ui.menu.courses')}" onSelect="@command('courseTabSelectedCmd')" />
+	        <tab id="usersSelectionTab" label="${c:l('txt.ui.menu.users')}" onSelect="@command('usersTabSelectedCmd')" />
 	        <tab id="applicationsSelectionTab" label="${c:l('txt.ui.menu.applications')}"  />
 	    </tabs>
 	    
 	    <tabpanels vflex="1">
+	    	
 	    	<!-- Kurzy -->
-	        <tabpanel>
-	        	Kurzy
+	        <tabpanel hflex="1">
+	        	<vlayout>
+		        	<listbox model="@load(vm.courseList)"
+						id="courseList"
+						hflex="1"
+						height="370px"
+						checkmark="true"
+						multiple="true"
+						selectedItems="@bind(vm.courseListSelected)"
+						emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+						class="listbox" >
+				        <auxhead>
+				            <auxheader class="header" >
+				            	<hlayout sclass="pull-left">	
+				            		<hbox visible="@load(vm.showCourseFilter)" >
+					            		<label value="${c:l('txt.ui.common.courseLocation2')}:"/>
+										<listbox id="courseLocation" 
+											selectedItem="@bind(vm.courseLocationSelected)" 
+											model="@load(vm.courseLocationList)"
+											onSelect="@command('filterByCourseLocationCmd')"
+											mold="select"
+											style="margin-left: 5px;"
+											height="30px"
+											hflex="1" >
+											<template name="model">
+								           		<listitem label="${each.name}" value="${each}" />
+											</template>
+										</listbox>
+				            		</hbox>
+				            	</hlayout>
+				            					
+			            		
+				            	<hlayout sclass="pull-right">
+				            		<!-- Rocnik -->
+		            				<include src="/pages/common/component/context-year.zul"/>
+		            				
+		            				<button iconSclass="z-icon-download" 
+		            					onClick="@command('exportToExcel',listbox=courseList)" 
+		            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
+		            					sclass="toolbar-btn"/>
+		           					<button iconSclass="z-icon-refresh" 
+		           						onClick="@command('refreshDataCmd')" 
+		           						tooltiptext="${c:l('txt.ui.common.refreshData')}" 
+		           						sclass="toolbar-btn"/>
+				            	</hlayout>
+				            </auxheader>
+				        </auxhead>
+				        
+				        <!-- Filter -->
+				        <listhead>
+				            <listheader align="left" >
+				            	<textbox hflex="1"
+				            		placeholder="${c:l('txt.ui.common.name')}"
+									value="@bind(vm.courseFilter.courseName)"
+									onChange="@command('filterCourseListCmd')" 
+									onOK="@command('filterDomCmd')" />
+								<!-- Vymazat filtr -->
+								<button iconSclass="z-icon-trash" 
+	           						onClick="@command('refreshCourseListDataCmd')" 
+	           						style="margin-left: 20px;"
+	           						tooltiptext="${c:l('txt.ui.common.CleanFilter')}" />
+				            </listheader>
+				        </listhead>
+				         
+				        <template name="model">
+				            <listitem>
+				                <listcell label="${each.name}" />
+				            </listitem>
+				        </template>
+				    </listbox>
+				    
+				    <button label="OK"
+						onClick="@command('submitCourseSelectionCmd')"
+						sclass="btn-success"
+						style="margin-left: 10px;"
+						iconSclass="z-icon-check" />
+			    </vlayout>
 	        </tabpanel>
 	        
 	        <!-- Uzivatele -->
-	        <tabpanel viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientUserListVM')" hflex="1" >
+	        <tabpanel hflex="1" >
 	    		<vlayout>
 		    		<listbox model="@load(vm.userList)"
 						id="userList"
@@ -33,7 +105,7 @@
 				        <listhead>
 				            <listheader align="left" >
 				            	<textbox hflex="1"
-									value="@bind(vm.filter.completeName)"
+									value="@bind(vm.userFilter.completeName)"
 									placeholder="${c:l('txt.ui.common.firstname')}"
 									onChange="@command('filterDomCmd')"
 									onOK="@command('filterDomCmd')" />
@@ -41,13 +113,13 @@
 				            <listheader align="left" >
 				            	<textbox hflex="1"
 				            		placeholder="${c:l('txt.ui.common.email')}"
-									value="@bind(vm.filter.email)"
+									value="@bind(vm.userFilter.email)"
 									onChange="@command('filterDomCmd')"
 									onOK="@command('filterDomCmd')" />
 				            </listheader>
 				            <listheader align="left" >
 				            	<label value="${c:l('txt.ui.common.Role')}" />
-				            	<listbox selectedItem="@bind(vm.filter.roleItem)" 
+				            	<listbox selectedItem="@bind(vm.userFilter.roleItem)" 
 									model="@load(vm.roleListWithEmptyItem)"
 									onSelect="@command('filterDomCmd')"
 									hflex="1"
@@ -58,7 +130,7 @@
 								</listbox>
 								<!-- Vymazat filtr -->
 								<button iconSclass="z-icon-trash" 
-	           						onClick="@command('refreshDataCmd')" 
+	           						onClick="@command('refreshUserListDataCmd')" 
 	           						style="margin-left: 20px;"
 	           						tooltiptext="${c:l('txt.ui.common.CleanFilter')}" />
 				            </listheader>
@@ -66,9 +138,9 @@
 				         
 				        <template name="model">
 				            <listitem>
-				                <listcell label="${each.contact.getCompleteName()}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />	
-				                <listcell label="${each.contact.email1}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
-				                <listcell label="@load(each.role) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+				                <listcell label="${each.contact.getCompleteName()}" />	
+				                <listcell label="${each.contact.email1}" />
+				                <listcell label="@load(each.role) @converter(vm.enumLabelConverter)" />
 				            </listitem>
 				        </template>
 				    </listbox>

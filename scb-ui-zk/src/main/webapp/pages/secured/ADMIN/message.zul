@@ -58,7 +58,7 @@
 											style="margin-bottom: 10px;"
 											autodrop="false" >
 											<bandpopup hflex="1" height="530px" id="mailToPopup" >
-												<mail-recipient-selection hflex="1" popupId="mailToPopup" />												
+												<mail-recipient-selection hflex="1" />												
 											</bandpopup>
 										</bandbox>
 										<bandbox id="ccTxt" hflex="1" 

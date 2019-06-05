@@ -1,16 +1,12 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -43,6 +39,7 @@ import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
+import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseApplicationFilter;
 
 public class CourseListVM extends BaseContextVM {
 
@@ -157,7 +154,7 @@ public class CourseListVM extends BaseContextVM {
 	@NotifyChange("courseList")
 	@Command
 	public void filterByCourseLocationCmd() {
-		this.courseList = filterByLocation(this.courseLocationSelected);
+		this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
 	}
 
 	public void loadData() {
@@ -174,16 +171,10 @@ public class CourseListVM extends BaseContextVM {
 			// pokud vice nez jedno misto konani, zobrazit vyber mist konani
 			this.showCourseFilter = true;
 			this.courseLocationSelected = this.courseLocationList.get(0);
-			this.courseList = filterByLocation(this.courseLocationSelected);
+			this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
 		}
 		
 		BindUtils.postNotifyChange(null, null, this, "courseList");
-	}
-	
-	private List<Course> filterByLocation(CourseLocation location) {
-		return this.courseListBase.stream()
-                .filter(line -> location.getUuid().toString().equals(line.getCourseLocation().getUuid().toString()))
-                .collect(Collectors.toList());
 	}
 
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
@@ -234,47 +225,5 @@ public class CourseListVM extends BaseContextVM {
 
 	public void setCourseLocationSelected(CourseLocation courseLocationSelected) {
 		this.courseLocationSelected = courseLocationSelected;
-	}
-
-	public static class CourseApplicationFilter {
-
-		private String courseName;
-		private String courseNameLc;
-
-		public boolean matches(String courseNameIn, boolean emptyMatch) {
-			if (courseName == null) {
-				return emptyMatch;
-			}
-			if (courseName != null && !courseNameIn.toLowerCase().contains(courseNameLc)) {
-				return false;
-			}
-			return true;
-		}
-
-		public List<Course> getApplicationListFiltered(List<Course> courseList) {
-			if (courseList == null || courseList.isEmpty()) {
-				return Collections.<Course>emptyList();
-			}
-			List<Course> ret = new ArrayList<Course>();
-			for (Course item : courseList) {
-				if (matches(item.getName(), true)) {
-					ret.add(item);
-				}
-			}
-			return ret;
-		}
-
-		public String getCourseName() {
-			return courseName == null ? "" : courseName;
-		}
-		public void setCourseName(String name) {
-			this.courseName = StringUtils.hasText(name) ? name.trim() : null;
-			this.courseNameLc = this.courseName == null ? null : this.courseName.toLowerCase();
-		}
-
-		public void setEmptyValues() {
-			courseName = null;
-			courseNameLc = null;
-		}
 	}
 }

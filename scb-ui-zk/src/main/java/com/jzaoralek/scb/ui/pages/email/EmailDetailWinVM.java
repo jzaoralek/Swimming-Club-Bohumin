@@ -14,14 +14,22 @@ import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
+import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zk.ui.select.Selectors;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Bandbox;
+import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
@@ -52,6 +60,9 @@ public class EmailDetailWinVM extends BaseVM {
 	private String mailCc;
 	private List<Attachment> attachmentList;
 	private final EmailAddressFilter filter = new EmailAddressFilter();
+	
+	@Wire
+	private Bandpopup mailToPopup;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -63,6 +74,11 @@ public class EmailDetailWinVM extends BaseVM {
 		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, data -> {
 			addMailToAddress((List<String>) data);
         });
+	}
+	
+	@AfterCompose
+	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
+		Selectors.wireComponents(view, this, false);
 	}
 	
 	@Command
@@ -267,23 +283,25 @@ public class EmailDetailWinVM extends BaseVM {
 	 * Prida emailove adresy do seznamu adresatu.
 	 * @param mailToList
 	 */
-	private void addMailToAddress(List<String> emailList) {
-		if (CollectionUtils.isEmpty(emailList)) {
-			return;
+	private void addMailToAddress(List<String> emailList) {				
+		if (!CollectionUtils.isEmpty(emailList)) {
+			if (this.emailAddressSet == null) {
+				this.emailAddressSet = new HashSet<>();
+			}
+			this.emailAddressSet.addAll(emailList);
+			
+			if (this.mailTo == null) {
+				this.mailTo = "";
+			}
+			this.mailTo = this.mailTo.concat(WebUtils.emailAddressListToStr(emailList));
+			
+			BindUtils.postNotifyChange(null, null, this,"emailAddressSet");
+			BindUtils.postNotifyChange(null, null, this,"mailTo");
 		}
 		
-		if (this.emailAddressSet == null) {
-			this.emailAddressSet = new HashSet<>();
-		}
-		this.emailAddressSet.addAll(emailList);
-		
-		if (this.mailTo == null) {
-			this.mailTo = "";
-		}
-		this.mailTo = this.mailTo.concat(WebUtils.emailAddressListToStr(emailList));
-		
-		BindUtils.postNotifyChange(null, null, this,"emailAddressSet");
-		BindUtils.postNotifyChange(null, null, this,"mailTo");
+		// zavreni popupu
+		Bandbox bandbox = (Bandbox)this.mailToPopup.getParent();
+		bandbox.close();
 	}
 	
 	public int getEmailAddressCount() {
