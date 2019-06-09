@@ -10,7 +10,7 @@
 	    	
 	    	<!-- Kurzy -->
 	        <tabpanel hflex="1">
-	        	<vlayout>
+	        	<vlayout hflex="1" sclass="listbox-wrapper">
 		        	<listbox model="@load(vm.courseList)"
 						id="courseList"
 						hflex="1"
@@ -86,7 +86,7 @@
 	        
 	        <!-- Uzivatele -->
 	        <tabpanel hflex="1" >
-	    		<vlayout>
+	    		<vlayout sclass="listbox-wrapper">
 		    		<listbox model="@load(vm.userList)"
 						id="userList"
 						hflex="1"
@@ -157,7 +157,7 @@
 	        
 	    	<!-- Prihlasky -->
 	    	<tabpanel>
-	    		<vlayout>
+	    		<vlayout sclass="listbox-wrapper listbox-mobile-width-1000 listbox-mobile-2-width-1000">
 		    		<listbox model="@load(vm.courseApplicationList)"
 						id="courseApplicationList"
 						height="370px"
