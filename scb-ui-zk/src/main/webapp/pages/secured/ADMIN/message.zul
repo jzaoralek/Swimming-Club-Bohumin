@@ -103,7 +103,6 @@
 					<vlayout children="@load(vm.attachmentList)" style="margin-left: 10px;" >
 						<template name="children">
 							<vbox align="start" pack="center" style="margin: 10px;">
-								
 								<hbox align="center" >
 									<a iconSclass="z-icon-download" 
 										onClick="@command('downloadAttachmentCmd', item=each)" />

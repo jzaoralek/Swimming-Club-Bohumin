@@ -39,7 +39,7 @@ import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
-import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseApplicationFilter;
+import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseFilter;
 
 public class CourseListVM extends BaseContextVM {
 
@@ -50,7 +50,7 @@ public class CourseListVM extends BaseContextVM {
 	private List<CourseLocation> courseLocationList;
 	private boolean showCourseFilter;
 	private CourseLocation courseLocationSelected;
-	private final CourseApplicationFilter filter = new CourseApplicationFilter();
+	private final CourseFilter filter = new CourseFilter();
 
 	@WireVariable
 	private CourseService courseService;
@@ -211,7 +211,7 @@ public class CourseListVM extends BaseContextVM {
 		return courseLocationList;
 	}
 
-	public CourseApplicationFilter getFilter() {
+	public CourseFilter getFilter() {
 		return filter;
 	}
 	

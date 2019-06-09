@@ -15,10 +15,12 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
+import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -26,24 +28,31 @@ import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseApplicationFilter;
+import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseFilter;
 
 public class MailRecipientSelectionVM extends BaseContextVM {
 
 	@WireVariable
 	private CourseService courseService;
 	
+	@WireVariable
+	private CourseApplicationService courseApplicationService;
+	
 	private List<ScbUser> userList;
 	private List<ScbUser> userListBase;
 	private final UserFilter userFilter = new UserFilter();
 	private List<ScbUser> userListSelected;
-	
 	private List<Course> courseList;
 	private List<Course> courseListBase;
 	private List<CourseLocation> courseLocationList;
 	private List<Course> courseListSelected;
 	private boolean showCourseFilter;
 	private CourseLocation courseLocationSelected;
-	private final CourseApplicationFilter courseFilter = new CourseApplicationFilter();
+	private final CourseFilter courseFilter = new CourseFilter();
+	private List<CourseApplication> courseApplicationList;
+	private List<CourseApplication> courseApplicationListBase;
+	private List<CourseApplication> courseApplicationListSelected;
+	private final CourseApplicationFilter courseApplicationFilter = new CourseApplicationFilter();
 
 	@Init
 	public void init() {
@@ -69,13 +78,20 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 		this.courseFilter.setEmptyValues();
 	}
 	
+	@NotifyChange({"courseApplication","courseApplicationFilter"})
+	@Command
+	public void refreshCourseApplicationListDataCmd() {
+		loadCourseApplicationListData();
+		this.courseApplicationFilter.setEmptyValues();
+	}
+	
 	@Command
 	@NotifyChange("userList")
 	public void filterDomCmd() {
 		this.userList = userFilter.getUserListFiltered(this.userListBase);
 	}
 	
-	@NotifyChange({"userListSelected","userFilter"})
+//	@NotifyChange({"userListSelected","userFilter"})
 	@Command
 	public void submitCmd() {
 		final List<String> emailList = new ArrayList<>();
@@ -84,11 +100,11 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 		}
 		
 		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, emailList);
-		this.userListSelected = null;
-		this.userFilter.setEmptyValues();
+//		this.userListSelected = null;
+//		this.userFilter.setEmptyValues();
 	}
 	
-	@NotifyChange({"courseListSelected","courseFilter"})
+//	@NotifyChange({"courseListSelected","courseFilter"})
 	@Command
 	public void submitCourseSelectionCmd() {
 		final List<String> emailList = new ArrayList<>();
@@ -97,8 +113,8 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 		}
 		
 		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, emailList);
-		this.courseListSelected = null;
-		this.courseFilter.setEmptyValues();
+//		this.courseListSelected = null;
+//		this.courseFilter.setEmptyValues();
 	}
 	
 	private List<String> getParticEmailAddressList(Course course) {
@@ -120,6 +136,19 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 		return ret;
 	}
 	
+//	@NotifyChange({"courseApplicationListSelected","courseApplicationFilter"})
+	@Command
+	public void submitCourseApplicationSelectionCmd() {
+		final List<String> emailList = new ArrayList<>();
+		if (!CollectionUtils.isEmpty(this.courseApplicationListSelected)) {
+			this.courseApplicationListSelected.forEach(i -> emailList.add(i.getCourseParticRepresentative().getContact().getEmail1()));
+		}
+		
+		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, emailList);
+//		this.courseApplicationListSelected = null;
+//		this.courseApplicationFilter.setEmptyValues();
+	}
+	
 	@Command
 	public void usersTabSelectedCmd() {
 		if (this.userList == null) {
@@ -129,9 +158,21 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	}
 	
 	@Command
+	public void closeCmd() {
+		EventQueueHelper.publish(ScbEvent.CLOSE_RECIPIENT_SELECTION_POPUP_EVENT, null);
+	}
+	
+	@Command
 	public void courseTabSelectedCmd() {
 		if (this.courseList == null) {
 			loadCourseListData();
+		}
+	}
+	
+	@Command
+	public void courseApplicationTabSelectedCmd() {
+		if (this.courseApplicationList == null) {
+			loadCourseApplicationListData();
 		}
 	}
 	
@@ -147,6 +188,12 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 		this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
 	}
 	
+	@Command
+	@NotifyChange("courseApplicationList")
+	public void filterCourseApplicationListCmd() {
+		this.courseApplicationList = this.courseApplicationFilter.getApplicationListFiltered(this.courseApplicationListBase);
+	}
+	
 	private void loadUserListData() {
 		this.userList = scbUserService.getAll();
 		this.userListBase = this.userList;
@@ -154,7 +201,8 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	
 	@Override
 	protected void courseYearChangeCmdCore() {
-		loadCourseListData();	
+		loadCourseListData();			
+		loadCourseApplicationListData();	
 	}
 	
 	private void loadCourseListData() {
@@ -187,6 +235,18 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 		BindUtils.postNotifyChange(null, null, this, "courseLocationSelected");
 	}
 	
+	private void loadCourseApplicationListData() {
+		String[] years = getYearsFromContext();
+		
+		int yearFrom = Integer.parseInt(years[0]);
+		int yearTo = Integer.parseInt(years[1]);
+
+		this.courseApplicationList = courseApplicationService.getAll(yearFrom, yearTo);
+		this.courseApplicationListBase = this.courseApplicationList;
+		
+		BindUtils.postNotifyChange(null, null, this, "courseApplicationList");
+	}
+	
 	public List<ScbUser> getUserList() {
 		return userList;
 	}
@@ -211,7 +271,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	public boolean isShowCourseFilter() {
 		return showCourseFilter;
 	}
-	public CourseApplicationFilter getCourseFilter() {
+	public CourseFilter getCourseFilter() {
 		return courseFilter;
 	}
 	public CourseLocation getCourseLocationSelected() {
@@ -225,6 +285,18 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	}
 	public void setCourseListSelected(List<Course> courseListSelected) {
 		this.courseListSelected = courseListSelected;
+	}
+	public List<CourseApplication> getCourseApplicationList() {
+		return courseApplicationList;
+	}
+	public CourseApplicationFilter getCourseApplicationFilter() {
+		return courseApplicationFilter;
+	}
+	public List<CourseApplication> getCourseApplicationListSelected() {
+		return courseApplicationListSelected;
+	}
+	public void setCourseApplicationListSelected(List<CourseApplication> courseApplicationListSelected) {
+		this.courseApplicationListSelected = courseApplicationListSelected;
 	}
 	
 	public static class UserFilter {

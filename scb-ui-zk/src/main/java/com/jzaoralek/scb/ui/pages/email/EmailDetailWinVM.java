@@ -73,6 +73,9 @@ public class EmailDetailWinVM extends BaseVM {
 		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, data -> {
 			addMailToAddress((List<String>) data);
         });
+		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.CLOSE_RECIPIENT_SELECTION_POPUP_EVENT, data -> {
+			closeRecipientSelectionPopup();
+        });
 	}
 	
 	@AfterCompose
@@ -269,7 +272,12 @@ public class EmailDetailWinVM extends BaseVM {
 			BindUtils.postNotifyChange(null, null, this,"emailAddressSet");
 			BindUtils.postNotifyChange(null, null, this,"mailTo");
 		}
-		
+	}
+	
+	/**
+	 * Zavre popup s vyberem adresastu.
+	 */
+	private void closeRecipientSelectionPopup() {
 		// zavreni popupu
 		Bandbox bandbox = (Bandbox)this.mailToPopup.getParent();
 		bandbox.close();
