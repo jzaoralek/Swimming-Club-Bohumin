@@ -22,6 +22,7 @@ import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseApplicationFilter;
@@ -47,6 +48,10 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	@Init
 	public void init() {
 		initYearContext();
+		
+		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.INIT_RECIPIENT_SELECTION_EVENT, data -> {
+			courseTabSelectedCmd();
+        });
 	}
 	
 	@NotifyChange({"userList","userFilter"})
@@ -88,7 +93,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	public void submitCourseSelectionCmd() {
 		final List<String> emailList = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(this.courseListSelected)) {
-			this.courseListSelected.forEach(i -> emailList.addAll(getParticEmailAddressList(i.getParticipantList())));;
+			this.courseListSelected.forEach(i -> emailList.addAll(getParticEmailAddressList(i)));;
 		}
 		
 		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, emailList);
@@ -96,12 +101,21 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 		this.courseFilter.setEmptyValues();
 	}
 	
-	private List<String> getParticEmailAddressList(List<CourseParticipant> courseParticList) {
-		if (CollectionUtils.isEmpty(courseParticList)) {
-			return Collections.emptyList();
+	private List<String> getParticEmailAddressList(Course course) {
+		if (CollectionUtils.isEmpty(course.getParticipantList())) {
+			course.setParticipantList(courseService.getByCourseParticListByCourseUuid(course.getUuid(), false));
 		}
 		final List<String> ret = new ArrayList<>();
-		courseParticList.forEach(i -> ret.add(i.getContact().getEmail1()));
+		ScbUser representative = null;
+		for (CourseParticipant courseParticipant : course.getParticipantList()) {
+			if (courseParticipant.getRepresentativeUuid() != null) {
+				representative = scbUserService.getByUuid(courseParticipant.getRepresentativeUuid());
+				if (representative != null) {
+					ret.add(representative.getContact().getEmail1());
+				}
+				
+			}
+		}
 		
 		return ret;
 	}

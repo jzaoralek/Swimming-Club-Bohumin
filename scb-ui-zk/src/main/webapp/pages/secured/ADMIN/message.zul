@@ -8,8 +8,8 @@
 <zk>
 	<div self="@{define(mainContent)}" 
 		sclass="scb-view"
-		hflex="1" 
-		vflex="1"
+		width="100%"
+		height="100%"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.email.EmailDetailWinVM')"
 		validationMessages="@id('vmsgs')"
        	form="@id('fx') @load(vm) @save(vm, before='sendCmd')">
@@ -56,6 +56,7 @@
 											placeholder="${c:l('txt.ui.common.To')}" 
 											mold="rounded"
 											style="margin-bottom: 10px;"
+											onOpen="@command('initRecipientPopupCmd')"
 											autodrop="false" >
 											<bandpopup hflex="1" height="530px" id="mailToPopup" >
 												<mail-recipient-selection hflex="1" />												
@@ -88,6 +89,7 @@
 								<cell vflex="1">
 									<textbox sclass="form-input-text"
 										multiline="true"
+										placeholder="${c:l('txt.ui.common.Messagetext')}"
 										value="@bind(vm.messageText)"
 										rows="20"
 										tabindex="4"
@@ -98,36 +100,40 @@
 						</rows>
 					</grid>
 					
-		            <vlayout children="@load(vm.attachmentList)" style="margin-left: 10px;" >
+					<vlayout children="@load(vm.attachmentList)" style="margin-left: 10px;" >
 						<template name="children">
-							<vbox align="start" pack="center" style="margin-left: 10px;margin-top: 5px;">
+							<vbox align="start" pack="center" style="margin: 10px;">
+								
 								<hbox align="center" >
-									<a label="@load(each.name)" 
+									<a iconSclass="z-icon-download" 
 										onClick="@command('downloadAttachmentCmd', item=each)" />
+									<a label="@load(each.name)" />
 									<a onClick="@command('removeAttachmentCmd', item=each)" 
-										iconSclass="z-icon-times"
-										tooltiptext="${c:l('txt.ui.common.remove')}" />
+										iconSclass="z-icon-times" 
+										style="margin-left: 5px;"
+					                	tooltiptext="${c:l('txt.ui.common.remove')}" />
 								</hbox>
 							</vbox>
 						</template>
 					</vlayout>
-					
-					<hbox align="start" pack="start" hflex="1" style="margin-left: 10px; margin-top: 15px; margin-bottom: 10px;">
-						<button onClick="@command('sendCmd')"
-							label="${c:l('txt.ui.common.Odeslat')}" 
-		       				iconSclass="z-icon-paper-plane"
-		       				tabindex="5"
-		       				style="margin-left: 10px;margin-bottom: 10px;" />
-		       			<button upload="true,native"
-		       				onUpload="@command('uploadCmd', event=event)"
-		       				iconSclass="z-icon-paperclip" 
-		       				tooltiptext="${c:l('txt.ui.common.FileAttachments')}"
-							sclass="btn-light fix-btn-icon"
-							tabindex="6"
-							style="margin-left: 10px;" />
-					</hbox>
 	            </vlayout>
 	        </groupbox>
 		</vlayout>
+		
+		<hbox align="start" pack="start" hflex="1" >
+			<button onClick="@command('sendCmd')"
+				label="${c:l('txt.ui.common.Odeslat')}" 
+      			iconSclass="z-icon-paper-plane"
+      			tabindex="5"
+      			style="margin-left: 10px;margin-bottom: 10px;" />
+      		<button upload="true,native"
+      			onUpload="@command('uploadCmd', event=event)"
+      			iconSclass="z-icon-paperclip" 
+      			tooltiptext="${c:l('txt.ui.common.FileAttachments')}"
+				sclass="btn-light fix-btn-icon"
+				tabindex="6"
+				style="margin-left: 10px;margin-bottom: 10px;" />
+		</hbox>
+		
 	</div>
 </zk>

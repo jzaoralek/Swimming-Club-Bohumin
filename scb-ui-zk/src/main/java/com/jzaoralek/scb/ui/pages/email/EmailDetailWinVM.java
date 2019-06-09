@@ -36,12 +36,11 @@ import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
-import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
-import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 /**
@@ -247,36 +246,8 @@ public class EmailDetailWinVM extends BaseVM {
 	}
 	
 	@Command
-	public void addMailToAddressCmd() {
-		Consumer<String> callback = this::addMailToAddress;
-		
-		Map<String, Object> args = new HashMap<>();
-		args.put(WebConstants.CALLBACK_PARAM, callback);
-		
-//		WebUtils.openModal(WebPages.RECIPIENT_SELECTION_WINDOW.getUrl(), null, args);
-	}
-	
-	/**
-	 * Prida emailove adresy z retezce do seznamu adresatu.
-	 * @param mailTo
-	 */
-	private void addMailToAddress(String mailTo) {
-		if (!StringUtils.hasText(mailTo)) {
-			return;
-		}
-		
-		List<String> emailList = WebUtils.emailAddressStrToList(mailTo);
-		if (!CollectionUtils.isEmpty(emailList)) {
-			if (this.emailAddressSet == null) {
-				this.emailAddressSet = new HashSet<>();
-			}
-			this.emailAddressSet.addAll(emailList);
-			
-			if (this.mailTo == null) {
-				this.mailTo = "";
-			}
-			this.mailTo = this.mailTo.concat(WebUtils.emailAddressListToStr(emailList));
-		}
+	public void initRecipientPopupCmd() {
+		EventQueueHelper.publish(ScbEvent.INIT_RECIPIENT_SELECTION_EVENT, null);
 	}
 	
 	/**

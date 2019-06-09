@@ -295,6 +295,14 @@ SCB common
 	border-radius: 18px;
 }
 
+.round-btn-small{
+	height: 22px;
+	width: 22px;
+	padding: 0;
+	text-align:center;
+	border-radius: 12px;
+}
+
 .scb-panel{
 	border: solid 1px #c8ced3;
 	border-radius: 4px;
