@@ -251,17 +251,16 @@ public class CourseApplicationListVM extends BaseContextVM {
 	}
 	
 	/**
-	 * Otevre modal pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
 	 */
 	@Command
-	public void openModalToSendEmailCmd() {
+	public void goToSendEmailCmd() {
 		if (CollectionUtils.isEmpty(this.courseApplicationList)) {
 			return;
 		}
 		
-		Map<String, Object> args = new HashMap<>();
-		args.put(WebConstants.COURSE_PARTIC_CONTACT_LIST_PARAM, buildCourseParticipantContactSet(this.courseApplicationList));
-		WebUtils.openModal(WebPages.EMAIL_DETAIL_WINDOW.getUrl(), null, args);
+		WebUtils.setSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM, buildCourseParticipantContactSet(this.courseApplicationList));
+		Executions.getCurrent().sendRedirect(WebPages.MESSAGE.getUrl(), "_blank");
 	}
 	
 	/**

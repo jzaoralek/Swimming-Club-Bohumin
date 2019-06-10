@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
@@ -32,6 +33,11 @@ import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseFilter;
 
 public class MailRecipientSelectionVM extends BaseContextVM {
 
+	public enum RecipientType {
+		TO,
+		CC;
+	}
+	
 	@WireVariable
 	private CourseService courseService;
 	
@@ -53,14 +59,20 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	private List<CourseApplication> courseApplicationListBase;
 	private List<CourseApplication> courseApplicationListSelected;
 	private final CourseApplicationFilter courseApplicationFilter = new CourseApplicationFilter();
+	private RecipientType  recipientType;
 
 	@Init
 	public void init() {
 		initYearContext();
 		
 		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.INIT_RECIPIENT_SELECTION_EVENT, data -> {
-			courseTabSelectedCmd();
+			initSelection((RecipientType)data);
         });
+	}
+	
+	private void initSelection(RecipientType recipientType) {
+		this.recipientType = recipientType;
+		courseTabSelectedCmd();
 	}
 	
 	@NotifyChange({"userList","userFilter"})
@@ -91,7 +103,6 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 		this.userList = userFilter.getUserListFiltered(this.userListBase);
 	}
 	
-//	@NotifyChange({"userListSelected","userFilter"})
 	@Command
 	public void submitCmd() {
 		final List<String> emailList = new ArrayList<>();
@@ -99,12 +110,9 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 			this.userListSelected.forEach(i -> emailList.add(i.getContact().getEmail1()));
 		}
 		
-		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, emailList);
-//		this.userListSelected = null;
-//		this.userFilter.setEmptyValues();
+		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, new Pair<>(emailList,this.recipientType));
 	}
 	
-//	@NotifyChange({"courseListSelected","courseFilter"})
 	@Command
 	public void submitCourseSelectionCmd() {
 		final List<String> emailList = new ArrayList<>();
@@ -112,9 +120,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 			this.courseListSelected.forEach(i -> emailList.addAll(getParticEmailAddressList(i)));;
 		}
 		
-		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, emailList);
-//		this.courseListSelected = null;
-//		this.courseFilter.setEmptyValues();
+		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, new Pair<>(emailList,this.recipientType));
 	}
 	
 	private List<String> getParticEmailAddressList(Course course) {
@@ -136,7 +142,6 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 		return ret;
 	}
 	
-//	@NotifyChange({"courseApplicationListSelected","courseApplicationFilter"})
 	@Command
 	public void submitCourseApplicationSelectionCmd() {
 		final List<String> emailList = new ArrayList<>();
@@ -144,9 +149,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 			this.courseApplicationListSelected.forEach(i -> emailList.add(i.getCourseParticRepresentative().getContact().getEmail1()));
 		}
 		
-		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, emailList);
-//		this.courseApplicationListSelected = null;
-//		this.courseApplicationFilter.setEmptyValues();
+		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, new Pair<>(emailList,this.recipientType));
 	}
 	
 	@Command
@@ -159,7 +162,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	
 	@Command
 	public void closeCmd() {
-		EventQueueHelper.publish(ScbEvent.CLOSE_RECIPIENT_SELECTION_POPUP_EVENT, null);
+		EventQueueHelper.publish(ScbEvent.CLOSE_RECIPIENT_SELECTION_POPUP_EVENT, this.recipientType);
 	}
 	
 	@Command

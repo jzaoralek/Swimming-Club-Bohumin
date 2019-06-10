@@ -16,8 +16,9 @@ public enum WebPages {
 	USER_LOG_TO_COURSE("/pages/secured/USER/prihlaseni-na-kurz.zul"),
 	USER_DETAIL("/pages/secured/ADMIN/uzivatel.zul"),
 	PAYMENT_LIST("/pages/secured/TRAINER/seznam-plateb.zul"),
-	EMAIL_DETAIL_WINDOW("/pages/secured/ADMIN/email-detail-window.zul"),
 	PAYMENT_INSTRUCTION_WINDOW("/pages/secured/ADMIN/payment-instruction-window.zul"),
+	MESSAGE("/pages/secured/ADMIN/message.zul"),
+	
 	LOGIN_PAGE("/pages/common/login.zul");
 	
 	private String url;

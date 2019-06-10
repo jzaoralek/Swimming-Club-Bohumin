@@ -1,14 +1,10 @@
 package com.jzaoralek.scb.ui.pages.email;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
@@ -42,6 +38,7 @@ import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
+import com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM.RecipientType;
 
 /**
  * View model for email message detail window.
@@ -62,19 +59,27 @@ public class EmailDetailWinVM extends BaseVM {
 	
 	@Wire
 	private Bandpopup mailToPopup;
+	
+	@Wire
+	private Bandpopup mailCcPopup;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	@Init
 	public void init() {
-		this.emailAddressSet = (Set<String>) WebUtils.getArg(WebConstants.COURSE_PARTIC_CONTACT_LIST_PARAM);
+		// iniciace adres z jiné stránky
+		this.emailAddressSet = (Set<String>) WebUtils.getSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM);
 		this.emailAddressSetBase = this.emailAddressSet;
+		if (!CollectionUtils.isEmpty(this.emailAddressSet)) {
+			this.mailTo = WebUtils.emailAddressListToStr(this.emailAddressSet);
+			WebUtils.removeSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM);
+		}
 		
 		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, data -> {
-			addMailToAddress((List<String>) data);
+			addMailToAddress((Pair<List<String>,RecipientType>) data);
         });
 		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.CLOSE_RECIPIENT_SELECTION_POPUP_EVENT, data -> {
-			closeRecipientSelectionPopup();
+			closeRecipientSelectionPopup((RecipientType) data);
         });
 	}
 	
@@ -126,11 +131,13 @@ public class EmailDetailWinVM extends BaseVM {
 		
 		// no mailCc addresses valid
 		Pair<List<String>, List<String>> mailCcValidResult = WebUtils.validateEmailList(this.mailCc);
-		invalidEmailList = mailCcValidResult.getValue1();
-		if (!CollectionUtils.isEmpty(invalidEmailList)) {
-			// neplatne adresy prijemcu
-			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidCcAddress", MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY, null, invalidEmailList);
-			return;
+		if (mailCcValidResult != null) {
+			invalidEmailList = mailCcValidResult.getValue1();
+			if (!CollectionUtils.isEmpty(invalidEmailList)) {
+				// neplatne adresy prijemcu
+				MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageInvalidCcAddress", MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY, null, invalidEmailList);
+				return;
+			}			
 		}
 		
 		// confirmations
@@ -165,7 +172,18 @@ public class EmailDetailWinVM extends BaseVM {
 	}
 	
 	private void sendMessage() {
-		mailService.sendMailBatch(Arrays.asList(new Mail(this.mailTo, this.mailCc,  this.messageSubject, this.messageText, this.attachmentList)));
+		List<Mail> mailList = new ArrayList<>();
+		Set<String> mailToList = WebUtils.emailAddressStrToList(this.mailTo);
+		if (!CollectionUtils.isEmpty(mailToList)) {
+			mailToList.forEach(i -> mailList.add(new Mail(i.trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
+		}
+		
+		Set<String> mailCcList = WebUtils.emailAddressStrToList(this.mailCc);
+		if (!CollectionUtils.isEmpty(mailCcList)) {
+			mailCcList.forEach(i -> mailList.add(new Mail(i.trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
+		}
+		
+		mailService.sendMailBatch(mailList);
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
 		clearMessage();
 	}
@@ -249,38 +267,54 @@ public class EmailDetailWinVM extends BaseVM {
 	}
 	
 	@Command
-	public void initRecipientPopupCmd() {
-		EventQueueHelper.publish(ScbEvent.INIT_RECIPIENT_SELECTION_EVENT, null);
+	public void initMailToPopupCmd() {
+		EventQueueHelper.publish(ScbEvent.INIT_RECIPIENT_SELECTION_EVENT, RecipientType.TO);
+	}
+	
+	@Command
+	public void initMailCcPopupCmd() {
+		EventQueueHelper.publish(ScbEvent.INIT_RECIPIENT_SELECTION_EVENT, RecipientType.CC);
 	}
 	
 	/**
 	 * Prida emailove adresy do seznamu adresatu.
 	 * @param mailToList
 	 */
-	private void addMailToAddress(List<String> emailList) {				
+	private void addMailToAddress(Pair<List<String>,RecipientType> emailListWithType) {
+		List<String> emailList = emailListWithType.getValue0();
 		if (!CollectionUtils.isEmpty(emailList)) {
-			if (this.emailAddressSet == null) {
-				this.emailAddressSet = new HashSet<>();
+			if (emailListWithType.getValue1() == RecipientType.TO) {
+				if (this.mailTo == null) {
+					this.mailTo = "";
+				}
+				// naplneni retezce email adres z unikatniho seznamu
+				this.mailTo = this.mailTo.concat(WebUtils.emailAddressListToStr(emailList));				
+				BindUtils.postNotifyChange(null, null, this,"mailTo");
+			} else {
+				if (this.mailCc == null) {
+					this.mailCc = "";
+				}
+				// naplneni retezce email adres z unikatniho seznamu
+				this.mailCc = this.mailCc.concat(WebUtils.emailAddressListToStr(emailList));				
+				BindUtils.postNotifyChange(null, null, this,"mailCc");
 			}
-			this.emailAddressSet.addAll(emailList);
-			
-			if (this.mailTo == null) {
-				this.mailTo = "";
-			}
-			this.mailTo = this.mailTo.concat(WebUtils.emailAddressListToStr(emailList));
-			
-			BindUtils.postNotifyChange(null, null, this,"emailAddressSet");
-			BindUtils.postNotifyChange(null, null, this,"mailTo");
 		}
 	}
 	
 	/**
 	 * Zavre popup s vyberem adresastu.
 	 */
-	private void closeRecipientSelectionPopup() {
-		// zavreni popupu
-		Bandbox bandbox = (Bandbox)this.mailToPopup.getParent();
-		bandbox.close();
+	private void closeRecipientSelectionPopup(RecipientType recipientType) {
+		Bandbox bandbox = null;
+		if (recipientType == RecipientType.TO) {
+			// zavreni popupu To
+			bandbox = (Bandbox)this.mailToPopup.getParent();
+			bandbox.close();			
+		} else {
+			// zavreni popupu Cc
+			bandbox = (Bandbox)this.mailCcPopup.getParent();
+			bandbox.close();
+		}		
 	}
 	
 	public int getEmailAddressCount() {

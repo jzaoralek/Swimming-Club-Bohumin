@@ -14,11 +14,11 @@ public class WebUtilsTest {
 	@Test
 	public void testValidateEmailList() {
 		String validEmailAddr1 = "a.a@seznam.cz";
-		String validEmailAddr2 = "a.a@seznam.cz";
-		String validEmailAddr3 = " a.a@seznam.cz ";
+		String validEmailAddr2 = "a.b@seznam.cz";
+		String validEmailAddr3 = " a.c@seznam.cz ";
 		String invalidEmailAddr1 = "a.seznam.cz";
 		String invalidEmailAddr2 = "aasasas";
-		String invalidEmailAddr3 = " aasasas ";
+		String invalidEmailAddr3 = " aasasasasa ";
 		
 		String allValidEmailAddrList1 = validEmailAddr1 + WebConstants.EMAIL_LIST_SEPARATOR + validEmailAddr2 + WebConstants.EMAIL_LIST_SEPARATOR + validEmailAddr3;
 		String oneInvalidEmailAddrList1 = validEmailAddr1 + WebConstants.EMAIL_LIST_SEPARATOR + validEmailAddr2 + WebConstants.EMAIL_LIST_SEPARATOR + invalidEmailAddr1;

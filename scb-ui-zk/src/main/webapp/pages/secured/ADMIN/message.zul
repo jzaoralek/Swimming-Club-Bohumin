@@ -56,7 +56,7 @@
 											placeholder="${c:l('txt.ui.common.To')}" 
 											mold="rounded"
 											style="margin-bottom: 10px;"
-											onOpen="@command('initRecipientPopupCmd')"
+											onOpen="@command('initMailToPopupCmd')"
 											autodrop="false" >
 											<bandpopup hflex="1" height="530px" id="mailToPopup" >
 												<mail-recipient-selection hflex="1" />												
@@ -68,7 +68,12 @@
 											placeholder="${c:l('txt.ui.common.Copy')}"
 											tabindex="2" 
 											mold="rounded" 
-											autodrop="true" />
+											onOpen="@command('initMailCcPopupCmd')"
+											autodrop="false" >
+											<bandpopup hflex="1" height="530px" id="mailCcPopup" >
+												<mail-recipient-selection hflex="1" />												
+											</bandpopup>
+										</bandbox>
 									</vlayout>
 								</cell>
 							</row>

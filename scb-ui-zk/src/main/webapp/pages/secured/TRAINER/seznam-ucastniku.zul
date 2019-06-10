@@ -34,7 +34,7 @@
 			                	
 					                	<menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
 		            				<!-- Nova zprava zobrazenym ucastnikum. -->
-									<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('openModalToSendEmailCmd')" />
+									<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('goToSendEmailCmd')" />
 									<!-- Odeslani instrukci k platbe za prvni pololeti. -->
 									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsFirstSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" />
 									<!-- Odeslani instrukci k platbe za druhe pololeti. -->

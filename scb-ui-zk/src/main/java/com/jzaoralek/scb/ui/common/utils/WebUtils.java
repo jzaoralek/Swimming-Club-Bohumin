@@ -7,10 +7,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -226,7 +229,7 @@ public final class WebUtils {
 			return null;
 		}
 		
-		List<String> emailList = emailAddressStrToList(value);
+		Set<String> emailList = emailAddressStrToList(value);
 	    
 	    List<String> validEmailList = new ArrayList<>();
 	    List<String> invalidEmailList = new ArrayList<>();
@@ -246,17 +249,25 @@ public final class WebUtils {
 	}
 	
 	/**
-	 * Prevede retezec emailovych adres na list.
+	 * Prevede retezec emailovych adres na Set, tzn. unikatnost.
 	 * @param value
 	 * @return
 	 */
-	public static List<String> emailAddressStrToList(String value) {
+	public static Set<String> emailAddressStrToList(String value) {
 		if (!StringUtils.hasText(value)) {
-			return Collections.emptyList();
+			return Collections.emptySet();
 		}
 		
+		Set<String> ret = new HashSet<>();
 		String[] emailArr = value.split(WebConstants.EMAIL_LIST_SEPARATOR);
-		return Arrays.stream(emailArr).collect(Collectors.toList());
+		for (int i = 0; i < emailArr.length; i++) {
+			String item = emailArr[i];
+			if (StringUtils.hasText(item)) {
+				ret.add(item.trim());
+			}
+			
+		}
+		return ret;
 	}
 	
 	/**
@@ -264,12 +275,12 @@ public final class WebUtils {
 	 * @param value
 	 * @return
 	 */
-	public static String emailAddressListToStr(List<String> value) {
+	public static String emailAddressListToStr(Collection<String> value) {
 		if (CollectionUtils.isEmpty(value)) {
 			return null;
 		}
 		
-		return value.stream().collect(Collectors.joining(WebConstants.EMAIL_LIST_SEPARATOR));
+		return value.stream().collect(Collectors.joining(WebConstants.EMAIL_LIST_SEPARATOR + " "));
 	}
 	
 	
