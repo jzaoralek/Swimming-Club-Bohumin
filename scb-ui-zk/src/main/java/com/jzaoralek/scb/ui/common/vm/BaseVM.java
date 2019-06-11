@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
@@ -324,6 +326,19 @@ public class BaseVM {
 		attachment.setContentType("application/pdf");
 		attachment.setName(fileName.toString());
 		return attachment;
+	}
+	
+	/**
+	 * Otevre stranku pro odeslani emailu na adresy na vstupu.
+	 * @param recipientList
+	 */
+	protected void goToSendEmailCore(Set<String> recipientList) {
+		if (CollectionUtils.isEmpty(recipientList)) {
+			return;
+		}
+		
+		WebUtils.setSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM, recipientList);
+		Executions.getCurrent().sendRedirect(WebPages.MESSAGE.getUrl(), "_blank");
 	}
 	
 	protected CourseApplicationFileConfig getByType(List<CourseApplicationFileConfig> cafcList, CourseApplicationFileType type) {

@@ -23,10 +23,10 @@
 							iconSclass="z-icon-arrow-left" 
 							sclass="btn-light fix-btn-icon"/>
 					<!-- Zpravy -->
-           			<button label="${c:l('txt.ui.common.Messaging')}" 
+           			<button tooltiptext="${c:l('txt.ui.common.Messaging')}"
            				iconSclass="z-icon-at"
            				style="margin-left: 10px;"
-           				popup="messagePopup, position=after_start"
+           				onClick="@command('goToSendEmailCmd')"
 	            		if="${vm.isLoggedUserInRole('ADMIN')}" />				
 				</hlayout>
 				

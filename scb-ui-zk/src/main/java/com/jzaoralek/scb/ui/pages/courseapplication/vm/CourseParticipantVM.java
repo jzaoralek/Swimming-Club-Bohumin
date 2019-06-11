@@ -1,7 +1,9 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -192,6 +194,14 @@ public class CourseParticipantVM extends BaseVM {
     public void refreshDataCmd() {
 		this.participant = courseApplicationService.getByUuid(this.participant.getUuid());
 		BindUtils.postNotifyChange(null, null, this, "participant");
+	}
+	
+	/**
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 */
+	@Command
+	public void goToSendEmailCmd() {
+		goToSendEmailCore(new HashSet<>(Arrays.asList(this.participant.getCourseParticRepresentative().getContact().getEmail1())));
 	}
 
 	private void fillSwimStyleItemList() {

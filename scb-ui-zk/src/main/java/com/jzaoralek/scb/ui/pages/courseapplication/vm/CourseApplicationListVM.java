@@ -255,12 +255,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 	 */
 	@Command
 	public void goToSendEmailCmd() {
-		if (CollectionUtils.isEmpty(this.courseApplicationList)) {
-			return;
-		}
-		
-		WebUtils.setSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM, buildCourseParticipantContactSet(this.courseApplicationList));
-		Executions.getCurrent().sendRedirect(WebPages.MESSAGE.getUrl(), "_blank");
+		goToSendEmailCore(buildCourseParticipantContactSet(this.courseApplicationList));
 	}
 	
 	/**
