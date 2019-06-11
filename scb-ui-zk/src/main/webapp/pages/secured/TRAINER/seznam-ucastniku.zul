@@ -27,19 +27,17 @@
 			            	<hlayout sclass="pull-left">
 			            		<!-- Zpravy -->
 		            			<button label="${c:l('txt.ui.common.Messaging')}" 
-		            				iconSclass="z-icon-envelope"
+		            				iconSclass="z-icon-at"
 		            				popup="messagePopup, position=after_start"
-				            				if="${vm.isLoggedUserInRole('ADMIN')}"
-		            				visible="${vm.isLoggedUserInRole('ADMIN')}"/>
-			                	
-					                	<menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
-		            				<!-- Nova zprava zobrazenym ucastnikum. -->
-									<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('goToSendEmailCmd')" />
-									<!-- Odeslani instrukci k platbe za prvni pololeti. -->
-									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsFirstSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" />
-									<!-- Odeslani instrukci k platbe za druhe pololeti. -->
-									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" />
-						       	</menupopup>
+				            		if="${vm.isLoggedUserInRole('ADMIN')}" />
+					                <menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
+			            				<!-- Nova zprava zobrazenym ucastnikum. -->
+										<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('goToSendEmailCmd')" />
+										<!-- Odeslani instrukci k platbe za prvni pololeti. -->
+										<menuitem label="${c:l('txt.ui.common.PaymentInstructionsFirstSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" />
+										<!-- Odeslani instrukci k platbe za druhe pololeti. -->
+										<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" />
+							       	</menupopup>
 			            	</hlayout>
 			            	
 			            	<hlayout sclass="pull-right">

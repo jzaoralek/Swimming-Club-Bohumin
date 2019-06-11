@@ -14,23 +14,9 @@
 		validationMessages="@id('vmsgs')"
        	form="@id('fx') @load(vm) @save(vm, before='sendCmd')">
 		
-        <vlayout>
-			<hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}">
-				<button onClick="@command('backCmd')" 
-					label="${c:l('txt.ui.common.Back')}" 
-					iconSclass="z-icon-arrow-left" 
-					sclass="btn-light fix-btn-icon"/>
-				
-				<button onClick="@command('clearMessageCmd')"
-					label="${c:l('txt.ui.common.ThrowOut')}" 
-					sclass="btn-default" 
-       				iconSclass="z-icon-trash"
-       				style="margin-left: 10px;" />	
-			</hlayout>
-        </vlayout>
-        
-        
-		<vlayout spacing="0" >
+		<vlayout spacing="0" >	
+			<label value="${c:l('txt.ui.menu.messages')}" sclass="scb-headline-big"/>
+			
 	        <groupbox hflex="1" sclass="no-inner-padding" >            
 	            <vlayout>
 		            <grid hflex="1" >
@@ -129,6 +115,7 @@
 				label="${c:l('txt.ui.common.Odeslat')}" 
       			iconSclass="z-icon-paper-plane"
       			tabindex="5"
+      			sclass="btn-success"
       			style="margin-left: 10px;margin-bottom: 10px;" />
       		<button upload="true,native"
       			onUpload="@command('uploadCmd', event=event)"
@@ -137,6 +124,12 @@
 				sclass="btn-light fix-btn-icon"
 				tabindex="6"
 				style="margin-left: 10px;margin-bottom: 10px;" />
+			<button onClick="@command('clearMessageCmd')"
+				label="${c:l('txt.ui.common.ThrowOut')}"
+				tooltiptext="${c:l('txt.ui.common.ThrowOut')}"
+				sclass="btn-light fix-btn-icon"
+      			iconSclass="z-icon-trash"
+      			style="margin-left: 10px;margin-bottom: 10px;" />
 		</hbox>
 		
 	</div>

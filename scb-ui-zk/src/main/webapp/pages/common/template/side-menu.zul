@@ -84,6 +84,15 @@
 				<label value="${c:l('txt.ui.menu.payments')}"/>
 			</a>
 			
+			<!-- Zpravy -->
+			<a 	id="ZPRAVY" 
+				iconSclass="z-icon-at" 
+				tooltiptext="${c:l('txt.ui.menu.messages')}"
+				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
+				href="/pages/secured/ADMIN/message.zul" >
+				<label value="${c:l('txt.ui.menu.messages')}"/>
+			</a>
+			
 			<!-- Nastaveni -->
 			<a 	id="NASTAVENI" 
 				iconSclass="z-icon-cog" 
