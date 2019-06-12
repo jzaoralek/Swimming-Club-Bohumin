@@ -1,6 +1,8 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -256,6 +258,17 @@ public class CourseVM extends BaseVM {
 			},
 			msgParams
 		);
+	}
+	
+	/**
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 */
+	@Command
+	public void goToSendEmailCmd() {
+		final Set<String> contactList = new HashSet<>();
+		contactList.addAll(WebUtils.getParticEmailAddressList(this.course, courseService, scbUserService));
+		
+		goToSendEmailCore(contactList);
 	}
 
 	public Course getCourse() {

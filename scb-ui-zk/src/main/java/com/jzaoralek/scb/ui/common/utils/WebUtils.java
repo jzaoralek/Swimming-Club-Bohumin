@@ -36,6 +36,10 @@ import org.zkoss.zul.Window;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 
@@ -313,5 +317,29 @@ public final class WebUtils {
 		return courseListBase.stream()
                 .filter(line -> location.getUuid().toString().equals(line.getCourseLocation().getUuid().toString()))
                 .collect(Collectors.toList());
+	}
+	
+	/**
+	 * For course returns email contacts of course participant representatives.
+	 */
+	public static List<String> getParticEmailAddressList(Course course
+			, CourseService courseService
+			, ScbUserService scbUserService) {
+		if (CollectionUtils.isEmpty(course.getParticipantList())) {
+			course.setParticipantList(courseService.getByCourseParticListByCourseUuid(course.getUuid(), false));
+		}
+		final List<String> ret = new ArrayList<>();
+		ScbUser representative = null;
+		for (CourseParticipant courseParticipant : course.getParticipantList()) {
+			if (courseParticipant.getRepresentativeUuid() != null) {
+				representative = scbUserService.getByUuid(courseParticipant.getRepresentativeUuid());
+				if (representative != null) {
+					ret.add(representative.getContact().getEmail1());
+				}
+				
+			}
+		}
+		
+		return ret;
 	}
 }

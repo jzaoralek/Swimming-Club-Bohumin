@@ -43,6 +43,8 @@
 		            	<hlayout sclass="pull-right">
 		            		<!-- Rocnik -->
             				<include src="/pages/common/component/context-year.zul"/>
+            				<!-- Zpravy -->
+				            <send-mail-button buttonSclass="toolbar-btn" />
             				<button iconSclass="z-icon-download" 
             					onClick="@command('exportToExcel',listbox=courseApplicationList)" 
             					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 

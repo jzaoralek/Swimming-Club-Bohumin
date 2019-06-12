@@ -1,12 +1,16 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -155,6 +159,21 @@ public class CourseListVM extends BaseContextVM {
 	@Command
 	public void filterByCourseLocationCmd() {
 		this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
+	}
+	
+	/**
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 */
+	@Command
+	public void goToSendEmailCmd() {
+		if (CollectionUtils.isEmpty(this.courseList)) {
+			return;
+		}
+		
+		final Set<String> contactList = new HashSet<>();
+		this.courseList.forEach(i -> contactList.addAll(WebUtils.getParticEmailAddressList(i, courseService, scbUserService)));
+		
+		goToSendEmailCore(contactList);
 	}
 
 	public void loadData() {

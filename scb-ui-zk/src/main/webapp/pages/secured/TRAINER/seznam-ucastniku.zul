@@ -25,10 +25,18 @@
 			        <auxhead>
 			            <auxheader class="header" colspan="5" >
 			            	<hlayout sclass="pull-left">
-			            		<!-- Zpravy -->
+			            		
+			            	</hlayout>
+			            	
+			            	<hlayout sclass="pull-right">
+			            		<!-- Rocnik -->
+	            				<include src="/pages/common/component/context-year.zul"/>
+	            				
+	            				<!-- Zpravy -->
 		            			<button tooltiptext="${c:l('txt.ui.common.Messaging')}" 
 		            				iconSclass="z-icon-at"
 		            				popup="messagePopup, position=after_start"
+		            				sclass="toolbar-btn"
 				            		if="${vm.isLoggedUserInRole('ADMIN')}" />
 				                <menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
 		            				<!-- Nova zprava zobrazenym ucastnikum. -->
@@ -38,16 +46,13 @@
 									<!-- Odeslani instrukci k platbe za druhe pololeti. -->
 									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" />
 						       	</menupopup>
-			            	</hlayout>
-			            	
-			            	<hlayout sclass="pull-right">
-			            		<!-- Rocnik -->
-	            				<include src="/pages/common/component/context-year.zul"/>
+						       	
 	            				<button iconSclass="z-icon-download" 
 	            					onClick="@command('exportToExcel',listbox=courseApplicationList)" 
 	            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
 	            					if="${vm.isLoggedUserInRole('ADMIN')}" 
 	            					sclass="toolbar-btn"/>
+	            				
             					<button iconSclass="z-icon-refresh" 
             						onClick="@command('refreshDataCmd')" 
             						tooltiptext="${c:l('txt.ui.common.refreshData')}" 

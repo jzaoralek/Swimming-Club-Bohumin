@@ -2,9 +2,11 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
@@ -169,6 +172,33 @@ public class UserListVM extends BaseVM {
 		}
 		
 		WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
+	}
+	
+	/**
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 */
+	@Command
+	public void goToSendEmailCmd() {
+		goToSendEmailCore(buildContactSet(this.userList));
+	}
+	
+	/**
+	 * Sestavi seznam emailovych adres ucastniku.
+	 * @param courseApplicationList
+	 * @return
+	 */
+	private Set<String> buildContactSet(List<ScbUser> userList) {
+		if (CollectionUtils.isEmpty(userList)) {
+			return Collections.emptySet();
+		}
+		
+		Set<String> ret = new HashSet<>();
+		for (ScbUser item : userList) {
+			if (item.getContact() != null && StringUtils.hasText(item.getContact().getEmail1())) {
+				ret.add(item.getContact().getEmail1());				
+			}
+		}
+		return ret;
 	}
 
 	public Boolean canDelete(UUID userUuid) {

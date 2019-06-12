@@ -54,5 +54,11 @@
 	    <component-name>mail-recipient-selection</component-name>    
 	    <macro-uri>/pages/common/component/mail-recipient-selection.zul</macro-uri>
 	</component>
+	
+	<!-- Tlacitko pro prechod na stranku pro  odeslani emailu -->
+	<component>
+	    <component-name>send-mail-button</component-name>    
+	    <macro-uri>/pages/common/component/send-mail-button.zul</macro-uri>
+	</component>
 
 </language-addon>

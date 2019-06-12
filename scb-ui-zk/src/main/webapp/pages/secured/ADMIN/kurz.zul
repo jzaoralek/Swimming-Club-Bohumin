@@ -27,13 +27,18 @@
         				iconSclass="z-icon-plus"
         				style="margin-left: 10px;"
         				visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
-        		
-        		<button onClick="@command('deleteCmd')"
-						label="Odstranit" 
+            	
+            	<hlayout visible="@load(vm.updateMode)">
+        			<!-- Zpravy -->
+	            	<send-mail-button />
+	        		<button onClick="@command('deleteCmd')"
+						label="${c:l('txt.ui.common.Delete')}" 
 						sclass="btn-danger" 
         				iconSclass="z-icon-times"
         				style="margin-left: 10px;"
-        				visible="@load(vm.isLoggedUserInRole('ADMIN') and vm.updateMode)" />		
+        				visible="@load(vm.isLoggedUserInRole('ADMIN') and vm.updateMode)" />
+            	</hlayout>
+        		
         				
 			</hlayout>
 			

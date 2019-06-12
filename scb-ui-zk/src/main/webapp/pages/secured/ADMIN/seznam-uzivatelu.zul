@@ -25,7 +25,6 @@
 					
 			        <auxhead>
 			            <auxheader class="header" colspan="6" >
-			            
 			            	<button onClick="@command('newItemCmd')" 
 											tooltiptext="${c:l('txt.ui.common.new')}" 
 											sclass="add-item-btn" 
@@ -35,6 +34,8 @@
 								<button label="Mail novým uživatelům" 
 									visible="@load(vm.allowSendMailToUsers)" 
 									onClick="@command('sendNewUserMailToAllUser')" />
+								<!-- Zpravy -->
+				            	<send-mail-button buttonSclass="toolbar-btn" />
 	            				<button iconSclass="z-icon-download" 
 	            					onClick="@command('exportToExcel',listbox=userList)" 
 	            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 

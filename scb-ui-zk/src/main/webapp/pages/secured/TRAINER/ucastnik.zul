@@ -23,11 +23,7 @@
 							iconSclass="z-icon-arrow-left" 
 							sclass="btn-light fix-btn-icon"/>
 					<!-- Zpravy -->
-           			<button tooltiptext="${c:l('txt.ui.common.Messaging')}"
-           				iconSclass="z-icon-at"
-           				style="margin-left: 10px;"
-           				onClick="@command('goToSendEmailCmd')"
-	            		if="${vm.isLoggedUserInRole('ADMIN')}" />				
+	            	<send-mail-button />			
 				</hlayout>
 				
 	            <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>

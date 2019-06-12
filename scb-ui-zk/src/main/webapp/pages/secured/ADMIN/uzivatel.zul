@@ -19,7 +19,14 @@
 		sclass="scb-view scb-view-900" >
 		
 		<hlayout>
-			<page-toolbar width="100%" self="@{define(pageToolbar)}"/>
+			<hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}">
+				<button onClick="@command('backCmd')" 
+					label="${c:l('txt.ui.common.Back')}" 
+					iconSclass="z-icon-arrow-left" 
+					sclass="btn-light fix-btn-icon"/>
+				<!-- Zpravy -->
+            	<send-mail-button />			
+			</hlayout>
             <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
         </hlayout>
 	    

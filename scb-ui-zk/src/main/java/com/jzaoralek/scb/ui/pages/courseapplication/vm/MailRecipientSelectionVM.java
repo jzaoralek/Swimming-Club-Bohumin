@@ -117,29 +117,10 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	public void submitCourseSelectionCmd() {
 		final List<String> emailList = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(this.courseListSelected)) {
-			this.courseListSelected.forEach(i -> emailList.addAll(getParticEmailAddressList(i)));;
+			this.courseListSelected.forEach(i -> emailList.addAll(WebUtils.getParticEmailAddressList(i, courseService, scbUserService)));;
 		}
 		
 		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, new Pair<>(emailList,this.recipientType));
-	}
-	
-	private List<String> getParticEmailAddressList(Course course) {
-		if (CollectionUtils.isEmpty(course.getParticipantList())) {
-			course.setParticipantList(courseService.getByCourseParticListByCourseUuid(course.getUuid(), false));
-		}
-		final List<String> ret = new ArrayList<>();
-		ScbUser representative = null;
-		for (CourseParticipant courseParticipant : course.getParticipantList()) {
-			if (courseParticipant.getRepresentativeUuid() != null) {
-				representative = scbUserService.getByUuid(courseParticipant.getRepresentativeUuid());
-				if (representative != null) {
-					ret.add(representative.getContact().getEmail1());
-				}
-				
-			}
-		}
-		
-		return ret;
 	}
 	
 	@Command
