@@ -78,14 +78,18 @@
 							</row>
 							<row vflex="1">
 								<cell vflex="1">
-									<textbox sclass="form-input-text"
-										multiline="true"
-										placeholder="${c:l('txt.ui.common.Messagetext')}"
-										value="@bind(vm.messageText)"
-										rows="20"
-										tabindex="4"
-										vflex="1"
-										hflex="1" />
+<!-- 									<textbox sclass="form-input-text" -->
+<!-- 										multiline="true" -->
+<!-- 										placeholder="${c:l('txt.ui.common.Messagetext')}" -->
+<!-- 										value="@bind(vm.messageText)" -->
+<!-- 										rows="20" -->
+<!-- 										tabindex="4" -->
+<!-- 										vflex="1" -->
+<!-- 										hflex="1" /> -->
+									<ckeditor id="cked" hflex="1"
+										height="300px" value="@bind(vm.messageText)"
+										customConfigurationsPath="/resources/js/ckeditor.js" >
+									</ckeditor>
 								</cell>
 							</row>
 						</rows>

@@ -241,7 +241,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(buildMailSignature());
 						
-						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null);
+						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null, false);
 						WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
 					}
 				}

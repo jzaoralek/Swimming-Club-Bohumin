@@ -175,12 +175,12 @@ public class EmailDetailWinVM extends BaseVM {
 		List<Mail> mailList = new ArrayList<>();
 		Set<String> mailToList = WebUtils.emailAddressStrToList(this.mailTo);
 		if (!CollectionUtils.isEmpty(mailToList)) {
-			mailToList.forEach(i -> mailList.add(new Mail(i.trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
+			mailToList.forEach(i -> mailList.add(Mail.ofHtml(i.trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
 		}
 		
 		Set<String> mailCcList = WebUtils.emailAddressStrToList(this.mailCc);
 		if (!CollectionUtils.isEmpty(mailCcList)) {
-			mailCcList.forEach(i -> mailList.add(new Mail(i.trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
+			mailCcList.forEach(i -> mailList.add(Mail.ofHtml(i.trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
 		}
 		
 		mailService.sendMailBatch(mailList);

@@ -50,7 +50,7 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendMail(String to, String cc, String subject, String text, List<Attachment> attachmentList) {
+    public void sendMail(String to, String cc, String subject, String text, List<Attachment> attachmentList, boolean html) {
         if (LOG.isDebugEnabled()) {
         	LOG.debug("Send email '" + subject + "' to '" + to + "'.");
         }
@@ -83,15 +83,21 @@ public class MailServiceImpl implements MailService {
           message.setSubject(subject, "UTF-8");
           // Now set the actual message
           MimeBodyPart messageBodyPart = new MimeBodyPart();
+          
           // Now set the actual message
-          messageBodyPart.setText(text, "UTF-8");
-
+          if (html) {
+        	  // html email
+        	  messageBodyPart.setContent(text,"text/html");        	  
+          } else {
+        	  // text email
+        	  messageBodyPart.setText(text, "UTF-8");        	  
+          }
+          
           Multipart multipart = new MimeMultipart();
           // Set text message part
           multipart.addBodyPart(messageBodyPart);
 
           // Part two is attachment
-
           if (attachmentList != null && !attachmentList.isEmpty()) {
         	  for (Attachment attachment : attachmentList) {
         		  if (attachment != null) {
@@ -140,7 +146,7 @@ public class MailServiceImpl implements MailService {
         	LOG.debug("Send email: " + mail);
         }
 		
-		sendMail(mail.getTo(), mail.getCc(), mail.getSubject(), mail.getText(), mail.getAttachmentList());
+		sendMail(mail.getTo(), mail.getCc(), mail.getSubject(), mail.getText(), mail.getAttachmentList(), mail.isHtml());
 	}
     
     @Async

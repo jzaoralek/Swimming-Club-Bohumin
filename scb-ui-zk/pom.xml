@@ -107,6 +107,13 @@
 			<version>0.0.1</version>
 		</dependency>
 		
+		<!-- CKEditor -->
+		<dependency>
+		    <groupId>org.zkoss.zkforge</groupId>
+		    <artifactId>ckez</artifactId>
+		    <version>4.11.1.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
