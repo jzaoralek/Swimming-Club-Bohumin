@@ -181,7 +181,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	}
 	
 	private void loadUserListData() {
-		this.userList = scbUserService.getAll();
+		this.userList = getUserListFromCache();
 		this.userListBase = this.userList;
 	}
 	

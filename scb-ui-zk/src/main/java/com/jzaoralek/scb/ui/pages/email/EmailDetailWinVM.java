@@ -22,6 +22,9 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.InputEvent;
+import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -49,8 +52,12 @@ import com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM.
 public class EmailDetailWinVM extends BaseVM {
 
 	private static final String MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY = "msg.ui.quest.title.messageSendConfirm";
-	private Set<Contact> mailToContactSet;
-	private Set<Contact> mailCcContactSet;
+	private static final String MAIL_TO_CONTACT_SET_ATTRIBUTE = "mailToContactSet";
+	private static final String MAIL_CC_CONTACT_SET_ATTRIBUTE = "mailCcContactSet";
+		
+			
+	private Set<Contact> mailToContactSet = new HashSet<>();
+	private Set<Contact> mailCcContactSet = new HashSet<>();
 	private String messageSubject;
 	private String messageText;
 	private String mailTo;
@@ -75,9 +82,11 @@ public class EmailDetailWinVM extends BaseVM {
 			WebUtils.removeSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM);
 		}
 		
+		// event listener - pridani kontaktu do seznamu prijemci
 		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, data -> {
 			addMailToAddress((Pair<Set<Contact>,RecipientType>) data);
         });
+		// event listener - zavreni popupu pro vyber prijemcu
 		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.CLOSE_RECIPIENT_SELECTION_POPUP_EVENT, data -> {
 			closeRecipientSelectionPopup((RecipientType) data);
         });
@@ -92,14 +101,15 @@ public class EmailDetailWinVM extends BaseVM {
 	public void sendCmd() {
 		// validations
 		// at least one mailTo email address
-		if (!StringUtils.hasText(this.mailTo)) {
+		String mailToStr = WebUtils.contactListToEmailStr(this.mailToContactSet);
+		if (!StringUtils.hasText(mailToStr)) {
 			// zadna emailova adresa neni zadana
 			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageEnterToAddress", MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY, null);
 			return;
 		}
 		
 		// no mailTo addresses valid
-		Pair<List<String>, List<String>> mailToValidResult = WebUtils.validateEmailList(this.mailTo);
+		Pair<List<String>, List<String>> mailToValidResult = WebUtils.validateEmailList(mailToStr);
 		if (CollectionUtils.isEmpty(mailToValidResult.getValue0())) {
 			// zadna ze zadanych adres neni platna
 			MessageBoxUtils.showOkWarningDialog("msg.ui.warn.MessageEnterValidToAddress", MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY, null);
@@ -113,7 +123,8 @@ public class EmailDetailWinVM extends BaseVM {
 		}
 		
 		// no mailCc addresses valid
-		Pair<List<String>, List<String>> mailCcValidResult = WebUtils.validateEmailList(this.mailCc);
+		String mailCcStr = WebUtils.contactListToEmailStr(this.mailCcContactSet);
+		Pair<List<String>, List<String>> mailCcValidResult = WebUtils.validateEmailList(mailCcStr);
 		if (mailCcValidResult != null) {
 			invalidEmailList = mailCcValidResult.getValue1();
 			if (!CollectionUtils.isEmpty(invalidEmailList)) {
@@ -156,14 +167,12 @@ public class EmailDetailWinVM extends BaseVM {
 	
 	private void sendMessage() {
 		List<Mail> mailList = new ArrayList<>();
-		Set<String> mailToList = WebUtils.emailAddressStrToList(this.mailTo);
-		if (!CollectionUtils.isEmpty(mailToList)) {
-			mailToList.forEach(i -> mailList.add(Mail.ofHtml(i.trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
+		if (!CollectionUtils.isEmpty(this.mailToContactSet)) {
+			this.mailToContactSet.forEach(i -> mailList.add(Mail.ofHtml(i.getEmail1().trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
 		}
 		
-		Set<String> mailCcList = WebUtils.emailAddressStrToList(this.mailCc);
-		if (!CollectionUtils.isEmpty(mailCcList)) {
-			mailCcList.forEach(i -> mailList.add(Mail.ofHtml(i.trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
+		if (!CollectionUtils.isEmpty(this.mailCcContactSet)) {
+			this.mailCcContactSet.forEach(i -> mailList.add(Mail.ofHtml(i.getEmail1().trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
 		}
 		
 		mailService.sendMailBatch(mailList);
@@ -227,10 +236,53 @@ public class EmailDetailWinVM extends BaseVM {
 		);
 	}
 	
-	@NotifyChange("mailTo")
+	/**
+	 * Prevede rucne zadany email do seznamu kontaktu prijemcu.
+	 * @param recipientType
+	 */
+	public void addAddressToContactSet(String type) {
+		Objects.requireNonNull(type, type);
+		RecipientType recipientType = RecipientType.valueOf(type);
+		if (recipientType == RecipientType.TO) {
+			// pridani adresy do mailToContactSet
+			this.mailToContactSet.addAll(getContactSetFromStr(this.mailTo));
+			this.mailTo = "";
+			BindUtils.postNotifyChange(null, null, this, MAIL_TO_CONTACT_SET_ATTRIBUTE);
+			BindUtils.postNotifyChange(null, null, this, "mailTo");
+		} else {
+			// pridani adresy do mailCcContactSet
+			this.mailCcContactSet.addAll(getContactSetFromStr(this.mailCc));
+			this.mailCc = "";
+			BindUtils.postNotifyChange(null, null, this, MAIL_CC_CONTACT_SET_ATTRIBUTE);
+			BindUtils.postNotifyChange(null, null, this, "mailCc");
+		}	
+	}
+	
 	@Command
-	public void updateValueCmd() {
-		this.mailTo = "asasas";
+	public void mailRecipientOnOKCmd(@BindingParam("recipientType")String type){
+		addAddressToContactSet(type);
+	}	
+	
+	private Set<Contact> getContactSetFromStr(String value) {
+		Set<String> mailToSet = WebUtils.emailAddressStrToList(value);
+		if (CollectionUtils.isEmpty(mailToSet)) {
+			return Collections.emptySet();
+		}
+		
+		Set<Contact> ret = new HashSet<>();
+		Contact contactItem = null;
+		for (String item : mailToSet) {
+			contactItem = scbUserService.getContactByEmail(item);
+			if (contactItem != null) {
+				ret.add(contactItem);
+			} else {
+				contactItem = new Contact();
+				contactItem.setEmail1(item);
+				ret.add(contactItem);
+			}
+		}
+		
+		return ret;
 	}
 	
 	private void clearMessage() {
@@ -263,16 +315,28 @@ public class EmailDetailWinVM extends BaseVM {
 	 * Remove email contact from emailAddressSet.
 	 * @param item
 	 */
-	@NotifyChange("mailToContactSet")
+	@NotifyChange(MAIL_TO_CONTACT_SET_ATTRIBUTE)
 	@Command
-	public void removeRecipientCmd(@BindingParam(WebConstants.ITEM_PARAM) Contact item) {
+	public void removeRecipientCmd(@BindingParam(WebConstants.ITEM_PARAM) Contact item, @BindingParam("recipientType")String type) {
 		Objects.requireNonNull(item, "item");
+		Objects.requireNonNull(type, type);
 		
-		if (CollectionUtils.isEmpty(this.mailToContactSet)) {
-			return;
+		RecipientType recipientType = RecipientType.valueOf(type);
+		if (recipientType == RecipientType.TO) {
+			// odebrani adresy z mailToContactSet
+			if (CollectionUtils.isEmpty(this.mailToContactSet)) {
+				return;
+			}		
+			this.mailToContactSet.remove(item);
+			BindUtils.postNotifyChange(null, null, this, MAIL_TO_CONTACT_SET_ATTRIBUTE);
+		} else {
+			// odebrani adresy z mailCcContactSet
+			if (CollectionUtils.isEmpty(this.mailCcContactSet)) {
+				return;
+			}		
+			this.mailCcContactSet.remove(item);
+			BindUtils.postNotifyChange(null, null, this, MAIL_CC_CONTACT_SET_ATTRIBUTE);
 		}
-		
-		this.mailToContactSet.remove(item);
 	}
 	
 	/**
@@ -284,18 +348,12 @@ public class EmailDetailWinVM extends BaseVM {
 		if (!CollectionUtils.isEmpty(emailList)) {
 			if (emailListWithType.getValue1() == RecipientType.TO) {
 				// pridani do mailTo kontaktu
-				if (this.mailToContactSet == null) {
-					this.mailToContactSet = new HashSet<>();
-				}
 				this.mailToContactSet.addAll(emailList);
-				BindUtils.postNotifyChange(null, null, this,"mailToContactSet");
+				BindUtils.postNotifyChange(null, null, this,MAIL_TO_CONTACT_SET_ATTRIBUTE);
 			} else {
 				// pridani do mailCc kontaktu
-				if (this.mailCcContactSet == null) {
-					this.mailCcContactSet = new HashSet<>();
-				}
 				this.mailCcContactSet.addAll(emailList);		
-				BindUtils.postNotifyChange(null, null, this,"mailToContactSet");
+				BindUtils.postNotifyChange(null, null, this,MAIL_CC_CONTACT_SET_ATTRIBUTE);
 			}
 		}
 	}

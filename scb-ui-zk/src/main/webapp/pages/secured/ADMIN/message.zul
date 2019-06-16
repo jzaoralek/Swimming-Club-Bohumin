@@ -35,22 +35,35 @@
 								<cell>
 									<vlayout hflex="1" style="margin-top: 5px;">
 										<!-- MailTo -->
-										<hlayout children="@load(vm.mailToContactSet)" style="margin-left: 10px;" >
+										<hlayout children="@load(vm.mailToContactSet)" style="margin-bottom: 5px;" >
 											<template name="children">
-												<hbox align="center" >
-													<label value="${each.email1}"/>
-													<a onClick="@command('removeRecipientCmd', item=each)" 
+												<hbox align="center" style="margin-right: 5px; border-color: #c8ced3 !important; background-color: #eee !important; padding-left: 10px; padding-right: 5px; border-radius: 14px;" >
+													<label value="${each.completeName}" tooltip="mailToPopup_${each.uuid}" style="cursor: pointer;"/>
+													<a onClick="@command('removeRecipientCmd', item=each, recipientType='TO')" 
 														iconSclass="z-icon-times"
 									                	tooltiptext="${c:l('txt.ui.common.remove')}" />
 												</hbox>
+												<popup id="mailToPopup_${each.uuid}" width="300px">
+											    	<vlayout style="margin: 5px;">
+											    		<label value="${each.completeName}" width="100%" sclass="sp-popup-headline"/>
+											    		<grid width="100%">
+															<rows>
+																<row>
+																	<label value="${each.email1}"/>
+																</row>
+															</rows>
+														</grid>
+											    	</vlayout>
+											    </popup>
 											</template>
 										</hlayout>
-										
 										<bandbox id="representativeEmail1" hflex="1" 
 											sclass="form-input-text"
 											focus="true"
 											tabindex="1"
 											value="@bind(vm.mailTo)"
+											onOK="@command('mailRecipientOnOKCmd', recipientType='TO')"
+											onChange="@command('mailRecipientOnOKCmd', recipientType='TO')"
 											placeholder="${c:l('txt.ui.common.To')}" 
 											mold="rounded"
 											style="margin-bottom: 10px;"
@@ -60,9 +73,35 @@
 												<mail-recipient-selection hflex="1" />												
 											</bandpopup>
 										</bandbox>
+										
+										<!-- MailCc -->
+										<hlayout children="@load(vm.mailCcContactSet)" style="margin-left: 5px; margin-bottom: 5px;" >
+											<template name="children">
+												<hbox align="center" style="margin-right:  10px;" >
+													<label value="${each.completeName}" tooltip="mailCcPopup_${each.uuid}" style="cursor: pointer;"/>
+													<a onClick="@command('removeRecipientCmd', item=each, recipientType='CC')" 
+														iconSclass="z-icon-times"
+									                	tooltiptext="${c:l('txt.ui.common.remove')}" />
+												</hbox>
+												<popup id="mailCcPopup_${each.uuid}" width="300px">
+											    	<vlayout style="margin: 5px;">
+											    		<label value="${each.completeName}" width="100%" sclass="sp-popup-headline"/>
+											    		<grid width="100%">
+															<rows>
+																<row>
+																	<label value="${each.email1}"/>
+																</row>
+															</rows>
+														</grid>
+											    	</vlayout>
+											    </popup>
+											</template>
+										</hlayout>
 										<bandbox id="ccTxt" hflex="1" 
 											sclass="form-input-text"
 											value="@bind(vm.mailCc)"
+											onOK="@command('mailRecipientOnOKCmd', recipientType='CC')"
+											onChange="@command('mailRecipientOnOKCmd', recipientType='CC')"
 											placeholder="${c:l('txt.ui.common.Copy')}"
 											tabindex="2" 
 											mold="rounded" 

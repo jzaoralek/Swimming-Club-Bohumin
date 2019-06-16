@@ -513,6 +513,17 @@ public class BaseVM {
 		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false);
 	}
 	
+	@SuppressWarnings("unchecked")
+	protected List<ScbUser> getUserListFromCache() {
+		List<ScbUser> userListSessionCache = (List<ScbUser>) WebUtils.getSessAtribute(WebConstants.USER_LIST_CACHE_PARAM);
+		if (CollectionUtils.isEmpty(userListSessionCache)) {
+			userListSessionCache = scbUserService.getAll();
+			WebUtils.setSessAtribute(WebConstants.USER_LIST_CACHE_PARAM, userListSessionCache);
+		}
+		
+		return userListSessionCache;
+	}
+	
 	@Command
 	public void downloadCmd() {
 		WebUtils.downloadAttachment(this.attachment);

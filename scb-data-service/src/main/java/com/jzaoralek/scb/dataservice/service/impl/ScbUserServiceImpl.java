@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
@@ -116,5 +117,13 @@ public class ScbUserServiceImpl extends BaseAbstractService implements ScbUserSe
 			// update
 			contactDao.update(contact);
 		}
+	}
+
+	@Override
+	public Contact getContactByEmail(String email) {
+		if (StringUtils.hasText(email)) {
+			return null;
+		}
+		return contactDao.getByEmail(email);
 	}
 }

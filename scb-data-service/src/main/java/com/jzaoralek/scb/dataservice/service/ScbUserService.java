@@ -3,6 +3,7 @@ package com.jzaoralek.scb.dataservice.service;
 import java.util.List;
 import java.util.UUID;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.utils.vo.Cover;
@@ -15,4 +16,6 @@ public interface ScbUserService {
 	ScbUser store(ScbUser user) throws ScbValidationException;
 	void delete(UUID uuid) throws ScbValidationException;
 	ScbUser getByUsername(String username);
+	Contact getContactByEmail(String email);
+	
 }

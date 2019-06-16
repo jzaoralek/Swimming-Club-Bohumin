@@ -275,18 +275,21 @@ public final class WebUtils {
 		return ret;
 	}
 	
-//	/**
-//	 * Prevede retezec emailovych adres na list.
-//	 * @param value
-//	 * @return
-//	 */
-//	public static String emailAddressListToStr(Collection<String> value) {
-//		if (CollectionUtils.isEmpty(value)) {
-//			return null;
-//		}
-//		
-//		return value.stream().collect(Collectors.joining(WebConstants.EMAIL_LIST_SEPARATOR + " "));
-//	}
+	/**
+	 * Prevede retezec emailovych adres na list.
+	 * @param value
+	 * @return
+	 */
+	public static String contactListToEmailStr(Collection<Contact> contactList) {
+		if (CollectionUtils.isEmpty(contactList)) {
+			return null;
+		}
+		
+		Collection<String> emailList = new ArrayList<>(); 
+		contactList.forEach(i -> emailList.add(i.getEmail1()));
+		
+		return emailList.stream().collect(Collectors.joining(WebConstants.EMAIL_LIST_SEPARATOR + " "));
+	}
 	
 	
 	// ***********************************
