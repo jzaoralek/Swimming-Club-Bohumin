@@ -77,7 +77,7 @@
 										<!-- MailCc -->
 										<hlayout children="@load(vm.mailCcContactSet)" style="margin-left: 5px; margin-bottom: 5px;" >
 											<template name="children">
-												<hbox align="center" style="margin-right:  10px;" >
+												<hbox align="center" style="margin-right: 5px; border-color: #c8ced3 !important; background-color: #eee !important; padding-left: 10px; padding-right: 5px; border-radius: 14px;" >
 													<label value="${each.completeName}" tooltip="mailCcPopup_${each.uuid}" style="cursor: pointer;"/>
 													<a onClick="@command('removeRecipientCmd', item=each, recipientType='CC')" 
 														iconSclass="z-icon-times"
