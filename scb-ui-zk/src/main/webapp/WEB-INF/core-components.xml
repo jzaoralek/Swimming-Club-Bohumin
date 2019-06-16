@@ -55,6 +55,12 @@
 	    <macro-uri>/pages/common/component/mail-recipient-selection.zul</macro-uri>
 	</component>
 	
+	<!-- Seznam prijemcu emailu s moznosti odebrani -->
+	<component>
+	    <component-name>mail-recipient-list-template</component-name>    
+	    <macro-uri>/pages/common/component/mail-recipient-list-template.zul</macro-uri>
+	</component>
+	
 	<!-- Tlacitko pro prechod na stranku pro  odeslani emailu -->
 	<component>
 	    <component-name>send-mail-button</component-name>    
