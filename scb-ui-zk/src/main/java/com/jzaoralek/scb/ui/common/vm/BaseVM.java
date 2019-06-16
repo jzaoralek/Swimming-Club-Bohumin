@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
@@ -329,10 +330,10 @@ public class BaseVM {
 	}
 	
 	/**
-	 * Otevre stranku pro odeslani emailu na adresy na vstupu.
+	 * Otevre stranku pro odeslani emailu na kontakty na vstupu.
 	 * @param recipientList
 	 */
-	protected void goToSendEmailCore(Set<String> recipientList) {
+	protected void goToSendEmailCore(Set<Contact> recipientList) {
 		if (CollectionUtils.isEmpty(recipientList)) {
 			return;
 		}

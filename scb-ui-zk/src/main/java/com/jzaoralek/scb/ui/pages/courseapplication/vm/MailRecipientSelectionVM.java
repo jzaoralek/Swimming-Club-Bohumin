@@ -2,7 +2,9 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.javatuples.Pair;
@@ -15,10 +17,10 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
-import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
@@ -105,9 +107,9 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	
 	@Command
 	public void submitCmd() {
-		final List<String> emailList = new ArrayList<>();
+		final Set<Contact> emailList = new HashSet<>();
 		if (!CollectionUtils.isEmpty(this.userListSelected)) {
-			this.userListSelected.forEach(i -> emailList.add(i.getContact().getEmail1()));
+			this.userListSelected.forEach(i -> emailList.add(i.getContact()));
 		}
 		
 		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, new Pair<>(emailList,this.recipientType));
@@ -115,7 +117,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	
 	@Command
 	public void submitCourseSelectionCmd() {
-		final List<String> emailList = new ArrayList<>();
+		final Set<Contact> emailList = new HashSet<>();
 		if (!CollectionUtils.isEmpty(this.courseListSelected)) {
 			this.courseListSelected.forEach(i -> emailList.addAll(WebUtils.getParticEmailAddressList(i, courseService, scbUserService)));;
 		}
@@ -125,9 +127,9 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	
 	@Command
 	public void submitCourseApplicationSelectionCmd() {
-		final List<String> emailList = new ArrayList<>();
+		final Set<Contact> emailList = new HashSet<>();
 		if (!CollectionUtils.isEmpty(this.courseApplicationListSelected)) {
-			this.courseApplicationListSelected.forEach(i -> emailList.add(i.getCourseParticRepresentative().getContact().getEmail1()));
+			this.courseApplicationListSelected.forEach(i -> emailList.add(i.getCourseParticRepresentative().getContact()));
 		}
 		
 		EventQueueHelper.publish(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, new Pair<>(emailList,this.recipientType));

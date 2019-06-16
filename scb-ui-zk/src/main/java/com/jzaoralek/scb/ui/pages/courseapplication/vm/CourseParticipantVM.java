@@ -201,7 +201,7 @@ public class CourseParticipantVM extends BaseVM {
 	 */
 	@Command
 	public void goToSendEmailCmd() {
-		goToSendEmailCore(new HashSet<>(Arrays.asList(this.participant.getCourseParticRepresentative().getContact().getEmail1())));
+		goToSendEmailCore(new HashSet<>(Arrays.asList(this.participant.getCourseParticRepresentative().getContact())));
 	}
 
 	private void fillSwimStyleItemList() {

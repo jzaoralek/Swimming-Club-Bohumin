@@ -28,6 +28,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
@@ -170,7 +171,7 @@ public class CourseListVM extends BaseContextVM {
 			return;
 		}
 		
-		final Set<String> contactList = new HashSet<>();
+		final Set<Contact> contactList = new HashSet<>();
 		this.courseList.forEach(i -> contactList.addAll(WebUtils.getParticEmailAddressList(i, courseService, scbUserService)));
 		
 		goToSendEmailCore(contactList);

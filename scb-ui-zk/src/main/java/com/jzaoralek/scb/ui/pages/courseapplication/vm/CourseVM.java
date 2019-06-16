@@ -24,6 +24,7 @@ import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
@@ -265,7 +266,7 @@ public class CourseVM extends BaseVM {
 	 */
 	@Command
 	public void goToSendEmailCmd() {
-		final Set<String> contactList = new HashSet<>();
+		final Set<Contact> contactList = new HashSet<>();
 		contactList.addAll(WebUtils.getParticEmailAddressList(this.course, courseService, scbUserService));
 		
 		goToSendEmailCore(contactList);

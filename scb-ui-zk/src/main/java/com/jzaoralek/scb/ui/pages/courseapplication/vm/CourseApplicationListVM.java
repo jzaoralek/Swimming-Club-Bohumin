@@ -34,6 +34,7 @@ import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
@@ -263,17 +264,17 @@ public class CourseApplicationListVM extends BaseContextVM {
 	 * @param courseApplicationList
 	 * @return
 	 */
-	private Set<String> buildCourseParticipantContactSet(List<CourseApplication> courseApplicationList) {
+	private Set<Contact> buildCourseParticipantContactSet(List<CourseApplication> courseApplicationList) {
 		if (CollectionUtils.isEmpty(courseApplicationList)) {
 			return Collections.emptySet();
 		}
 		
-		Set<String> ret = new HashSet<>();
+		Set<Contact> ret = new HashSet<>();
 		for (CourseApplication item : courseApplicationList) {
 			if (item.getCourseParticRepresentative() != null 
 					&& item.getCourseParticRepresentative().getContact() != null
 					&& StringUtils.hasText(item.getCourseParticRepresentative().getContact().getEmail1())) {
-				ret.add(item.getCourseParticRepresentative().getContact().getEmail1());				
+				ret.add(item.getCourseParticRepresentative().getContact());				
 			}
 		}
 		return ret;

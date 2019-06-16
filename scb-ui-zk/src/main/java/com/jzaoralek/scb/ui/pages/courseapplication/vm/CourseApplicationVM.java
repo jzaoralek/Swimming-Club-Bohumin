@@ -339,7 +339,7 @@ public class CourseApplicationVM extends BaseVM {
 	 */
 	@Command
 	public void goToSendEmailCmd() {
-		goToSendEmailCore(new HashSet<>(Arrays.asList(this.application.getCourseParticRepresentative().getContact().getEmail1())));
+		goToSendEmailCore(new HashSet<>(Arrays.asList(this.application.getCourseParticRepresentative().getContact())));
 	}
 	
 	public String getHealthAgreement() {

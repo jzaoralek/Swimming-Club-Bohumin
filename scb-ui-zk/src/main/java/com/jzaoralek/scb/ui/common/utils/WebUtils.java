@@ -34,6 +34,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
@@ -274,18 +275,18 @@ public final class WebUtils {
 		return ret;
 	}
 	
-	/**
-	 * Prevede retezec emailovych adres na list.
-	 * @param value
-	 * @return
-	 */
-	public static String emailAddressListToStr(Collection<String> value) {
-		if (CollectionUtils.isEmpty(value)) {
-			return null;
-		}
-		
-		return value.stream().collect(Collectors.joining(WebConstants.EMAIL_LIST_SEPARATOR + " "));
-	}
+//	/**
+//	 * Prevede retezec emailovych adres na list.
+//	 * @param value
+//	 * @return
+//	 */
+//	public static String emailAddressListToStr(Collection<String> value) {
+//		if (CollectionUtils.isEmpty(value)) {
+//			return null;
+//		}
+//		
+//		return value.stream().collect(Collectors.joining(WebConstants.EMAIL_LIST_SEPARATOR + " "));
+//	}
 	
 	
 	// ***********************************
@@ -322,19 +323,19 @@ public final class WebUtils {
 	/**
 	 * For course returns email contacts of course participant representatives.
 	 */
-	public static List<String> getParticEmailAddressList(Course course
+	public static List<Contact> getParticEmailAddressList(Course course
 			, CourseService courseService
 			, ScbUserService scbUserService) {
 		if (CollectionUtils.isEmpty(course.getParticipantList())) {
 			course.setParticipantList(courseService.getByCourseParticListByCourseUuid(course.getUuid(), false));
 		}
-		final List<String> ret = new ArrayList<>();
+		final List<Contact> ret = new ArrayList<>();
 		ScbUser representative = null;
 		for (CourseParticipant courseParticipant : course.getParticipantList()) {
 			if (courseParticipant.getRepresentativeUuid() != null) {
 				representative = scbUserService.getByUuid(courseParticipant.getRepresentativeUuid());
 				if (representative != null) {
-					ret.add(representative.getContact().getEmail1());
+					ret.add(representative.getContact());
 				}
 				
 			}

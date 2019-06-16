@@ -31,6 +31,7 @@ import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
@@ -187,15 +188,15 @@ public class UserListVM extends BaseVM {
 	 * @param courseApplicationList
 	 * @return
 	 */
-	private Set<String> buildContactSet(List<ScbUser> userList) {
+	private Set<Contact> buildContactSet(List<ScbUser> userList) {
 		if (CollectionUtils.isEmpty(userList)) {
 			return Collections.emptySet();
 		}
 		
-		Set<String> ret = new HashSet<>();
+		Set<Contact> ret = new HashSet<>();
 		for (ScbUser item : userList) {
 			if (item.getContact() != null && StringUtils.hasText(item.getContact().getEmail1())) {
-				ret.add(item.getContact().getEmail1());				
+				ret.add(item.getContact());				
 			}
 		}
 		return ret;

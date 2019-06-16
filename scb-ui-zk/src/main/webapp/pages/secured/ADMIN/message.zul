@@ -34,6 +34,18 @@
 							<row>
 								<cell>
 									<vlayout hflex="1" style="margin-top: 5px;">
+										<!-- MailTo -->
+										<hlayout children="@load(vm.mailToContactSet)" style="margin-left: 10px;" >
+											<template name="children">
+												<hbox align="center" >
+													<label value="${each.email1}"/>
+													<a onClick="@command('removeRecipientCmd', item=each)" 
+														iconSclass="z-icon-times"
+									                	tooltiptext="${c:l('txt.ui.common.remove')}" />
+												</hbox>
+											</template>
+										</hlayout>
+										
 										<bandbox id="representativeEmail1" hflex="1" 
 											sclass="form-input-text"
 											focus="true"
@@ -78,14 +90,6 @@
 							</row>
 							<row vflex="1">
 								<cell vflex="1">
-<!-- 									<textbox sclass="form-input-text" -->
-<!-- 										multiline="true" -->
-<!-- 										placeholder="${c:l('txt.ui.common.Messagetext')}" -->
-<!-- 										value="@bind(vm.messageText)" -->
-<!-- 										rows="20" -->
-<!-- 										tabindex="4" -->
-<!-- 										vflex="1" -->
-<!-- 										hflex="1" /> -->
 									<ckeditor id="cked" hflex="1"
 										height="300px" value="@bind(vm.messageText)"
 										customConfigurationsPath="/resources/js/ckeditor.js" >

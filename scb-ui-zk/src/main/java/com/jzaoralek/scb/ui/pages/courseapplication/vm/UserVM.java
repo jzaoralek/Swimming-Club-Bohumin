@@ -83,7 +83,7 @@ public class UserVM extends BaseVM {
 	 */
 	@Command
 	public void goToSendEmailCmd() {
-		goToSendEmailCore(new HashSet<>(Arrays.asList(this.user.getContact().getEmail1())));
+		goToSendEmailCore(new HashSet<>(Arrays.asList(this.user.getContact())));
 	}
 
 	public ScbUser getUser() {
