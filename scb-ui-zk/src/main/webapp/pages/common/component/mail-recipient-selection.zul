@@ -1,15 +1,14 @@
 <zk>
-	<tabbox id="tb" height="530px" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM')" >
-	    <tabs id="tabs" vflex="1" >
-	        <tab id="coursesSelectionTab" label="${c:l('txt.ui.menu.courses')}" onSelect="@command('courseTabSelectedCmd')" />
-	        <tab id="usersSelectionTab" label="${c:l('txt.ui.menu.users')}" onSelect="@command('usersTabSelectedCmd')" />
-	        <tab id="applicationsSelectionTab" label="${c:l('txt.ui.menu.applications')}" onSelect="@command('courseApplicationTabSelectedCmd')"  />
+	<tabbox height="530px" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM')" hflex="1" >
+	    <tabs vflex="1" hflex="1" >
+	        <tab label="${c:l('txt.ui.menu.courses')}" onSelect="@command('courseTabSelectedCmd')" />
+	        <tab label="${c:l('txt.ui.menu.users')}" onSelect="@command('usersTabSelectedCmd')" />
+	        <tab label="${c:l('txt.ui.menu.applications')}" onSelect="@command('courseApplicationTabSelectedCmd')"  />
 	    </tabs>
 	    
-	    <tabpanels vflex="1">
-	    	
+	    <tabpanels vflex="1" hflex="1" >
 	    	<!-- Kurzy -->
-	        <tabpanel hflex="1">
+	        <tabpanel hflex="1" vflex="1">
 	        	<vlayout hflex="1" sclass="listbox-wrapper">
 		        	<listbox model="@load(vm.courseList)"
 						id="courseList"
@@ -22,7 +21,7 @@
 						class="listbox" >
 				        <auxhead>
 				            <auxheader class="header" >
-				            	<hlayout sclass="pull-left">	
+				            	<hlayout sclass="pull-left" >	
 				            		<hbox visible="@load(vm.showCourseFilter)" >
 					            		<label value="${c:l('txt.ui.common.courseLocation2')}:"/>
 										<listbox id="courseLocation" 
@@ -50,7 +49,7 @@
 				        
 				        <!-- Filter -->
 				        <listhead>
-				            <listheader align="left" >
+				            <listheader align="left" hflex="1" >
 				            	<textbox hflex="1"
 				            		placeholder="${c:l('txt.ui.common.name')}"
 									value="@bind(vm.courseFilter.courseName)"

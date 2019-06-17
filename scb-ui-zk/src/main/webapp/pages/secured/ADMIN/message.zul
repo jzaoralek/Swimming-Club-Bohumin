@@ -36,12 +36,17 @@
 									<vlayout hflex="1" style="margin-top: 5px;">
 										<hlayout>
 											<vlayout width="90px">
-<!-- 												<label value="${c:l('txt.ui.common.To')}" /> -->
-												<button label="${c:l('txt.ui.common.To')}" sclass="btn-light" style="margin-top: 5px;" />
+												<button id="mailToBtn" label="${c:l('txt.ui.common.To')}" 
+													sclass="btn-light" 
+													style="margin-top: 2px; margin-bottom: 2px;" 
+													onClick="@command('initMailToPopupCmd')" /> 
+												<popup id="mailToPopupBtn" vflex="1" >
+													<mail-recipient-selection hflex="1" vflex="1" />
+												</popup>
 											</vlayout>
 											<vlayout hflex="1">
 												<!-- MailTo -->
-												<hlayout children="@load(vm.mailToContactSet)" style="margin-bottom: 5px;" >
+												<hlayout children="@load(vm.mailToContactSet)" style="margin-bottom: 2px;" >
 													<template name="children">
 														<mail-recipient-list-template recipientType="TO" />
 													</template>
@@ -54,24 +59,30 @@
 													onOK="@command('mailRecipientOnOKCmd', recipientType='TO')"
 													onChange="@command('mailRecipientOnOKCmd', recipientType='TO')"
 													mold="rounded"
+													buttonVisible="false"
 													style="margin-bottom: 10px;"
-													onOpen="@command('initMailToPopupCmd')"
 													autodrop="false" >
-													<bandpopup hflex="1" height="530px" id="mailToPopup" >
-														<mail-recipient-selection hflex="1" />												
-													</bandpopup>
+<!-- 													<bandpopup hflex="1" height="530px" id="mailToPopup" > -->
+<!-- 														<mail-recipient-selection hflex="1" />							 -->
+<!-- 													</bandpopup> -->
 												</bandbox>
 											</vlayout>
 										</hlayout>
 										
-										<hlayout>
+										<hlayout style="margin-top: 30px;">
 											<vlayout width="90px">
-<!-- 												<label value="${c:l('txt.ui.common.Copy')}" /> -->
-												<button label="${c:l('txt.ui.common.Copy')}" sclass="btn-light" style="margin-top: 5px;" />
+												<button id="mailCcBtn" 
+													label="${c:l('txt.ui.common.Copy')}" 
+													sclass="btn-light" 
+													style="margin-top: 2px; margin-bottom: 2px;"
+													onClick="@command('initMailCcPopupCmd')" />
+												<popup id="mailCcPopupBtn">
+													<mail-recipient-selection hflex="1" />
+												</popup>
 											</vlayout>
 											<vlayout hflex="1">
 												<!-- MailCc -->
-												<hlayout children="@load(vm.mailCcContactSet)" style="margin-left: 5px; margin-bottom: 5px;" >
+												<hlayout children="@load(vm.mailCcContactSet)" style="margin-bottom: 2px;" >
 													<template name="children">
 														<mail-recipient-list-template recipientType="CC" />
 													</template>
@@ -83,11 +94,11 @@
 													onChange="@command('mailRecipientOnOKCmd', recipientType='CC')"
 													tabindex="2" 
 													mold="rounded" 
-													onOpen="@command('initMailCcPopupCmd')"
+													buttonVisible="false"
 													autodrop="false" >
-													<bandpopup hflex="1" height="530px" id="mailCcPopup" >
-														<mail-recipient-selection hflex="1" />												
-													</bandpopup>
+<!-- 													<bandpopup hflex="1" height="530px" id="mailCcPopup" > -->
+<!-- 														<mail-recipient-selection hflex="1" />										 -->
+<!-- 													</bandpopup> -->
 												</bandbox>
 											</vlayout>
 										</hlayout>
@@ -96,19 +107,15 @@
 							</row>
 							<row>
 								<cell>
-									<vlayout hflex="1">
-										<hlayout>
-											<vbox width="90px" align="center">
-												<label value="${c:l('txt.ui.common.Predmet')}" />
-											</vbox>
-											<vlayout hflex="1">
-												<textbox sclass="form-input-text"
-													value="@bind(vm.messageSubject)"
-													tabindex="3"
-													hflex="1" />
-											</vlayout>
-										</hlayout>
-									</vlayout>
+									<hbox style="margin-top: 20px;" hflex="1" align="center">
+										<vbox width="86px" align="center" pack="center">
+											<label value="${c:l('txt.ui.common.Predmet')}" />
+										</vbox>
+										<textbox sclass="form-input-text"
+											value="@bind(vm.messageSubject)"
+											tabindex="3"
+											hflex="1" />
+									</hbox>
 								</cell>
 							</row>
 							<row vflex="1">

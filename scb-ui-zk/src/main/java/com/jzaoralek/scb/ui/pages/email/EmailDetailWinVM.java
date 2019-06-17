@@ -22,14 +22,13 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.InputEvent;
-import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Bandpopup;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
@@ -65,12 +64,19 @@ public class EmailDetailWinVM extends BaseVM {
 	private List<Attachment> attachmentList;
 	private final EmailAddressFilter filter = new EmailAddressFilter();
 	
+//	@Wire
+//	private Bandpopup mailToPopup;
+//	@Wire
+//	private Bandpopup mailCcPopup;
 	@Wire
-	private Bandpopup mailToPopup;
+	private Popup mailToPopupBtn;
+	@Wire
+	private Popup mailCcPopupBtn;
+	@Wire
+	private Button mailToBtn;
+	@Wire
+	private Button mailCcBtn;
 	
-	@Wire
-	private Bandpopup mailCcPopup;
-
 	@SuppressWarnings("unchecked")
 	@Override
 	@Init
@@ -304,11 +310,13 @@ public class EmailDetailWinVM extends BaseVM {
 	@Command
 	public void initMailToPopupCmd() {
 		EventQueueHelper.publish(ScbEvent.INIT_RECIPIENT_SELECTION_EVENT, RecipientType.TO);
+		mailToPopupBtn.open(mailToBtn);
 	}
 	
 	@Command
 	public void initMailCcPopupCmd() {
 		EventQueueHelper.publish(ScbEvent.INIT_RECIPIENT_SELECTION_EVENT, RecipientType.CC);
+		mailCcPopupBtn.open(mailCcBtn);
 	}
 	
 	/**
@@ -362,15 +370,17 @@ public class EmailDetailWinVM extends BaseVM {
 	 * Zavre popup s vyberem adresastu.
 	 */
 	private void closeRecipientSelectionPopup(RecipientType recipientType) {
-		Bandbox bandbox = null;
+//		Bandbox bandbox = null;
 		if (recipientType == RecipientType.TO) {
 			// zavreni popupu To
-			bandbox = (Bandbox)this.mailToPopup.getParent();
-			bandbox.close();			
+//			bandbox = (Bandbox)this.mailToPopup.getParent();
+//			bandbox.close();
+			mailToPopupBtn.close();
 		} else {
 			// zavreni popupu Cc
-			bandbox = (Bandbox)this.mailCcPopup.getParent();
-			bandbox.close();
+//			bandbox = (Bandbox)this.mailCcPopup.getParent();
+//			bandbox.close();
+			mailCcPopupBtn.close();
 		}		
 	}
 	
