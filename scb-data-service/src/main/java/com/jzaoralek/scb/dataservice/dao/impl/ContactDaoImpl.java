@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -38,6 +39,7 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 	private static final String SELECT_BY_UUID = "SELECT uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, email1, email2, phone1, phone2, modif_at, modif_by from contact WHERE uuid = :" + UUID_PARAM;
 	private static final String SELECT_BY_EMAIL_COUNT = "SELECT count(*) FROM contact WHERE email1 = "+EMAIL1_PARAM;
 	private static final String SELECT_BY_EMAIL = "SELECT uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, email1, email2, phone1, phone2, modif_at, modif_by FROM contact WHERE email1 = :"+EMAIL1_PARAM;
+	private static final String SELECT_EMAIl_ALL = "SELECT DISTINCT email1 FROM contact";
 	private static final String DELETE = "DELETE FROM contact where uuid = :" + UUID_PARAM;
 	private static final String UPDATE = "UPDATE contact SET firstname=:"+FIRSTNAME_PARAM+", surname=:"+SURNAME_PARAM+", street=:"+STREET_PARAM+", land_registry_number=:"+LAND_REGISTRY_NUMBER_PARAM+", house_number=:"+HOUSE_NUMBER_PARAM+", city=:"+CITY_PARAM+", zip_code=:"+ZIPCODE_PARAM+", email1=:"+EMAIL1_PARAM+", email2=:"+EMAIL2_PARAM+", phone1=:"+PHONE1_PARAM+", phone2=:"+PHONE2_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
@@ -71,7 +73,12 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 			return null;
 		}
 	}
-
+	
+	@Override
+	public List<String> getEmailAll() {
+		return namedJdbcTemplate.getJdbcOperations().queryForList(SELECT_EMAIl_ALL, String.class);
+	}
+	
 	@Override
 	public void insert(Contact contact) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();

@@ -34,7 +34,6 @@ import org.zkoss.zul.SimpleListModel;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Mail;
-import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
@@ -66,8 +65,7 @@ public class EmailDetailWinVM extends BaseVM {
 	private List<Attachment> attachmentList;
 	private boolean ccVisible = false;
 	private final EmailAddressFilter filter = new EmailAddressFilter();
-	private List<ScbUser> userList;
-	private ListModel userListModel;
+	private ListModel<String> emailListModel;
 
 	//	@Wire
 //	private Bandpopup mailToPopup;
@@ -95,16 +93,12 @@ public class EmailDetailWinVM extends BaseVM {
 			WebUtils.removeSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM);
 		}
 		
-		// load user list from cache
-//		this.userList = getUserListFromCache();
-//		String[] dict = {"abacus", "abase", "abate", "abbess", "abbey", "abbot", "abdicate", "abdomen", "abdominal", "abduction", "abed", "aberrant", "aberration", "abet", "abeyance",
-//				"abhor", "abhorrence", "abhorrent", "abidance", "ability", "abject", "abjure", "able-bodied", "ablution", "abnegate", "abnormal", "abominable", "abominate", "abomination", "aboriginal",
-//				"aborigines", "abound", "aboveboard", "abrade", "abrasion", "abridge", "abridgment", "abrogate", "abrupt", "abscess", "abscission", "abscond", "absence", "absent-minded", "absolution",
-//				"absolve", "absorb", "absorption", "abstain", "abstemious", "abstinence", "abstinent", "abstract", "abstruse", "absurd", "abundant", "abusive", "abut", "abysmal", "abyss", "academic",
-//				"academician", "academy", "accede", "accelerate", "accentuate", "accept", "access", "accessible", "accession", "accessory", "acclaim", "accolade", "accommodate", "accompaniment",
-//				"accompanist", "accompany","ccc","dddd","eeee","ggggg","fffff","zzzz"};
-//		this.userListModel = new SimpleListModel<>(dict);
-		
+		// load email contact list from cache
+//		List<String> emailList = scbUserService.getEmailAll();
+//		if (!CollectionUtils.isEmpty(emailList)) {
+//			emailListModel = new SimpleListModel<>(emailList.toArray(new String[emailList.size()]));
+//		}
+
 		// event listener - pridani kontaktu do seznamu prijemci
 		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, data -> {
 			addMailToAddress((Pair<Set<Contact>,RecipientType>) data);
@@ -473,11 +467,8 @@ public class EmailDetailWinVM extends BaseVM {
 	public boolean isCcVisible() {
 		return ccVisible;
 	}
-	public List<ScbUser> getUserList() {
-		return userList;
-	}
-	public ListModel getUserListModel() {
-		return userListModel;
+	public ListModel<String> getEmailListModel() {
+		return emailListModel;
 	}
 	
 	public static class EmailAddressFilter {

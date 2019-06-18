@@ -1,5 +1,7 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,5 +94,12 @@ public class ContactDaoTest extends BaseTestCase {
 		Contact item = contactDao.getByEmail(CONTACT_EMAIL1);
 		Assert.assertNotNull(item);
 		Assert.assertEquals(true, CONTACT_EMAIL1.equals(item.getEmail1()));
+	}
+	
+	@Test
+	public void testGetEmailAll() {
+		List<String> emailList = contactDao.getEmailAll();
+		Assert.assertNotNull(emailList);
+		Assert.assertTrue(!emailList.isEmpty());
 	}
 }

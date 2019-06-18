@@ -60,7 +60,9 @@
 <!-- 													tabindex="1" -->
 <!-- 													autodrop="true" -->
 <!-- 													autocomplete="true" -->
-<!-- 								                    model="@load(vm.userListModel)" > -->
+<!-- 													value="@bind(vm.mailTo)" -->
+<!-- 													onSelect="@command('mailRecipientOnOKCmd', recipientType='TO')" -->
+<!-- 								                    model="@load(vm.emailListModel)" > -->
 <!-- 								                </combobox> -->
 												<bandbox id="representativeEmail1" hflex="1" 
 													sclass="form-input-text"

@@ -17,5 +17,5 @@ public interface ScbUserService {
 	void delete(UUID uuid) throws ScbValidationException;
 	ScbUser getByUsername(String username);
 	Contact getContactByEmail(String email);
-	
+	List<String> getEmailAll();
 }

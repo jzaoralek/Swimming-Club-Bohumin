@@ -126,4 +126,9 @@ public class ScbUserServiceImpl extends BaseAbstractService implements ScbUserSe
 		}
 		return contactDao.getByEmail(email);
 	}
+	
+	@Override
+	public List<String> getEmailAll() {
+		return contactDao.getEmailAll();
+	}
 }
