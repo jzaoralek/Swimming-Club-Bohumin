@@ -38,19 +38,30 @@
 											<vlayout width="90px">
 												<button id="mailToBtn" label="${c:l('txt.ui.common.To')}" 
 													sclass="btn-light" 
-													style="margin-top: 2px; margin-bottom: 2px;" 
-													onClick="@command('initMailToPopupCmd')" /> 
+													dir="reverse"
+													iconSclass="z-icon-caret-down"
+													style="margin-bottom: 2px; padding-left: 10px; padding-right: 0px;" 
+													onClick="@command('initMailToPopupCmd')" />
+												
 												<popup id="mailToPopupBtn" vflex="1" >
 													<mail-recipient-selection hflex="1" vflex="1" />
 												</popup>
 											</vlayout>
 											<vlayout hflex="1">
 												<!-- MailTo -->
-												<hlayout children="@load(vm.mailToContactSet)" style="margin-bottom: 2px;" >
+												<div children="@load(vm.mailToContactSet)" sclass="mail-recipient-list" >
 													<template name="children">
 														<mail-recipient-list-template recipientType="TO" />
 													</template>
-												</hlayout>
+												</div>
+<!-- 												<combobox hflex="1"  -->
+<!-- 													sclass="form-input-text" -->
+<!-- 													focus="true" -->
+<!-- 													tabindex="1" -->
+<!-- 													autodrop="true" -->
+<!-- 													autocomplete="true" -->
+<!-- 								                    model="@load(vm.userListModel)" > -->
+<!-- 								                </combobox> -->
 												<bandbox id="representativeEmail1" hflex="1" 
 													sclass="form-input-text"
 													focus="true"
@@ -60,21 +71,28 @@
 													onChange="@command('mailRecipientOnOKCmd', recipientType='TO')"
 													mold="rounded"
 													buttonVisible="false"
-													style="margin-bottom: 10px;"
 													autodrop="false" >
 <!-- 													<bandpopup hflex="1" height="530px" id="mailToPopup" > -->
 <!-- 														<mail-recipient-selection hflex="1" />							 -->
 <!-- 													</bandpopup> -->
 												</bandbox>
+												<vbox hflex="1" align="end" visible="@load(!vm.ccVisible)" >
+													<a label="${c:l('txt.ui.common.Copy')}" 
+														onClick="@command('ccVisibleCmd')"
+														style="text-decoration: none; margin-right: 10px;" 
+														iconSclass="z-icon-plus" />
+												</vbox>
 											</vlayout>
 										</hlayout>
 										
-										<hlayout style="margin-top: 30px;">
+										<hlayout style="margin-top: 30px; margin-bottom: 15px;" visible="@load(vm.ccVisible)">
 											<vlayout width="90px">
 												<button id="mailCcBtn" 
 													label="${c:l('txt.ui.common.Copy')}" 
-													sclass="btn-light" 
-													style="margin-top: 2px; margin-bottom: 2px;"
+													sclass="btn-light"
+													dir="reverse"
+													iconSclass="z-icon-caret-down"
+													style="margin-bottom: 2px; padding-left: 10px; padding-right: 0px;"
 													onClick="@command('initMailCcPopupCmd')" />
 												<popup id="mailCcPopupBtn">
 													<mail-recipient-selection hflex="1" />
@@ -82,11 +100,11 @@
 											</vlayout>
 											<vlayout hflex="1">
 												<!-- MailCc -->
-												<hlayout children="@load(vm.mailCcContactSet)" style="margin-bottom: 2px;" >
+												<div children="@load(vm.mailCcContactSet)" sclass="mail-recipient-list" >
 													<template name="children">
 														<mail-recipient-list-template recipientType="CC" />
 													</template>
-												</hlayout>
+												</div>
 												<bandbox id="ccTxt" hflex="1" 
 													sclass="form-input-text"
 													value="@bind(vm.mailCc)"
@@ -107,7 +125,7 @@
 							</row>
 							<row>
 								<cell>
-									<hbox style="margin-top: 20px;" hflex="1" align="center">
+									<hbox hflex="1" align="center">
 										<vbox width="86px" align="center" pack="center">
 											<label value="${c:l('txt.ui.common.Predmet')}" />
 										</vbox>

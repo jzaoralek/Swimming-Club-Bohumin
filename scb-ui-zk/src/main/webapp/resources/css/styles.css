@@ -1080,6 +1080,11 @@ i.big-icon{
 	vertical-align: top;
 }
 
+.mail-recipient-list{
+	max-height: 300px;
+	margin-bottom: 2px;
+	overflow-y: auto; 
+}
 
 
 

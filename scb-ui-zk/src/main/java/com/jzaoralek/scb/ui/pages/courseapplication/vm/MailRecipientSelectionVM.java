@@ -2,7 +2,7 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -107,7 +107,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	
 	@Command
 	public void submitCmd() {
-		final Set<Contact> emailList = new HashSet<>();
+		final Set<Contact> emailList = new LinkedHashSet<>();
 		if (!CollectionUtils.isEmpty(this.userListSelected)) {
 			this.userListSelected.forEach(i -> emailList.add(i.getContact()));
 		}
@@ -117,7 +117,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	
 	@Command
 	public void submitCourseSelectionCmd() {
-		final Set<Contact> emailList = new HashSet<>();
+		final Set<Contact> emailList = new LinkedHashSet<>();
 		if (!CollectionUtils.isEmpty(this.courseListSelected)) {
 			this.courseListSelected.forEach(i -> emailList.addAll(WebUtils.getParticEmailAddressList(i, courseService, scbUserService)));;
 		}
@@ -127,7 +127,7 @@ public class MailRecipientSelectionVM extends BaseContextVM {
 	
 	@Command
 	public void submitCourseApplicationSelectionCmd() {
-		final Set<Contact> emailList = new HashSet<>();
+		final Set<Contact> emailList = new LinkedHashSet<>();
 		if (!CollectionUtils.isEmpty(this.courseApplicationListSelected)) {
 			this.courseApplicationListSelected.forEach(i -> emailList.add(i.getCourseParticRepresentative().getContact()));
 		}

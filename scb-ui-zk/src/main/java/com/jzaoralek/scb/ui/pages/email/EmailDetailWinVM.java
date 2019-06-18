@@ -2,7 +2,7 @@ package com.jzaoralek.scb.ui.pages.email;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -26,13 +26,15 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Bandbox;
-import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Popup;
+import org.zkoss.zul.SimpleListModel;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Mail;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
@@ -55,16 +57,19 @@ public class EmailDetailWinVM extends BaseVM {
 	private static final String MAIL_CC_CONTACT_SET_ATTRIBUTE = "mailCcContactSet";
 		
 			
-	private Set<Contact> mailToContactSet = new HashSet<>();
-	private Set<Contact> mailCcContactSet = new HashSet<>();
+	private Set<Contact> mailToContactSet = new LinkedHashSet<>();
+	private Set<Contact> mailCcContactSet = new LinkedHashSet<>();
 	private String messageSubject;
 	private String messageText;
 	private String mailTo;
 	private String mailCc;
 	private List<Attachment> attachmentList;
+	private boolean ccVisible = false;
 	private final EmailAddressFilter filter = new EmailAddressFilter();
-	
-//	@Wire
+	private List<ScbUser> userList;
+	private ListModel userListModel;
+
+	//	@Wire
 //	private Bandpopup mailToPopup;
 //	@Wire
 //	private Bandpopup mailCcPopup;
@@ -76,6 +81,8 @@ public class EmailDetailWinVM extends BaseVM {
 	private Button mailToBtn;
 	@Wire
 	private Button mailCcBtn;
+	@Wire
+	private Bandbox ccTxt;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -87,6 +94,16 @@ public class EmailDetailWinVM extends BaseVM {
 			this.mailToContactSet = emailAddrSet;
 			WebUtils.removeSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM);
 		}
+		
+		// load user list from cache
+//		this.userList = getUserListFromCache();
+//		String[] dict = {"abacus", "abase", "abate", "abbess", "abbey", "abbot", "abdicate", "abdomen", "abdominal", "abduction", "abed", "aberrant", "aberration", "abet", "abeyance",
+//				"abhor", "abhorrence", "abhorrent", "abidance", "ability", "abject", "abjure", "able-bodied", "ablution", "abnegate", "abnormal", "abominable", "abominate", "abomination", "aboriginal",
+//				"aborigines", "abound", "aboveboard", "abrade", "abrasion", "abridge", "abridgment", "abrogate", "abrupt", "abscess", "abscission", "abscond", "absence", "absent-minded", "absolution",
+//				"absolve", "absorb", "absorption", "abstain", "abstemious", "abstinence", "abstinent", "abstract", "abstruse", "absurd", "abundant", "abusive", "abut", "abysmal", "abyss", "academic",
+//				"academician", "academy", "accede", "accelerate", "accentuate", "accept", "access", "accessible", "accession", "accessory", "acclaim", "accolade", "accommodate", "accompaniment",
+//				"accompanist", "accompany","ccc","dddd","eeee","ggggg","fffff","zzzz"};
+//		this.userListModel = new SimpleListModel<>(dict);
 		
 		// event listener - pridani kontaktu do seznamu prijemci
 		EventQueueHelper.queueLookup(ScbEventQueues.MAIL_QUEUE).subscribe(ScbEvent.ADD_TO_RECIPIENT_LIST_EVENT, data -> {
@@ -173,12 +190,17 @@ public class EmailDetailWinVM extends BaseVM {
 	
 	private void sendMessage() {
 		List<Mail> mailList = new ArrayList<>();
+		Set<String> mailAddrSet = new LinkedHashSet<>();
 		if (!CollectionUtils.isEmpty(this.mailToContactSet)) {
-			this.mailToContactSet.forEach(i -> mailList.add(Mail.ofHtml(i.getEmail1().trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
+			// unikatnost prohnanim pres Set
+			this.mailToContactSet.forEach(i -> mailAddrSet.add(i.getEmail1().trim()));
+			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList)));		
 		}
 		
 		if (!CollectionUtils.isEmpty(this.mailCcContactSet)) {
-			this.mailCcContactSet.forEach(i -> mailList.add(Mail.ofHtml(i.getEmail1().trim(), null,  this.messageSubject, this.messageText, this.attachmentList)));			
+			// unikatnost prohnanim pres Set
+			this.mailCcContactSet.forEach(i -> mailAddrSet.add(i.getEmail1().trim()));	
+			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList)));			
 		}
 		
 		mailService.sendMailBatch(mailList);
@@ -275,7 +297,7 @@ public class EmailDetailWinVM extends BaseVM {
 			return Collections.emptySet();
 		}
 		
-		Set<Contact> ret = new HashSet<>();
+		Set<Contact> ret = new LinkedHashSet<>();
 		Contact contactItem = null;
 		for (String item : mailToSet) {
 			contactItem = scbUserService.getContactByEmail(item);
@@ -347,6 +369,13 @@ public class EmailDetailWinVM extends BaseVM {
 		}
 	}
 	
+	@NotifyChange("ccVisible")
+	@Command
+	public void ccVisibleCmd() {
+		this.ccVisible = true;
+		ccTxt.setFocus(true);
+	}
+	
 	/**
 	 * Prida emailove adresy do seznamu adresatu.
 	 * @param mailToList
@@ -357,10 +386,12 @@ public class EmailDetailWinVM extends BaseVM {
 			if (emailListWithType.getValue1() == RecipientType.TO) {
 				// pridani do mailTo kontaktu
 				this.mailToContactSet.addAll(emailList);
+				this.mailToPopupBtn.close();
 				BindUtils.postNotifyChange(null, null, this,MAIL_TO_CONTACT_SET_ATTRIBUTE);
 			} else {
 				// pridani do mailCc kontaktu
-				this.mailCcContactSet.addAll(emailList);		
+				this.mailCcContactSet.addAll(emailList);
+				this.mailCcPopupBtn.close();
 				BindUtils.postNotifyChange(null, null, this,MAIL_CC_CONTACT_SET_ATTRIBUTE);
 			}
 		}
@@ -439,6 +470,15 @@ public class EmailDetailWinVM extends BaseVM {
 	public Set<Contact> getMailCcContactSet() {
 		return mailCcContactSet;
 	}
+	public boolean isCcVisible() {
+		return ccVisible;
+	}
+	public List<ScbUser> getUserList() {
+		return userList;
+	}
+	public ListModel getUserListModel() {
+		return userListModel;
+	}
 	
 	public static class EmailAddressFilter {
 
@@ -456,7 +496,7 @@ public class EmailDetailWinVM extends BaseVM {
 			if (courseList == null || courseList.isEmpty()) {
 				return Collections.<String>emptySet();
 			}
-			Set<String> ret = new HashSet<>();
+			Set<String> ret = new LinkedHashSet<>();
 			for (String item : courseList) {
 				if (matches(item, true)) {
 					ret.add(item);

@@ -121,7 +121,7 @@ public class ScbUserServiceImpl extends BaseAbstractService implements ScbUserSe
 
 	@Override
 	public Contact getContactByEmail(String email) {
-		if (StringUtils.hasText(email)) {
+		if (!StringUtils.hasText(email)) {
 			return null;
 		}
 		return contactDao.getByEmail(email);

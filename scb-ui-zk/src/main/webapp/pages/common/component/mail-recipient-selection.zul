@@ -73,7 +73,6 @@
 				    <hlayout style="padding-bottom: 1px;">
 					    <button label="${c:l('txt.ui.common.Add')}"
 							onClick="@command('submitCourseSelectionCmd')"
-							sclass="btn-success"
 							iconSclass="z-icon-plus" />
 		    			<button onClick="@command('closeCmd')" 
 							label="${c:l('txt.ui.ToClose')}"
@@ -144,7 +143,6 @@
 	    			<hlayout style="padding-bottom: 1px;">
 		    			<button label="${c:l('txt.ui.common.Add')}"
 							onClick="@command('submitCmd')"
-							sclass="btn-success"
 							iconSclass="z-icon-plus" />
 		    			<button onClick="@command('closeCmd')" 
 							label="${c:l('txt.ui.ToClose')}"
@@ -245,7 +243,6 @@
 				    <hlayout style="padding-bottom: 1px;">
 				    	<button label="${c:l('txt.ui.common.Add')}"
 							onClick="@command('submitCourseApplicationSelectionCmd')"
-							sclass="btn-success"
 							iconSclass="z-icon-plus" />
 				    	<button onClick="@command('closeCmd')" 
 							label="${c:l('txt.ui.ToClose')}"
