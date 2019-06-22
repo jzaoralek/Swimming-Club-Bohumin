@@ -16,6 +16,6 @@ public interface ScbUserService {
 	ScbUser store(ScbUser user) throws ScbValidationException;
 	void delete(UUID uuid) throws ScbValidationException;
 	ScbUser getByUsername(String username);
-	Contact getContactByEmail(String email);
+	List<Contact> getContactByEmail(String email);
 	List<String> getEmailAll();
 }

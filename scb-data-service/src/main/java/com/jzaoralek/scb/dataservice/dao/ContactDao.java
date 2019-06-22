@@ -8,7 +8,7 @@ import com.jzaoralek.scb.dataservice.domain.Contact;
 public interface ContactDao {
 
 	Contact getByUuid(UUID uuid);
-	Contact getByEmail(String email);
+	List<Contact> getByEmail(String email);
 	boolean existsByEmail(String email);
 	void insert(Contact contact);
 	void update(Contact contact);

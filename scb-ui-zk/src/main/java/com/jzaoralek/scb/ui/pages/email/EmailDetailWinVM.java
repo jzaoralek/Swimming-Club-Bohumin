@@ -292,11 +292,12 @@ public class EmailDetailWinVM extends BaseVM {
 		}
 		
 		Set<Contact> ret = new LinkedHashSet<>();
-		Contact contactItem = null;
+		List<Contact> contactItemList = null;
+		Contact contactItem =  null;
 		for (String item : mailToSet) {
-			contactItem = scbUserService.getContactByEmail(item);
-			if (contactItem != null) {
-				ret.add(contactItem);
+			contactItemList = scbUserService.getContactByEmail(item);
+			if (CollectionUtils.isEmpty(contactItemList)) {
+				ret.add(contactItemList.get(0));
 			} else {
 				contactItem = new Contact();
 				contactItem.setEmail1(item);

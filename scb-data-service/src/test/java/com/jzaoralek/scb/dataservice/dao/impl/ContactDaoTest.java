@@ -91,9 +91,9 @@ public class ContactDaoTest extends BaseTestCase {
 	
 	@Test
 	public void testGetByEmail() {
-		Contact item = contactDao.getByEmail(CONTACT_EMAIL1);
-		Assert.assertNotNull(item);
-		Assert.assertEquals(true, CONTACT_EMAIL1.equals(item.getEmail1()));
+		List<Contact> itemList = contactDao.getByEmail(CONTACT_EMAIL1);
+		Assert.assertNotNull(itemList);
+		Assert.assertEquals(true, CONTACT_EMAIL1.equals(itemList.get(0).getEmail1()));
 	}
 	
 	@Test

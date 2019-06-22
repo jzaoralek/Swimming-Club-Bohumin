@@ -87,7 +87,7 @@ public class MailServiceImpl implements MailService {
           // Now set the actual message
           if (html) {
         	  // html email
-        	  messageBodyPart.setContent(text,"text/html");        	  
+        	  messageBodyPart.setContent(text,"text/html; charset=UTF-8"); 
           } else {
         	  // text email
         	  messageBodyPart.setText(text, "UTF-8");        	  

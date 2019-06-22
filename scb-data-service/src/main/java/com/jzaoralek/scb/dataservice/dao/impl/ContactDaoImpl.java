@@ -65,13 +65,9 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 	}
 	
 	@Override
-	public Contact getByEmail(String email) {
+	public List<Contact> getByEmail(String email) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(EMAIL1_PARAM, email);
-		try {
-			return namedJdbcTemplate.queryForObject(SELECT_BY_EMAIL, paramMap, new ContactRowMapper());
-		} catch (EmptyResultDataAccessException e) {
-			return null;
-		}
+		return namedJdbcTemplate.query(SELECT_BY_EMAIL, paramMap, new ContactRowMapper());
 	}
 	
 	@Override
