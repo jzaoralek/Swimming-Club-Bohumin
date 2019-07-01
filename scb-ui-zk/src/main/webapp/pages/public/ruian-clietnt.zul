@@ -1,0 +1,15 @@
+<?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
+<?page title="${c:l('txt.Login')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+
+<zk xmlns:c="client" xmlns:x="xhtml">
+	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
+	
+	<div self="@{define(mainContent)}" hflex="1" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.security.vm.RuainClientVM')" >
+		
+		<button label="Get region list" onClick="@command('getRegionListCmd')" />
+		
+	</div>
+</zk>
