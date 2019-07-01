@@ -296,7 +296,7 @@ public class EmailDetailWinVM extends BaseVM {
 		Contact contactItem =  null;
 		for (String item : mailToSet) {
 			contactItemList = scbUserService.getContactByEmail(item);
-			if (CollectionUtils.isEmpty(contactItemList)) {
+			if (!CollectionUtils.isEmpty(contactItemList)) {
 				ret.add(contactItemList.get(0));
 			} else {
 				contactItem = new Contact();
