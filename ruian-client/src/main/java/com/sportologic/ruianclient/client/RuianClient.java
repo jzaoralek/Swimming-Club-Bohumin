@@ -24,7 +24,7 @@ public class RuianClient {
         restExecutor = new RestExecutor(DOMAIN, null);
     }
     
-    public List<RuianRegion> getRegionList(String token) throws RestException {
+    public List<RuianRegion> getRegionList() throws RestException {
     	RuianRegionResponse response = restExecutor.execute("/api/v1/ruian/build/regions?apiKey=" + AUTH_TOKEN,  HttpMethod.GET, null, RuianRegionResponse.class);
     	if (response == null) {
     		return Collections.emptyList();
