@@ -11,5 +11,7 @@
 		
 		<button label="Get region list" onClick="@command('getRegionListCmd')" />
 		
+		<textbox value="@load(vm.response)" multiline="true" rows="50" hflex="1" />
+		
 	</div>
 </zk>

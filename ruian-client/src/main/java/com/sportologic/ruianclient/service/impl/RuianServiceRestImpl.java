@@ -1,18 +1,32 @@
 package com.sportologic.ruianclient.service.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.stereotype.Service;
+
+import com.sportologic.ruianclient.client.RuianClient;
+import com.sportologic.ruianclient.model.RuianRegion;
 import com.sportologic.ruianclient.service.RuianService;
+
+import webtools.rest.exception.RestException;
 
 @Service("ruianServiceRest")
 public class RuianServiceRestImpl implements RuianService {
 
-	public String getRegionList() {
-		
-		final String uri = "https://ruian.fnx.io/api/v1/ruian/build/regions?apiKey=dd6afece52966e0109885ca6de64e6bd4b0d5236db6cede1463bcdd1fb2cfa16";
-	     
-	    RestTemplate restTemplate = new RestTemplate();
-	    return restTemplate.getForObject(uri, String.class);
+	private RuianClient ruianClient;
+	
+	@PostConstruct
+    public void init() {
+		ruianClient = new RuianClient();
+    }
+	
+	public List<RuianRegion> getRegionList() {
+		try {
+			return ruianClient.getRegionList("dd6afece52966e0109885ca6de64e6bd4b0d5236db6cede1463bcdd1fb2cfa16");
+		} catch (RestException e) {
+			return null;
+		}
 	}
 }
