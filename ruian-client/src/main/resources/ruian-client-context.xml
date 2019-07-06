@@ -18,4 +18,14 @@
 	<context:annotation-config />
 	<context:component-scan base-package="com.sportologic.ruianclient" />
 	
+	<context:property-placeholder location="classpath:ruian-client.properties"  />
+	
+<!-- 	<bean id="propertyConfigurerRuian" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  -->
+<!-- 		<property name="locations"> -->
+<!-- 			<list> -->
+<!-- 				<value>classpath:ruian-client.properties</value> -->
+<!-- 			</list>  -->
+<!-- 		</property>  -->
+<!-- 	</bean> -->
+	
 </beans>

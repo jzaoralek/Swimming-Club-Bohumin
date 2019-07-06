@@ -8,10 +8,16 @@
 	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
 	
 	<div self="@{define(mainContent)}" hflex="1" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.security.vm.RuainClientVM')" >
+		<hlayout hflex="1" vflex="1">
+			<vlayout hflex="min">
+				<button label="Get region list" onClick="@command('getRegionListCmd')" />
+				<button label="Get municipality list" onClick="@command('getMuicipalityListCmd')" />
+				<button label="Get street list" onClick="@command('getStreetListCmd')" />
+				<button label="Get places list" onClick="@command('getPlacesListCmd')" />
+			</vlayout>
+			<textbox value="@load(vm.response)" multiline="true" rows="50" hflex="1" />
+		</hlayout>
 		
-		<button label="Get region list" onClick="@command('getRegionListCmd')" />
-		
-		<textbox value="@load(vm.response)" multiline="true" rows="50" hflex="1" />
 		
 	</div>
 </zk>
