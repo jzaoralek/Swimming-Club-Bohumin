@@ -14,6 +14,15 @@
 				<button label="Get municipality list" onClick="@command('getMuicipalityListCmd')" />
 				<button label="Get street list" onClick="@command('getStreetListCmd')" />
 				<button label="Get places list" onClick="@command('getPlacesListCmd')" />
+				
+				<textbox value="@bind(vm.city)" placeholder="Město" />
+				<textbox value="@bind(vm.street)" placeholder="Ulice" />
+				<textbox value="@bind(vm.cp)" placeholder="Č.p." />
+				<textbox value="@bind(vm.co)" placeholder="Č.o." />
+				<textbox value="@bind(vm.ce)" placeholder="Č.e." />
+				<textbox value="@bind(vm.zip)" placeholder="PSČ" />
+				
+				<button label="Place validation" onClick="@command('placeValidationCmd')" />
 			</vlayout>
 			<textbox value="@load(vm.response)" multiline="true" rows="50" hflex="1" />
 		</hlayout>

@@ -6,6 +6,7 @@ import com.sportologic.ruianclient.model.RuianMunicipality;
 import com.sportologic.ruianclient.model.RuianPlace;
 import com.sportologic.ruianclient.model.RuianRegion;
 import com.sportologic.ruianclient.model.RuianStreet;
+import com.sportologic.ruianclient.model.RuianValidationResponse;
 
 public interface RuianService {
 
@@ -24,5 +25,5 @@ public interface RuianService {
 	 * @param street – název ulice
 	 * @return
 	 */
-	String validate(String municipalityName, String zip, String ce, String co, String cp, String street);
+	RuianValidationResponse validate(String municipalityName, String zip, String ce, String co, String cp, String street);
 }
