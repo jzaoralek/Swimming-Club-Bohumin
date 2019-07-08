@@ -25,30 +25,35 @@ public class RuainClientVM extends BaseVM {
 	private RuianService ruianServiceRest;
 	
 	private String response;
-	private String city;
-	private String street;
 	private String cp;
 	private String co;
 	private String ce;
 	private String zip;
+	
+	private List<RuianRegion> regionList;
+	private RuianRegion regionSelected;
+	private List<RuianMunicipality> municipalityList;
+	private RuianMunicipality municipalitySelected;
+	private List<RuianStreet> streetList;
+	private RuianStreet streetSelected;
 
-	@NotifyChange("response")
+	@NotifyChange({"response","regionList"})
 	@Command
 	public void getRegionListCmd() {
-		List<RuianRegion> res = ruianServiceRest.getRegionList();
+		this.regionList = ruianServiceRest.getRegionList();
 		this.response = null;
-		if (res != null) {
-			this.response = res.toString();			
+		if (this.regionList != null) {
+			this.response = this.regionList.toString();			
 		}
 	}
 	
 	@NotifyChange("response")
 	@Command
 	public void getMuicipalityListCmd() {
-		List<RuianMunicipality> res = ruianServiceRest.getMunicipalityList("CZ020");
+		this.municipalityList = ruianServiceRest.getMunicipalityList("CZ020");
 		this.response = null;
-		if (res != null) {
-			this.response = res.toString();			
+		if (this.municipalityList != null) {
+			this.response = this.municipalityList.toString();			
 		}
 	}
 	
@@ -76,7 +81,7 @@ public class RuainClientVM extends BaseVM {
 	@Command
 	public void placeValidationCmd() {
 		try {
-			RuianValidationResponse res = ruianServiceRest.validate(this.city, this.zip, this.ce, this.co, this.cp, this.street);
+			RuianValidationResponse res = ruianServiceRest.validate(getMunicipalityName(), this.zip, this.ce, this.co, this.cp, getStreetName());
 			this.response = null;
 			if (res != null) {
 				this.response = res.toString();			
@@ -87,24 +92,42 @@ public class RuainClientVM extends BaseVM {
 		}
 	}
 	
-	public String getResponse() {
-		return response;
+	private String getMunicipalityName() {
+		if (this.municipalitySelected != null) {
+			return this.municipalitySelected.getMunicipalityName();
+		}
+		
+		return null;
 	}
 	
-	public String getCity() {
-		return city;
+	private String getStreetName() {
+		if (this.streetSelected != null) {
+			return this.streetSelected.getStreetName();
+		}
+		
+		return null;
 	}
-
-	public void setCity(String city) {
-		this.city = city;
+	
+	@NotifyChange("municipalityList")
+	@Command
+	public void regionSelectCmd() {
+		if (this.regionSelected == null) {
+			return;
+		}
+		this.municipalityList = ruianServiceRest.getMunicipalityList(this.regionSelected.getRegionId());
 	}
-
-	public String getStreet() {
-		return street;
+	
+	@NotifyChange("streetList")
+	@Command
+	public void municipaltitySelectCmd() {		
+		if (this.municipalitySelected == null) {
+			return;
+		}
+		this.streetList = ruianServiceRest.getStreetList(this.municipalitySelected.getMunicipalityId());
 	}
-
-	public void setStreet(String street) {
-		this.street = street;
+	
+	public String getResponse() {
+		return response;
 	}
 
 	public String getCp() {
@@ -137,5 +160,41 @@ public class RuainClientVM extends BaseVM {
 
 	public void setZip(String zip) {
 		this.zip = zip;
+	}
+	
+	public List<RuianRegion> getRegionList() {
+		return regionList;
+	}
+	
+	public RuianRegion getRegionSelected() {
+		return regionSelected;
+	}
+
+	public void setRegionSelected(RuianRegion regionSelected) {
+		this.regionSelected = regionSelected;
+	}
+	
+	public List<RuianMunicipality> getMunicipalityList() {
+		return municipalityList;
+	}
+	
+	public RuianMunicipality getMunicipalitySelected() {
+		return municipalitySelected;
+	}
+
+	public void setMunicipalitySelected(RuianMunicipality municipalitySelected) {
+		this.municipalitySelected = municipalitySelected;
+	}
+	
+	public List<RuianStreet> getStreetList() {
+		return streetList;
+	}
+	
+	public RuianStreet getStreetSelected() {
+		return streetSelected;
+	}
+
+	public void setStreetSelected(RuianStreet streetSelected) {
+		this.streetSelected = streetSelected;
 	}
 }
