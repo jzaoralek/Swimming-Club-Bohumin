@@ -1,0 +1,160 @@
+<?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
+<?page title="${c:l('txt.Login')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+
+<zk xmlns:c="client" xmlns:x="xhtml">
+	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
+	
+	<div self="@{define(mainContent)}" hflex="1" 
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressVM')"
+		validationMessages="@id('vmsgs')" >
+		<groupbox width="100%" style="margin-top:20px;" >
+			<caption hflex="1">
+			    <label value="${c:l('txt.ui.common.Address')}" style="font-weight: bold;"/>
+			</caption>
+            <grid sclass="scb-form-grid-2" hflex="1">
+				<rows>
+					<row>
+						<cell>
+							<vbox hflex="1">
+								<label value="Kraj"/>
+								<!-- Region -->
+								<combobox id="region" 
+									model="@load(vm.regionList)"
+									onSelect="@command('regionSelectCmd')"
+									selectedItem="@bind(vm.regionSelected)"
+									placeholder="*"
+									style="background: white;"
+									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+									maxlength="240"
+									hflex="1"
+									readonly="true" >
+									<template name="model">
+						            	<comboitem label="${each.regionName}"/>
+									</template>
+								</combobox>
+								<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+									<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[region])" >
+										<label value="@bind(vmsgs[region])" />
+									</span>
+								</hbox>
+							</vbox>
+						</cell>
+					</row>
+					<row>
+						<cell sclass="form-grid-cell">
+							<vbox hflex="1">
+								<label value="${c:l('txt.ui.common.city')}"/>
+								<!-- Mesto -->
+								<combobox id="city" 
+									model="@load(vm.municipalityList)"
+									onSelect="@command('municipaltitySelectCmd')"
+									selectedItem="@bind(vm.municipalitySelected)"
+									placeholder="*"
+									style="background: white;"
+									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+									maxlength="240"
+									hflex="1" >
+									<template name="model">
+						            	<comboitem label="@bind(each.municipalityName)"/>
+									</template>
+								</combobox>
+								<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+									<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[city])" >
+										<label value="@bind(vmsgs[city])" />
+									</span>
+								</hbox>
+							</vbox>
+						</cell>
+					</row>
+					<row>
+						<cell sclass="form-grid-cell">
+							<vbox hflex="1">
+								<label value="${c:l('txt.ui.common.street')}"/>
+								<!-- Ulice -->
+								<combobox id="street"
+									model="@load(vm.streetList)"
+									selectedItem="@bind(vm.streetSelected)"
+									onChange="@command('streetSelectCmd')"
+									placeholder="Město"
+									style="background: white;"
+									hflex="1" >
+									<template name="model">
+						            	<comboitem label="${each.streetName}"/>
+									</template>
+								</combobox>
+							</vbox>
+						</cell>
+					</row>
+					<row>
+						<cell>
+							<hbox hflex="1">
+								<vbox hflex="1">
+									<label value="${c:l('txt.ui.common.landRegNo')}"/>
+									<intbox id="particLandRegNo"
+										value="@bind(vm.cp)"
+										onChange="@command('addressItemChangedCmd')"
+										maxlength="8"
+										placeholder="*"
+										constraint="no empty"
+										sclass="form-input-text"
+										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+										hflex="1" />
+								</vbox>
+								<vbox hflex="1">
+									<label value="${c:l('txt.ui.common.houseNo')}"/>
+									<textbox id="particHouseNo"
+										value="@bind(vm.co)"
+										onChange="@command('addressItemChangedCmd')"
+										maxlength="6"
+										sclass="form-input-text"
+										hflex="1" />
+								</vbox>
+								<vbox hflex="1">
+									<label value="Číslo evidenční"/>
+									<textbox id="ce"
+										value="@bind(vm.ce)"
+										onChange="@command('addressItemChangedCmd')"
+										maxlength="6"
+										sclass="form-input-text"
+										hflex="1" />
+								</vbox>
+							</hbox>
+						</cell>
+					</row>
+					<row>
+						<cell sclass="form-grid-cell">
+							<vbox hflex="1">
+								<label value="${c:l('txt.ui.common.zipCode')}"/>
+								<textbox id="zipCode"
+									value="@bind(vm.zip) @validator(vm.notNullValidator)"
+									onChange="@command('addressItemChangedCmd')"
+									maxlength="32"
+									placeholder="*"
+									sclass="form-input-text"
+									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+									hflex="1" />
+								<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+									<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[zipCode])" >
+										<label value="@bind(vmsgs[zipCode])" />
+									</span>
+								</hbox>
+							</vbox>
+						</cell>
+					</row>
+					<row>
+						<cell sclass="form-grid-cell">
+							<hbox hflex="1">
+								<button label="Fill region list" onClick="@command('getRegionListCmd')" />
+								<button label="Ověřit" onClick="@command('placeValidationCmd')" />
+								<label value="@load(vm.validationResponse.valid)"></label>					
+							</hbox>
+						</cell>
+					</row>
+				</rows>
+			</grid>			
+		</groupbox>
+	</div>
+</zk>
