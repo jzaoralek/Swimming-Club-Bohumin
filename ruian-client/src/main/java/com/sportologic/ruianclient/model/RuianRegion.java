@@ -1,7 +1,18 @@
 package com.sportologic.ruianclient.model;
 
+import java.util.Comparator;
+
 public class RuianRegion {
 	
+	public static final Comparator<RuianRegion> REGION_COMP =
+			new Comparator<RuianRegion>() {
+				public int compare(RuianRegion reg1, RuianRegion reg2) {
+					String reg1Name = reg1.getRegionName();
+					String reg2Name = reg2.getRegionName();
+		            return reg1Name.compareTo(reg2Name);
+				}
+		};
+		
 	private String regionId;
 	private String regionName;
 	

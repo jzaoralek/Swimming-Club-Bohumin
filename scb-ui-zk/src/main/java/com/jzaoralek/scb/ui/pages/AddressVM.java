@@ -89,7 +89,7 @@ public class AddressVM extends BaseVM {
 	
 	@NotifyChange("*")
 	@Command
-	public void streetSelectCmd() {	
+	public void streetSelectCmd() {
 		cleanAddress(false, false);
 	}
 	

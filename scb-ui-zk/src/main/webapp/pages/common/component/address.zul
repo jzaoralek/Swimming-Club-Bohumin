@@ -76,9 +76,9 @@
 								<!-- Ulice -->
 								<combobox id="street"
 									model="@load(vm.streetList)"
+									onSelect="@command('streetSelectCmd')"
 									selectedItem="@bind(vm.streetSelected)"
-									onChange="@command('streetSelectCmd')"
-									placeholder="Město"
+									placeholder="Ulice"
 									style="background: white;"
 									hflex="1" >
 									<template name="model">

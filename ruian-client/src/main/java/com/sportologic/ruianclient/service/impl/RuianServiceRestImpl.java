@@ -51,6 +51,7 @@ public class RuianServiceRestImpl implements RuianService {
 			if (response == null) {
 				return Collections.emptyList();
 			}			
+			Collections.sort(response.getData(), RuianRegion.REGION_COMP);
 			return response.getData();
 		} catch (RestException e) {
 			LOG.error(REST_EXCEPT_CAUGHT, e);
@@ -63,7 +64,8 @@ public class RuianServiceRestImpl implements RuianService {
 			RuianMunicipalityResponse response = restExecutor.execute("/api/v1/ruian/build/municipalities?apiKey=" + authToken + "&regionId=" + regionId,  HttpMethod.GET, null, RuianMunicipalityResponse.class);
 			if (response == null) {
 				return Collections.emptyList();
-			}			
+			}
+			Collections.sort(response.getData(), RuianMunicipality.MUNICIPALITY_COMP);
 			return response.getData();
 		} catch (RestException e) {
 			LOG.error(REST_EXCEPT_CAUGHT, e);
@@ -77,6 +79,7 @@ public class RuianServiceRestImpl implements RuianService {
 			if (response == null) {
 				return Collections.emptyList();
 			}
+			Collections.sort(response.getData(), RuianStreet.STREET_COMP);
 			return response.getData();
 		} catch (RestException e) {
 			LOG.error(REST_EXCEPT_CAUGHT, e);
