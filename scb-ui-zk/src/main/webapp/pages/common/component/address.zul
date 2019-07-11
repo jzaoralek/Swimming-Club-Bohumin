@@ -6,6 +6,7 @@
 
 <zk xmlns:c="client" xmlns:x="xhtml">
 	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
+	<custom-attributes placeValidationCmd="placeValidationCmd" />
 	
 	<div self="@{define(mainContent)}" hflex="1" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressVM')"
@@ -38,7 +39,7 @@
 								<combobox id="region" 
 									model="@load(vm.regionList)"
 									onSelect="@command('regionSelectCmd')"
-									selectedItem="@bind(vm.regionSelected)"
+									selectedItem="@bind(vm.regionSelected) @save(vm.regionSelected, before={placeValidationCmd}) @validator(vm.notNullObjectValidator)"
 									placeholder="*"
 									style="background: white;"
 									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -69,7 +70,7 @@
 								<!-- Mesto -->
 								<combobox id="city" 
 									model="@load(vm.municipalityListModel)"
-									selectedItem="@bind(vm.municipalityNameSelected)"
+									selectedItem="@bind(vm.municipalityNameSelected) @save(vm.municipalityNameSelected, before={placeValidationCmd}) @validator(vm.notNullObjectValidator)"
 									onBlur="@command('municipaltitySelectCmd')"
 									autodrop="true"
 									placeholder="*"
@@ -121,15 +122,19 @@
 							<hbox hflex="1">
 								<vbox hflex="1">
 									<label value="${c:l('txt.ui.common.landRegNo')}"/>
-									<intbox id="particLandRegNo"
-										value="@bind(vm.cp)"
+									<intbox id="cp"
+										value="@bind(vm.cp) @save(vm.cp, before={placeValidationCmd}) @validator(vm.notNullObjectValidator)"
 										onChange="@command('addressItemChangedCmd')"
 										maxlength="8"
 										placeholder="*"
-										constraint="no empty"
 										sclass="form-input-text"
 										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 										hflex="1" />
+									<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+										<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[cp])" >
+											<label value="@bind(vmsgs[cp])" />
+										</span>
+									</hbox>
 								</vbox>
 								<vbox hflex="1">
 									<label value="${c:l('txt.ui.common.houseNo')}"/>
@@ -157,7 +162,7 @@
 							<vbox hflex="1">
 								<label value="${c:l('txt.ui.common.zipCode')}"/>
 								<textbox id="zipCode"
-									value="@bind(vm.zip) @validator(vm.notNullValidator)"
+									value="@bind(vm.zip) @save(vm.zip, before={placeValidationCmd}) @validator(vm.notNullValidator)"
 									onChange="@command('addressItemChangedCmd')"
 									maxlength="32"
 									placeholder="*"
@@ -176,7 +181,7 @@
 						<cell sclass="form-grid-cell">
 							<hlayout hflex="1">
 								<button label="Fill region list" onClick="@command('getRegionListCmd')" />
-								<button label="${c:l('msg.ui.address.Verify')}" onClick="@command('placeValidationCmd')" />
+								<button label="${c:l('msg.ui.address.Verify')}" onClick="@command(placeValidationCmd)" />
 							</hlayout>
 						</cell>
 					</row>
