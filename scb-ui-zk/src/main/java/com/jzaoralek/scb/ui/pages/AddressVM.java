@@ -13,6 +13,7 @@ import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
+import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -64,14 +65,17 @@ public class AddressVM extends BaseVM {
 	private String zip;
 	private RuianValidationResponse validationResponse;
 
+	@Init
+	public void init() {
+		fillRegionList();
+	}
+	
 	@AfterCompose
 	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
 		Selectors.wireComponents(view, this, false);
 	}
 	
-	@NotifyChange({"response","regionList"})
-	@Command
-	public void getRegionListCmd() {
+	private void fillRegionList() {
 		this.regionList = ruianServiceRest.getRegionList();
 		this.response = null;
 		if (this.regionList != null) {

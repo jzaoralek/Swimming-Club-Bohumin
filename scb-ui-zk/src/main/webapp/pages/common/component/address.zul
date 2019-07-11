@@ -180,7 +180,6 @@
 					<row>
 						<cell sclass="form-grid-cell">
 							<hlayout hflex="1">
-								<button label="Fill region list" onClick="@command('getRegionListCmd')" />
 								<button label="${c:l('msg.ui.address.Verify')}" onClick="@command(placeValidationCmd)" />
 							</hlayout>
 						</cell>
