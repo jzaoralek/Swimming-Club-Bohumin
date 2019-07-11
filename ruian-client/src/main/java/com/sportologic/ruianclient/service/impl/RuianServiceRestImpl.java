@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -45,6 +46,7 @@ public class RuianServiceRestImpl implements RuianService {
         restExecutor = new RestExecutor(domain, null);
     }
 	
+	@Cacheable(value="ruianRegionCache")
 	public List<RuianRegion> getRegionList() {
 		try {
 			RuianRegionResponse response = restExecutor.execute("/api/v1/ruian/build/regions?apiKey=" + authToken,  HttpMethod.GET, null, RuianRegionResponse.class);
@@ -59,6 +61,7 @@ public class RuianServiceRestImpl implements RuianService {
 		}
 	}
 
+	@Cacheable(value="ruianMunicipalityCache", key="#regionId")
 	public List<RuianMunicipality> getMunicipalityList(String regionId) {
 		try {
 			RuianMunicipalityResponse response = restExecutor.execute("/api/v1/ruian/build/municipalities?apiKey=" + authToken + "&regionId=" + regionId,  HttpMethod.GET, null, RuianMunicipalityResponse.class);
@@ -73,6 +76,7 @@ public class RuianServiceRestImpl implements RuianService {
 		}
 	}
 
+	@Cacheable(value="ruianStreetCache", key="#municipalityId")
 	public List<RuianStreet> getStreetList(String municipalityId) {
 		try {
 			RuianStreetResponse response = restExecutor.execute("/api/v1/ruian/build/streets?apiKey=" + authToken + "&municipalityId=" + municipalityId,  HttpMethod.GET, null, RuianStreetResponse.class);
