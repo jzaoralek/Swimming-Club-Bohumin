@@ -11,21 +11,17 @@
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressVM')"
 		validationMessages="@id('vmsgs')" >
 		<groupbox width="100%" style="margin-top:20px;" >
-			<caption hflex="1">
-			    <hlayout hflex="1">
-					<label value="${c:l('txt.ui.common.Address')}" style="font-weight: bold;"/>
-				    <hbox pack="end" align="center" hflex="1" style="margin-right: 10px;">
-						<label visible="@load(vm.validationResponse.valid)" 
-							value="Ověřeno" 
-							style="background-color: #EFF7E8 !important; color: #78C128; border-color: #78C128 !important; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
-						<label visible="@load(!empty(vm.validationResponse) and !vm.validationResponse.valid)" 
-							value="Neplatná" 
-							style="background-color: #FFEAEC !important; color: #FF4051; border-color: #FF4051 !important; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />									
-						<label visible="@load(empty(vm.validationResponse))" 
-							value="Neověřeno" 
-							style="background-color: #FFF3E7 !important; color: #FF8501; border-color: #FF8501 !important; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />		
-					</hbox>
-			    </hlayout>
+			<caption label="${c:l('txt.ui.common.Address')}" style="font-weight: bold;"
+				 width="100%" sclass="customPosition"  >
+				<label visible="@load(vm.validationResponse.valid)" 
+					value="Platná" 
+					style="margin-top: 10px; background-color: #EFF7E8 !important; color: #78C128; border: 1px solid #78C128; border-color: #78C128 !important; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
+				<label visible="@load(!empty(vm.validationResponse) and !vm.validationResponse.valid)" 
+					value="Neplatná" 
+					style="margin-top: 10px; background-color: #FFEAEC !important; color: #FF4051; border: 1px solid #FF4051; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />									
+				<label visible="@load(empty(vm.validationResponse))"
+					value="Neověřená" 
+					style="margin-top: 10px; background-color: #FFF3E7 !important; color: #FF8501; border: 1px solid #FF8501; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
 			</caption>
             <grid sclass="scb-form-grid-2" hflex="1">
 				<rows>
@@ -78,6 +74,7 @@
 									autodrop="true"
 									placeholder="*"
 									style="background: white;"
+									buttonVisible="false"
 									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 									maxlength="240"
 									hflex="1" >
@@ -107,6 +104,7 @@
 									model="@load(vm.streetListModel)"
 									onBlur="@command('streetSelectCmd')"
 									autodrop="true"
+									buttonVisible="false"
 									selectedItem="@bind(vm.streetNameSelected)"
 									placeholder="Ulice"
 									style="background: white;"

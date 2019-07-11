@@ -1306,3 +1306,29 @@ i.big-icon{
 	}
 }
 
+.z-caption.customPosition .z-caption-content {
+	width: 100%;
+	position: relative;
+}
+
+.z-caption.customPosition .z-caption-content i {
+    position: absolute;
+    right: 0px;
+    font-size: 16px;
+}
+
+.z-caption.customPosition .z-caption-content a {
+    position: absolute;
+    right: 0px;
+    font-size: 16px;
+}
+
+.z-caption.customPosition .z-caption-content span {
+    position: absolute;
+    right: 0px;
+    font-size: 16px;
+}
+
+.z-groupbox-collapsed .z-caption .z-icon-folder-open-o::before {
+    content: '\f114'; /*z-icon-folder-o*/
+}
