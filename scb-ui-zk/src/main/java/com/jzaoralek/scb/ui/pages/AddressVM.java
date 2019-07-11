@@ -13,8 +13,8 @@ import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
-import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -155,14 +155,14 @@ public class AddressVM extends BaseVM {
 		try {
 			this.validationResponse = ruianServiceRest.validate(getMunicipalityName(), this.zip, this.ce, this.co, this.cp, getStreetName());
 			if (this.validationResponse != null && this.validationResponse.isValid()) {
-				WebUtils.showNotificationInfo("Adresa je platná.");
+				WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.address.AddressIsValid"));
 			} else if (this.validationResponse != null && !this.validationResponse.isValid()) {
-				WebUtils.showNotificationError("Adresa není platná.");
+				WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressIsNotValid"));
 			}
 			
 		} catch (RuntimeException e) {
 			LOG.error("RuntimeException caught, ", e);
-			WebUtils.showNotificationError("Služba pro ověření adresy není dostupná, použijte prosím neověřenou adresu.");
+			WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressVerificationServiceNotAvailable"));
 		}
 	}
 	
