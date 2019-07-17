@@ -11,18 +11,15 @@ public class AddressDemoVM {
 	@Init
 	public void init() {
 		this.contact = new Contact();
-		this.contact.setRegion("Zlínský kraj");
+		this.contact.setRegion("Zlínský kraj2");
 		this.contact.setCity("Valašské Meziříčí2");
-		this.contact.setStreet("Blahoslavova");
+		this.contact.setStreet("Blahoslavova2");
 		this.contact.setLandRegistryNumber(418L);
 		this.contact.setHouseNumber("6");
 		this.contact.setEvidenceNumber("");
 		this.contact.setZipCode("70800");
 		
-		// TODO: refaktoring AddressVM.initContact()
-		// 		 nevalidní adresa na vstupu
-		//       castecne validni adresa
-		//       male pismeno na zacatku
+		// TODO: male pismeno na zacatku
 		//       dynamicka zmena v kontaktu
 		//       status ověření do databáze
 		//       pokud neověřená, pokusit se ověřit

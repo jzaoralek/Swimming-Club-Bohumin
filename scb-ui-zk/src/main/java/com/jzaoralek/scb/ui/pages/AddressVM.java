@@ -79,73 +79,86 @@ public class AddressVM extends BaseVM {
 		if (contact != null) {
 			this.contact = contact;
 			// init region
-			List<RuianRegion> regionFilterred = this.regionList.stream()
-					.filter(i -> i.getRegionName().equals(this.contact.getRegion()))
-					.collect(Collectors.toList());
-			if (!CollectionUtils.isEmpty(regionFilterred)) {
-				this.regionSelected = regionFilterred.get(0);
-				if (this.regionSelected != null) {
-					// FIXME					
-					regionSelectCmd();		
-				}
-			} else {
-				this.regionSelected = new RuianRegion();
-				this.regionSelected.setRegionName(this.contact.getRegion());
-			}
+			initRegion();
 			// init municipality
-			if (this.regionSelected != null) {
-				List<RuianMunicipality> municipalityFilterred = null;
-				if (!CollectionUtils.isEmpty(this.municipalityList)) {
-					municipalityFilterred = this.municipalityList.stream()
-							.filter(i -> i.getMunicipalityName().equals(this.contact.getCity()))
-							.collect(Collectors.toList());
-				}
-				if (!CollectionUtils.isEmpty(municipalityFilterred)) {
-					this.municipalitySelected = municipalityFilterred.get(0);
-					if (this.municipalitySelected != null) {
-						this.municipalityNameSelected = this.municipalitySelected.getMunicipalityName();
-					}
-					if (this.municipalitySelected != null) {
-						// FIXME
-						municipaltitySelectCmd();
-					}
-				} else {
-					this.municipalitySelected = new RuianMunicipality();
-					this.municipalitySelected.setMunicipalityName(this.contact.getCity());
-					this.municipalityNameSelected = this.municipalitySelected.getMunicipalityName();
-				}
-			}
+			initMunicipality();
 			// init street
-			if (this.municipalitySelected != null) {
-				List<RuianStreet> streetFilterred = null;
-				if (!CollectionUtils.isEmpty(this.streetList)) {
-					streetFilterred = this.streetList.stream()
-							.filter(i -> i.getStreetName().equals(this.contact.getStreet()))
-							.collect(Collectors.toList());
-				}
-				if (!CollectionUtils.isEmpty(streetFilterred)) {
-					this.streetSelected = streetFilterred.get(0);
-					if (this.streetSelected != null) {
-						this.streetNameSelected = this.streetSelected.getStreetName();
-					}
-					if (this.streetSelected != null) {
-						// FIXME
-						streetSelectCmd();
-					}
-				} else {
-					this.streetSelected = new RuianStreet();
-					this.streetSelected.setStreetName(this.contact.getStreet());
-					this.streetNameSelected = this.streetSelected.getStreetName();
-				}
-			}
+			initStreet();
 			// init cp
-			this.cp = contact.getLandRegistryNumber() != 0 ? String.valueOf(contact.getLandRegistryNumber()) : "";
-			this.co = contact.getHouseNumber();
-			this.ce = contact.getEvidenceNumber();
-			this.zip = contact.getZipCode();
+			initOtherElems();
 		} else {
 			this.contact = new Contact();
 		}
+	}
+	
+	private void initRegion() {
+		List<RuianRegion> regionFilterred = this.regionList.stream()
+				.filter(i -> i.getRegionName().equals(this.contact.getRegion()))
+				.collect(Collectors.toList());
+		if (!CollectionUtils.isEmpty(regionFilterred)) {
+			this.regionSelected = regionFilterred.get(0);
+			if (this.regionSelected != null) {
+				regionSelectCore();	
+			}
+		} else {
+			this.regionSelected = new RuianRegion();
+			this.regionSelected.setRegionName(this.contact.getRegion());
+		}
+	}
+	
+	private void initMunicipality() {
+		if (this.regionSelected != null) {
+			List<RuianMunicipality> municipalityFilterred = null;
+			if (!CollectionUtils.isEmpty(this.municipalityList)) {
+				municipalityFilterred = this.municipalityList.stream()
+						.filter(i -> i.getMunicipalityName().equals(this.contact.getCity()))
+						.collect(Collectors.toList());
+			}
+			if (!CollectionUtils.isEmpty(municipalityFilterred)) {
+				this.municipalitySelected = municipalityFilterred.get(0);
+				if (this.municipalitySelected != null) {
+					this.municipalityNameSelected = this.municipalitySelected.getMunicipalityName();
+				}
+				if (this.municipalitySelected != null) {
+					municipaltitySelectCore();
+				}
+			} else {
+				this.municipalitySelected = new RuianMunicipality();
+				this.municipalitySelected.setMunicipalityName(this.contact.getCity());
+				this.municipalityNameSelected = this.municipalitySelected.getMunicipalityName();
+			}
+		}
+	}
+	
+	private void initStreet() {
+		if (this.municipalitySelected != null) {
+			List<RuianStreet> streetFilterred = null;
+			if (!CollectionUtils.isEmpty(this.streetList)) {
+				streetFilterred = this.streetList.stream()
+						.filter(i -> i.getStreetName().equals(this.contact.getStreet()))
+						.collect(Collectors.toList());
+			}
+			if (!CollectionUtils.isEmpty(streetFilterred)) {
+				this.streetSelected = streetFilterred.get(0);
+				if (this.streetSelected != null) {
+					this.streetNameSelected = this.streetSelected.getStreetName();
+				}
+				if (this.streetSelected != null) {
+					streetSelectCore();
+				}
+			} else {
+				this.streetSelected = new RuianStreet();
+				this.streetSelected.setStreetName(this.contact.getStreet());
+				this.streetNameSelected = this.streetSelected.getStreetName();
+			}
+		}
+	}
+	
+	private void initOtherElems() {
+		this.cp = contact.getLandRegistryNumber() != 0 ? String.valueOf(contact.getLandRegistryNumber()) : "";
+		this.co = contact.getHouseNumber();
+		this.ce = contact.getEvidenceNumber();
+		this.zip = contact.getZipCode();
 	}
 	
 	@AfterCompose
@@ -164,6 +177,11 @@ public class AddressVM extends BaseVM {
 	@NotifyChange("*")
 	@Command
 	public void regionSelectCmd() {
+		regionSelectCore();
+		cleanAddress(true, true);
+	}
+	
+	private void regionSelectCore() {
 		if (this.regionSelected == null) {
 			return;
 		}
@@ -177,12 +195,16 @@ public class AddressVM extends BaseVM {
 		
 		this.streetList = Collections.emptyList();
 		this.streetListModel = null;
-		cleanAddress(true, true);
 	}
 	
 	@NotifyChange("*")
 	@Command
 	public void municipaltitySelectCmd() {
+		municipaltitySelectCore();
+		cleanAddress(false, true);
+	}
+	
+	private void municipaltitySelectCore() {
 		this.streetList = null;
 		this.municipalitySelected = null;
 		if (!StringUtils.hasText(this.municipalityNameSelected) 
@@ -203,12 +225,16 @@ public class AddressVM extends BaseVM {
 				this.streetListModel = new SimpleListModel<>(streetNameList.toArray(new String[streetNameList.size()]));
 			}
 		}
-		cleanAddress(false, true);
 	}
 	
 	@NotifyChange("*")
 	@Command
 	public void streetSelectCmd() {
+		streetSelectCore();
+		cleanAddress(false, false);
+	}
+	
+	private void streetSelectCore() {
 		this.streetSelected = null;
 		if (!StringUtils.hasText(this.streetNameSelected) 
 				|| CollectionUtils.isEmpty(this.streetList)) {
@@ -222,8 +248,6 @@ public class AddressVM extends BaseVM {
 		if (!CollectionUtils.isEmpty(streetFilterred)) {
 			this.streetSelected = streetFilterred.get(0);
 		}
-		
-		cleanAddress(false, false);
 	}
 	
 	@NotifyChange("validationResponse")

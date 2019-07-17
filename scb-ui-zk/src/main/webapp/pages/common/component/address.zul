@@ -112,7 +112,6 @@
 									autodrop="true"
 									buttonVisible="false"
 									selectedItem="@bind(vm.streetNameSelected)"
-									placeholder="Ulice"
 									style="background: white;"
 									hflex="1" >
 									<template name="model">
