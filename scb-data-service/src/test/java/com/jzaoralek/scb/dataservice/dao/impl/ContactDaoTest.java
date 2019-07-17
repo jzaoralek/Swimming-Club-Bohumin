@@ -33,7 +33,7 @@ public class ContactDaoTest extends BaseTestCase {
 		Assert.assertTrue(CONTACT_SURNAME.equals(item.getSurname()));
 		Assert.assertTrue(CONTACT_STREET.equals(item.getStreet()));
 		Assert.assertTrue(CONTACT_LAND_REGISTRY_NO.longValue() == item.getLandRegistryNumber().longValue());
-		Assert.assertTrue(CONTACT_HOUSE_NO == item.getHouseNumber());
+		Assert.assertTrue(CONTACT_HOUSE_NO.equals(item.getHouseNumber()));
 		Assert.assertTrue(CONTACT_CITY.equals(item.getCity()));
 		Assert.assertTrue(CONTACT_ZIP_CODE.equals(item.getZipCode()));
 		Assert.assertTrue(CONTACT_EMAIL1.equals(item.getEmail1()));
@@ -45,7 +45,7 @@ public class ContactDaoTest extends BaseTestCase {
 	@Test
 	public void update() {
 		String UPDATED_POSTFIX = "updated";
-		Short HOUSE_NO_UPDATED = 6;
+		String HOUSE_NO_UPDATED = "6";
 		Long LAND_REGISTRY_NO_UPDATED = 1000L;
 
 		item.setFirstname(CONTACT_FIRSTNAME+UPDATED_POSTFIX);
@@ -68,7 +68,7 @@ public class ContactDaoTest extends BaseTestCase {
 		Assert.assertTrue((CONTACT_SURNAME+UPDATED_POSTFIX).equals(itemUpdated.getSurname()));
 		Assert.assertTrue((CONTACT_STREET+UPDATED_POSTFIX).equals(itemUpdated.getStreet()));
 		Assert.assertTrue(LAND_REGISTRY_NO_UPDATED.longValue() == itemUpdated.getLandRegistryNumber().longValue());
-		Assert.assertTrue(HOUSE_NO_UPDATED == itemUpdated.getHouseNumber());
+		Assert.assertTrue(HOUSE_NO_UPDATED.equals(itemUpdated.getHouseNumber()));
 		Assert.assertTrue((CONTACT_CITY+UPDATED_POSTFIX).equals(itemUpdated.getCity()));
 		Assert.assertTrue((CONTACT_ZIP_CODE+UPDATED_POSTFIX).equals(itemUpdated.getZipCode()));
 		Assert.assertTrue((CONTACT_EMAIL1+UPDATED_POSTFIX).equals(itemUpdated.getEmail1()));

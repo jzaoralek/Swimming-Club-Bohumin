@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.annotation.AfterCompose;
+import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
@@ -24,6 +25,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.SimpleListModel;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 import com.sportologic.ruianclient.model.RuianMunicipality;
@@ -64,10 +66,86 @@ public class AddressVM extends BaseVM {
 	private String ce;
 	private String zip;
 	private RuianValidationResponse validationResponse;
+	
+	private Contact contact;
 
 	@Init
-	public void init() {
+	public void init(@BindingParam("contact")Contact contact) {
 		fillRegionList();
+		initContact(contact);
+	}
+	
+	private void initContact(Contact contact) {
+		if (contact != null) {
+			this.contact = contact;
+			// init region
+			List<RuianRegion> regionFilterred = this.regionList.stream()
+					.filter(i -> i.getRegionName().equals(this.contact.getRegion()))
+					.collect(Collectors.toList());
+			if (!CollectionUtils.isEmpty(regionFilterred)) {
+				this.regionSelected = regionFilterred.get(0);
+				if (this.regionSelected != null) {
+					// FIXME					
+					regionSelectCmd();		
+				}
+			} else {
+				this.regionSelected = new RuianRegion();
+				this.regionSelected.setRegionName(this.contact.getRegion());
+			}
+			// init municipality
+			if (this.regionSelected != null) {
+				List<RuianMunicipality> municipalityFilterred = null;
+				if (!CollectionUtils.isEmpty(this.municipalityList)) {
+					municipalityFilterred = this.municipalityList.stream()
+							.filter(i -> i.getMunicipalityName().equals(this.contact.getCity()))
+							.collect(Collectors.toList());
+				}
+				if (!CollectionUtils.isEmpty(municipalityFilterred)) {
+					this.municipalitySelected = municipalityFilterred.get(0);
+					if (this.municipalitySelected != null) {
+						this.municipalityNameSelected = this.municipalitySelected.getMunicipalityName();
+					}
+					if (this.municipalitySelected != null) {
+						// FIXME
+						municipaltitySelectCmd();
+					}
+				} else {
+					this.municipalitySelected = new RuianMunicipality();
+					this.municipalitySelected.setMunicipalityName(this.contact.getCity());
+					this.municipalityNameSelected = this.municipalitySelected.getMunicipalityName();
+				}
+			}
+			// init street
+			if (this.municipalitySelected != null) {
+				List<RuianStreet> streetFilterred = null;
+				if (!CollectionUtils.isEmpty(this.streetList)) {
+					streetFilterred = this.streetList.stream()
+							.filter(i -> i.getStreetName().equals(this.contact.getStreet()))
+							.collect(Collectors.toList());
+				}
+				if (!CollectionUtils.isEmpty(streetFilterred)) {
+					this.streetSelected = streetFilterred.get(0);
+					if (this.streetSelected != null) {
+						this.streetNameSelected = this.streetSelected.getStreetName();
+					}
+					if (this.streetSelected != null) {
+						// FIXME
+						streetSelectCmd();
+					}
+				} else {
+					this.streetSelected = new RuianStreet();
+					this.streetSelected.setStreetName(this.contact.getStreet());
+					this.streetNameSelected = this.streetSelected.getStreetName();
+				}
+			}
+			// init cp
+			this.cp = contact.getLandRegistryNumber() != 0 ? String.valueOf(contact.getLandRegistryNumber()) : "";
+			this.co = contact.getHouseNumber();
+			this.ce = contact.getEvidenceNumber();
+			this.zip = contact.getZipCode();
+		} else {
+			this.contact = new Contact();
+		}
 	}
 	
 	@AfterCompose
@@ -114,6 +192,7 @@ public class AddressVM extends BaseVM {
 		List<RuianMunicipality> municipalityFilterred = this.municipalityList.stream()
 																.filter(i -> i.getMunicipalityName().equals(this.municipalityNameSelected))
 																.collect(Collectors.toList());
+
 		if (!CollectionUtils.isEmpty(municipalityFilterred)) {
 			this.municipalitySelected = municipalityFilterred.get(0);		
 			this.streetList = ruianServiceRest.getStreetList(this.municipalitySelected.getMunicipalityId());
@@ -190,12 +269,16 @@ public class AddressVM extends BaseVM {
 		if (cleanMunic) {
 			this.municipalitySelected = null;
 			this.municipalityNameSelected = null;
-			city.setSelectedItem(null);
+			if (city != null) {
+				city.setSelectedItem(null);				
+			}
 		}
 		if (cleanStreet) {
 			this.streetSelected = null;
 			this.streetNameSelected = null;
-			street.setSelectedItem(null);
+			if (street != null) {
+				street.setSelectedItem(null);				
+			}
 		}
 		this.cp = null;
 		this.co = null;

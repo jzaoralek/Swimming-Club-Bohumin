@@ -679,7 +679,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipantContact.setCity(rs.getString("city"));
 			courseParticipantContact.setStreet(rs.getString("street"));
 			courseParticipantContact.setLandRegistryNumber(rs.getLong("land_registry_number"));
-			courseParticipantContact.setHouseNumber(rs.getShort("house_number"));
+			courseParticipantContact.setHouseNumber(rs.getString("house_number"));
 			courseParticipantContact.setZipCode(rs.getString("zip_code"));
 			courseParticipant.setContact(courseParticipantContact);
 
@@ -773,7 +773,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipantContact.setCity(rs.getString("city"));
 			courseParticipantContact.setStreet(rs.getString("street"));
 			courseParticipantContact.setLandRegistryNumber(rs.getLong("land_registry_number"));
-			courseParticipantContact.setHouseNumber(rs.getShort("house_number"));
+			courseParticipantContact.setHouseNumber(rs.getString("house_number"));
 			courseParticipantContact.setZipCode(rs.getString("zip_code"));
 			courseParticipant.setContact(courseParticipantContact);
 

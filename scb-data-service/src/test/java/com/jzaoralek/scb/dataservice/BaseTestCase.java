@@ -32,7 +32,7 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 	protected static final String CONTACT_SURNAME = "surname";
 	protected static final String CONTACT_STREET = "street";
 	protected static final Long CONTACT_LAND_REGISTRY_NO = 1352L;
-	protected static final Short CONTACT_HOUSE_NO = 10;
+	protected static final String CONTACT_HOUSE_NO = "10";
 	protected static final String CONTACT_CITY = "city";
 	protected static final String CONTACT_ZIP_CODE = "zipCode";
 	protected static final String CONTACT_EMAIL1 = "email1";

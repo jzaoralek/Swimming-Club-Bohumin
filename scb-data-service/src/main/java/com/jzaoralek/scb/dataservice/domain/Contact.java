@@ -16,9 +16,11 @@ public class Contact implements IdentEntity {
 	private Date modifAt;
 	private String firstname;
 	private String surname;
+	private String region;
 	private String street;
 	private Long landRegistryNumber;
-	private Short houseNumber;
+	private String houseNumber;
+	private String evidenceNumber;
 	private String city;
 	private String zipCode;
 	private String email1;
@@ -77,10 +79,10 @@ public class Contact implements IdentEntity {
 	public void setLandRegistryNumber(Long landRegistryNumber) {
 		this.landRegistryNumber = landRegistryNumber;
 	}
-	public Short getHouseNumber() {
+	public String getHouseNumber() {
 		return houseNumber;
 	}
-	public void setHouseNumber(Short houseNumber) {
+	public void setHouseNumber(String houseNumber) {
 		this.houseNumber = houseNumber;
 	}
 	public String getCity() {
@@ -126,17 +128,31 @@ public class Contact implements IdentEntity {
 			sb.append(this.street + " ");			
 		}
 		sb.append(this.landRegistryNumber);
-		if (this.houseNumber != null && this.houseNumber > 0) {
+		if (this.houseNumber != null && !this.houseNumber.equals("0")) {
 			sb.append("/"+this.houseNumber);
 		}
 		return sb.toString();
 	}
-
+	public String getEvidenceNumber() {
+		return evidenceNumber;
+	}
+	public void setEvidenceNumber(String evidenceNumber) {
+		this.evidenceNumber = evidenceNumber;
+	}
+	public String getRegion() {
+		return region;
+	}
+	public void setRegion(String region) {
+		this.region = region;
+	}
+	
 	@Override
 	public String toString() {
 		return "Contact [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", firstname=" + firstname
-				+ ", surname=" + surname + ", street=" + street + ", landRegistryNumber=" + landRegistryNumber
-				+ ", houseNumber=" + houseNumber + ", city=" + city + ", zipCode=" + zipCode + ", email1=" + email1
-				+ ", email2=" + email2 + ", phone1=" + phone1 + ", phone2=" + phone2 + "]";
+				+ ", surname=" + surname + ", region=" + region + ", street=" + street + ", landRegistryNumber="
+				+ landRegistryNumber + ", houseNumber=" + houseNumber + ", evidenceNumber=" + evidenceNumber + ", city="
+				+ city + ", zipCode=" + zipCode + ", email1=" + email1 + ", email2=" + email2 + ", phone1=" + phone1
+				+ ", phone2=" + phone2 + "]";
 	}
+	
 }

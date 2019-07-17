@@ -128,7 +128,7 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 			ret.setEmail1(rs.getString("email1"));
 			ret.setEmail2(rs.getString("email2"));
 			ret.setFirstname(rs.getString("firstname"));
-			ret.setHouseNumber(rs.getShort("house_number"));
+			ret.setHouseNumber(rs.getString("house_number"));
 			ret.setLandRegistryNumber(Long.valueOf(rs.getInt("land_registry_number")));
 			ret.setPhone1(rs.getString("phone1"));
 			ret.setPhone2(rs.getString("phone2"));
