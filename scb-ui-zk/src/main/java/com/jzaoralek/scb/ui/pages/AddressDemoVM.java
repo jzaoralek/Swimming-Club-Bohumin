@@ -19,12 +19,11 @@ public class AddressDemoVM {
 		this.contact.setEvidenceNumber("");
 		this.contact.setZipCode("70800");
 		
-		// TODO: nevalidní adresa
-		//       refaktoring AddressVM.initContact()
+		// TODO: refaktoring AddressVM.initContact()
+		// 		 nevalidní adresa na vstupu
 		//       castecne validni adresa
 		//       male pismeno na zacatku
-		//       dynamicka zmena adresy
-		//       vice adres na jedne strance
+		//       dynamicka zmena v kontaktu
 		//       status ověření do databáze
 		//       pokud neověřená, pokusit se ověřit
 		//       indikátor neověřená ?, neplatná křížek, ověřená fajfka
