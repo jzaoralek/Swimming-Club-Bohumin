@@ -20,9 +20,10 @@ public class AddressDemoVM {
 		this.contact.setEvidenceNumber("");
 		this.contact.setZipCode("70800");
 		
-		// TODO: male pismeno na zacatku
+		// TODO: 
 		//       databaze, DAO, JUnit - region, status ověření
-		//       pokud neověřená, pokusit se ověřit
+		//       male pismeno na zacatku
+		//       nabidka adres zobrazená na tlačítko a ověřit
 		//       indikátor neověřená ?, neplatná křížek, ověřená fajfka
 	}
 	

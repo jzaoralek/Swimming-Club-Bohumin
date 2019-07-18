@@ -1,8 +1,11 @@
 package com.sportologic.ruianclient.model;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class RuianMunicipality {
+public class RuianMunicipality implements Serializable {
+
+	private static final long serialVersionUID = -3975417284100899516L;
 
 	public static final Comparator<RuianMunicipality> MUNICIPALITY_COMP =
 			new Comparator<RuianMunicipality>() {

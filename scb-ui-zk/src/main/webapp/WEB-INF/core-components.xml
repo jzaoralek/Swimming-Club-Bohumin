@@ -66,5 +66,11 @@
 	    <component-name>send-mail-button</component-name>    
 	    <macro-uri>/pages/common/component/send-mail-button.zul</macro-uri>
 	</component>
+	
+	<!-- Adresa -->
+	<component>
+	    <component-name>ruian-address</component-name>    
+	    <macro-uri>/pages/common/component/ruian-address.zul</macro-uri>
+	</component>
 
 </language-addon>

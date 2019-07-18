@@ -1,0 +1,176 @@
+<zk>
+	
+	<custom-attributes contact="${arg.contact}" />
+	
+	<groupbox width="100%" style="margin-top:20px;"
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressVM', contact=contact)"
+		validationMessages="@id('vmsgs')" >
+		<caption label="${c:l('txt.ui.common.Address')}" style="font-weight: bold;"
+			 width="100%" sclass="customPosition"  >
+			<label visible="@load(vm.validationResponse.valid)" 
+				value="${c:l('msg.ui.address.valid')}" 
+				style="margin-top: 10px; background-color: #EFF7E8 !important; color: #78C128; border: 1px solid #78C128; border-color: #78C128 !important; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
+			<label visible="@load(!empty(vm.validationResponse) and !vm.validationResponse.valid)" 
+				value="${c:l('msg.ui.address.invalid')}" 
+				style="margin-top: 10px; background-color: #FFEAEC !important; color: #FF4051; border: 1px solid #FF4051; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />									
+			<label visible="@load(empty(vm.validationResponse))"
+				value="${c:l('msg.ui.address.notVerified')}" 
+				style="margin-top: 10px; background-color: #FFF3E7 !important; color: #FF8501; border: 1px solid #FF8501; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
+		</caption>
+	          <grid sclass="scb-form-grid-2" hflex="1">
+			<rows>
+				<row>
+					<cell>
+						<vbox hflex="1">
+							<hlayout hflex="1">
+								<label value="${c:l('msg.ui.address.Region')}"/>
+								<hbox hflex="1" pack="end" xmlns:x="xhtml" style="padding-left: 5px; padding-right: 12px; height: 26px;">
+									<x:i class="z-icon-check-circle" visible="@load(!empty(vm.regionSelected))" style="color: green;" />
+								</hbox>
+							</hlayout>
+							<!-- Region -->
+							<combobox id="region" 
+								model="@load(vm.regionList)"
+								onSelect="@command('regionSelectCmd')"
+								selectedItem="@bind(vm.regionSelected) @save(vm.regionSelected, before={placeValidationCmd}) @validator(vm.notNullObjectValidator)"
+								placeholder="*"
+								style="background: white;"
+								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+								maxlength="240"
+								hflex="1"
+								readonly="true" >
+								<template name="model">
+					            	<comboitem label="${each.regionName}"/>
+								</template>
+							</combobox>
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[region])" >
+									<label value="@bind(vmsgs[region])" />
+								</span>
+							</hbox>
+						</vbox>
+					</cell>
+				</row>
+				<row>
+					<cell sclass="form-grid-cell">
+						<vbox hflex="1">
+							<hlayout hflex="1">
+								<label value="${c:l('txt.ui.common.city')}"/>
+								<hbox hflex="1" pack="end" xmlns:x="xhtml" style="padding-left: 5px; padding-right: 12px; height: 26px;">
+									<x:i class="z-icon-check-circle" visible="@load(!empty(vm.municipalitySelected))" style="color: green;" />
+								</hbox>
+							</hlayout>
+							<!-- Mesto -->
+							<combobox id="city" 
+								model="@load(vm.municipalityListModel)"
+								selectedItem="@bind(vm.municipalityNameSelected) @save(vm.municipalityNameSelected, before={placeValidationCmd}) @validator(vm.notNullObjectValidator)"
+								onBlur="@command('municipaltitySelectCmd')"
+								autodrop="true"
+								placeholder="*"
+								style="background: white;"
+								buttonVisible="false"
+								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+								maxlength="240"
+								hflex="1" >
+								<template name="model">
+					            	<comboitem label="${each}"/>
+								</template>
+							</combobox>
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[city])" >
+									<label value="@bind(vmsgs[city])" />
+								</span>
+							</hbox>
+						</vbox>
+					</cell>
+				</row>
+				<row>
+					<cell sclass="form-grid-cell">
+						<vbox hflex="1">
+							<hlayout hflex="1">
+								<label value="${c:l('txt.ui.common.street')}"/>
+								<hbox hflex="1" pack="end" xmlns:x="xhtml" style="padding-left: 5px; padding-right: 12px; height: 26px;">
+									<x:i class="z-icon-check-circle" visible="@load(!empty(vm.streetSelected))" style="color: green;)" />
+								</hbox>
+							</hlayout>
+							<!-- Ulice -->
+							<combobox id="street"
+								model="@load(vm.streetListModel)"
+								onBlur="@command('streetSelectCmd')"
+								autodrop="true"
+								buttonVisible="false"
+								selectedItem="@bind(vm.streetNameSelected)"
+								style="background: white;"
+								hflex="1" >
+								<template name="model">
+					            	<comboitem label="${each}"/>
+								</template>
+							</combobox>
+						</vbox>
+					</cell>
+				</row>
+				<row>
+					<cell>
+						<hbox hflex="1">
+							<vbox hflex="1">
+								<label value="${c:l('txt.ui.common.landRegNo')}"/>
+								<intbox id="cp"
+									value="@bind(vm.cp)"
+									onChange="@command('addressItemChangedCmd')"
+									maxlength="8"
+									sclass="form-input-text"
+									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+									hflex="1" />
+							</vbox>
+							<vbox hflex="1">
+								<label value="${c:l('txt.ui.common.houseNo')}"/>
+								<textbox id="particHouseNo"
+									value="@bind(vm.co)"
+									onChange="@command('addressItemChangedCmd')"
+									maxlength="6"
+									sclass="form-input-text"
+									hflex="1" />
+							</vbox>
+							<vbox hflex="1">
+								<label value="${c:l('msg.ui.address.EvNo')}"/>
+								<textbox id="ce"
+									value="@bind(vm.ce)"
+									onChange="@command('addressItemChangedCmd')"
+									maxlength="6"
+									sclass="form-input-text"
+									hflex="1" />
+							</vbox>
+						</hbox>
+					</cell>
+				</row>
+				<row>
+					<cell sclass="form-grid-cell">
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.zipCode')}"/>
+							<textbox id="zipCode"
+								value="@bind(vm.zip) @save(vm.zip, before={placeValidationCmd}) @validator(vm.notNullValidator)"
+								onChange="@command('addressItemChangedCmd')"
+								maxlength="32"
+								placeholder="*"
+								sclass="form-input-text"
+								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+								hflex="1" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[zipCode])" >
+									<label value="@bind(vmsgs[zipCode])" />
+								</span>
+							</hbox>
+						</vbox>
+					</cell>
+				</row>
+				<row>
+					<cell sclass="form-grid-cell">
+						<hlayout hflex="1">
+							<button label="${c:l('msg.ui.address.Verify')}" onClick="@command(placeValidationCmd)" visible="@load(!vm.validationResponse.valid)" />
+						</hlayout>
+					</cell>
+				</row>
+			</rows>
+		</grid>			
+	</groupbox>
+</zk>
