@@ -185,6 +185,8 @@ public class AddressVM extends BaseVM {
 		if (this.regionSelected == null) {
 			return;
 		}
+		
+		this.contact.setRegion(this.regionSelected.getRegionName());
 		this.municipalityList = ruianServiceRest.getMunicipalityList(this.regionSelected.getRegionId());
 		
 		if (!CollectionUtils.isEmpty(this.municipalityList)) {
@@ -215,6 +217,8 @@ public class AddressVM extends BaseVM {
 																.filter(i -> i.getMunicipalityName().equals(this.municipalityNameSelected))
 																.collect(Collectors.toList());
 
+		this.contact.setCity(this.municipalityNameSelected);
+		
 		if (!CollectionUtils.isEmpty(municipalityFilterred)) {
 			this.municipalitySelected = municipalityFilterred.get(0);		
 			this.streetList = ruianServiceRest.getStreetList(this.municipalitySelected.getMunicipalityId());
@@ -241,6 +245,8 @@ public class AddressVM extends BaseVM {
 			return;
 		}
 		
+		this.contact.setStreet(this.streetNameSelected);
+		
 		List<RuianStreet> streetFilterred = this.streetList.stream()
 				.filter(i -> i.getStreetName().equals(this.streetNameSelected))
 				.collect(Collectors.toList());
@@ -253,6 +259,11 @@ public class AddressVM extends BaseVM {
 	@NotifyChange("validationResponse")
 	@Command
 	public void addressItemChangedCmd() {
+		this.contact.setLandRegistryNumber(Long.valueOf(this.cp));
+		this.contact.setHouseNumber(this.co);
+		this.contact.setEvidenceNumber(this.ce);
+		this.contact.setZipCode(this.zip);
+		
 		this.validationResponse = null;
 	}
 	

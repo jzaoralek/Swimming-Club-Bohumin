@@ -12,6 +12,8 @@
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressDemoVM')"
 		hflex="1" >
 		
+		<button onClick="@command('submitCmd')" label="Submit" />
+		
 		<custom-attributes contact="${vm.contact}" />
 		
 		<groupbox width="100%" style="margin-top:20px;"
