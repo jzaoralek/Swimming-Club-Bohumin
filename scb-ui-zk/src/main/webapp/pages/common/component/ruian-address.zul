@@ -3,6 +3,7 @@
 	<custom-attributes contact="${arg.contact}" />
 	
 	<groupbox width="100%" style="margin-top:20px;"
+		closable="false"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressVM', contact=contact)"
 		validationMessages="@id('vmsgs')" >
 		<caption label="${c:l('txt.ui.common.Address')}" style="font-weight: bold;"
