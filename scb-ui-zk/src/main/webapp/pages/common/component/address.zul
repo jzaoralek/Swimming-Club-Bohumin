@@ -14,7 +14,7 @@
 		
 		<button onClick="@command('submitCmd')" label="Submit" />
 		
-		<ruian-address contact="${vm.contact}" />
+		<ruian-address contact="${vm.contact}" contactDisabled="false" />
 		
 	</div>
 </zk>

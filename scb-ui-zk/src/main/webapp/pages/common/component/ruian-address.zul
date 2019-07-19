@@ -1,6 +1,7 @@
 <zk>
 	
 	<custom-attributes contact="${arg.contact}" />
+	<custom-attributes contactDisabled="${empty(arg.contactDisabled) ? true : arg.contactDisabled}" />
 	
 	<groupbox width="100%" style="margin-top:20px;"
 		closable="false"
@@ -36,6 +37,7 @@
 								selectedItem="@bind(vm.regionSelected) @save(vm.regionSelected, before={placeValidationCmd}) @validator(vm.notNullObjectValidator)"
 								placeholder="*"
 								style="background: white;"
+								if="${!contactDisabled}"
 								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 								maxlength="240"
 								hflex="1"
@@ -44,6 +46,11 @@
 					            	<comboitem label="${each.regionName}"/>
 								</template>
 							</combobox>
+							<textbox value="${vm.regionSelected.regionName}"
+								if="${contactDisabled}"
+								sclass="form-input-text"
+								hflex="1"
+								readonly="true" />
 							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[region])" >
 									<label value="@bind(vmsgs[region])" />
@@ -69,6 +76,7 @@
 								autodrop="true"
 								placeholder="*"
 								style="background: white;"
+								if="${!contactDisabled}"
 								buttonVisible="false"
 								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 								maxlength="240"
@@ -77,6 +85,11 @@
 					            	<comboitem label="${each}"/>
 								</template>
 							</combobox>
+							<textbox value="${vm.municipalityNameSelected}"
+								if="${contactDisabled}"
+								sclass="form-input-text"
+								hflex="1"
+								readonly="true" />
 							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 								<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[city])" >
 									<label value="@bind(vmsgs[city])" />
@@ -102,11 +115,17 @@
 								buttonVisible="false"
 								selectedItem="@bind(vm.streetNameSelected)"
 								style="background: white;"
+								if="${!contactDisabled}"
 								hflex="1" >
 								<template name="model">
 					            	<comboitem label="${each}"/>
 								</template>
 							</combobox>
+							<textbox value="${vm.streetNameSelected}"
+								if="${contactDisabled}"
+								sclass="form-input-text"
+								hflex="1"
+								readonly="true" />
 						</vbox>
 					</cell>
 				</row>
@@ -120,6 +139,7 @@
 									onChange="@command('addressItemChangedCmd')"
 									maxlength="8"
 									sclass="form-input-text"
+									readonly="${contactDisabled}"
 									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 									hflex="1" />
 							</vbox>
@@ -130,6 +150,7 @@
 									onChange="@command('addressItemChangedCmd')"
 									maxlength="6"
 									sclass="form-input-text"
+									readonly="${contactDisabled}"
 									hflex="1" />
 							</vbox>
 							<vbox hflex="1">
@@ -139,6 +160,7 @@
 									onChange="@command('addressItemChangedCmd')"
 									maxlength="6"
 									sclass="form-input-text"
+									readonly="${contactDisabled}"
 									hflex="1" />
 							</vbox>
 						</hbox>
@@ -154,6 +176,7 @@
 								maxlength="32"
 								placeholder="*"
 								sclass="form-input-text"
+								readonly="${contactDisabled}"
 								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 								hflex="1" />
 							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
@@ -167,7 +190,10 @@
 				<row>
 					<cell sclass="form-grid-cell">
 						<hlayout hflex="1">
-							<button label="${c:l('msg.ui.address.Verify')}" onClick="@command(placeValidationCmd)" visible="@load(!vm.validationResponse.valid)" />
+							<button label="${c:l('msg.ui.address.Verify')}" 
+								onClick="@command(placeValidationCmd)" 
+								visible="@load(!vm.validationResponse.valid)"
+								if="${!contactDisabled}" />
 						</hlayout>
 					</cell>
 				</row>
