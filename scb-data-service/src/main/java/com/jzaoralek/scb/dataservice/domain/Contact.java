@@ -23,11 +23,28 @@ public class Contact implements IdentEntity {
 	private String evidenceNumber;
 	private String city;
 	private String zipCode;
+	private AddressValidationStatus addressValidationStatus;
 	private String email1;
 	private String email2;
 	private String phone1;
 	private String phone2;
 
+	public Contact() {
+		this.addressValidationStatus = AddressValidationStatus.NOT_VERIFIED;
+	}
+	
+	public boolean isAddressValid() {
+		return this.addressValidationStatus == AddressValidationStatus.VALID;
+	}
+	
+	public boolean isAddressInvalid() {
+		return this.addressValidationStatus == AddressValidationStatus.INVALID;
+	}
+	
+	public boolean isAddressNotVerified() {
+		return this.addressValidationStatus == AddressValidationStatus.NOT_VERIFIED;
+	}
+	
 	@Override
 	public UUID getUuid() {
 		return uuid;
@@ -97,6 +114,12 @@ public class Contact implements IdentEntity {
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
 	}
+	public AddressValidationStatus getAddressValidationStatus() {
+		return addressValidationStatus;
+	}
+	public void setAddressValidationStatus(AddressValidationStatus addressValidationStatus) {
+		this.addressValidationStatus = addressValidationStatus;
+	}
 	public String getEmail1() {
 		return email1;
 	}
@@ -151,8 +174,7 @@ public class Contact implements IdentEntity {
 		return "Contact [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", firstname=" + firstname
 				+ ", surname=" + surname + ", region=" + region + ", street=" + street + ", landRegistryNumber="
 				+ landRegistryNumber + ", houseNumber=" + houseNumber + ", evidenceNumber=" + evidenceNumber + ", city="
-				+ city + ", zipCode=" + zipCode + ", email1=" + email1 + ", email2=" + email2 + ", phone1=" + phone1
-				+ ", phone2=" + phone2 + "]";
+				+ city + ", zipCode=" + zipCode + ", addressValidationStatus=" + addressValidationStatus + ", email1="
+				+ email1 + ", email2=" + email2 + ", phone1=" + phone1 + ", phone2=" + phone2 + "]";
 	}
-	
 }

@@ -8,14 +8,14 @@
 		validationMessages="@id('vmsgs')" >
 		<caption label="${c:l('txt.ui.common.Address')}" style="font-weight: bold;"
 			 width="100%" sclass="customPosition"  >
-			<label visible="@load(vm.validationResponse.valid)" 
-				value="${c:l('msg.ui.address.valid')}" 
+			<label visible="@load(vm.contact.addressValid)" 
+				value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" 
 				style="margin-top: 10px; background-color: #EFF7E8 !important; color: #78C128; border: 1px solid #78C128; border-color: #78C128 !important; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
-			<label visible="@load(!empty(vm.validationResponse) and !vm.validationResponse.valid)" 
-				value="${c:l('msg.ui.address.invalid')}" 
+			<label visible="@load(vm.contact.addressInvalid)" 
+				value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" 
 				style="margin-top: 10px; background-color: #FFEAEC !important; color: #FF4051; border: 1px solid #FF4051; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />									
-			<label visible="@load(empty(vm.validationResponse))"
-				value="${c:l('msg.ui.address.notVerified')}" 
+			<label visible="@load(vm.contact.addressNotVerified)"
+				value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" 
 				style="margin-top: 10px; background-color: #FFF3E7 !important; color: #FF8501; border: 1px solid #FF8501; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
 		</caption>
 	          <grid sclass="scb-form-grid-2" hflex="1">

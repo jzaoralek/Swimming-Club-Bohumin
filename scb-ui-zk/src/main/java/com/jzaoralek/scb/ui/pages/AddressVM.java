@@ -25,6 +25,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.SimpleListModel;
 
+import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
@@ -256,7 +257,7 @@ public class AddressVM extends BaseVM {
 		}
 	}
 	
-	@NotifyChange("validationResponse")
+	@NotifyChange("contact")
 	@Command
 	public void addressItemChangedCmd() {
 		this.contact.setLandRegistryNumber(Long.valueOf(this.cp));
@@ -265,17 +266,22 @@ public class AddressVM extends BaseVM {
 		this.contact.setZipCode(this.zip);
 		
 		this.validationResponse = null;
+		this.contact.setAddressValidationStatus(AddressValidationStatus.NOT_VERIFIED);
 	}
 	
-	@NotifyChange("validationResponse")
+	@NotifyChange("contact")
 	@Command
 	public void placeValidationCmd() {
 		try {
 			this.validationResponse = ruianServiceRest.validate(getMunicipalityName(), this.zip, this.ce, this.co, this.cp, getStreetName());
 			if (this.validationResponse != null && this.validationResponse.isValid()) {
+				this.contact.setAddressValidationStatus(AddressValidationStatus.VALID);
 				WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.address.AddressIsValid"));
 			} else if (this.validationResponse != null && !this.validationResponse.isValid()) {
+				this.contact.setAddressValidationStatus(AddressValidationStatus.INVALID);
 				WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressIsNotValid"));
+			} else {
+				this.contact.setAddressValidationStatus(AddressValidationStatus.NOT_VERIFIED);
 			}
 			
 		} catch (RuntimeException e) {
@@ -320,7 +326,8 @@ public class AddressVM extends BaseVM {
 		this.ce = null;
 		this.zip = null;
 		
-		this.validationResponse = null;		
+		this.validationResponse = null;
+		this.contact.setAddressValidationStatus(AddressValidationStatus.NOT_VERIFIED);
 	}
 	
 	public String getResponse() {
@@ -405,5 +412,9 @@ public class AddressVM extends BaseVM {
 	
 	public RuianStreet getStreetSelected() {
 		return streetSelected;
+	}
+	
+	public Contact getContact() {
+		return contact;
 	}
 }
