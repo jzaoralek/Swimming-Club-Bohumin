@@ -6,7 +6,6 @@
 
 <zk xmlns:c="client" xmlns:x="xhtml">
 	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
-	<custom-attributes placeValidationCmd="placeValidationCmd" />
 	
 	<div self="@{define(mainContent)}"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressDemoVM')"

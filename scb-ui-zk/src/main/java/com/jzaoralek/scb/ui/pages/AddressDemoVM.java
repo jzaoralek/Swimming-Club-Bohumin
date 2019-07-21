@@ -20,10 +20,11 @@ public class AddressDemoVM {
 		this.contact.setEvidenceNumber("");
 		this.contact.setZipCode("70800");
 		
-		// TODO: integrace do přihlášky
+		// TODO: validace adresních elementů
+		//       nefunkční ruian, zahraniční adresa - vše textbox
 		//       male pismeno na zacatku
 		//       nabidka adres zobrazená na tlačítko a ověřit
-		//       indikátor neověřená ?, neplatná křížek, ověřená fajfka
+		//       umístění indikátoru dolů neověřená ?, neplatná křížek, ověřená fajfka
 	}
 	
 	@Command

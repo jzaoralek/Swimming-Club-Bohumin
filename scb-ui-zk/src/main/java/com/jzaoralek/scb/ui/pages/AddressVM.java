@@ -20,7 +20,6 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.SimpleListModel;
@@ -33,14 +32,10 @@ import com.sportologic.ruianclient.model.RuianMunicipality;
 import com.sportologic.ruianclient.model.RuianRegion;
 import com.sportologic.ruianclient.model.RuianStreet;
 import com.sportologic.ruianclient.model.RuianValidationResponse;
-import com.sportologic.ruianclient.service.RuianService;
 
 public class AddressVM extends BaseVM {
 
 	private final Logger LOG = LoggerFactory.getLogger(getClass());
-	
-	@WireVariable
-	private RuianService ruianServiceRest;
 	
 	@Wire
 	private Combobox city;
@@ -108,26 +103,25 @@ public class AddressVM extends BaseVM {
 	}
 	
 	private void initMunicipality() {
-		if (this.regionSelected != null) {
-			List<RuianMunicipality> municipalityFilterred = null;
-			if (!CollectionUtils.isEmpty(this.municipalityList)) {
-				municipalityFilterred = this.municipalityList.stream()
-						.filter(i -> i.getMunicipalityName().equals(this.contact.getCity()))
-						.collect(Collectors.toList());
-			}
-			if (!CollectionUtils.isEmpty(municipalityFilterred)) {
-				this.municipalitySelected = municipalityFilterred.get(0);
-				if (this.municipalitySelected != null) {
-					this.municipalityNameSelected = this.municipalitySelected.getMunicipalityName();
-				}
-				if (this.municipalitySelected != null) {
-					municipaltitySelectCore();
-				}
-			} else {
-				this.municipalitySelected = new RuianMunicipality();
-				this.municipalitySelected.setMunicipalityName(this.contact.getCity());
+		List<RuianMunicipality> municipalityFilterred = null;
+		if (!CollectionUtils.isEmpty(this.municipalityList)) {
+			municipalityFilterred = this.municipalityList.stream()
+					.filter(i -> i.getMunicipalityName().equals(this.contact.getCity()))
+					.collect(Collectors.toList());
+		}
+		if (!CollectionUtils.isEmpty(municipalityFilterred)) {
+			this.municipalitySelected = municipalityFilterred.get(0);
+			if (this.municipalitySelected != null) {
 				this.municipalityNameSelected = this.municipalitySelected.getMunicipalityName();
 			}
+			if (this.municipalitySelected != null) {
+				municipaltitySelectCore();
+			}
+		} else {			
+			this.municipalitySelected = new RuianMunicipality();
+			this.municipalitySelected.setMunicipalityName(this.contact.getCity());
+			this.municipalityNameSelected = this.municipalitySelected.getMunicipalityName();
+			this.municipalityListModel = new SimpleListModel<>(new String[]{this.municipalitySelected.getMunicipalityName()});
 		}
 	}
 	
@@ -151,12 +145,13 @@ public class AddressVM extends BaseVM {
 				this.streetSelected = new RuianStreet();
 				this.streetSelected.setStreetName(this.contact.getStreet());
 				this.streetNameSelected = this.streetSelected.getStreetName();
+				this.streetListModel = new SimpleListModel<>(new String[]{this.streetSelected.getStreetName()});
 			}
 		}
 	}
 	
 	private void initOtherElems() {
-		this.cp = contact.getLandRegistryNumber() != 0 ? String.valueOf(contact.getLandRegistryNumber()) : "";
+		this.cp = (contact.getLandRegistryNumber() != null && contact.getLandRegistryNumber() != 0) ? String.valueOf(contact.getLandRegistryNumber()) : "";
 		this.co = contact.getHouseNumber();
 		this.ce = contact.getEvidenceNumber();
 		this.zip = contact.getZipCode();
@@ -210,6 +205,17 @@ public class AddressVM extends BaseVM {
 	private void municipaltitySelectCore() {
 		this.streetList = null;
 		this.municipalitySelected = null;
+		
+		// nasetovani z comboboxu, pokud zadána ulice nevybraná ze seznamu
+		String cityNameEntered = this.city != null ? this.city.getValue() : "";
+		if (StringUtils.hasText(cityNameEntered) && !cityNameEntered.equals(this.municipalityNameSelected)) {
+			this.contact.setCity(cityNameEntered);
+			this.municipalityNameSelected = cityNameEntered;
+			this.municipalityListModel = new SimpleListModel<>(new String[]{this.municipalityNameSelected});
+
+			return;
+		}
+		
 		if (!StringUtils.hasText(this.municipalityNameSelected) 
 				|| CollectionUtils.isEmpty(this.municipalityList)) {
 			return;
@@ -240,6 +246,8 @@ public class AddressVM extends BaseVM {
 	}
 	
 	private void streetSelectCore() {
+		// nasetovani z comboboxu, pokud nevalidni ulice
+		this.contact.setStreet(this.street != null ? this.street.getValue() : "");
 		this.streetSelected = null;
 		if (!StringUtils.hasText(this.streetNameSelected) 
 				|| CollectionUtils.isEmpty(this.streetList)) {
@@ -260,7 +268,7 @@ public class AddressVM extends BaseVM {
 	@NotifyChange("contact")
 	@Command
 	public void addressItemChangedCmd() {
-		this.contact.setLandRegistryNumber(Long.valueOf(this.cp));
+		this.contact.setLandRegistryNumber(StringUtils.hasText(this.cp) ? Long.valueOf(this.cp) : null);
 		this.contact.setHouseNumber(this.co);
 		this.contact.setEvidenceNumber(this.ce);
 		this.contact.setZipCode(this.zip);
@@ -283,7 +291,6 @@ public class AddressVM extends BaseVM {
 			} else {
 				this.contact.setAddressValidationStatus(AddressValidationStatus.NOT_VERIFIED);
 			}
-			
 		} catch (RuntimeException e) {
 			LOG.error("RuntimeException caught, ", e);
 			WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressVerificationServiceNotAvailable"));

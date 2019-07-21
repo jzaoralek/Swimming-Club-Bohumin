@@ -22,7 +22,9 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
 
+import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
@@ -37,9 +39,16 @@ import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
+import com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM.RecipientType;
+import com.sportologic.ruianclient.model.RuianValidationResponse;
 
 public class CourseApplicationVM extends BaseVM {
 
@@ -198,49 +207,109 @@ public class CourseApplicationVM extends BaseVM {
 					}
 				}
 				
-				ScbUser scbUserBeforeApplicationSave = null;
-				if (this.loggedByParticRepr) {
-					// prihlaseny v rodicovske zone
-					scbUserBeforeApplicationSave = SecurityUtils.getLoggedUser();
-					application.setCourseParticRepresentative(scbUserBeforeApplicationSave);
-				} else {					
-					// verejna prihlaska, zjistit zda-li pred zalozenim objednavky uz uzivatel v aplikaci existoval
-					scbUserBeforeApplicationSave = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
+				// overeni validni adresy
+				if (!this.application.getCourseParticipant().getContact().isAddressValid()) {
+					// automaticke overeni nevalidní adresy
+					placeValidation(this.application.getCourseParticipant().getContact());
+//					// kontrola platnosti adresy po automatickem overeni
+//					if (!this.application.getCourseParticipant().getContact().isAddressValid()) {
+//						// adresa neni validni, dotaz jestli pokracovat
+//						MessageBoxUtils.showDefaultConfirmDialog(
+//								"msg.ui.quest.ProcessNotValidAddress",
+//								"msg.ui.quest.title.NotValidAddress",
+//								new SzpEventListener() {
+//									@Override
+//									public void onOkEvent() {
+//										submitCore();
+//									}
+//								}
+//						);
+//					} else {
+//						// adresa je validni, mozno ulozit
+//						submitCore();
+//					}
 				}
 				
-				CourseApplication courseApplication = courseApplicationService.store(application);
-				this.editMode = false;
-				this.confirmText = Labels.getLabel("msg.ui.info.applicationSend");
-				this.showNotification = true;
-				
-				// prihlaseni rovnou do kurzu
-				if (this.courseSelected != null && !this.courseSelected.isEmpty()) {
-					courseService.storeCourseParticipants(Arrays.asList(courseApplication.getCourseParticipant()), this.courseSelected.iterator().next().getUuid());
-					this.application.getCourseParticipant().setCourseList(new ArrayList<>(this.courseSelected));
-				}
-
-				sendMail(this.application, this.pageHeadline);
-				
-				// pokud se jedna o noveho uzivatele poslat mail o pristupu do aplikace
-				if (scbUserBeforeApplicationSave == null) {
-					ScbUser user = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
-					sendMailToNewUser(user);
-				}
-				
-				if (this.loggedByParticRepr) {
-					// rodicovska zona, redirect na seznam ucastniku
-					WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.applicationSend"));
-					Executions.sendRedirect(WebPages.USER_PARTICIPANT_LIST.getUrl());
-				}
+				submitCore();					
 			}
 		} catch (ScbValidationException e) {
-			LOG.warn("ScbValidationException caught for application: " + this.application);
+			LOG.warn("ScbValidationException caught for application: " + this.application, e);
 			WebUtils.showNotificationError(e.getMessage());
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for application: " + this.application, e);
 			throw new RuntimeException(e);
 		}
     }
+	
+	private void submitCore() {
+		try {
+			ScbUser scbUserBeforeApplicationSave = null;
+			if (this.loggedByParticRepr) {
+				// prihlaseny v rodicovske zone
+				scbUserBeforeApplicationSave = SecurityUtils.getLoggedUser();
+				application.setCourseParticRepresentative(scbUserBeforeApplicationSave);
+			} else {					
+				// verejna prihlaska, zjistit zda-li pred zalozenim objednavky uz uzivatel v aplikaci existoval
+				scbUserBeforeApplicationSave = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
+			}
+			
+			CourseApplication courseApplication = courseApplicationService.store(application);
+			this.editMode = false;
+			this.confirmText = Labels.getLabel("msg.ui.info.applicationSend");
+			this.showNotification = true;
+			
+			// prihlaseni rovnou do kurzu
+			if (this.courseSelected != null && !this.courseSelected.isEmpty()) {
+				courseService.storeCourseParticipants(Arrays.asList(courseApplication.getCourseParticipant()), this.courseSelected.iterator().next().getUuid());
+				this.application.getCourseParticipant().setCourseList(new ArrayList<>(this.courseSelected));
+			}
+
+			sendMail(this.application, this.pageHeadline);
+			
+			// pokud se jedna o noveho uzivatele poslat mail o pristupu do aplikace
+			if (scbUserBeforeApplicationSave == null) {
+				ScbUser user = scbUserService.getByUsername(application.getCourseParticRepresentative().getContact().getEmail1());
+				sendMailToNewUser(user);
+			}
+			
+			if (this.loggedByParticRepr) {
+				// rodicovska zona, redirect na seznam ucastniku
+				WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.applicationSend"));
+				Executions.sendRedirect(WebPages.USER_PARTICIPANT_LIST.getUrl());
+			}
+		} catch (ScbValidationException e) {
+			LOG.warn("ScbValidationException caught for application: " + this.application, e);
+			WebUtils.showNotificationError(e.getMessage());
+		} catch (Exception e) {
+			LOG.error("Unexpected exception caught for application: " + this.application, e);
+			throw new RuntimeException(e);
+		}
+		
+	}
+	
+	private void placeValidation(Contact contact) {
+		if (contact == null) {
+			return;
+		}
+		try {
+			RuianValidationResponse validationResponse = ruianServiceRest.validate(contact.getCity()
+					, contact.getZipCode()
+					, contact.getEvidenceNumber()
+					, contact.getHouseNumber()
+					, contact.getLandRegistryNumber() != null ? String.valueOf(contact.getLandRegistryNumber()) : ""
+					, contact.getStreet());
+			if (validationResponse != null && validationResponse.isValid()) {
+				contact.setAddressValidationStatus(AddressValidationStatus.VALID);
+			} else if (validationResponse != null && !validationResponse.isValid()) {
+				contact.setAddressValidationStatus(AddressValidationStatus.INVALID);
+			} else {
+				contact.setAddressValidationStatus(AddressValidationStatus.NOT_VERIFIED);
+			}
+		} catch (RuntimeException e) {
+			LOG.error("RuntimeException caught, ", e);
+			WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressVerificationServiceNotAvailable"));
+		}
+	}
 
 	/**
 	 * Kontroluje pouziti emailu jako defaultniho prihlasovaciho jmena, pokud je jiz evidovano, nabidne predvyplneni hodnot zakonneho zastupce.

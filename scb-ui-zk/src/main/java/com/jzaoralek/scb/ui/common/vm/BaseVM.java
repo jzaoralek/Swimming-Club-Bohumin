@@ -46,6 +46,7 @@ import com.jzaoralek.scb.ui.common.utils.ManifestSolver;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.validator.ExistingUsernameValidator;
 import com.jzaoralek.scb.ui.common.validator.Validators;
+import com.sportologic.ruianclient.service.RuianService;
 
 public class BaseVM {
 
@@ -73,6 +74,9 @@ public class BaseVM {
 	
 	@WireVariable
 	protected CourseApplicationFileConfigService courseApplicationFileConfigService;
+	
+	@WireVariable
+	protected RuianService ruianServiceRest;
 
 	protected String returnToPage;
 	protected String returnToUrl;

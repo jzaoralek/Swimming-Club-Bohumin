@@ -23,6 +23,7 @@ public class Contact implements IdentEntity {
 	private String evidenceNumber;
 	private String city;
 	private String zipCode;
+	private String foreignAddress;
 	private AddressValidationStatus addressValidationStatus;
 	private String email1;
 	private String email2;
@@ -168,13 +169,20 @@ public class Contact implements IdentEntity {
 	public void setRegion(String region) {
 		this.region = region;
 	}
-	
+	public String getForeignAddress() {
+		return foreignAddress;
+	}
+	public void setForeignAddress(String foreignAddress) {
+		this.foreignAddress = foreignAddress;
+	}
+
 	@Override
 	public String toString() {
 		return "Contact [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", firstname=" + firstname
 				+ ", surname=" + surname + ", region=" + region + ", street=" + street + ", landRegistryNumber="
 				+ landRegistryNumber + ", houseNumber=" + houseNumber + ", evidenceNumber=" + evidenceNumber + ", city="
-				+ city + ", zipCode=" + zipCode + ", addressValidationStatus=" + addressValidationStatus + ", email1="
-				+ email1 + ", email2=" + email2 + ", phone1=" + phone1 + ", phone2=" + phone2 + "]";
+				+ city + ", zipCode=" + zipCode + ", foreignAddress=" + foreignAddress + ", addressValidationStatus="
+				+ addressValidationStatus + ", email1=" + email1 + ", email2=" + email2 + ", phone1=" + phone1
+				+ ", phone2=" + phone2 + "]";
 	}
 }

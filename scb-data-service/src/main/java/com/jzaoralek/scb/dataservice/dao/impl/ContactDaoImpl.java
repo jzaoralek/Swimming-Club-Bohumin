@@ -34,17 +34,19 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 	private static final String PHONE2_PARAM = "phone2";
 	private static final String REGION_PARAM = "region";
 	private static final String ADDRESS_VALIDATION_STATUS_PARAM = "address_validation_status";
+	private static final String FOREIGN_ADDRESS_PARAM = "foreign_address";
+	private static final String EVIDENCE_NUMBER_PARAM = "evidence_number";
 
 	private static final String INSERT = " INSERT INTO contact " +
-		" (uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, region, address_validation_status, email1, email2, phone1, phone2, modif_at, modif_by) " +
+		" (uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, region, evidence_number, foreign_address, address_validation_status, email1, email2, phone1, phone2, modif_at, modif_by) " +
 		" VALUES " +
-		" (:"+UUID_PARAM+", :"+FIRSTNAME_PARAM+", :"+SURNAME_PARAM+", :"+STREET_PARAM+", :"+LAND_REGISTRY_NUMBER_PARAM+", :"+HOUSE_NUMBER_PARAM+", :"+CITY_PARAM+", :"+ZIPCODE_PARAM+", :"+REGION_PARAM+", :"+ADDRESS_VALIDATION_STATUS_PARAM+", :"+EMAIL1_PARAM+", :"+EMAIL2_PARAM+", :"+PHONE1_PARAM+", :"+PHONE2_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+") ";
-	private static final String SELECT_BY_UUID = "SELECT uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, region, address_validation_status, email1, email2, phone1, phone2, modif_at, modif_by from contact WHERE uuid = :" + UUID_PARAM;
+		" (:"+UUID_PARAM+", :"+FIRSTNAME_PARAM+", :"+SURNAME_PARAM+", :"+STREET_PARAM+", :"+LAND_REGISTRY_NUMBER_PARAM+", :"+HOUSE_NUMBER_PARAM+", :"+CITY_PARAM+", :"+ZIPCODE_PARAM+", :"+REGION_PARAM+", :"+EVIDENCE_NUMBER_PARAM+", :"+FOREIGN_ADDRESS_PARAM+", :"+ADDRESS_VALIDATION_STATUS_PARAM+", :"+EMAIL1_PARAM+", :"+EMAIL2_PARAM+", :"+PHONE1_PARAM+", :"+PHONE2_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+") ";
+	private static final String SELECT_BY_UUID = "SELECT uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, region, evidence_number, foreign_address, address_validation_status, email1, email2, phone1, phone2, modif_at, modif_by from contact WHERE uuid = :" + UUID_PARAM;
 	private static final String SELECT_BY_EMAIL_COUNT = "SELECT count(*) FROM contact WHERE email1 = "+EMAIL1_PARAM;
-	private static final String SELECT_BY_EMAIL = "SELECT uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, region, address_validation_status, email1, email2, phone1, phone2, modif_at, modif_by FROM contact WHERE email1 = :"+EMAIL1_PARAM;
+	private static final String SELECT_BY_EMAIL = "SELECT uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, region, evidence_number, foreign_address, address_validation_status, email1, email2, phone1, phone2, modif_at, modif_by FROM contact WHERE email1 = :"+EMAIL1_PARAM;
 	private static final String SELECT_EMAIl_ALL = "SELECT DISTINCT email1 FROM contact";
 	private static final String DELETE = "DELETE FROM contact where uuid = :" + UUID_PARAM;
-	private static final String UPDATE = "UPDATE contact SET firstname=:"+FIRSTNAME_PARAM+", surname=:"+SURNAME_PARAM+", street=:"+STREET_PARAM+", land_registry_number=:"+LAND_REGISTRY_NUMBER_PARAM+", house_number=:"+HOUSE_NUMBER_PARAM+", city=:"+CITY_PARAM+", zip_code=:"+ZIPCODE_PARAM+", region=:"+REGION_PARAM+", address_validation_status=:"+ADDRESS_VALIDATION_STATUS_PARAM+", email1=:"+EMAIL1_PARAM+", email2=:"+EMAIL2_PARAM+", phone1=:"+PHONE1_PARAM+", phone2=:"+PHONE2_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE = "UPDATE contact SET firstname=:"+FIRSTNAME_PARAM+", surname=:"+SURNAME_PARAM+", street=:"+STREET_PARAM+", land_registry_number=:"+LAND_REGISTRY_NUMBER_PARAM+", house_number=:"+HOUSE_NUMBER_PARAM+", city=:"+CITY_PARAM+", zip_code=:"+ZIPCODE_PARAM+", region=:"+REGION_PARAM+", evidence_number=:"+EVIDENCE_NUMBER_PARAM+", foreign_address=:"+FOREIGN_ADDRESS_PARAM+", address_validation_status=:"+ADDRESS_VALIDATION_STATUS_PARAM+", email1=:"+EMAIL1_PARAM+", email2=:"+EMAIL2_PARAM+", phone1=:"+PHONE1_PARAM+", phone2=:"+PHONE2_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
 
 	@Autowired
 	public ContactDaoImpl(DataSource ds) {
@@ -90,6 +92,8 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 		paramMap.addValue(CITY_PARAM, contact.getCity());
 		paramMap.addValue(ZIPCODE_PARAM, contact.getZipCode());
 		paramMap.addValue(REGION_PARAM, contact.getRegion());
+		paramMap.addValue(EVIDENCE_NUMBER_PARAM, contact.getEvidenceNumber());
+		paramMap.addValue(FOREIGN_ADDRESS_PARAM, contact.getForeignAddress());
 		paramMap.addValue(ADDRESS_VALIDATION_STATUS_PARAM, contact.getAddressValidationStatus() != null ? contact.getAddressValidationStatus().name() : AddressValidationStatus.NOT_VERIFIED.name());
 		paramMap.addValue(EMAIL1_PARAM, contact.getEmail1());
 		paramMap.addValue(EMAIL2_PARAM, contact.getEmail2());
@@ -112,6 +116,8 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 		paramMap.addValue(CITY_PARAM, contact.getCity());
 		paramMap.addValue(ZIPCODE_PARAM, contact.getZipCode());
 		paramMap.addValue(REGION_PARAM, contact.getRegion());
+		paramMap.addValue(EVIDENCE_NUMBER_PARAM, contact.getEvidenceNumber());
+		paramMap.addValue(FOREIGN_ADDRESS_PARAM, contact.getForeignAddress());
 		paramMap.addValue(ADDRESS_VALIDATION_STATUS_PARAM, contact.getAddressValidationStatus() != null ? contact.getAddressValidationStatus().name() : AddressValidationStatus.NOT_VERIFIED.name());
 		paramMap.addValue(EMAIL1_PARAM, contact.getEmail1());
 		paramMap.addValue(EMAIL2_PARAM, contact.getEmail2());
@@ -138,6 +144,8 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 			ret.setHouseNumber(rs.getString("house_number"));
 			ret.setLandRegistryNumber(Long.valueOf(rs.getInt("land_registry_number")));
 			ret.setRegion(rs.getString("region"));
+			ret.setEvidenceNumber(rs.getString("evidence_number"));
+			ret.setForeignAddress(rs.getString("foreign_address"));
 			ret.setAddressValidationStatus(AddressValidationStatus.valueOf(rs.getString("address_validation_status")));
 			ret.setPhone1(rs.getString("phone1"));
 			ret.setPhone2(rs.getString("phone2"));

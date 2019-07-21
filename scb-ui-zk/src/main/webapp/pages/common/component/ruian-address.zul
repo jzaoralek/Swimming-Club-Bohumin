@@ -2,8 +2,11 @@
 	
 	<custom-attributes contact="${arg.contact}" />
 	<custom-attributes contactDisabled="${empty(arg.contactDisabled) ? true : arg.contactDisabled}" />
+	<custom-attributes foreignAddress="${empty(arg.foreignAddress) ? false : arg.foreignAddress}" />
 	
-	<groupbox width="100%" style="margin-top:20px;"
+	<custom-attributes placeValidationCmd="placeValidationCmd" />
+	
+	<groupbox hflex="1"
 		closable="false"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressVM', contact=contact)"
 		validationMessages="@id('vmsgs')" >
@@ -19,16 +22,18 @@
 				value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" 
 				style="margin-top: 10px; background-color: #FFF3E7 !important; color: #FF8501; border: 1px solid #FF8501; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
 		</caption>
-	          <grid sclass="scb-form-grid-2" hflex="1">
+		<grid sclass="scb-form-grid-2" 
+			style="margin-left: 10px; margin-rignt: 10px;"
+			hflex="1" >
 			<rows>
 				<row>
 					<cell>
 						<vbox hflex="1">
 							<hlayout hflex="1">
 								<label value="${c:l('msg.ui.address.Region')}"/>
-								<hbox hflex="1" pack="end" xmlns:x="xhtml" style="padding-left: 5px; padding-right: 12px; height: 26px;">
-									<x:i class="z-icon-check-circle" visible="@load(!empty(vm.regionSelected))" style="color: green;" />
-								</hbox>
+<!-- 								<hbox hflex="1" pack="end" xmlns:x="xhtml" style="padding-left: 5px; padding-right: 12px; height: 26px;"> -->
+<!-- 									<x:i class="z-icon-check-circle" visible="@load(!empty(vm.regionSelected))" style="color: green;" /> -->
+<!-- 								</hbox> -->
 							</hlayout>
 							<!-- Region -->
 							<combobox id="region" 
@@ -64,9 +69,9 @@
 						<vbox hflex="1">
 							<hlayout hflex="1">
 								<label value="${c:l('txt.ui.common.city')}"/>
-								<hbox hflex="1" pack="end" xmlns:x="xhtml" style="padding-left: 5px; padding-right: 12px; height: 26px;">
-									<x:i class="z-icon-check-circle" visible="@load(!empty(vm.municipalitySelected))" style="color: green;" />
-								</hbox>
+<!-- 								<hbox hflex="1" pack="end" xmlns:x="xhtml" style="padding-left: 5px; padding-right: 12px; height: 26px;"> -->
+<!-- 									<x:i class="z-icon-check-circle" visible="@load(!empty(vm.municipalitySelected))" style="color: green;" /> -->
+<!-- 								</hbox> -->
 							</hlayout>
 							<!-- Mesto -->
 							<combobox id="city" 
@@ -103,9 +108,9 @@
 						<vbox hflex="1">
 							<hlayout hflex="1">
 								<label value="${c:l('txt.ui.common.street')}"/>
-								<hbox hflex="1" pack="end" xmlns:x="xhtml" style="padding-left: 5px; padding-right: 12px; height: 26px;">
-									<x:i class="z-icon-check-circle" visible="@load(!empty(vm.streetSelected))" style="color: green;)" />
-								</hbox>
+<!-- 								<hbox hflex="1" pack="end" xmlns:x="xhtml" style="padding-left: 5px; padding-right: 12px; height: 26px;"> -->
+<!-- 									<x:i class="z-icon-check-circle" visible="@load(!empty(vm.streetSelected))" style="color: green;)" /> -->
+<!-- 								</hbox> -->
 							</hlayout>
 							<!-- Ulice -->
 							<combobox id="street"
@@ -134,7 +139,7 @@
 						<hbox hflex="1">
 							<vbox hflex="1">
 								<label value="${c:l('txt.ui.common.landRegNo')}"/>
-								<intbox id="cp"
+								<textbox id="cp"
 									value="@bind(vm.cp)"
 									onChange="@command('addressItemChangedCmd')"
 									maxlength="8"
@@ -192,12 +197,12 @@
 						<hlayout hflex="1">
 							<button label="${c:l('msg.ui.address.Verify')}" 
 								onClick="@command(placeValidationCmd)" 
-								visible="@load(!vm.validationResponse.valid)"
+								visible="@load(!vm.contact.addressValid)"
 								if="${!contactDisabled}" />
 						</hlayout>
 					</cell>
 				</row>
 			</rows>
-		</grid>			
+		</grid>
 	</groupbox>
 </zk>
