@@ -41,13 +41,9 @@ import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
-import com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM.RecipientType;
 import com.sportologic.ruianclient.model.RuianValidationResponse;
 
 public class CourseApplicationVM extends BaseVM {
@@ -208,29 +204,30 @@ public class CourseApplicationVM extends BaseVM {
 				}
 				
 				// overeni validni adresy
-				if (!this.application.getCourseParticipant().getContact().isAddressValid()) {
+				if (this.application.getCourseParticipant().getContact().isAddressValid()) {
+					// adresa je validni, mozno ulozit
+					submitCore();
+				} else {
 					// automaticke overeni nevalidní adresy
 					placeValidation(this.application.getCourseParticipant().getContact());
-//					// kontrola platnosti adresy po automatickem overeni
-//					if (!this.application.getCourseParticipant().getContact().isAddressValid()) {
-//						// adresa neni validni, dotaz jestli pokracovat
-//						MessageBoxUtils.showDefaultConfirmDialog(
-//								"msg.ui.quest.ProcessNotValidAddress",
-//								"msg.ui.quest.title.NotValidAddress",
-//								new SzpEventListener() {
-//									@Override
-//									public void onOkEvent() {
-//										submitCore();
-//									}
-//								}
-//						);
-//					} else {
-//						// adresa je validni, mozno ulozit
-//						submitCore();
-//					}
+					// kontrola platnosti adresy po automatickem overeni
+					if (this.application.getCourseParticipant().getContact().isAddressValid()) {
+						// adresa je validni, mozno ulozit
+						submitCore();
+					} else {
+						// adresa neni validni, dotaz jestli pokracovat
+						MessageBoxUtils.showDefaultConfirmDialog(
+								"msg.ui.quest.ProcessNotValidAddress",
+								"msg.ui.quest.title.NotValidAddress",
+								new SzpEventListener() {
+									@Override
+									public void onOkEvent() {
+										submitCore();
+									}
+								}
+						);
+					}					
 				}
-				
-				submitCore();					
 			}
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught for application: " + this.application, e);
@@ -277,6 +274,9 @@ public class CourseApplicationVM extends BaseVM {
 				WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.applicationSend"));
 				Executions.sendRedirect(WebPages.USER_PARTICIPANT_LIST.getUrl());
 			}
+			
+			BindUtils.postNotifyChange(null, null, this, "*");
+			
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught for application: " + this.application, e);
 			WebUtils.showNotificationError(e.getMessage());
@@ -284,7 +284,6 @@ public class CourseApplicationVM extends BaseVM {
 			LOG.error("Unexpected exception caught for application: " + this.application, e);
 			throw new RuntimeException(e);
 		}
-		
 	}
 	
 	private void placeValidation(Contact contact) {
