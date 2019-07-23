@@ -18,10 +18,11 @@ public class AddressComposer extends SelectorComposer<Grid> {
 	public void doAfterCompose(Grid comp) throws Exception {
 		Button submitBtn = (Button)comp.getAttribute("submitBtn");
 		Button submitAddressBtn = (Button)comp.getFellowIfAny("submitAddressBtn");
-
+		
 		if (submitBtn != null && submitAddressBtn != null) {
 			submitBtn.addForward(Events.ON_CLICK, submitAddressBtn, Events.ON_CLICK);
 		}
+		
 		super.doAfterCompose(comp);
 	}
 }

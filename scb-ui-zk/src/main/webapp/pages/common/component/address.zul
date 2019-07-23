@@ -12,7 +12,9 @@
 		validationMessages="@id('vmsgs')"
 		hflex="1" >
 		
-		<vbox width="100%" style="margin: 10px;">
+		<vbox width="100%" style="margin: 10px;"
+			apply="com.jzaoralek.scb.ui.common.component.address.AddressClientComposer" >
+			
 			<button id="submitBtn" 
 				onClick="@command('submitCmd')" 
 				label="Submit" />
@@ -24,10 +26,9 @@
 					<label value="@bind(vmsgs[representativeEmail1])" />
 				</span>	
 			</hbox>
+			
+			<custom-attributes submitBtn="@load(submitBtn)"></custom-attributes>
+			<ruian-address contact="${vm.contact}" contactDisabled="false" submitBtn="@load(submitBtn)" />
 		</vbox>
-		
-		<custom-attributes submitBtn="${submitBtn}"></custom-attributes>
-		<ruian-address contact="${vm.contact}" contactDisabled="false" submitBtn="@load(submitBtn)" />
-		
 	</div>
 </zk>
