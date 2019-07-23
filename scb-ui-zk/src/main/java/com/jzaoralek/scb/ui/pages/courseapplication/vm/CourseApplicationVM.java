@@ -39,6 +39,7 @@ import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
@@ -163,6 +164,11 @@ public class CourseApplicationVM extends BaseVM {
 	@Command
     public void submit() {
 		try {
+			// kontrola vyplneni adresy
+			if (!AddressUtils.isAddressValid()) {
+				return;
+			}
+			
 			if (this.securedMode) {
 				// update
 				if (LOG.isDebugEnabled()) {
@@ -235,6 +241,9 @@ public class CourseApplicationVM extends BaseVM {
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for application: " + this.application, e);
 			throw new RuntimeException(e);
+		} finally {
+			// zruseni validity adresy pro dalsi vyplneni
+			AddressUtils.setAddressInvalid();
 		}
     }
 	

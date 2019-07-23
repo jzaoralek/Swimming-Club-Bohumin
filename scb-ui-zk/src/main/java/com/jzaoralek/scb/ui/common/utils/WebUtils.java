@@ -106,6 +106,30 @@ public final class WebUtils {
 		}
 		exec.getSession().removeAttribute(atr);
 	}
+	
+	public static void setDesktopAtribute(String atr, Object obj) {
+		Execution exec = Executions.getCurrent();
+		if (exec == null || exec.getSession() == null) {
+			return;
+		}
+		exec.getDesktop().setAttribute(atr, obj);
+	}
+	
+	public static Object getDesktopAtribute(String atr) {
+		Execution exec = Executions.getCurrent();
+		if (exec == null || exec.getSession() == null) {
+			return null;
+		}
+		return exec.getDesktop().getAttribute(atr);
+	}
+
+	public static void removeDesktopAtribute(String atr) {
+		Execution exec = Executions.getCurrent();
+		if (exec == null || exec.getSession() == null) {
+			return;
+		}
+		exec.getDesktop().removeAttribute(atr);
+	}
 
 	public static void downloadAttachment(Attachment attachment) {
 		if (attachment == null) {

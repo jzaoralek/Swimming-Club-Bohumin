@@ -4,6 +4,8 @@ import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class AddressDemoVM extends BaseVM {
@@ -31,7 +33,11 @@ public class AddressDemoVM extends BaseVM {
 	
 	@Command
 	public void submitCmd() {
-		System.out.println(this.contact);
+		if (!AddressUtils.isAddressValid()) {
+			return;
+		}
+		WebUtils.showNotificationInfo("Submitted.");
+		AddressUtils.setAddressInvalid();
 	}
 	
 	public Contact getContact() {

@@ -13,7 +13,9 @@
 		hflex="1" >
 		
 		<vbox width="100%" style="margin: 10px;">
-			<button onClick="@command('submitCmd')" label="Submit" />
+			<button id="submitBtn" 
+				onClick="@command('submitCmd')" 
+				label="Submit" />
 			<textbox id="representativeEmail1"
 				value="@bind(vm.courseReprName) @save(vm.courseReprName, before='submitCmd') @validator(vm.notNullValidator)"
 				hflex="1" />
@@ -24,7 +26,8 @@
 			</hbox>
 		</vbox>
 		
-		<ruian-address contact="${vm.contact}" contactDisabled="false" />
+		<custom-attributes submitBtn="${submitBtn}"></custom-attributes>
+		<ruian-address contact="${vm.contact}" contactDisabled="false" submitBtn="@load(submitBtn)" />
 		
 	</div>
 </zk>

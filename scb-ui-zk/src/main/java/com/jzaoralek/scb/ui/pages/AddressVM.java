@@ -26,6 +26,7 @@ import org.zkoss.zul.SimpleListModel;
 
 import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 import com.sportologic.ruianclient.model.RuianMunicipality;
@@ -295,6 +296,14 @@ public class AddressVM extends BaseVM {
 			LOG.error("RuntimeException caught, ", e);
 			WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressVerificationServiceNotAvailable"));
 		}
+	}
+	
+	/**
+	 * Command pro submit vyvolavajici validaci adresy.
+	 */
+	@Command
+	public void addressSubmitCmd() {
+		AddressUtils.setAddressValid();
 	}
 	
 	private String getMunicipalityName() {

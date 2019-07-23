@@ -11,9 +11,10 @@
 		height="100%"
 		sclass="scb-view scb-view-900" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
-		validationMessages="@id('vmsgs')"
-	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
+		validationMessages="@id('vmsgs')" >
 		
+			<custom-attributes submitCmd="submit" />
+			
             <hlayout>
 	            <hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())">
 					<button onClick="@command('backCmd')" 
@@ -63,13 +64,13 @@
 											<label value="${c:l('txt.ui.common.email')} / ${c:l('txt.ui.common.Username')}"/>
 											<hbox hflex="1">
 												<textbox id="representativeEmail1" readonly="@load(vm.itemReadOnly or !vm.editMode)"
-													value="@bind(fx.application.courseParticRepresentative.contact.email1) @validator(vm.emailValidator, notNull=true)"
+													value="@bind(vm.application.courseParticRepresentative.contact.email1) @save(vm.application.courseParticRepresentative.contact.email1, before={submitCmd}) @validator(vm.emailValidator, notNull=true)"
 													maxlength="@load(vm.getEmailMaxlength())"
 													placeholder="*"
 													sclass="form-input-text"
 													focus="${!vm.courseSelectionRequired}"
 													tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-													onChange="@command('validateUniqueUsernameCmd', email=self.value, fx=fx)"
+													onChange="@command('validateUniqueUsernameCmd', email=self.value, fx=vm)"
 													hflex="1" />
 												<a iconSclass="z-icon-info-circle big-icon" popup="emailPopup" style="margin-left: 5px; position:relative;top: 5px" />
 											</hbox>
@@ -87,7 +88,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.firstname')}"/>
 											<textbox id="representativeFirstname" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticRepresentative.contact.firstname) @validator(vm.notNullValidator)" 
+												value="@bind(vm.application.courseParticRepresentative.contact.firstname) @save(vm.application.courseParticRepresentative.contact.firstname, before={submitCmd}) @validator(vm.notNullValidator)" 
 												maxlength="@load(vm.getFirstnameMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
@@ -107,7 +108,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.surname')}"/>
 											<textbox id="representativeSurname" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticRepresentative.contact.surname) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticRepresentative.contact.surname) @save(vm.application.courseParticRepresentative.contact.surname, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getSurnameMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
@@ -127,7 +128,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.phone')} 1"/>
 											<textbox id="representativePhone1" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticRepresentative.contact.phone1) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticRepresentative.contact.phone1) @save(vm.application.courseParticRepresentative.contact.phone1, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getPhoneMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
@@ -147,7 +148,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.phone')} 2"/>
 											<textbox id="representativePhone2" readonly="@load(!vm.editMode)" 
-												value="@bind(fx.application.courseParticRepresentative.contact.phone2)"
+												value="@bind(vm.application.courseParticRepresentative.contact.phone2)"
 												maxlength="@load(vm.getPhoneMaxlength())"
 												sclass="form-input-text"
 												hflex="1" />
@@ -163,7 +164,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.email')} 2"/>
 											<textbox id="representativeEmail2" readonly="@load(!vm.editMode)" 
-												value="@bind(fx.application.courseParticRepresentative.contact.email2) @validator(vm.emailValidator)"
+												value="@bind(vm.application.courseParticRepresentative.contact.email2) @validator(vm.emailValidator)"
 												maxlength="@load(vm.getEmailMaxlength())"
 												sclass="form-input-text"
 												hflex="1" />
@@ -191,7 +192,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.birthNumber')}"/>
 											<textbox id="particBirthNumber" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
+												value="@bind(vm.application.courseParticipant.personalNo) @save(vm.application.courseParticipant.personalNo, before={submitCmd}) @validator(vm.birthNumberValidator, notNull=true)"
 			                            		maxlength="@load(vm.getBirthNumberMaxlength())"
 			                            		placeholder="*"
 			                            		sclass="form-input-text"
@@ -211,7 +212,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.firstname')}"/>
 											<textbox id="particFirstname" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.contact.firstname) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticipant.contact.firstname) @save(vm.application.courseParticipant.contact.firstname, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getFirstnameMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
@@ -231,7 +232,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.surname')}"/>
 											<textbox id="particSurname" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.contact.surname) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticipant.contact.surname) @save(vm.application.courseParticipant.contact.surname, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getSurnameMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
@@ -249,7 +250,8 @@
 								<!-- Adresa -->
 								<row>
 									<cell>
-										<ruian-address contact="${vm.application.courseParticipant.contact}" contactDisabled="${!vm.editMode}" />
+										<custom-attributes submitBtn="${submitBtn}"></custom-attributes>
+										<ruian-address contact="${vm.application.courseParticipant.contact}" contactDisabled="${!vm.editMode}" submitBtn="@load(submitBtn)" />
 									</cell>
 								</row>						
 								<row>
@@ -257,7 +259,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.birthDate')}"/>
 											<datebox id="particBirthdate" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.birthdate) @validator(vm.notNullObjectValidator)"
+												value="@bind(vm.application.courseParticipant.birthdate) @save(vm.application.courseParticipant.birthdate, before={submitCmd}) @validator(vm.notNullObjectValidator)"
 			                            		format="@load(vm.dateFormat)" 
 			                            		maxlength="@load(vm.getDateMaxlength())"
 			                            		placeholder="*"
@@ -276,7 +278,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.healthInsurance')}"/>
 											<textbox id="particHealthInsurance" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.healthInsurance) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticipant.healthInsurance) @save(vm.application.courseParticipant.healthInsurance, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getHealthInsuranceMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
@@ -295,7 +297,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.application.healthInfo')}"/>
 											<textbox rows="3" hflex="3" multiline="true" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.healthInfo)"
+												value="@bind(vm.application.courseParticipant.healthInfo)"
 												sclass="form-input-textarea"
 												maxlength="@load(vm.getHealthInfoMaxlength())" />
 										</vbox>
@@ -362,7 +364,7 @@
 							        data-callback="afterValidate"
 							        visible="@load(vm.editMode and !vm.securedMode)" />
 
-								<button id="submit" 
+								<button id="submitBtn" 
 									label="Odeslat"
 									onClick="@command('submit')" 
 									iconSclass="z-icon-check"
