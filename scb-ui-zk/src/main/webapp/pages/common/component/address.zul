@@ -9,9 +9,20 @@
 	
 	<div self="@{define(mainContent)}"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressDemoVM')"
+		validationMessages="@id('vmsgs')"
 		hflex="1" >
 		
-		<button onClick="@command('submitCmd')" label="Submit" />
+		<vbox width="100%" style="margin: 10px;">
+			<button onClick="@command('submitCmd')" label="Submit" />
+			<textbox id="representativeEmail1"
+				value="@bind(vm.courseReprName) @save(vm.courseReprName, before='submitCmd') @validator(vm.notNullValidator)"
+				hflex="1" />
+			<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+				<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
+					<label value="@bind(vmsgs[representativeEmail1])" />
+				</span>	
+			</hbox>
+		</vbox>
 		
 		<ruian-address contact="${vm.contact}" contactDisabled="false" />
 		

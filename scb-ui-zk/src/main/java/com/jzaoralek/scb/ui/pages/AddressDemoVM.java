@@ -4,10 +4,12 @@ import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-public class AddressDemoVM {
+public class AddressDemoVM extends BaseVM {
 
 	private Contact contact;
+	private String courseReprName;
 
 	@Init
 	public void init() {
@@ -35,8 +37,13 @@ public class AddressDemoVM {
 	public Contact getContact() {
 		return contact;
 	}
-
 	public void setContact(Contact contact) {
 		this.contact = contact;
-	}	
+	}
+	public String getCourseReprName() {
+		return courseReprName;
+	}
+	public void setCourseReprName(String courseReprName) {
+		this.courseReprName = courseReprName;
+	}
 }
