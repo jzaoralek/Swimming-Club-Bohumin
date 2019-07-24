@@ -22,7 +22,7 @@
 						iconSclass="z-icon-arrow-left" 
 						sclass="btn-light fix-btn-icon"/>
 					<!-- Zpravy -->
-	            	<send-mail-button />			
+	            	<send-mail-button />	
 				</hlayout>
 			
                 <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
@@ -48,7 +48,12 @@
 		
 				<!-- Formular -->
 				<vlayout visible="@load(vm.editMode)" width="100%">	  
-				
+					<!-- Tlacitko odesilajici formular, neni viditelne, kvulu validaci musi byt definovane pred komponentou adresa -->
+					<button id="realSubmitBtn" 
+						onClick="@command('submit')"
+						visible="false"
+						label="Submit" />
+					
 					<!-- Vyber kurzu -->
 					<include src="/pages/common/component/course-selection-groupbox.zul" if="${vm.courseSelectionRequired}" />
                     	
@@ -250,8 +255,8 @@
 								<!-- Adresa -->
 								<row>
 									<cell>
-										<custom-attributes submitBtn="${submitBtn}"></custom-attributes>
-										<ruian-address contact="${vm.application.courseParticipant.contact}" contactDisabled="${!vm.editMode}" submitBtn="@load(submitBtn)" />
+										<custom-attributes submitBtn="${realSubmitBtn}"></custom-attributes>
+										<ruian-address contact="${vm.application.courseParticipant.contact}" contactDisabled="${!vm.editMode}" submitBtn="@load(realSubmitBtn)" />
 									</cell>
 								</row>						
 								<row>
@@ -364,9 +369,10 @@
 							        data-callback="afterValidate"
 							        visible="@load(vm.editMode and !vm.securedMode)" />
 
+								<!-- Kliknuti vyvolava klik na realSubmitBtn, ktere teprve odesila formular, kvuli validaci adresy, tlacitko musi byt definovani pred elementem s adresou. -->
 								<button id="submitBtn" 
 									label="Odeslat"
-									onClick="@command('submit')" 
+									forward="onClick=realSubmitBtn.onClick"
 									iconSclass="z-icon-check"
 									style="margin-top: 20px;"
 									sclass="btn-success"
@@ -374,7 +380,7 @@
 									visible="@load(vm.editMode and !vm.securedMode)" />
 								<button label="Uložit"
 									sclass="btn-success"
-									onClick="@command('submit')" 
+									forward="onClick=realSubmitBtn.onClick"
 									iconSclass="z-icon-check" 
 									visible="@load(vm.editMode and vm.securedMode)" />
 							</vlayout>

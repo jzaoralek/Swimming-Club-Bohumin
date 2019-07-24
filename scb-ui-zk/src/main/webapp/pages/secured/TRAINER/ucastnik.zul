@@ -18,10 +18,14 @@
 			
 			<hlayout>
 				<hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}">
+					<button id="realSubmitBtn"
+						onClick="@command('submit')"
+						visible="false"
+						label="Submit" />
 					<button onClick="@command('backCmd')" 
-							label="${c:l('txt.ui.common.Back')}" 
-							iconSclass="z-icon-arrow-left" 
-							sclass="btn-light fix-btn-icon"/>
+						label="${c:l('txt.ui.common.Back')}" 
+						iconSclass="z-icon-arrow-left" 
+						sclass="btn-light fix-btn-icon"/>
 					<!-- Zpravy -->
 	            	<send-mail-button />			
 				</hlayout>
@@ -156,7 +160,10 @@
 									<!-- Adresa -->
 									<row>
 										<cell>
-											<ruian-address contact="${vm.participant.courseParticipant.contact}" contactDisabled="${vm.isItemReadOnly()}" />
+											<custom-attributes submitBtn="${realSubmitBtn}"></custom-attributes>
+											<ruian-address contact="${vm.participant.courseParticipant.contact}" 
+												contactDisabled="${vm.isItemReadOnly()}" 
+												submitBtn="@load(realSubmitBtn)" />
 										</cell>
 									</row>
 								</rows>
@@ -165,7 +172,7 @@
 							<hbox>
 								<vbox>
 									<button label="${c:l('txt.ui.common.Save')}"
-										onClick="@command('submit')"
+										forward="onClick=realSubmitBtn.onClick"
 										sclass="btn-success"
 										visible="@load(!vm.isItemReadOnly())"
 										iconSclass="z-icon-check" />
