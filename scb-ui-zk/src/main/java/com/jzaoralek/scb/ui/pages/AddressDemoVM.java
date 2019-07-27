@@ -24,8 +24,7 @@ public class AddressDemoVM extends BaseVM {
 		this.contact.setEvidenceNumber("");
 		this.contact.setZipCode("70800");
 		
-		// TODO: validace adresních elementů
-		//       nefunkční ruian, zahraniční adresa - vše textbox
+		// TODO: nefunkční ruian, zahraniční adresa - vše textbox
 		//       male pismeno na zacatku
 		//       nabidka adres zobrazená na tlačítko a ověřit
 		//       umístění indikátoru dolů neověřená ?, neplatná křížek, ověřená fajfka
@@ -36,7 +35,7 @@ public class AddressDemoVM extends BaseVM {
 		if (!AddressUtils.isAddressValid()) {
 			return;
 		}
-		WebUtils.showNotificationInfo("Submitted.");
+		WebUtils.showNotificationInfo("Submitted. Contact city:" + this.contact.getCity() + ", street:" + this.contact.getStreet());
 		AddressUtils.setAddressInvalid();
 	}
 	

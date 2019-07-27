@@ -282,6 +282,13 @@ public class AddressVM extends BaseVM {
 	@Command
 	public void placeValidationCmd() {
 		try {
+			System.out.println("municipalitySelected: " + this.municipalitySelected);
+			System.out.println("municipalityNameSelected: " + this.municipalityNameSelected);
+			System.out.println("city.value: " + this.city.getValue());
+			System.out.println("streetSelected: " + this.streetSelected);
+			System.out.println("streetNameSelected: " + this.streetNameSelected);
+			System.out.println("street.value: " + this.street.getValue());
+			
 			this.validationResponse = ruianServiceRest.validate(getMunicipalityName(), this.zip, this.ce, this.co, this.cp, getStreetName());
 			if (this.validationResponse != null && this.validationResponse.isValid()) {
 				this.contact.setAddressValidationStatus(AddressValidationStatus.VALID);
@@ -309,6 +316,10 @@ public class AddressVM extends BaseVM {
 	private String getMunicipalityName() {
 		if (this.municipalitySelected != null) {
 			return this.municipalitySelected.getMunicipalityName();
+		} else if (StringUtils.hasText(this.municipalityNameSelected)) {
+			return this.municipalityNameSelected;
+		} else if (this.city != null) {
+			return this.city.getValue();
 		}
 		
 		return null;
@@ -317,6 +328,10 @@ public class AddressVM extends BaseVM {
 	private String getStreetName() {
 		if (this.streetSelected != null) {
 			return this.streetSelected.getStreetName();
+		} else if (StringUtils.hasText(this.streetNameSelected)) {
+			return this.streetNameSelected;
+		} else if (this.street != null) {
+			return this.street.getValue();
 		}
 		
 		return null;
@@ -334,7 +349,8 @@ public class AddressVM extends BaseVM {
 			this.streetSelected = null;
 			this.streetNameSelected = null;
 			if (street != null) {
-				street.setSelectedItem(null);				
+				street.setSelectedItem(null);
+				street.setValue(null);
 			}
 		}
 		this.cp = null;
