@@ -2,6 +2,7 @@ package com.jzaoralek.scb.ui.pages;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,14 +15,17 @@ import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
+import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModel;
+import org.zkoss.zul.Popup;
 import org.zkoss.zul.SimpleListModel;
 
 import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
@@ -30,6 +34,7 @@ import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 import com.sportologic.ruianclient.model.RuianMunicipality;
+import com.sportologic.ruianclient.model.RuianPlace;
 import com.sportologic.ruianclient.model.RuianRegion;
 import com.sportologic.ruianclient.model.RuianStreet;
 import com.sportologic.ruianclient.model.RuianValidationResponse;
@@ -43,6 +48,12 @@ public class AddressVM extends BaseVM {
 	
 	@Wire
 	private Combobox street;
+	
+	@Wire
+	private Popup placeListPopup;
+	
+	@Wire
+	private Button placeSearchBtn;
 	
 	private String response;
 	
@@ -64,6 +75,9 @@ public class AddressVM extends BaseVM {
 	private String zip;
 	private RuianValidationResponse validationResponse;
 	
+	private List<RuianPlace> placeList;
+	private String placeStreetName;
+
 	private Contact contact;
 
 	@Init
@@ -282,14 +296,7 @@ public class AddressVM extends BaseVM {
 	@Command
 	public void placeValidationCmd() {
 		try {
-			System.out.println("municipalitySelected: " + this.municipalitySelected);
-			System.out.println("municipalityNameSelected: " + this.municipalityNameSelected);
-			System.out.println("city.value: " + this.city.getValue());
-			System.out.println("streetSelected: " + this.streetSelected);
-			System.out.println("streetNameSelected: " + this.streetNameSelected);
-			System.out.println("street.value: " + this.street.getValue());
-			
-			this.validationResponse = ruianServiceRest.validate(getMunicipalityName(), this.zip, this.ce, this.co, this.cp, getStreetName());
+			this.validationResponse = ruianServiceRest.validate(getMunicipalityName(), this.zip, this.ce, this.co, this.cp, getStreetName());			
 			if (this.validationResponse != null && this.validationResponse.isValid()) {
 				this.contact.setAddressValidationStatus(AddressValidationStatus.VALID);
 				WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.address.AddressIsValid"));
@@ -305,12 +312,95 @@ public class AddressVM extends BaseVM {
 		}
 	}
 	
+	@NotifyChange({"placeList","placeStreetName"})
+	@Command
+	public void getPlacesCmd() {
+		if (!isGetPlacesEnabled()) {
+			WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.address.FillCityAndStreet"));
+			return;
+		}
+		
+		String streetName = getStreetName();
+		this.placeStreetName = streetName;
+		this.placeList = ruianServiceRest.getPlacesList(getMunicipalityId(), streetName);
+		
+		if (!CollectionUtils.isEmpty(this.placeList)) {
+			Collections.sort(this.placeList, RuianPlace.PLACE_COMP);			
+		}
+		
+		placeListPopup.open(placeSearchBtn);
+	}
+	
+	@DependsOn({"municipalitySelected", "municipalityNameSelected", "streetSelected", "streetNameSelected"})
+	public boolean isGetPlacesEnabled() {
+		String municipalityId = getMunicipalityId();
+		String streetName = getStreetName();
+		
+		return StringUtils.hasText(municipalityId) && StringUtils.hasText(streetName);
+	}
+	
+	private String getMunicipalityId() {
+		RuianMunicipality ruianMunicipality = null;
+		if (this.municipalitySelected != null) {
+			ruianMunicipality = this.municipalitySelected;
+		} else if (StringUtils.hasText(this.municipalityNameSelected)) {
+			ruianMunicipality = getMunicipalityFromListByName(this.municipalityNameSelected);
+		} else if (this.city != null) {
+			ruianMunicipality = getMunicipalityFromListByName(this.city.getValue());
+		}
+		
+		if (ruianMunicipality != null) {
+			return ruianMunicipality.getMunicipalityId();
+		}
+		
+		return null;
+	}
+	
+	private RuianMunicipality getMunicipalityFromListByName(String name) {
+		if (!StringUtils.hasText(name) || CollectionUtils.isEmpty(this.municipalityList)) {
+			return null;
+		}
+		
+		List<RuianMunicipality> municipalityFilterred = this.municipalityList.stream()
+				.filter(i -> i.getMunicipalityName().equals(name))
+				.collect(Collectors.toList());
+		
+		if (!CollectionUtils.isEmpty(municipalityFilterred)) {
+			return municipalityFilterred.get(0);
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Command pro submit vyvolavajici validaci adresy.
 	 */
 	@Command
 	public void addressSubmitCmd() {
 		AddressUtils.setAddressValid();
+	}
+	
+	@NotifyChange("*")
+	@Command
+	public void placeSelectCmd(@BindingParam("item") RuianPlace item) {
+		if (item == null) {
+			return;
+		}
+		this.cp = item.getPlaceCp();
+		this.contact.setLandRegistryNumber(Long.valueOf(item.getPlaceCp()));
+		
+		this.co = item.getPlaceCo();
+		this.contact.setHouseNumber(item.getPlaceCo());
+		
+		this.ce = item.getPlaceCe();
+		this.contact.setEvidenceNumber(item.getPlaceCe());
+		
+		this.zip = item.getPlaceZip();
+		this.contact.setZipCode(item.getPlaceZip());
+		
+		this.contact.setAddressValidationStatus(AddressValidationStatus.VALID);
+		
+		placeListPopup.close();
 	}
 	
 	private String getMunicipalityName() {
@@ -449,4 +539,13 @@ public class AddressVM extends BaseVM {
 	public Contact getContact() {
 		return contact;
 	}
+	
+	public List<RuianPlace> getPlaceList() {
+		return placeList;
+	}
+	
+	public String getPlaceStreetName() {
+		return placeStreetName;
+	}
+	
 }

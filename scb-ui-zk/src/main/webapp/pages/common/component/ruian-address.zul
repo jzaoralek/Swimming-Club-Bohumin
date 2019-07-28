@@ -199,9 +199,81 @@
 				<row>
 					<cell sclass="form-grid-cell">
 						<hlayout hflex="1">
+							<!-- Find place -->
+							<button id="placeSearchBtn" 
+								label="Vybrat adresu" 
+								onClick="@command('getPlacesCmd')" 
+								visible="@load(!vm.contact.addressValid)"
+								disabled="@load(!vm.getPlacesEnabled)"
+								iconSclass="z-icon-search" 
+								if="${!contactDisabled}" />
+							<popup id="placeListPopup" vflex="1" >
+								<vlayout hflex="1" sclass="listbox-wrapper">
+						        	<listbox model="@load(vm.placeList)"
+										id="courseList"
+										height="370px"
+										width="350px"
+										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+										class="listbox" >
+<!-- 										selectedItems="@bind(vm.courseListSelected)" -->
+								        <auxhead>
+								            <auxheader class="header" colspan="2" >
+								            	Výběr adresy
+								            </auxheader>
+								        </auxhead>
+								        <!-- Filter -->
+								        <listhead>
+								            <listheader align="center" width="65px">
+								            </listheader>
+								            <listheader align="left" hflex="1" >
+<!-- 								            	<textbox hflex="1" -->
+<!-- 								            		placeholder="${c:l('txt.ui.common.name')}" -->
+<!-- 													value="@bind(vm.courseFilter.courseName)" -->
+<!-- 													onChange="@command('filterCourseListCmd')"  -->
+<!-- 													onOK="@command('filterDomCmd')" /> -->
+<!-- 												Vymazat filtr -->
+<!-- 												<button iconSclass="z-icon-trash"  -->
+<!-- 					           						onClick="@command('refreshCourseListDataCmd')"  -->
+<!-- 					           						style="margin-left: 20px;" -->
+<!-- 					           						tooltiptext="${c:l('txt.ui.common.CleanFilter')}" /> -->
+								            </listheader>
+								        </listhead>
+								         
+								        <template name="model">
+								            <listitem>
+								            	<listcell>
+<!-- 							            			iconSclass="z-icon-check" -->
+							            			<button onClick="@command('placeSelectCmd', item=each)"
+							            				label="OK"
+					                					sclass="square-btn" />
+								            	</listcell>
+								            	<listcell>
+								            		<hlayout>
+								            			<label value="@load(vm.placeStreetName)" style="margin-right: 5px;" />
+								            			<label value="@load(each.placeStr)"/>
+								            		</hlayout>
+								            	</listcell>
+								            </listitem>
+								        </template>
+								    </listbox>
+								    
+								    <hlayout style="padding-bottom: 1px;">
+						    			<button onClick="placeListPopup.close()" 
+											label="${c:l('txt.ui.ToClose')}"
+											sclass="btn-light"/>
+									</hlayout>
+							    </vlayout>
+									
+									
+									
+							</popup>
+							
+							<!-- Verify address -->
 							<button label="${c:l('msg.ui.address.Verify')}" 
 								onClick="@command(placeValidationCmd)" 
 								visible="@load(!vm.contact.addressValid)"
+								iconSclass="z-icon-check"
+								style="margin-left: 10px"
 								if="${!contactDisabled}" />
 							
 							<!-- Hidden button pro submit adresy vyvolavajiciho validaci, volany z tlacitka pro submit formulare, zaregistrovano v composeru -->

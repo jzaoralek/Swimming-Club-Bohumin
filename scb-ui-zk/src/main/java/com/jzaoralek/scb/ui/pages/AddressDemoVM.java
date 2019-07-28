@@ -26,7 +26,6 @@ public class AddressDemoVM extends BaseVM {
 		
 		// TODO: nefunkční ruian, zahraniční adresa - vše textbox
 		//       male pismeno na zacatku
-		//       nabidka adres zobrazená na tlačítko a ověřit
 		//       umístění indikátoru dolů neověřená ?, neplatná křížek, ověřená fajfka
 	}
 	
