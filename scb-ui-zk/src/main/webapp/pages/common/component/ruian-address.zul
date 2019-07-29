@@ -11,17 +11,8 @@
 		closable="false"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressVM', contact=contact)"
 		validationMessages="@id('vmsgs')" >
-		<caption label="${c:l('txt.ui.common.Address')}" style="font-weight: bold;"
-			 width="100%" sclass="customPosition"  >
-			<label visible="@load(vm.contact.addressValid)" 
-				value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" 
-				style="margin-top: 10px; background-color: #EFF7E8 !important; color: #78C128; border: 1px solid #78C128; border-color: #78C128 !important; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
-			<label visible="@load(vm.contact.addressInvalid)" 
-				value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" 
-				style="margin-top: 10px; background-color: #FFEAEC !important; color: #FF4051; border: 1px solid #FF4051; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />									
-			<label visible="@load(vm.contact.addressNotVerified)"
-				value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" 
-				style="margin-top: 10px; background-color: #FFF3E7 !important; color: #FF8501; border: 1px solid #FF8501; padding-left: 15px; padding-right: 15px; border-radius: 14px;" />
+		<caption label="${c:l('txt.ui.common.Address')}" style="font-weight: bold;" width="100%" sclass="customPosition"  >
+			
 		</caption>
 		
 		<grid sclass="scb-form-grid-2" 
@@ -207,84 +198,90 @@
 				<row>
 					<cell sclass="form-grid-cell">
 						<hlayout hflex="1">
-							<popup id="placeListPopup" vflex="1" >
-								<vlayout hflex="1" sclass="listbox-wrapper">
-						        	<listbox model="@load(vm.placeList)"
-										id="courseList"
-										height="370px"
-										width="350px"
-										emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-										class="listbox" >
-<!-- 										selectedItems="@bind(vm.courseListSelected)" -->
-								        <auxhead>
-								            <auxheader class="header" colspan="2" >
-								            	Výběr adresy
-								            </auxheader>
-								        </auxhead>
-								        <!-- Filter -->
-								        <listhead>
-								            <listheader align="center" width="65px">
-								            </listheader>
-								            <listheader align="left" hflex="1" >
-<!-- 								            	<textbox hflex="1" -->
-<!-- 								            		placeholder="${c:l('txt.ui.common.name')}" -->
-<!-- 													value="@bind(vm.courseFilter.courseName)" -->
-<!-- 													onChange="@command('filterCourseListCmd')"  -->
-<!-- 													onOK="@command('filterDomCmd')" /> -->
-<!-- 												Vymazat filtr -->
-<!-- 												<button iconSclass="z-icon-trash"  -->
-<!-- 					           						onClick="@command('refreshCourseListDataCmd')"  -->
-<!-- 					           						style="margin-left: 20px;" -->
-<!-- 					           						tooltiptext="${c:l('txt.ui.common.CleanFilter')}" /> -->
-								            </listheader>
-								        </listhead>
-								         
-								        <template name="model">
-								            <listitem>
-								            	<listcell>
-<!-- 							            			iconSclass="z-icon-check" -->
-							            			<button onClick="@command('placeSelectCmd', item=each)"
-							            				label="OK"
-					                					sclass="square-btn" />
-								            	</listcell>
-								            	<listcell>
-								            		<hlayout>
-								            			<label value="@load(vm.placeStreetName)" style="margin-right: 5px;" />
-								            			<label value="@load(each.placeStr)"/>
-								            		</hlayout>
-								            	</listcell>
-								            </listitem>
-								        </template>
-								    </listbox>
-								    
-								    <hlayout style="padding-bottom: 1px;">
-						    			<button onClick="placeListPopup.close()" 
-											label="${c:l('txt.ui.ToClose')}"
-											sclass="btn-light"/>
-									</hlayout>
-							    </vlayout>
-									
-									
-									
-							</popup>
-							
-							<!-- Verify address -->
-							<button label="${c:l('msg.ui.address.Verify')}" 
-								onClick="@command(placeValidationCmd)" 
-								disabled="@load(vm.contact.addressValid)"
-								iconSclass="z-icon-check"
-								height="22px"
-								if="${!contactDisabled}" />
-							
-							<!-- Hidden button pro submit adresy vyvolavajiciho validaci, volany z tlacitka pro submit formulare, zaregistrovano v composeru -->
-							<button id="submitAddressBtn" 
-								label="Submit Address"
-								visible="false"
-								onClick="@command(addressSubmitCmd)"/>
+							<vbox hflex="1" pack="center">
+								<!-- Verify address -->
+								<button label="${c:l('msg.ui.address.Verify')}" 
+									onClick="@command(placeValidationCmd)" 
+									disabled="@load(vm.contact.addressValid)"
+									iconSclass="z-icon-check"
+									height="22px"
+									if="${!contactDisabled}" />
+								
+								<!-- Hidden button pro submit adresy vyvolavajiciho validaci, volany z tlacitka pro submit formulare, zaregistrovano v composeru -->
+								<button id="submitAddressBtn" 
+									label="Submit Address"
+									visible="false"
+									onClick="@command(addressSubmitCmd)"/>
+							</vbox>
+							<vbox hflex="min" pack="center" align="end" >
+								<span style="background-color: #FFF3E7 !important; color: #FF8501; border: 1px solid #FF8501; padding-left: 15px; padding-right: 15px; padding-top: 5px; border-radius: 14px;"
+									visible="@load(vm.contact.addressNotVerified)">
+									<a iconSclass="z-icon-exclamation" style="margin-right: 5px; color: #FF8501; font-size: 22px;" />
+									<label value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" style="font-size: 22px;" />
+								</span>
+								<span style="background-color: #EFF7E8 !important; color: #78C128; border: 1px solid #78C128; padding-left: 15px; padding-right: 15px; padding-top: 5px; border-radius: 14px;"
+									visible="@load(vm.contact.addressValid)">
+									<a iconSclass="z-icon-check" style="margin-right: 5px; color: #78C128; font-size: 22px;" />
+									<label value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" style="font-size: 22px;" />								
+								</span>
+								<span style="background-color: #FFEAEC !important; color: #FF4051; border: 1px solid #FF4051; padding-left: 15px; padding-right: 15px; padding-top: 5px; border-radius: 14px;"
+									visible="@load(vm.contact.addressInvalid)" >
+									<a iconSclass="z-icon-times" style="margin-right: 5px; color: #FF4051; font-size: 22px;" />
+									<label value="@load(vm.contact.addressValidationStatus) @converter(vm.enumLabelConverter)" style="font-size: 22px;" />									
+								</span>
+							</vbox>
 						</hlayout>
 					</cell>
 				</row>
 			</rows>
 		</grid>
+		
+		<popup id="placeListPopup" vflex="1" >
+			<vlayout hflex="1" sclass="listbox-wrapper">
+	        	<listbox model="@load(vm.placeList)"
+					id="courseList"
+					height="370px"
+					width="350px"
+					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+					class="listbox" >
+					<!-- selectedItems="@bind(vm.courseListSelected)" -->
+			        <auxhead>
+			            <auxheader class="header" colspan="2" >
+			            	Výběr adresy
+			            </auxheader>
+			        </auxhead>
+			        <!-- Filter -->
+			        <listhead>
+			            <listheader align="center" width="65px">
+			            </listheader>
+			            <listheader align="left" hflex="1" >
+			            </listheader>
+			        </listhead>
+			         
+			        <template name="model">
+			            <listitem>
+			            	<listcell>
+							<!-- iconSclass="z-icon-check" -->
+		            			<button onClick="@command('placeSelectCmd', item=each)"
+		            				label="OK"
+                					sclass="square-btn" />
+			            	</listcell>
+			            	<listcell>
+			            		<hlayout>
+			            			<label value="@load(vm.placeStreetName)" style="margin-right: 5px;" />
+			            			<label value="@load(each.placeStr)"/>
+			            		</hlayout>
+			            	</listcell>
+			            </listitem>
+			        </template>
+			    </listbox>
+			    
+			    <hlayout style="padding-bottom: 1px;">
+	    			<button onClick="placeListPopup.close()" 
+						label="${c:l('txt.ui.ToClose')}"
+						sclass="btn-light"/>
+				</hlayout>
+		    </vlayout>
+		</popup>
 	</groupbox>
 </zk>
