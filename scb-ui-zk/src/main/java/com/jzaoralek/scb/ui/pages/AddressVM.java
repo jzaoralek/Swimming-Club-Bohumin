@@ -398,6 +398,7 @@ public class AddressVM extends BaseVM {
 		this.contact.setZipCode(item.getPlaceZip());
 		
 		this.contact.setAddressValidationStatus(AddressValidationStatus.VALID);
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.address.AddressIsValid"));
 		
 		placeListPopup.close();
 	}

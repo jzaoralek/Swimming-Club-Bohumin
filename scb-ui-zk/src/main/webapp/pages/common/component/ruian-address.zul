@@ -135,6 +135,14 @@
 								sclass="form-input-text"
 								hflex="1"
 								readonly="true" />
+							<!-- Find place -->
+							<button id="placeSearchBtn" 
+								label="Vybrat adresu" 
+								onClick="@command('getPlacesCmd')" 
+								disabled="@load(!vm.getPlacesEnabled or vm.contact.addressValid)"
+								height="22px"
+								width="160px"
+								if="${!contactDisabled}" />
 						</vbox>
 					</cell>
 				</row>
@@ -199,14 +207,6 @@
 				<row>
 					<cell sclass="form-grid-cell">
 						<hlayout hflex="1">
-							<!-- Find place -->
-							<button id="placeSearchBtn" 
-								label="Vybrat adresu" 
-								onClick="@command('getPlacesCmd')" 
-								visible="@load(!vm.contact.addressValid)"
-								disabled="@load(!vm.getPlacesEnabled)"
-								iconSclass="z-icon-search" 
-								if="${!contactDisabled}" />
 							<popup id="placeListPopup" vflex="1" >
 								<vlayout hflex="1" sclass="listbox-wrapper">
 						        	<listbox model="@load(vm.placeList)"
@@ -271,9 +271,9 @@
 							<!-- Verify address -->
 							<button label="${c:l('msg.ui.address.Verify')}" 
 								onClick="@command(placeValidationCmd)" 
-								visible="@load(!vm.contact.addressValid)"
+								disabled="@load(vm.contact.addressValid)"
 								iconSclass="z-icon-check"
-								style="margin-left: 10px"
+								height="22px"
 								if="${!contactDisabled}" />
 							
 							<!-- Hidden button pro submit adresy vyvolavajiciho validaci, volany z tlacitka pro submit formulare, zaregistrovano v composeru -->

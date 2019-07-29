@@ -25,10 +25,10 @@ public class AddressDemoVM extends BaseVM {
 		this.contact.setZipCode("70800");
 		
 		// TODO: nefunkční ruian, zahraniční adresa - vše textbox
-		//       povolit jen platnou adresu
-		//       Vybrat adresu pod ulici
+		//       layout
+		//       - indikátory doprava dolů neověřená ?, neplatná křížek, ověřená fajfka
+		//       - nahore nechat místo na prepinac CR a zahraniční adresa
 		//       male pismeno na zacatku
-		//       umístění indikátoru dolů neověřená ?, neplatná křížek, ověřená fajfka
 	}
 	
 	@Command
