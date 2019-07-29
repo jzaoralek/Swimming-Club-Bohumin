@@ -221,17 +221,27 @@ public class CourseApplicationVM extends BaseVM {
 						// adresa je validni, mozno ulozit
 						submitCore();
 					} else {
-						// adresa neni validni, dotaz jestli pokracovat
-						MessageBoxUtils.showDefaultConfirmDialog(
-								"msg.ui.quest.ProcessNotValidAddress",
-								"msg.ui.quest.title.NotValidAddress",
+						// adresa neni validni, zastaveni odeslani
+						MessageBoxUtils.showOkWarningDialog("msg.ui.warn.ProcessNotValidAddress", 
+								"msg.ui.quest.title.NotValidAddress", 
 								new SzpEventListener() {
 									@Override
 									public void onOkEvent() {
-										submitCore();
+										// nothing
 									}
-								}
-						);
+								});
+						
+						// adresa neni validni, dotaz jestli pokracovat
+//						MessageBoxUtils.showDefaultConfirmDialog(
+//								"msg.ui.quest.ProcessNotValidAddress",
+//								"msg.ui.quest.title.NotValidAddress",
+//								new SzpEventListener() {
+//									@Override
+//									public void onOkEvent() {
+//										submitCore();
+//									}
+//								}
+//						);
 					}					
 				}
 			}
