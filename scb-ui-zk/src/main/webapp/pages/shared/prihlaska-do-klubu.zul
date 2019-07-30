@@ -200,9 +200,9 @@
 												<label value="${c:l('txt.ui.common.CzechCitizen')}"/>
 											</hlayout>
 											<hlayout width="150px">
-												<radiogroup id="sexRadioGroup" />
-												<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" checked="@bind(vm.application.courseParticipant.contact.sexMale)" />
-                								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" checked="@bind(!vm.application.courseParticipant.contact.sexMale)" />
+												<radiogroup id="sexRadioGroup" selectedItem="@bind(vm.application.courseParticipant.contact.sexMale)" />
+												<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" />
+                								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/>
 											</hlayout>
 										</hlayout>
 									</cell>
