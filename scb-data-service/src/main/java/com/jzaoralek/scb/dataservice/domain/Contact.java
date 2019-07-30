@@ -11,11 +11,15 @@ import org.springframework.util.StringUtils;
  */
 public class Contact implements IdentEntity {
 
+	public static final String CZECH_CITIZENSHIP_CODE = "CZE";
+	
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
 	private String firstname;
 	private String surname;
+	private String citizenship;
+	private boolean sexMale;
 	private String region;
 	private String street;
 	private Long landRegistryNumber;
@@ -44,6 +48,10 @@ public class Contact implements IdentEntity {
 	
 	public boolean isAddressNotVerified() {
 		return this.addressValidationStatus == AddressValidationStatus.NOT_VERIFIED;
+	}
+	
+	public boolean isCzechCitizenship() {
+		return StringUtils.hasText(this.citizenship) && CZECH_CITIZENSHIP_CODE.equals(this.citizenship);
 	}
 	
 	@Override
@@ -175,14 +183,26 @@ public class Contact implements IdentEntity {
 	public void setForeignAddress(String foreignAddress) {
 		this.foreignAddress = foreignAddress;
 	}
+	public String getCitizenship() {
+		return citizenship;
+	}
+	public void setCitizenship(String citizenship) {
+		this.citizenship = citizenship;
+	}
+	public boolean isSexMale() {
+		return sexMale;
+	}
+	public void setSexMale(boolean sexMale) {
+		this.sexMale = sexMale;
+	}
 
 	@Override
 	public String toString() {
 		return "Contact [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", firstname=" + firstname
-				+ ", surname=" + surname + ", region=" + region + ", street=" + street + ", landRegistryNumber="
-				+ landRegistryNumber + ", houseNumber=" + houseNumber + ", evidenceNumber=" + evidenceNumber + ", city="
-				+ city + ", zipCode=" + zipCode + ", foreignAddress=" + foreignAddress + ", addressValidationStatus="
-				+ addressValidationStatus + ", email1=" + email1 + ", email2=" + email2 + ", phone1=" + phone1
-				+ ", phone2=" + phone2 + "]";
+				+ ", surname=" + surname + ", citizenship=" + citizenship + ", sexMale=" + sexMale + ", region="
+				+ region + ", street=" + street + ", landRegistryNumber=" + landRegistryNumber + ", houseNumber="
+				+ houseNumber + ", evidenceNumber=" + evidenceNumber + ", city=" + city + ", zipCode=" + zipCode
+				+ ", foreignAddress=" + foreignAddress + ", addressValidationStatus=" + addressValidationStatus
+				+ ", email1=" + email1 + ", email2=" + email2 + ", phone1=" + phone1 + ", phone2=" + phone2 + "]";
 	}
 }

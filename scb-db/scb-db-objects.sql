@@ -20,6 +20,8 @@ CREATE TABLE contact(
 	uuid varchar(36),
 	firstname VARCHAR(100) NOT NULL,
 	surname VARCHAR(100) NOT NULL,
+    citizenship VARCHAR(3) NOT NULL DEFAULT 'CZE',
+	sex_male ENUM('0','1') NOT NULL DEFAULT '1',
 	street VARCHAR(240),
 	land_registry_number INT,
     house_number VARCHAR(32),
