@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 public class Contact implements IdentEntity {
 
 	public static final String CZECH_CITIZENSHIP_CODE = "CZE";
+	public static final String OTHER_CITIZENSHIP_CODE = "NON";
 	
 	private UUID uuid;
 	private String modifBy;
@@ -35,6 +36,8 @@ public class Contact implements IdentEntity {
 	private String phone2;
 
 	public Contact() {
+		this.sexMale = true;
+		this.citizenship = CZECH_CITIZENSHIP_CODE;
 		this.addressValidationStatus = AddressValidationStatus.NOT_VERIFIED;
 	}
 	
@@ -52,6 +55,10 @@ public class Contact implements IdentEntity {
 	
 	public boolean isCzechCitizenship() {
 		return StringUtils.hasText(this.citizenship) && CZECH_CITIZENSHIP_CODE.equals(this.citizenship);
+	}
+	
+	public void setCzechCitizenship(boolean czechCitizenship) {
+		this.citizenship = czechCitizenship ? CZECH_CITIZENSHIP_CODE : OTHER_CITIZENSHIP_CODE;
 	}
 	
 	@Override

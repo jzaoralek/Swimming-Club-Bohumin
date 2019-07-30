@@ -123,6 +123,8 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 		fillIdentEntityUuid(ret, UUID.randomUUID());
 		ret.setFirstname(CONTACT_FIRSTNAME);
 		ret.setSurname(CONTACT_SURNAME);
+		ret.setCitizenship(Contact.CZECH_CITIZENSHIP_CODE);
+		ret.setSexMale(true);
 		ret.setStreet(CONTACT_STREET);
 		ret.setLandRegistryNumber(CONTACT_LAND_REGISTRY_NO);
 		ret.setHouseNumber(CONTACT_HOUSE_NO);
