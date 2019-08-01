@@ -127,13 +127,15 @@
 								hflex="1"
 								readonly="true" />
 							<!-- Find place -->
-							<button id="placeSearchBtn" 
-								label="Vybrat adresu" 
-								onClick="@command('getPlacesCmd')" 
-								disabled="@load(!vm.getPlacesEnabled or vm.contact.addressValid)"
-								height="22px"
-								width="160px"
-								if="${!contactDisabled}" />
+							<hlayout height="26px">
+								<button id="placeSearchBtn" 
+									label="Vybrat adresu" 
+									onClick="@command('getPlacesCmd')" 
+									visible="@load(vm.getPlacesEnabled)"
+									height="22px"
+									width="160px"
+									if="${!contactDisabled}" />
+							</hlayout>
 						</vbox>
 					</cell>
 				</row>

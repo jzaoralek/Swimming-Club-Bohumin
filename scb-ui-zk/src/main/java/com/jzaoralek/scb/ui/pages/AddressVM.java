@@ -386,7 +386,9 @@ public class AddressVM extends BaseVM {
 			return;
 		}
 		this.cp = item.getPlaceCp();
-		this.contact.setLandRegistryNumber(Long.valueOf(item.getPlaceCp()));
+		if (StringUtils.hasText(item.getPlaceCp())) {
+			this.contact.setLandRegistryNumber(Long.valueOf(item.getPlaceCp()));			
+		}
 		
 		this.co = item.getPlaceCo();
 		this.contact.setHouseNumber(item.getPlaceCo());

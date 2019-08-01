@@ -199,11 +199,11 @@
 												<checkbox checked="@bind(vm.application.courseParticipant.contact.czechCitizenship)" />
 												<label value="${c:l('txt.ui.common.CzechCitizen')}"/>
 											</hlayout>
-											<hlayout width="150px">
-												<radiogroup id="sexRadioGroup" selectedItem="@bind(vm.application.courseParticipant.contact.sexMale)" />
-												<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" />
-                								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/>
-											</hlayout>
+<!-- 											<hlayout width="150px"> -->
+<!-- 												<radiogroup id="sexRadioGroup" selectedItem="@bind(vm.application.courseParticipant.contact.sexMale)" /> -->
+<!-- 												<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" /> -->
+<!--                 								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/> -->
+<!-- 											</hlayout> -->
 										</hlayout>
 									</cell>
 								</row>
@@ -213,14 +213,13 @@
 											<vlayout width="150px">
 												<label value="${c:l('txt.ui.common.birthNumber')}"/>
 												<textbox id="particBirthNumber" readonly="@load(!vm.editMode)"
-													value="@bind(vm.application.courseParticipant.personalNo) @save(vm.application.courseParticipant.personalNo, before={submitCmd}) @validator(vm.birthNumberValidator, notNull=true)"
+													value="@bind(vm.application.courseParticipant.personalNo) @save(vm.application.courseParticipant.personalNo, before={submitCmd}) @validator(vm.birthNumberValidator, notNull=true, validateFormat=vm.application.courseParticipant.contact.czechCitizenship)"
 				                            		maxlength="@load(vm.getBirthNumberMaxlength())"
 				                            		placeholder="*"
 				                            		width="140px"
 				                            		sclass="form-input-text"
 				                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-				                            		onChange="@command('validateUniquePersonalNumberCmd', personal_number=self.value, fx=fx)"
-				                            		 />
+				                            		onChange="@command('birtNumberOnChangeCmd', personal_number=self.value, fx=vm)" />
 												<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 													<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
 														<label value="@bind(vmsgs[particBirthNumber])" />
@@ -230,7 +229,7 @@
 											<vlayout hflex="min">
 												<label value="${c:l('txt.ui.common.birthDate')}"/>
 												<datebox id="particBirthdate" readonly="@load(!vm.editMode)"
-													value="@bind(vm.application.courseParticipant.birthdate) @save(vm.application.courseParticipant.birthdate, before={submitCmd}) @validator(vm.notNullObjectValidator)"
+													value="@bind(vm.application.courseParticipant.birthdate) @save(vm.application.courseParticipant.birthdate, before={submitCmd}) @validator('com.jzaoralek.scb.ui.common.validator.BirthdateValidator', notNull=true, validateBirthNumber=vm.application.courseParticipant.contact.czechCitizenship, birthNumber=vm.application.courseParticipant.personalNo)"
 				                            		format="@load(vm.dateFormat)" 
 				                            		maxlength="@load(vm.getDateMaxlength())"
 				                            		placeholder="*"
