@@ -209,6 +209,18 @@ public class CourseParticipantVM extends BaseVM {
 	public void goToSendEmailCmd() {
 		goToSendEmailCore(new HashSet<>(Arrays.asList(this.participant.getCourseParticRepresentative().getContact())));
 	}
+	
+	/**
+	 * Nastavi datum narozeni podle rodneho cisla.
+	 * @param personalNumber
+	 * @param fx
+	 */
+	@Command
+	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") CourseParticipantVM fx) {
+		// predvyplneni datumu narozeni podle rodneho cisla
+		 WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getParticipant().getCourseParticipant());
+		 BindUtils.postNotifyChange(null, null, this, "participant");
+	}
 
 	private void fillSwimStyleItemList() {
 		List<CodeListItem> swimStyleList = codeListService.getItemListByType(CodeListType.SWIMMING_STYLE);

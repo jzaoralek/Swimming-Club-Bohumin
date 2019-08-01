@@ -2,7 +2,6 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -355,6 +354,7 @@ public class CourseApplicationVM extends BaseVM {
 	
 	/**
 	 * Kontroluje pouziti emailu jako defaultniho prihlasovaciho jmena, pokud je jiz evidovano, nabidne predvyplneni hodnot zakonneho zastupce.
+	 * Nastavi datum narozeni podle rodneho cisla.
 	 * @param personalNumber
 	 * @param fx
 	 */
@@ -374,15 +374,8 @@ public class CourseApplicationVM extends BaseVM {
 		}
 		
 		// predvyplneni datumu narozeni podle rodneho cisla
-		if (StringUtils.hasText(personalNumber)) {
-			try {
-				Date birthDate = WebUtils.parseRcDatePart(personalNumber.substring(0, personalNumber.indexOf("/")));
-				this.application.getCourseParticipant().setBirthdate(birthDate);
-				BindUtils.postNotifyChange(null, null, this, "application");
-			} catch (Exception e) {
-				LOG.error("Exception caught for personalNumber: " + personalNumber, e);
-			}
-		}
+		WebUtils.setBirthdateByBirthNumer(personalNumber, this.application.getCourseParticipant());
+		BindUtils.postNotifyChange(null, null, this, "application");
 	}
 	
 	@NotifyChange("courseList")

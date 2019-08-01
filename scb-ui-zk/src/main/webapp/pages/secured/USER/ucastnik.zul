@@ -275,41 +275,40 @@
 											</row>
 											<row>
 												<cell>
-													<vbox hflex="1">
-														<label value="${c:l('txt.ui.common.birthDate')}"/>
-														<datebox id="particBirthdate"
-															value="@bind(fx.courseParticipant.birthdate) @validator(vm.notNullObjectValidator)"
-						                            		format="@load(vm.dateFormat)" 
-						                            		maxlength="@load(vm.getDateMaxlength())"
-						                            		placeholder="*"
-						                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-						                            		tabindex="3" />
-														<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-															<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
-																	<label value="@bind(vmsgs[particBirthdate])" />
+													<hbox hflex="1">
+														<vbox width="150px">
+															<label value="${c:l('txt.ui.common.birthNumber')}"/>
+															<textbox id="particBirthNumber"
+																value="@bind(fx.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true, validateFormat=fx.courseParticipant.contact.czechCitizenship)"
+							                            		maxlength="@load(vm.getBirthNumberMaxlength())"
+							                            		placeholder="*"
+							                            		sclass="form-input-text"
+							                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+							                            		tabindex="4"
+							                            		hflex="1"
+							                            		onChange="@command('birtNumberOnChangeCmd', personal_number=self.value, fx=fx)" />
+															<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+																<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
+																	<label value="@bind(vmsgs[particBirthNumber])" />
 																</span>
-														</hbox>
-													</vbox>
-												</cell>
-											</row>
-											<row visible="@load(vm.isLoggedUserInRole('ADMIN'))" >
-												<cell>
-													<vbox hflex="1">
-														<label value="${c:l('txt.ui.common.birthNumber')}"/>
-														<textbox id="particBirthNumber"
-															value="@bind(fx.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
-						                            		maxlength="@load(vm.getBirthNumberMaxlength())"
-						                            		placeholder="*"
-						                            		sclass="form-input-text"
-						                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-						                            		tabindex="4"
-						                            		hflex="1" />
-														<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-															<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
-																<label value="@bind(vmsgs[particBirthNumber])" />
-															</span>
-														</hbox>
-													</vbox>
+															</hbox>
+														</vbox>
+														<vbox hflex="1">
+															<label value="${c:l('txt.ui.common.birthDate')}"/>
+															<datebox id="particBirthdate"
+																value="@bind(fx.courseParticipant.birthdate) @validator('com.jzaoralek.scb.ui.common.validator.BirthdateValidator', notNull=true, validateBirthNumber=fx.courseParticipant.contact.czechCitizenship, birthNumber=fx.courseParticipant.personalNo)"
+							                            		format="@load(vm.dateFormat)" 
+							                            		maxlength="@load(vm.getDateMaxlength())"
+							                            		placeholder="*"
+							                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+							                            		tabindex="3" />
+															<hbox hflex="1" align="center" pack="start" sclass="form-grid-validation-hbox">
+																<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
+																		<label value="@bind(vmsgs[particBirthdate])" />
+																	</span>
+															</hbox>
+														</vbox>
+													</hbox>
 												</cell>
 											</row>
 											<row>

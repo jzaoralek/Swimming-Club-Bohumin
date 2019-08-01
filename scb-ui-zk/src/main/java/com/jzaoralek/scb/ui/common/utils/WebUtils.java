@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.zkoss.bind.BindUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
@@ -443,5 +444,18 @@ public final class WebUtils {
 		cal.set(Calendar.MILLISECOND, 0);
 
 		return cal.getTime();
+	}
+	
+	public static void setBirthdateByBirthNumer(String birtNumber, CourseParticipant courseParticipant) {
+		if (!StringUtils.hasText(birtNumber) || courseParticipant == null) {
+			return;
+		}
+		
+		try {
+			Date birthDate = WebUtils.parseRcDatePart(birtNumber.substring(0, birtNumber.indexOf("/")));
+			courseParticipant.setBirthdate(birthDate);
+		} catch (Exception e) {
+			logger.error("Exception caught for personalNumber: " + birtNumber, e);
+		}
 	}
 }

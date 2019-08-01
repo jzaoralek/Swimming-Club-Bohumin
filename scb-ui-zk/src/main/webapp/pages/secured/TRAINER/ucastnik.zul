@@ -106,34 +106,35 @@
 									<row>
 										<cell>
 											<hbox hflex="1">
+												<vbox width="150px" visible="@load(vm.isLoggedUserInRole('ADMIN'))">
+													<label value="${c:l('txt.ui.common.birthNumber')}"/>
+													<textbox id="particBirthNumber"
+														value="@bind(fx.participant.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true, validateFormat=vm.participant.courseParticipant.contact.czechCitizenship)"
+					                            		maxlength="@load(vm.getBirthNumberMaxlength())"
+					                            		placeholder="*"
+					                            		width="140px"
+					                            		sclass="form-input-text"
+					                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+					                            		onChange="@command('birtNumberOnChangeCmd', personal_number=self.value, fx=fx)" />
+													<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+														<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
+															<label value="@bind(vmsgs[particBirthNumber])" />
+														</span>
+													</hbox>
+												</vbox>
 												<vbox hflex="1">
 													<label value="${c:l('txt.ui.common.birthDate')}"/>
 													<datebox id="particBirthdate"
-														value="@bind(fx.participant.courseParticipant.birthdate) @validator(vm.notNullObjectValidator)"
+														value="@bind(fx.participant.courseParticipant.birthdate) @validator('com.jzaoralek.scb.ui.common.validator.BirthdateValidator', notNull=true, validateBirthNumber=vm.participant.courseParticipant.contact.czechCitizenship, birthNumber=fx.participant.courseParticipant.personalNo)"
 					                            		format="@load(vm.dateFormat)" 
 					                            		maxlength="@load(vm.getDateMaxlength())"
 					                            		placeholder="*"
 					                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 					                            		readonly="@load(vm.isItemReadOnly())"
 					                            		buttonVisible="@load(!vm.isItemReadOnly())" />
-													<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+													<hbox hflex="1" align="center" pack="start" sclass="form-grid-validation-hbox">
 														<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
-																<label value="@bind(vmsgs[particBirthdate])" />
-															</span>
-													</hbox>
-												</vbox>
-												<vbox hflex="1" visible="@load(vm.isLoggedUserInRole('ADMIN'))">
-													<label value="${c:l('txt.ui.common.birthNumber')}"/>
-													<textbox id="particBirthNumber"
-														value="@bind(fx.participant.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
-					                            		maxlength="@load(vm.getBirthNumberMaxlength())"
-					                            		placeholder="*"
-					                            		sclass="form-input-text"
-					                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-					                            		hflex="1" />
-													<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-														<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
-															<label value="@bind(vmsgs[particBirthNumber])" />
+															<label value="@bind(vmsgs[particBirthdate])" />
 														</span>
 													</hbox>
 												</vbox>
