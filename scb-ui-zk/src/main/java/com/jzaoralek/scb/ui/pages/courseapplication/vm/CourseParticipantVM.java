@@ -40,6 +40,7 @@ import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.dataservice.service.ResultService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
@@ -111,6 +112,9 @@ public class CourseParticipantVM extends BaseVM {
 	@NotifyChange("*")
 	@Command
     public void submit() {
+		if (!AddressUtils.isAddressValid()) {
+			return;
+		}
 		try {
 			// update
 			if (LOG.isDebugEnabled()) {
@@ -124,6 +128,8 @@ public class CourseParticipantVM extends BaseVM {
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for application: " + this.participant, e);
 			throw new RuntimeException(e);
+		} finally {
+			AddressUtils.setAddressInvalid();
 		}
     }
 
@@ -202,6 +208,20 @@ public class CourseParticipantVM extends BaseVM {
 	@Command
 	public void goToSendEmailCmd() {
 		goToSendEmailCore(new HashSet<>(Arrays.asList(this.participant.getCourseParticRepresentative().getContact())));
+	}
+	
+	/**
+	 * Nastavi datum narozeni podle rodneho cisla.
+	 * @param personalNumber
+	 * @param fx
+	 */
+	@Command
+	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") CourseParticipantVM fx) {
+		// predvyplneni datumu narozeni podle rodneho cisla
+		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getParticipant().getCourseParticipant());
+		if (success) {
+			BindUtils.postNotifyChange(null, null, this, "participant");
+		}
 	}
 
 	private void fillSwimStyleItemList() {

@@ -32,6 +32,11 @@
 			<groupId>com.jzaoralek.scb</groupId>
 			<artifactId>scb-data-service</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.jzaoralek.scb</groupId>
+			<artifactId>ruian-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Spring -->
 		<dependency>

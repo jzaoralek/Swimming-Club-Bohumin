@@ -1,0 +1,65 @@
+<?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
+<?page title="${c:l('txt.Login')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+
+<zk xmlns:c="client" xmlns:x="xhtml">
+	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
+	
+	<div self="@{define(mainContent)}" hflex="1" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.security.vm.RuainClientVM')" >
+		<hlayout hflex="1" vflex="1">
+			<vlayout hflex="min">
+				<button label="Get region list" onClick="@command('getRegionListCmd')" />
+				<button label="Get municipality list" onClick="@command('getMuicipalityListCmd')" />
+				<button label="Get street list" onClick="@command('getStreetListCmd')" />
+				<button label="Get places list" onClick="@command('getPlacesListCmd')" />
+				
+				<!-- Vyber regionu -->
+				<combobox model="@load(vm.regionList)"
+					onSelect="@command('regionSelectCmd')"
+					selectedItem="@bind(vm.regionSelected)"
+					placeholder="Region"
+					style="background: white;"
+					hflex="1"
+					readonly="true" >
+					<template name="model">
+		            	<comboitem label="${each.regionName}"/>
+					</template>
+				</combobox>
+				
+				<!-- Vyber mesta -->
+				<combobox model="@load(vm.municipalityList)"
+					onSelect="@command('municipaltitySelectCmd')"
+					selectedItem="@bind(vm.municipalitySelected)"
+					placeholder="Město"
+					style="background: white;"
+					hflex="1" >
+					<template name="model">
+		            	<comboitem label="${each.municipalityName}"/>
+					</template>
+				</combobox>
+				
+				<!-- Vyber ulice -->
+				<combobox model="@load(vm.streetList)"
+					selectedItem="@bind(vm.streetSelected)"
+					placeholder="Město"
+					style="background: white;"
+					hflex="1" >
+					<template name="model">
+		            	<comboitem label="${each.streetName}"/>
+					</template>
+				</combobox>
+				
+				<textbox value="@bind(vm.cp)" placeholder="Č.p." />
+				<textbox value="@bind(vm.co)" placeholder="Č.o." />
+				<textbox value="@bind(vm.ce)" placeholder="Č.e." />
+				<textbox value="@bind(vm.zip)" placeholder="PSČ" />
+				
+				<button label="Place validation" onClick="@command('placeValidationCmd')" />
+				
+			</vlayout>
+			<textbox value="@load(vm.response)" multiline="true" rows="50" hflex="1" />
+		</hlayout>
+	</div>
+</zk>

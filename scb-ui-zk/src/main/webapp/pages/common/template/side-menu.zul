@@ -80,7 +80,8 @@
 				iconSclass="z-icon-credit-card" 
 				tooltiptext="${c:l('txt.ui.menu.bankPayments')}"
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul" >
+				href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul"
+				if="${vm.paymentsAvailable}" >
 				<label value="${c:l('txt.ui.menu.payments')}"/>
 			</a>
 			

@@ -11,21 +11,56 @@ import org.springframework.util.StringUtils;
  */
 public class Contact implements IdentEntity {
 
+	public static final String CZECH_CITIZENSHIP_CODE = "CZE";
+	public static final String OTHER_CITIZENSHIP_CODE = "NON";
+	
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
 	private String firstname;
 	private String surname;
+	private String citizenship;
+	private boolean sexMale;
+	private String region;
 	private String street;
 	private Long landRegistryNumber;
-	private Short houseNumber;
+	private String houseNumber;
+	private String evidenceNumber;
 	private String city;
 	private String zipCode;
+	private String foreignAddress;
+	private AddressValidationStatus addressValidationStatus;
 	private String email1;
 	private String email2;
 	private String phone1;
 	private String phone2;
 
+	public Contact() {
+		this.sexMale = true;
+		this.citizenship = CZECH_CITIZENSHIP_CODE;
+		this.addressValidationStatus = AddressValidationStatus.NOT_VERIFIED;
+	}
+	
+	public boolean isAddressValid() {
+		return this.addressValidationStatus == AddressValidationStatus.VALID;
+	}
+	
+	public boolean isAddressInvalid() {
+		return this.addressValidationStatus == AddressValidationStatus.INVALID;
+	}
+	
+	public boolean isAddressNotVerified() {
+		return this.addressValidationStatus == AddressValidationStatus.NOT_VERIFIED;
+	}
+	
+	public boolean isCzechCitizenship() {
+		return StringUtils.hasText(this.citizenship) && CZECH_CITIZENSHIP_CODE.equals(this.citizenship);
+	}
+	
+	public void setCzechCitizenship(boolean czechCitizenship) {
+		this.citizenship = czechCitizenship ? CZECH_CITIZENSHIP_CODE : OTHER_CITIZENSHIP_CODE;
+	}
+	
 	@Override
 	public UUID getUuid() {
 		return uuid;
@@ -77,10 +112,10 @@ public class Contact implements IdentEntity {
 	public void setLandRegistryNumber(Long landRegistryNumber) {
 		this.landRegistryNumber = landRegistryNumber;
 	}
-	public Short getHouseNumber() {
+	public String getHouseNumber() {
 		return houseNumber;
 	}
-	public void setHouseNumber(Short houseNumber) {
+	public void setHouseNumber(String houseNumber) {
 		this.houseNumber = houseNumber;
 	}
 	public String getCity() {
@@ -94,6 +129,12 @@ public class Contact implements IdentEntity {
 	}
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
+	}
+	public AddressValidationStatus getAddressValidationStatus() {
+		return addressValidationStatus;
+	}
+	public void setAddressValidationStatus(AddressValidationStatus addressValidationStatus) {
+		this.addressValidationStatus = addressValidationStatus;
 	}
 	public String getEmail1() {
 		return email1;
@@ -126,17 +167,49 @@ public class Contact implements IdentEntity {
 			sb.append(this.street + " ");			
 		}
 		sb.append(this.landRegistryNumber);
-		if (this.houseNumber != null && this.houseNumber > 0) {
+		if (this.houseNumber != null && !this.houseNumber.equals("0")) {
 			sb.append("/"+this.houseNumber);
 		}
 		return sb.toString();
+	}
+	public String getEvidenceNumber() {
+		return evidenceNumber;
+	}
+	public void setEvidenceNumber(String evidenceNumber) {
+		this.evidenceNumber = evidenceNumber;
+	}
+	public String getRegion() {
+		return region;
+	}
+	public void setRegion(String region) {
+		this.region = region;
+	}
+	public String getForeignAddress() {
+		return foreignAddress;
+	}
+	public void setForeignAddress(String foreignAddress) {
+		this.foreignAddress = foreignAddress;
+	}
+	public String getCitizenship() {
+		return citizenship;
+	}
+	public void setCitizenship(String citizenship) {
+		this.citizenship = citizenship;
+	}
+	public boolean isSexMale() {
+		return sexMale;
+	}
+	public void setSexMale(boolean sexMale) {
+		this.sexMale = sexMale;
 	}
 
 	@Override
 	public String toString() {
 		return "Contact [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", firstname=" + firstname
-				+ ", surname=" + surname + ", street=" + street + ", landRegistryNumber=" + landRegistryNumber
-				+ ", houseNumber=" + houseNumber + ", city=" + city + ", zipCode=" + zipCode + ", email1=" + email1
-				+ ", email2=" + email2 + ", phone1=" + phone1 + ", phone2=" + phone2 + "]";
+				+ ", surname=" + surname + ", citizenship=" + citizenship + ", sexMale=" + sexMale + ", region="
+				+ region + ", street=" + street + ", landRegistryNumber=" + landRegistryNumber + ", houseNumber="
+				+ houseNumber + ", evidenceNumber=" + evidenceNumber + ", city=" + city + ", zipCode=" + zipCode
+				+ ", foreignAddress=" + foreignAddress + ", addressValidationStatus=" + addressValidationStatus
+				+ ", email1=" + email1 + ", email2=" + email2 + ", phone1=" + phone1 + ", phone2=" + phone2 + "]";
 	}
 }

@@ -20,17 +20,17 @@ public class RecaptchaComposer extends SelectorComposer<Component>  {
 	private ConfigurationService configurationService;
 	
 	@Wire
-    Button submit;
+    Button submitBtn;
     
     @Listen("onUserRespond = #recaptcha")
     public void verify(Event event) throws Exception{
         JSONObject result = RecaptchaVerifier.verifyResponse(configurationService.getRecaptchaSecredkey(), ((JSONObject)event.getData()).get("response").toString());
         if (Boolean.parseBoolean(result.get("success").toString())){
-            submit.setDisabled(false);
+        	submitBtn.setDisabled(false);
         }else{
             //log or show error
             WebUtils.showNotificationWarning(result.get("error-codes").toString());
-            submit.setDisabled(true);
+            submitBtn.setDisabled(true);
         }
     }
 }

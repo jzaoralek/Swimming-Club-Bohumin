@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
@@ -36,6 +37,7 @@ import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
+import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseParticipantVM;
 
 /**
  * Detail ucastnika zobrazeneho prihlasenym zakonnym zastupcem.
@@ -182,6 +184,20 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		courseApplicationService.updateCourseParticInterruption(Arrays.asList(course.getCourseCourseParticipantVO().getUuid()), null);
 		loadCourseListData();
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseParticipationRenewed"));
+	}
+	
+	/**
+	 * Nastavi datum narozeni podle rodneho cisla.
+	 * @param personalNumber
+	 * @param fx
+	 */
+	@Command
+	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") CourseParticipantDetailVM fx) {
+		// predvyplneni datumu narozeni podle rodneho cisla
+		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getCourseParticipant());
+		if (success) {
+			BindUtils.postNotifyChange(null, null, this, "courseParticipant");			
+		}
 	}
 	
 	public boolean isAttendanceForParentsVisible() {

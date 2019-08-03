@@ -1,5 +1,8 @@
 package com.jzaoralek.scb.ui.common.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.javatuples.Pair;
@@ -58,5 +61,77 @@ public class WebUtilsTest {
 				&& !CollectionUtils.isEmpty(validResult.getValue1())
 				&& validResult.getValue0().size() == 1
 				&& validResult.getValue1().size() == 2);
+	}
+	
+	@Test
+	public void testParseRcDatePart() {
+		String TOO_LONG_RC = "11223344";
+		try {
+			WebUtils.parseRcDatePart(TOO_LONG_RC);			
+			Assert.fail("Should fail on IllegalArgumentException.");
+		} catch (Exception e) {
+			// expected
+		}
+		
+		String WRONG_FORMAT_RC = "11223b";
+		try {
+			WebUtils.parseRcDatePart(WRONG_FORMAT_RC);			
+			Assert.fail("Should fail on IllegalArgumentException.");
+		} catch (Exception e) {
+			// expected
+		}
+		
+		String WRONG_DATE_RC = "11223b";
+		try {
+			WebUtils.parseRcDatePart(WRONG_DATE_RC);			
+			Assert.fail("Should fail on IllegalArgumentException.");
+		} catch (Exception e) {
+			// expected
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		
+        try {
+        	// 1981-05-04
+        	Date expDate = sdf.parse("1981-05-04");
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("810504"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("812504"));
+			
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("815504"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("817504"));
+			
+			// 1981-12-04
+			expDate = sdf.parse("1981-12-04");			
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("811204"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("813204"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("811204"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("816204"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("818204"));
+			
+			// 1981-01-04
+			expDate = sdf.parse("1981-01-04");
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("815104"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("817104"));
+			
+			// 2000-01-01
+			expDate = sdf.parse("2000-01-01");
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("000101"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("002101"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("005101"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("007101"));
+			
+			// 2000-12-31
+			expDate = sdf.parse("2000-12-31");
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("001231"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("003231"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("006231"));
+			assertEqualsDates(expDate, WebUtils.parseRcDatePart("008231"));
+		} catch (ParseException e) {
+			Assert.fail();
+		}
+	}
+	
+	protected void assertEqualsDates(Date date1, Date date2) {
+		Assert.assertTrue(date1.compareTo(date1) == 0);
 	}
 }

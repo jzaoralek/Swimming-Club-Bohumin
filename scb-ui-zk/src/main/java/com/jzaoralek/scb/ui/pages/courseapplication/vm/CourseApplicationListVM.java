@@ -419,7 +419,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 								item.getCourseParticRepresentative().getContact().getEmail1(),								
 								getNotNullString(item.getCourseParticipant().getContact().getStreet()),
 								getNotNullLong(item.getCourseParticipant().getContact().getLandRegistryNumber()),
-								getNotNullShort(item.getCourseParticipant().getContact().getHouseNumber()),
+								getNotNullString(item.getCourseParticipant().getContact().getHouseNumber()),
 								getNotNullString(item.getCourseParticipant().getContact().getCity()),
 								getNotNullString(item.getCourseParticipant().getContact().getZipCode())
 					});
@@ -435,7 +435,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 								item.getCourseParticRepresentative().getContact().getEmail1(),	
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getStreet()),
 								getNotNullLongEmptyChar(item.getCourseParticipant().getContact().getLandRegistryNumber()),
-								getNotNullShortEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity()),
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode())
 								});

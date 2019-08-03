@@ -1,0 +1,41 @@
+<?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
+<?page title="${c:l('txt.Login')}"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+
+<zk xmlns:c="client" xmlns:x="xhtml">
+	<script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
+	
+	<div self="@{define(mainContent)}"
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.AddressDemoVM')"
+		validationMessages="@id('vmsgs')"
+		hflex="1" >
+		
+		<custom-attributes submitBtn="@load(submitBtn)"></custom-attributes>
+		
+		<button id="submitBtn" 
+				onClick="@command('submitCmd')"
+				visible="false"
+				label="Submit" />
+				
+		<ruian-address contact="${vm.contact}" contactDisabled="false" submitBtn="@load(submitBtn)" />
+			
+		<vbox width="100%" style="margin: 10px;"
+			apply="com.jzaoralek.scb.ui.common.component.address.AddressClientComposer" >
+			
+			<button id="submitBtnVisible" 
+				forward="onClick=submitBtn.onClick"
+				label="Submit" />
+			<textbox id="representativeEmail1"
+				value="@bind(vm.courseReprName) @save(vm.courseReprName, before='submitCmd') @validator(vm.notNullValidator)"
+				hflex="1" />
+			<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+				<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
+					<label value="@bind(vmsgs[representativeEmail1])" />
+				</span>	
+			</hbox>
+		</vbox>
+		
+	</div>
+</zk>

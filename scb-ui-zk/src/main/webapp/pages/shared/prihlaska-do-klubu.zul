@@ -11,9 +11,10 @@
 		height="100%"
 		sclass="scb-view scb-view-900" 
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM')"
-		validationMessages="@id('vmsgs')"
-	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
+		validationMessages="@id('vmsgs')" >
 		
+			<custom-attributes submitCmd="submit" />
+			
             <hlayout>
 	            <hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())">
 					<button onClick="@command('backCmd')" 
@@ -21,7 +22,7 @@
 						iconSclass="z-icon-arrow-left" 
 						sclass="btn-light fix-btn-icon"/>
 					<!-- Zpravy -->
-	            	<send-mail-button />			
+	            	<send-mail-button />	
 				</hlayout>
 			
                 <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
@@ -47,7 +48,12 @@
 		
 				<!-- Formular -->
 				<vlayout visible="@load(vm.editMode)" width="100%">	  
-				
+					<!-- Tlacitko odesilajici formular, neni viditelne, kvulu validaci musi byt definovane pred komponentou adresa -->
+					<button id="realSubmitBtn" 
+						onClick="@command('submit')"
+						visible="false"
+						label="Submit" />
+					
 					<!-- Vyber kurzu -->
 					<include src="/pages/common/component/course-selection-groupbox.zul" if="${vm.courseSelectionRequired}" />
                     	
@@ -63,14 +69,13 @@
 											<label value="${c:l('txt.ui.common.email')} / ${c:l('txt.ui.common.Username')}"/>
 											<hbox hflex="1">
 												<textbox id="representativeEmail1" readonly="@load(vm.itemReadOnly or !vm.editMode)"
-													value="@bind(fx.application.courseParticRepresentative.contact.email1) @validator(vm.emailValidator, notNull=true)"
+													value="@bind(vm.application.courseParticRepresentative.contact.email1) @save(vm.application.courseParticRepresentative.contact.email1, before={submitCmd}) @validator(vm.emailValidator, notNull=true)"
 													maxlength="@load(vm.getEmailMaxlength())"
 													placeholder="*"
 													sclass="form-input-text"
 													focus="${!vm.courseSelectionRequired}"
 													tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-													onChange="@command('validateUniqueUsernameCmd', email=self.value, fx=fx)"
-													tabindex="1"
+													onChange="@command('validateUniqueUsernameCmd', email=self.value, fx=vm)"
 													hflex="1" />
 												<a iconSclass="z-icon-info-circle big-icon" popup="emailPopup" style="margin-left: 5px; position:relative;top: 5px" />
 											</hbox>
@@ -88,12 +93,11 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.firstname')}"/>
 											<textbox id="representativeFirstname" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticRepresentative.contact.firstname) @validator(vm.notNullValidator)" 
+												value="@bind(vm.application.courseParticRepresentative.contact.firstname) @save(vm.application.courseParticRepresentative.contact.firstname, before={submitCmd}) @validator(vm.notNullValidator)" 
 												maxlength="@load(vm.getFirstnameMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-												tabindex="2"
 												hflex="1" />
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeFirstname])" >
@@ -109,12 +113,11 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.surname')}"/>
 											<textbox id="representativeSurname" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticRepresentative.contact.surname) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticRepresentative.contact.surname) @save(vm.application.courseParticRepresentative.contact.surname, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getSurnameMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-												tabindex="3"
 												hflex="1" />
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeSurname])" >
@@ -130,12 +133,11 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.phone')} 1"/>
 											<textbox id="representativePhone1" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticRepresentative.contact.phone1) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticRepresentative.contact.phone1) @save(vm.application.courseParticRepresentative.contact.phone1, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getPhoneMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-												tabindex="4"
 												hflex="1" />
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativePhone1])" >
@@ -151,10 +153,9 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.phone')} 2"/>
 											<textbox id="representativePhone2" readonly="@load(!vm.editMode)" 
-												value="@bind(fx.application.courseParticRepresentative.contact.phone2)"
+												value="@bind(vm.application.courseParticRepresentative.contact.phone2)"
 												maxlength="@load(vm.getPhoneMaxlength())"
 												sclass="form-input-text"
-												tabindex="5"
 												hflex="1" />
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												
@@ -168,10 +169,9 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.email')} 2"/>
 											<textbox id="representativeEmail2" readonly="@load(!vm.editMode)" 
-												value="@bind(fx.application.courseParticRepresentative.contact.email2) @validator(vm.emailValidator)"
+												value="@bind(vm.application.courseParticRepresentative.contact.email2) @validator(vm.emailValidator)"
 												maxlength="@load(vm.getEmailMaxlength())"
 												sclass="form-input-text"
-												tabindex="6"
 												hflex="1" />
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail2])" >
@@ -193,37 +193,66 @@
 						<grid hflex="1" style="padding-bottom:10px;">
 							<rows>
 								<row>
-									<cell  >
-										<vbox hflex="1">
-											<label value="${c:l('txt.ui.common.birthNumber')}"/>
-											<textbox id="particBirthNumber" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
-			                            		maxlength="@load(vm.getBirthNumberMaxlength())"
-			                            		placeholder="*"
-			                            		sclass="form-input-text"
-			                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-			                            		onChange="@command('validateUniquePersonalNumberCmd', personal_number=self.value, fx=fx)"
-			                            		tabindex="7"
-			                            		hflex="1" />
-											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
-													<label value="@bind(vmsgs[particBirthNumber])" />
-												</span>
-											</hbox>
-										</vbox>
+									<cell>
+										<hlayout style="margin-top: 10px;" hflex="1">
+											<hlayout width="150px">
+												<checkbox checked="@bind(vm.application.courseParticipant.contact.czechCitizenship)" />
+												<label value="${c:l('txt.ui.common.CzechCitizen')}"/>
+											</hlayout>
+<!-- 											<hlayout width="150px"> -->
+<!-- 												<radiogroup id="sexRadioGroup" selectedItem="@bind(vm.application.courseParticipant.contact.sexMale)" /> -->
+<!-- 												<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" /> -->
+<!--                 								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/> -->
+<!-- 											</hlayout> -->
+										</hlayout>
 									</cell>
 								</row>
-								<row     >
+								<row>
+									<cell>
+										<hlayout hflex="1">
+											<vlayout width="150px">
+												<label value="${c:l('txt.ui.common.birthNumber')}"/>
+												<textbox id="particBirthNumber" readonly="@load(!vm.editMode)"
+													value="@bind(vm.application.courseParticipant.personalNo) @save(vm.application.courseParticipant.personalNo, before={submitCmd}) @validator(vm.birthNumberValidator, notNull=true, validateFormat=vm.application.courseParticipant.contact.czechCitizenship)"
+				                            		maxlength="@load(vm.getBirthNumberMaxlength())"
+				                            		placeholder="*"
+				                            		width="140px"
+				                            		sclass="form-input-text"
+				                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+				                            		onChange="@command('birtNumberOnChangeCmd', personal_number=self.value, fx=vm)" />
+												<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+													<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
+														<label value="@bind(vmsgs[particBirthNumber])" />
+													</span>
+												</hbox>
+											</vlayout>
+											<vlayout hflex="min">
+												<label value="${c:l('txt.ui.common.birthDate')}"/>
+												<datebox id="particBirthdate" readonly="@load(!vm.editMode)"
+													value="@bind(vm.application.courseParticipant.birthdate) @save(vm.application.courseParticipant.birthdate, before={submitCmd}) @validator('com.jzaoralek.scb.ui.common.validator.BirthdateValidator', notNull=true, validateBirthNumber=vm.application.courseParticipant.contact.czechCitizenship, birthNumber=vm.application.courseParticipant.personalNo)"
+				                            		format="@load(vm.dateFormat)" 
+				                            		maxlength="@load(vm.getDateMaxlength())"
+				                            		placeholder="*"
+				                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}" />
+												<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+													<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
+														<label value="@bind(vmsgs[particBirthdate])" />
+													</span>
+												</hbox>
+											</vlayout>
+										</hlayout>
+									</cell>
+								</row>
+								<row>
 									<cell   >
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.firstname')}"/>
 											<textbox id="particFirstname" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.contact.firstname) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticipant.contact.firstname) @save(vm.application.courseParticipant.contact.firstname, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getFirstnameMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-												tabindex="8"
 												hflex="1" />
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" visible="@load(not empty vmsgs[particFirstname])" >
@@ -235,16 +264,15 @@
 								</row>
 								
 								<row>
-									<cell  >
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.surname')}"/>
 											<textbox id="particSurname" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.contact.surname) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticipant.contact.surname) @save(vm.application.courseParticipant.contact.surname, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getSurnameMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-												tabindex="9"
 												hflex="1" />
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particSurname])" >
@@ -255,127 +283,23 @@
 									</cell>
 								</row>
 								
+								<!-- Adresa -->
 								<row>
-									<cell  >
-										<vbox hflex="1">
-											<label value="${c:l('txt.ui.common.street')}"/>
-											<textbox id="particStreet" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.contact.street)"
-												maxlength="240"
-												sclass="form-input-text"
-												tabindex="10"
-												hflex="1" />
-											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-											</hbox>
-										</vbox>
+									<cell>
+										<custom-attributes submitBtn="${realSubmitBtn}"></custom-attributes>
+										<ruian-address contact="${vm.application.courseParticipant.contact}" contactDisabled="${!vm.editMode}" submitBtn="@load(realSubmitBtn)" />
 									</cell>
 								</row>
-								
 								<row>
-									<cell  >
-										<vbox hflex="1">
-											<hbox>
-												<vbox>
-													<label value="${c:l('txt.ui.common.landRegNo')}"/>
-													<intbox id="particLandRegNo" readonly="@load(!vm.editMode)"
-														value="@bind(fx.application.courseParticipant.contact.landRegistryNumber)"
-														maxlength="11"
-														placeholder="*"
-														constraint="no empty"
-														sclass="form-input-text"
-														tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-														tabindex="11"
-														hflex="1" />
-												</vbox>
-												<vbox>
-													<label value="${c:l('txt.ui.common.houseNo')}"/>
-													<intbox id="particHouseNo" readonly="@load(!vm.editMode)"
-														value="@bind(fx.application.courseParticipant.contact.houseNumber)"
-														maxlength="6"
-														sclass="form-input-text"
-														tabindex="11"
-														hflex="1" />
-												</vbox>
-											</hbox>
-											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-											</hbox>
-										</vbox>
-									</cell>
-								</row>
-								
-								<row>
-									<cell  >
-										<vbox hflex="1">
-											<label value="${c:l('txt.ui.common.city')}"/>
-											<textbox id="particCity" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.contact.city) @validator(vm.notNullValidator)"
-												maxlength="240"
-												placeholder="*"
-												sclass="form-input-text"
-												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-												tabindex="12"
-												hflex="1" />
-											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particCity])" >
-													<label value="@bind(vmsgs[particCity])" />
-												</span>
-											</hbox>
-										</vbox>
-									</cell>
-								</row>
-								
-								<row>
-									<cell  >
-										<vbox hflex="1">
-											<label value="${c:l('txt.ui.common.zipCode')}"/>
-											<textbox id="particZipCode" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.contact.zipCode) @validator(vm.notNullValidator)"
-												maxlength="32"
-												placeholder="*"
-												sclass="form-input-text"
-												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-												tabindex="13"
-												hflex="1" />
-											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particZipCode])" >
-													<label value="@bind(vmsgs[particZipCode])" />
-												</span>
-											</hbox>
-										</vbox>
-									</cell>
-								</row>
-								
-								<row    >
-									<cell  >
-										<vbox hflex="1">
-											<label value="${c:l('txt.ui.common.birthDate')}"/>
-											<datebox id="particBirthdate" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.birthdate) @validator(vm.notNullObjectValidator)"
-			                            		format="@load(vm.dateFormat)" 
-			                            		maxlength="@load(vm.getDateMaxlength())"
-			                            		placeholder="*"
-			                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-			                            		tabindex="14" />
-											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
-													<label value="@bind(vmsgs[particBirthdate])" />
-												</span>
-											</hbox>
-										</vbox>
-									</cell>
-								</row>
-								
-								<row    >
 									<cell  >
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.healthInsurance')}"/>
 											<textbox id="particHealthInsurance" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.healthInsurance) @validator(vm.notNullValidator)"
+												value="@bind(vm.application.courseParticipant.healthInsurance) @save(vm.application.courseParticipant.healthInsurance, before={submitCmd}) @validator(vm.notNullValidator)"
 												maxlength="@load(vm.getHealthInsuranceMaxlength())"
 												placeholder="*"
 												sclass="form-input-text"
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-												tabindex="16"
 												hflex="1" />
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particHealthInsurance])" >
@@ -390,7 +314,7 @@
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.application.healthInfo')}"/>
 											<textbox rows="3" hflex="3" multiline="true" readonly="@load(!vm.editMode)"
-												value="@bind(fx.application.courseParticipant.healthInfo)" tabindex="17"
+												value="@bind(vm.application.courseParticipant.healthInfo)"
 												sclass="form-input-textarea"
 												maxlength="@load(vm.getHealthInfoMaxlength())" />
 										</vbox>
@@ -404,7 +328,7 @@
 						<hbox hflex="1" sclass="form-grid" 
 								visible="@load(vm.editMode and !vm.securedMode)" 
 								if="${vm.healthInfoConfirmRequired}" style="margin-top: 10px;">
-							<checkbox checked="@bind(vm.healthInfoAgreement)" tabindex="18" />
+							<checkbox checked="@bind(vm.healthInfoAgreement)" />
 							<vlayout>
 								<label value="${vm.healthAgreement}" />
 								<a label="${c:l('txt.ui.common.DocumentToDownload')}" 
@@ -417,7 +341,7 @@
 						<!-- Personal data process agreement -->
 						<hbox hflex="1" sclass="form-grid" visible="@load(vm.editMode and !vm.securedMode)" 
 								if="${vm.gdprConfirmRequired}" style="margin-top: 10px;">
-							<checkbox checked="@bind(vm.personalInfoProcessAgreement)" tabindex="19" />
+							<checkbox checked="@bind(vm.personalInfoProcessAgreement)" />
 							<vlayout>
 								<label value="${vm.persDataProcessAgreement}" />
 								<a label="${c:l('txt.ui.common.DocumentToDownload')}" 
@@ -431,7 +355,7 @@
 						<hbox hflex="1" sclass="form-grid" 
 								visible="@load(vm.editMode and !vm.securedMode)" 
 								if="${vm.clubRulesConfirmRequired}" style="margin-top: 10px;">
-							<checkbox checked="@bind(vm.clubRulesAgreement)" tabindex="19" />
+							<checkbox checked="@bind(vm.clubRulesAgreement)" />
 							<vlayout>
 								<label value="${vm.clubRulesText}" />
 								<a label="${c:l('txt.ui.common.DocumentToDownload')}" 
@@ -457,10 +381,10 @@
 							        data-callback="afterValidate"
 							        visible="@load(vm.editMode and !vm.securedMode)" />
 
-								<button id="submit" 
-									label="Odeslat" 
-									tabindex="21"
-									onClick="@command('submit')" 
+								<!-- Kliknuti vyvolava klik na realSubmitBtn, ktere teprve odesila formular, kvuli validaci adresy, tlacitko musi byt definovani pred elementem s adresou. -->
+								<button id="submitBtn" 
+									label="Odeslat"
+									forward="onClick=realSubmitBtn.onClick"
 									iconSclass="z-icon-check"
 									style="margin-top: 20px;"
 									sclass="btn-success"
@@ -468,7 +392,7 @@
 									visible="@load(vm.editMode and !vm.securedMode)" />
 								<button label="Uložit"
 									sclass="btn-success"
-									onClick="@command('submit')" 
+									forward="onClick=realSubmitBtn.onClick"
 									iconSclass="z-icon-check" 
 									visible="@load(vm.editMode and vm.securedMode)" />
 							</vlayout>
