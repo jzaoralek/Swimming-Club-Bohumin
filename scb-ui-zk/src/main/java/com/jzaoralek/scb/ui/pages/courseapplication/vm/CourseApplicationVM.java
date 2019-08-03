@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -371,11 +372,13 @@ public class CourseApplicationVM extends BaseVM {
 			        BindUtils.postNotifyChange(null, null, fx, "*");
 			    }
 			});
+		} else {
+			// predvyplneni datumu narozeni podle rodneho cisla
+			boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getApplication().getCourseParticipant());
+			if (success) {
+				BindUtils.postNotifyChange(null, null, this, "application");	
+			}
 		}
-		
-		// predvyplneni datumu narozeni podle rodneho cisla
-		WebUtils.setBirthdateByBirthNumer(personalNumber, this.application.getCourseParticipant());
-		BindUtils.postNotifyChange(null, null, this, "application");
 	}
 	
 	@NotifyChange("courseList")

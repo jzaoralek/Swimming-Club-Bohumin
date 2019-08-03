@@ -194,8 +194,10 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	@Command
 	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") CourseParticipantDetailVM fx) {
 		// predvyplneni datumu narozeni podle rodneho cisla
-		 WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getCourseParticipant());
-		 BindUtils.postNotifyChange(null, null, this, "courseParticipant");
+		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getCourseParticipant());
+		if (success) {
+			BindUtils.postNotifyChange(null, null, this, "courseParticipant");			
+		}
 	}
 	
 	public boolean isAttendanceForParentsVisible() {

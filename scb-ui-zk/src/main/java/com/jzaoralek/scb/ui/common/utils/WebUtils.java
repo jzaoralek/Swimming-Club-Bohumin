@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,6 @@ import org.apache.log4j.Logger;
 import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.zkoss.bind.BindUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
@@ -446,16 +446,21 @@ public final class WebUtils {
 		return cal.getTime();
 	}
 	
-	public static void setBirthdateByBirthNumer(String birtNumber, CourseParticipant courseParticipant) {
+	public static boolean setBirthdateByBirthNumer(String birtNumber, CourseParticipant courseParticipant) {
 		if (!StringUtils.hasText(birtNumber) || courseParticipant == null) {
-			return;
+			return false;
+		}
+		if (!courseParticipant.getContact().isCzechCitizenship()) {
+			return false;
 		}
 		
 		try {
 			Date birthDate = WebUtils.parseRcDatePart(birtNumber.substring(0, birtNumber.indexOf("/")));
 			courseParticipant.setBirthdate(birthDate);
+			return true;
 		} catch (Exception e) {
 			logger.error("Exception caught for personalNumber: " + birtNumber, e);
+			return false;
 		}
 	}
 }

@@ -218,8 +218,10 @@ public class CourseParticipantVM extends BaseVM {
 	@Command
 	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") CourseParticipantVM fx) {
 		// predvyplneni datumu narozeni podle rodneho cisla
-		 WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getParticipant().getCourseParticipant());
-		 BindUtils.postNotifyChange(null, null, this, "participant");
+		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getParticipant().getCourseParticipant());
+		if (success) {
+			BindUtils.postNotifyChange(null, null, this, "participant");
+		}
 	}
 
 	private void fillSwimStyleItemList() {
