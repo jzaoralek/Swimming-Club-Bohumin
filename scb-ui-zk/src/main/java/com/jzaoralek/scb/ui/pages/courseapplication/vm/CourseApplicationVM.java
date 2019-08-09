@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +168,6 @@ public class CourseApplicationVM extends BaseVM {
 			if (!AddressUtils.isAddressValid()) {
 				return;
 			}
-			
 			if (this.securedMode) {
 				// update
 				if (LOG.isDebugEnabled()) {
@@ -208,6 +206,11 @@ public class CourseApplicationVM extends BaseVM {
 						this.courseSelected.clear();
 						return;
 					}
+				}
+				
+				// kontrola unikatnosti pole Email/prihlasovaci jmeno
+				if (!validateUniqueUsernameCore(this.application.getCourseParticRepresentative().getUsername(), this)) {
+					return;
 				}
 				
 				// overeni validni adresy
@@ -335,11 +338,16 @@ public class CourseApplicationVM extends BaseVM {
 	 * @param email
 	 * @param fx
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	
 	@NotifyChange("*")
 	@Command
 	public void validateUniqueUsernameCmd(@BindingParam("email") String email, @BindingParam("fx") final CourseApplicationVM fx) {
 		// pokud existuje uzivatel se stejnym username jako je zadany email, zobrazit upozorneni a nepovolit vyplnit
+		validateUniqueUsernameCore(email, fx);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private boolean validateUniqueUsernameCore(String email, final CourseApplicationVM fx) {
 		final ScbUser scbUser = scbUserService.getByUsername(email);
 		if (scbUser != null) {
 			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists",new Object[] {email, scbUser.getContact().getCompleteName()});			
@@ -350,7 +358,10 @@ public class CourseApplicationVM extends BaseVM {
 			        BindUtils.postNotifyChange(null, null, fx, "*");
 			    }
 			});
+			return false;
 		}
+		
+		return true;
 	}
 	
 	/**
