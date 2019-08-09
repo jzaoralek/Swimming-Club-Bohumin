@@ -64,6 +64,6 @@ public final class PaymentUtils {
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
 		
-		return new Pair<>(new GregorianCalendar(yearFrom,8,1), new GregorianCalendar(yearTo,7,31));
+		return new Pair<>(new GregorianCalendar(yearFrom,6,1), new GregorianCalendar(yearTo,5,30));
 	}
 }
