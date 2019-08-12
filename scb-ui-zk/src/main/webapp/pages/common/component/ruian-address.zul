@@ -144,7 +144,7 @@
 						<hbox hflex="1">
 							<vbox hflex="1">
 								<label value="${c:l('txt.ui.common.landRegNo')}"/>
-								<textbox id="cp"
+								<intbox id="cp"
 									value="@bind(vm.cp)"
 									onChange="@command('addressItemChangedCmd')"
 									maxlength="8"

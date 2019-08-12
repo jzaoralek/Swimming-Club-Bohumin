@@ -68,7 +68,7 @@ public class AddressVM extends BaseVM {
 	private ListModel<String> streetListModel;
 	private String streetNameSelected;
 	
-	private String cp;
+	private Long cp;
 	private String co;
 	private String ce;
 	private String zip;
@@ -165,7 +165,7 @@ public class AddressVM extends BaseVM {
 	}
 	
 	private void initOtherElems() {
-		this.cp = (contact.getLandRegistryNumber() != null && contact.getLandRegistryNumber() != 0) ? String.valueOf(contact.getLandRegistryNumber()) : "";
+		this.cp = contact.getLandRegistryNumber();
 		this.co = contact.getHouseNumber();
 		this.ce = contact.getEvidenceNumber();
 		this.zip = contact.getZipCode();
@@ -282,7 +282,7 @@ public class AddressVM extends BaseVM {
 	@NotifyChange("contact")
 	@Command
 	public void addressItemChangedCmd() {
-		this.contact.setLandRegistryNumber(StringUtils.hasText(this.cp) ? Long.valueOf(this.cp) : null);
+		this.contact.setLandRegistryNumber(this.cp);
 		this.contact.setHouseNumber(this.co);
 		this.contact.setEvidenceNumber(this.ce);
 		this.contact.setZipCode(this.zip);
@@ -295,7 +295,7 @@ public class AddressVM extends BaseVM {
 	@Command
 	public void placeValidationCmd() {
 		try {
-			this.validationResponse = ruianServiceRest.validate(getMunicipalityName(), this.zip, this.ce, this.co, this.cp, getStreetName());			
+			this.validationResponse = ruianServiceRest.validate(getMunicipalityName(), this.zip, this.ce, this.co, this.cp != null ? String.valueOf(this.cp) : "", getStreetName());			
 			if (this.validationResponse != null && this.validationResponse.isValid()) {
 				this.contact.setAddressValidationStatus(AddressValidationStatus.VALID);
 				WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.address.AddressIsValid"));
@@ -385,10 +385,8 @@ public class AddressVM extends BaseVM {
 		if (item == null) {
 			return;
 		}
-		this.cp = item.getPlaceCp();
-		if (StringUtils.hasText(item.getPlaceCp())) {
-			this.contact.setLandRegistryNumber(Long.valueOf(item.getPlaceCp()));			
-		}
+		this.cp = StringUtils.hasText(item.getPlaceCp()) ? Long.valueOf(item.getPlaceCp()) : null;
+		this.contact.setLandRegistryNumber(this.cp);			
 		
 		this.co = item.getPlaceCo();
 		this.contact.setHouseNumber(item.getPlaceCo());
@@ -458,11 +456,11 @@ public class AddressVM extends BaseVM {
 		return response;
 	}
 
-	public String getCp() {
+	public Long getCp() {
 		return cp;
 	}
 
-	public void setCp(String cp) {
+	public void setCp(Long cp) {
 		this.cp = cp;
 	}
 
