@@ -200,7 +200,7 @@
 				<row>
 					<cell sclass="form-grid-cell">
 						<hlayout hflex="1">
-							<vbox hflex="1" pack="center">
+							<vbox width="110px" pack="center">
 								<!-- Verify address -->
 								<button label="${c:l('msg.ui.address.Verify')}" 
 									onClick="@command(placeValidationCmd)" 
@@ -215,7 +215,7 @@
 									visible="false"
 									onClick="@command(addressSubmitCmd)"/>
 							</vbox>
-							<vbox hflex="min" pack="center" align="end" >
+							<vbox hflex="1" pack="center" align="end" >
 								<span style="background-color: #FFF3E7 !important; color: #FF8501; border: 1px solid #FF8501; padding-left: 15px; padding-right: 15px; padding-top: 5px; border-radius: 14px;"
 									visible="@load(vm.contact.addressNotVerified)">
 									<a iconSclass="z-icon-exclamation" style="margin-right: 5px; color: #FF8501; font-size: 22px;" />
