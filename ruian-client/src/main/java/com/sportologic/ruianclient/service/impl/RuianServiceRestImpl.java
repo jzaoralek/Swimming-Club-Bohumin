@@ -61,7 +61,7 @@ public class RuianServiceRestImpl implements RuianService {
 		}
 	}
 
-	@Cacheable(value="ruianMunicipalityCache", key="#regionId")
+	@Cacheable(value="ruianMunicipalityCache", key="#p0")
 	public List<RuianMunicipality> getMunicipalityList(String regionId) {
 		try {
 			RuianMunicipalityResponse response = restExecutor.execute("/api/v1/ruian/build/municipalities?apiKey=" + authToken + "&regionId=" + regionId,  HttpMethod.GET, null, RuianMunicipalityResponse.class);
