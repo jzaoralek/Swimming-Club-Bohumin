@@ -8,8 +8,8 @@
 	<diskStore path="java.io.tmpdir" />
 	
 	<cache name="ruianRegionCache" 
-		maxEntriesLocalHeap="10000"
-		maxEntriesLocalDisk="1000" 
+		maxEntriesLocalHeap="1000"
+		maxEntriesLocalDisk="100" 
 		eternal="false" 
 		diskSpoolBufferSizeMB="20"
 		timeToIdleSeconds="300" timeToLiveSeconds="600"
@@ -19,8 +19,8 @@
 	</cache>
 	
 	<cache name="ruianMunicipalityCache" 
-		maxEntriesLocalHeap="10000"
-		maxEntriesLocalDisk="1000" 
+		maxEntriesLocalHeap="15000"
+		maxEntriesLocalDisk="1500" 
 		eternal="false" 
 		diskSpoolBufferSizeMB="20"
 		timeToIdleSeconds="300" timeToLiveSeconds="600"
@@ -30,8 +30,8 @@
 	</cache>
 	
 	<cache name="ruianStreetCache" 
-		maxEntriesLocalHeap="10000"
-		maxEntriesLocalDisk="1000" 
+		maxEntriesLocalHeap="15000"
+		maxEntriesLocalDisk="1500" 
 		eternal="false" 
 		diskSpoolBufferSizeMB="20"
 		timeToIdleSeconds="300" timeToLiveSeconds="600"
