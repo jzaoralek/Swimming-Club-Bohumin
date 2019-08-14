@@ -193,9 +193,9 @@ public class CourseLearningLessonsVM extends BaseVM {
 		
 		this.learningLessonList = learnLessonListFinal;
 
-		// nelze se posunout na cervenec a srpen
-		this.prevMonthBtnDisabled = this.monthSelected.get(Calendar.MONTH) == Calendar.SEPTEMBER + 1;
-		this.nextMonthBtnDisabled = this.monthSelected.get(Calendar.MONTH) == (Calendar.JUNE + 1);
+		// nelze se posunout na cervenec a srpen, zakomentovano
+		this.prevMonthBtnDisabled = false; //this.monthSelected.get(Calendar.MONTH) == Calendar.SEPTEMBER + 1;
+		this.nextMonthBtnDisabled = false; //this.monthSelected.get(Calendar.MONTH) == (Calendar.JUNE + 1);
 	}
 
 	private LearningLesson searchInLearnedLessonList(LearningLesson lesson, List<LearningLesson> learnedLessonList) {
