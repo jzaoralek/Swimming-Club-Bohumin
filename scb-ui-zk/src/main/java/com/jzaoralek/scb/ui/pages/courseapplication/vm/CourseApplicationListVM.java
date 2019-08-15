@@ -2,6 +2,7 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO.CoursePaymentState;
+import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -226,6 +228,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 				@Override
 				public void onOkEvent() {
 					StringBuilder mailToUser = null;
+					List<Mail> mailList = new ArrayList<>();
 					for (CourseApplication courseApplication : courseApplicationList) {
 						mailToUser = new StringBuilder();
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text0"));
@@ -240,11 +243,12 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text3"));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
-						mailToUser.append(buildMailSignature());
-						
-						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null, false);
-						WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
+						mailToUser.append(buildMailSignature());						
+						mailList.add(new Mail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null));	
 					}
+					
+					mailService.sendMailBatch(mailList);
+					WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
 				}
 			},
 			msgParams
