@@ -182,6 +182,60 @@
 												submitBtn="@load(realSubmitBtn)" />
 										</cell>
 									</row>
+									<row if="${vm.isLoggedUserInRole('ADMIN')}">
+										<cell>
+											<!-- ISCUS -->
+											<groupbox hflex="1" closable="false">
+												<caption label="Česká unie sportu" style="font-weight: bold;" width="100%" sclass="customPosition" />
+												<grid sclass="scb-form-grid-2" 
+													style="margin-left: 10px; margin-rignt: 10px;"
+													hflex="1" >
+													<rows>
+														<row>
+															<cell>
+																<hlayout hflex="1">
+																	<vbox hflex="1">
+																		<label value="ID člena"/>
+																		<textbox readonly="@load(vm.isItemReadOnly())"
+																			value="@bind(fx.participant.courseParticipant.iscusParticId)"
+																			sclass="form-input-text"
+																			hflex="1"
+																			maxlength="32" />
+																	</vbox>
+																	<vbox hflex="1" style="margin-left: 5px;">
+																		<label value="ID systému"/>
+																		<textbox readonly="true"
+																			value="${vm.iscusSystemId}"
+																			sclass="form-input-text"
+																			hflex="1" />
+																	</vbox>
+																</hlayout>
+															</cell>
+														</row>
+														<row>
+															<cell>
+																<hlayout hflex="1">
+																	<vbox hflex="1" >
+																		<label value="Role"/>
+																		<combobox model="@load(vm.iscusRoleList)"
+																			readonly="true"
+																			buttonVisible="true"
+																			selectedItem="@bind(vm.iscusRoleSelected)"
+																			style="background: white;"
+																			hflex="1" >
+																			<template name="model">
+																            	<comboitem label="@bind(each.label)" value="@bind(each)"/>
+																			</template>
+																		</combobox>
+																	</vbox>
+																</hlayout>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
 								</rows>
 							</grid>
 							
@@ -329,7 +383,8 @@
 							<hbox style="margin-bottom: 10px;">
 								<vbox>
 									<button label="Uložit"
-										onClick="@command('submit')" 
+										onClick="@command('submit')"
+										sclass="btn-success"
 										visible="@load(!vm.isItemReadOnly())"
 										iconSclass="z-icon-check" />
 								</vbox>

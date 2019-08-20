@@ -150,6 +150,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public String getRecaptchaSitekey() {
 		return this.recaptchaSitekey;
 	}
+	
+	@Override
+	public String getIscusSystemId() {
+		return configurationDao.getByName(Config.ConfigName.ISCUS_SYSTEM_ID.name()).getValue();
+	}
 
 	@Override
 	public String getRecaptchaSecredkey() {

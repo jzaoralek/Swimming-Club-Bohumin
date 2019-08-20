@@ -3,6 +3,7 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant.IscusRole;
 import com.jzaoralek.scb.dataservice.domain.LearningLessonStatsWrapper;
 import com.jzaoralek.scb.dataservice.domain.Result;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
@@ -44,6 +46,7 @@ import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
+import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -78,6 +81,8 @@ public class CourseParticipantVM extends BaseVM {
 	private LearningLessonStatsWrapper lessonStats;
 	private boolean attendanceTabSelected;
 	private UUID courseUuidSelected;
+	private final List<Listitem> iscusRoleList = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(IscusRole.class));
+	private Listitem iscusRoleSelected;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -88,6 +93,7 @@ public class CourseParticipantVM extends BaseVM {
         setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_U);
 		if (StringUtils.hasText(uuid)) {
 			this.participant = courseApplicationService.getByUuid(UUID.fromString(uuid));
+			this.iscusRoleSelected = getIscusRoleListItem(this.participant.getCourseParticipant().getIscusRole());
 			this.pageHeadline = this.participant.getCourseParticipant().getContact().getCompleteName();
 		}
 		if (StringUtils.hasText(courseUuid)) {
@@ -119,6 +125,9 @@ public class CourseParticipantVM extends BaseVM {
 			// update
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Updating application: " + this.participant);
+			}
+			if (this.iscusRoleSelected != null) {
+				this.participant.getCourseParticipant().setIscusRole((IscusRole)this.iscusRoleSelected.getValue());				
 			}
 			courseApplicationService.store(this.participant);
 			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
@@ -223,6 +232,10 @@ public class CourseParticipantVM extends BaseVM {
 			BindUtils.postNotifyChange(null, null, this, "participant");
 		}
 	}
+	
+	public String getIscusSystemId() {
+		return ConfigUtil.getIscusSystemId(configurationService);
+	}
 
 	private void fillSwimStyleItemList() {
 		List<CodeListItem> swimStyleList = codeListService.getItemListByType(CodeListType.SWIMMING_STYLE);
@@ -232,6 +245,20 @@ public class CourseParticipantVM extends BaseVM {
 		}
 		this.swimStyleListitemList.add(0, new Listitem(Labels.getLabel("txt.ui.common.all"), null));
 		this.swimStyleListitemSelected = this.swimStyleListitemList.get(0);
+	}
+	
+	protected Listitem getIscusRoleListItem(IscusRole role) {
+		if (role == null) {
+			return null;
+		}
+
+		for (Listitem item : this.iscusRoleList) {
+			if (item.getValue() == role) {
+				return item;
+			}
+		}
+
+		return null;
 	}
 	
 	private void buildCourseStatistics() {
@@ -327,5 +354,17 @@ public class CourseParticipantVM extends BaseVM {
 
 	public void setAttendanceTabSelected(boolean attendanceTabSelected) {
 		this.attendanceTabSelected = attendanceTabSelected;
+	}
+	
+	public List<Listitem> getIscusRoleList() {
+		return iscusRoleList;
+	}
+	
+	public Listitem getIscusRoleSelected() {
+		return iscusRoleSelected;
+	}
+
+	public void setIscusRoleSelected(Listitem iscusRoleSelected) {
+		this.iscusRoleSelected = iscusRoleSelected;
 	}
 }

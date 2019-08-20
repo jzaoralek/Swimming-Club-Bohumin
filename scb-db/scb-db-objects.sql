@@ -48,6 +48,8 @@ CREATE TABLE course_participant(
 	health_info varchar(524),
 	user_uuid varchar(36) REFERENCES user(uuid),
 	contact_uuid varchar(36) REFERENCES contact(uuid),
+    iscus_role ENUM('ACTIVE_SPORTSMAN','ACTIVE_SPORTSMAN_PROFESSIONAL','OTHER') NULL,
+    iscus_partic_id VARCHAR(32) NULL,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)

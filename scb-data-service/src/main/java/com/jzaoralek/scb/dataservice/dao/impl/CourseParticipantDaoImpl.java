@@ -3,7 +3,6 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,8 +21,10 @@ import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
+import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant.IscusRole;
 
 @Repository
 public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParticipantDao {
@@ -35,36 +36,37 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 	private static final String CONTACT_PARAM = "contact_uuid";
 	private static final String HEALTH_INFO_PARAM = "health_info";
 	private static final String COURSE_PARTICIPANT_UUID_PARAM = "course_participant_uuid";
-	private static final String COURSE_UUID_PARAM = "course_uuid";
 	private static final String LEARNING_LESSON_UUID_PARAM = "learning_lesson_uuid";
+	private static final String ISCUS_ROLE_PARAM = "iscus_role";
+	private static final String ISCUS_PARTIC_ID_PARAM = "iscus_partic_id";
 
 	private static final String INSERT = "INSERT INTO course_participant " +
-			"(uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by, user_uuid) " +
-			" VALUES (:"+UUID_PARAM+", :"+BIRTHDATE_PARAM+", :"+PERSONAL_NUMBER_PARAM+", :"+HEALTH_INSURANCE+", :"+CONTACT_PARAM+", :"+HEALTH_INFO_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+USER_UUID_PARAM+")";
-	private static final String SELECT_BY_UUID = "SELECT uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by, user_uuid FROM course_participant WHERE uuid= :"+UUID_PARAM;
+			"(uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by, user_uuid, iscus_role, iscus_partic_id) " +
+			" VALUES (:"+UUID_PARAM+", :"+BIRTHDATE_PARAM+", :"+PERSONAL_NUMBER_PARAM+", :"+HEALTH_INSURANCE+", :"+CONTACT_PARAM+", :"+HEALTH_INFO_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+USER_UUID_PARAM+", :"+ISCUS_ROLE_PARAM+", :"+ISCUS_PARTIC_ID_PARAM+")";
+	private static final String SELECT_BY_UUID = "SELECT uuid, birthdate, personal_number, health_insurance, contact_uuid, health_info, modif_at, modif_by, user_uuid, iscus_role, iscus_partic_id FROM course_participant WHERE uuid= :"+UUID_PARAM;
 
-	private static final String SELECT_BY_COURSE_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid FROM course_participant cp, course_course_participant ccp, contact c "
+	private static final String SELECT_BY_COURSE_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid, cp.iscus_role, cp.iscus_partic_id FROM course_participant cp, course_course_participant ccp, contact c "
 			+ "WHERE cp.uuid = ccp.course_participant_uuid "
 			+ "AND cp.contact_uuid = c.uuid "
 			+ "AND ccp.course_uuid = :"+COURSE_UUID_PARAM+" "
 			+ "AND ccp.course_partic_interrupted_at is null "
 			+ "ORDER BY c.surname ";
 	
-	private static final String SELECT_BY_COURSE_INCLUDE_INTERRUPTED_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid FROM course_participant cp, course_course_participant ccp, contact c "
+	private static final String SELECT_BY_COURSE_INCLUDE_INTERRUPTED_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid, cp.iscus_role, cp.iscus_partic_id FROM course_participant cp, course_course_participant ccp, contact c "
 			+ "WHERE cp.uuid = ccp.course_participant_uuid "
 			+ "AND cp.contact_uuid = c.uuid "
 			+ "AND ccp.course_uuid = :"+COURSE_UUID_PARAM+" "
 			+ "ORDER BY c.surname ";
 
-	private static final String SELECT_BY_LEARNING_LESSON_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid FROM course_participant cp, participant_learning_lesson cpl "
+	private static final String SELECT_BY_LEARNING_LESSON_UUID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid, cp.iscus_role, cp.iscus_partic_id FROM course_participant cp, participant_learning_lesson cpl "
 			+ "WHERE cp.uuid = cpl.course_participant_uuid "
 			+ "AND cpl.learning_lesson_uuid = :" + LEARNING_LESSON_UUID_PARAM;
 	
-	private static final String SELECT_BY_USERID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid  "
+	private static final String SELECT_BY_USERID = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid, cp.iscus_role, cp.iscus_partic_id  "
 			+ " FROM course_participant cp , contact c "
 			+ " WHERE cp.contact_uuid = c.uuid AND cp.user_uuid=:" + USER_UUID_PARAM;
 	
-	private static final String SELECT_BY_PERSONAL_NUMBER = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid  "
+	private static final String SELECT_BY_PERSONAL_NUMBER = "SELECT cp.uuid, cp.birthdate, cp.personal_number, cp.health_insurance, cp.contact_uuid, cp.health_info, cp.modif_at, cp.modif_by, cp.user_uuid, cp.iscus_role, cp.iscus_partic_id  "
 			+ " FROM course_participant cp "
 			+ " WHERE cp.personal_number=:" + PERSONAL_NUMBER_PARAM;
 	
@@ -79,7 +81,10 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			" VALUES (:"+UUID_PARAM+", :"+COURSE_PARTICIPANT_UUID_PARAM+", :"+COURSE_UUID_PARAM+")";
 
 	private static final String DELETE = "DELETE FROM course_participant where uuid = :" + UUID_PARAM;
-	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + ", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", user_uuid=:"+USER_UUID_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	private static final String UPDATE = "UPDATE course_participant SET birthdate=:"+BIRTHDATE_PARAM+", personal_number=:"+PERSONAL_NUMBER_PARAM+", health_insurance=:"+HEALTH_INSURANCE+
+			", contact_uuid=:"+CONTACT_PARAM+", health_info=:"+HEALTH_INFO_PARAM + ", iscus_role=:"+ISCUS_ROLE_PARAM + ", iscus_partic_id=:"+ISCUS_PARTIC_ID_PARAM +
+			", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", user_uuid=:"+USER_UUID_PARAM
+			+" WHERE uuid=:"+UUID_PARAM;
 	private static final String SELECT_COURSE_COURSE_PARTIC_BY_UUID = "select uuid, course_participant_uuid, course_uuid from course_course_participant where uuid = :"+UUID_PARAM;
 	private static final String SELECT_COURSE_COURSE_PARTIC_BY_PARTIC_AND_COURSE = "select * from course_course_participant where course_participant_uuid = :"+COURSE_PARTICIPANT_UUID_PARAM+" AND course_uuid = :"+COURSE_UUID_PARAM;
 	
@@ -152,6 +157,9 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		paramMap.addValue(CONTACT_PARAM, courseParticipant.getContact() != null ? courseParticipant.getContact().getUuid().toString() : null);
 		paramMap.addValue(HEALTH_INFO_PARAM, courseParticipant.getHealthInfo());
 		paramMap.addValue(USER_UUID_PARAM, courseParticipant.getRepresentativeUuid() != null ? courseParticipant.getRepresentativeUuid().toString() : null);
+		paramMap.addValue(ISCUS_PARTIC_ID_PARAM, courseParticipant.getIscusParticId());
+		paramMap.addValue(ISCUS_ROLE_PARAM, courseParticipant.getIscusRole() != null ? courseParticipant.getIscusRole().name() : null);
+		
 		namedJdbcTemplate.update(INSERT, paramMap);
 	}
 
@@ -165,6 +173,8 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 		paramMap.addValue(CONTACT_PARAM, courseParticipant.getContact() != null ? courseParticipant.getContact().getUuid().toString() : null);
 		paramMap.addValue(HEALTH_INFO_PARAM, courseParticipant.getHealthInfo());
 		paramMap.addValue(USER_UUID_PARAM, courseParticipant.getRepresentativeUuid() != null ? courseParticipant.getRepresentativeUuid().toString() : null);
+		paramMap.addValue(ISCUS_PARTIC_ID_PARAM, courseParticipant.getIscusParticId());
+		paramMap.addValue(ISCUS_ROLE_PARAM, courseParticipant.getIscusRole() != null ? courseParticipant.getIscusRole().name() : null);
 		namedJdbcTemplate.update(UPDATE, paramMap);
 	}
 
@@ -270,6 +280,12 @@ public class CourseParticipantDaoImpl extends BaseJdbcDao implements CourseParti
 			ret.setPersonalNo(rs.getString("personal_number"));
 			ret.setHealthInsurance(rs.getString("health_insurance"));
 			ret.setHealthInfo(rs.getString("health_info"));
+			
+			String iscusRoleStr = rs.getString("iscus_role");
+			if (StringUtils.hasText(iscusRoleStr)) {
+				ret.setIscusRole(IscusRole.valueOf(iscusRoleStr));				
+			}
+			ret.setIscusParticId(rs.getString("iscus_partic_id"));
 
 			UUID contactUuid = rs.getString("contact_uuid") != null ? UUID.fromString(rs.getString("contact_uuid")) : null;
 			if (contactUuid != null) {
