@@ -195,7 +195,7 @@
 															<cell>
 																<hlayout hflex="1">
 																	<vbox hflex="1">
-																		<label value="ID člena"/>
+																		<label value="${c:l('txt.ui.iscus.particId')}"/>
 																		<textbox readonly="@load(vm.isItemReadOnly())"
 																			value="@bind(fx.participant.courseParticipant.iscusParticId)"
 																			sclass="form-input-text"
@@ -203,7 +203,7 @@
 																			maxlength="32" />
 																	</vbox>
 																	<vbox hflex="1" style="margin-left: 5px;">
-																		<label value="ID systému"/>
+																		<label value="${c:l('txt.ui.iscus.systemId')}"/>
 																		<textbox readonly="true"
 																			value="${vm.iscusSystemId}"
 																			sclass="form-input-text"
@@ -216,7 +216,7 @@
 															<cell>
 																<hlayout hflex="1">
 																	<vbox hflex="1" >
-																		<label value="Role"/>
+																		<label value="${c:l('txt.ui.iscus.particRole')}"/>
 																		<combobox model="@load(vm.iscusRoleList)"
 																			readonly="true"
 																			buttonVisible="true"
