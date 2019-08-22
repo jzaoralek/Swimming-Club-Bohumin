@@ -22,9 +22,19 @@ public class CourseParticipant implements IdentEntity {
 	}
 	
 	public enum IscusRole {
-		ACTIVE_SPORTSMAN,
-		ACTIVE_SPORTSMAN_PROFESSIONAL,
-		OTHER;
+		ACTIVE_SPORTSMAN("1"),
+		ACTIVE_SPORTSMAN_PROFESSIONAL("2"),
+		OTHER("3");
+		
+		private String abbr;
+
+		private IscusRole(String abbr) {
+			this.abbr = abbr;
+		}
+
+		public String getAbbr() {
+			return abbr;
+		}
 	}
 	
 	private UUID uuid;

@@ -46,6 +46,7 @@ import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -173,6 +174,12 @@ public class CourseApplicationListVM extends BaseContextVM {
 	public void exportToExcel(@BindingParam("listbox") Listbox listbox) {
 		String filename = this.pageMode == PageMode.COURSE_APPLICATION_LIST ? "seznam_prihlasek.xls" : "seznam_ucastniku.xls";
 		ExcelUtil.exportToExcel(filename, buildExcelRowData(listbox));
+	}
+	
+	@Command
+	public void exportToExcelISCUSCmd(@BindingParam("listbox") Listbox listbox) {
+		String filename = "seznam_ucastniku_iscus.xls";
+		ExcelUtil.exportToExcel(filename, buildExcelISCUSRowData(listbox));
 	}
 
 	@NotifyChange("*")
@@ -444,6 +451,66 @@ public class CourseApplicationListVM extends BaseContextVM {
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode())
 								});
 				}
+			}
+		}
+
+		return data;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, Object[]> buildExcelISCUSRowData(@BindingParam("listbox") Listbox listbox) {
+		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
+
+		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_ISCUS_PATTERN);
+		String iscusSystemId = ConfigUtil.getIscusSystemId(configurationService);
+
+		// header
+		Object[] headerArray = new Object[17];
+		headerArray[0] = Labels.getLabel("txt.ui.common.CzechCitizen");
+		headerArray[1] = Labels.getLabel("txt.ui.common.birthNumber");
+		headerArray[2] = Labels.getLabel("txt.ui.common.birthDate");
+		headerArray[3] = Labels.getLabel("txt.ui.common.Sex");
+		headerArray[4] = Labels.getLabel("txt.ui.iscus.particRole");
+		headerArray[5] = Labels.getLabel("txt.ui.iscus.IsTrainer");
+		headerArray[6] = Labels.getLabel("txt.ui.iscus.IsReferee");
+		headerArray[7] = Labels.getLabel("txt.ui.common.street");
+		headerArray[8] = Labels.getLabel("txt.ui.common.landRegNo.abbr");
+		headerArray[9] = Labels.getLabel("txt.ui.common.houseNo.abbr");
+		headerArray[10] = Labels.getLabel("txt.ui.common.city");
+		headerArray[11] = Labels.getLabel("txt.ui.common.zipCode");
+		headerArray[12] = Labels.getLabel("txt.ui.common.phone");
+		headerArray[13] = Labels.getLabel("txt.ui.common.email");
+		headerArray[14] = Labels.getLabel("txt.ui.iscus.particId");
+		headerArray[15] = Labels.getLabel("txt.ui.iscus.ClubLabels");
+		headerArray[16] = Labels.getLabel("txt.ui.iscus.systemIdNotEdit");
+		
+		data.put("0", headerArray);
+
+		// rows
+		ListModel<Object> model = listbox.getListModel();
+		CourseApplication item = null;
+		for (int i = 0; i < model.getSize(); i++) {
+			if (model.getElementAt(i) instanceof CourseApplication) {
+				item = (CourseApplication)model.getElementAt(i);
+				data.put(String.valueOf(i+1),
+						new Object[] { 
+								item.getCourseParticipant().getContact().isCzechCitizenship() ? "1" : "0",
+								item.getCourseParticipant().getPersonalNo(),
+								item.getCourseParticipant().getBirthdate() != null ? dateFormat.format(item.getCourseParticipant().getBirthdate()) : "",
+								item.getCourseParticipant().getContact().isSexMale() ? "M" : "Z",
+								item.getCourseParticipant().getIscusRole() != null ? item.getCourseParticipant().getIscusRole().getAbbr() : "",
+								"0",
+								"0",
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getStreet()),
+								getNotNullLongEmptyChar(item.getCourseParticipant().getContact().getLandRegistryNumber()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode()),
+								item.getCourseParticRepresentative().getContact().getPhone1(),
+								item.getCourseParticRepresentative().getContact().getEmail1(),
+								item.getCourseParticipant().getIscusParticId(),
+								"",
+								iscusSystemId});
 			}
 		}
 

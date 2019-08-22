@@ -48,10 +48,20 @@
 						       	</menupopup>
 						       	
 	            				<button iconSclass="z-icon-download" 
-	            					onClick="@command('exportToExcel',listbox=courseApplicationList)" 
+	            					popup="downloadPopup, position=after_start"
 	            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
 	            					if="${vm.isLoggedUserInRole('ADMIN')}" 
 	            					sclass="toolbar-btn"/>
+	            				<menupopup id="downloadPopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
+		            				<!-- Standardni export -->
+									<menuitem label="${c:l('txt.ui.export.Standard')} ${c:l('txt.ui.export.XLS')}" 
+										onClick="@command('exportToExcel',listbox=courseApplicationList)" />
+									<menuseparator/>
+									<!-- Ceska unie sportu -->
+									<menuitem label="${c:l('txt.ui.export.Cus')} ${c:l('txt.ui.export.XLS')}"
+										onClick="@command('exportToExcelISCUSCmd',listbox=courseApplicationList)" />
+									<menuitem label="${c:l('txt.ui.export.Cus')} ${c:l('txt.ui.export.CSV')}" />
+						       	</menupopup>
 	            				
             					<button iconSclass="z-icon-refresh" 
             						onClick="@command('refreshDataCmd')" 

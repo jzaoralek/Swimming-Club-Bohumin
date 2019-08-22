@@ -55,11 +55,11 @@
 													<checkbox checked="@bind(fx.participant.courseParticipant.contact.czechCitizenship)" />
 													<label value="${c:l('txt.ui.common.CzechCitizen')}"/>
 												</hlayout>
-<!-- 												<hlayout width="150px"> -->
-<!-- 													<radiogroup id="sexRadioGroup" selectedItem="@bind(fx.participant.courseParticipant.contact.sexMale)" /> -->
-<!-- 													<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" /> -->
-<!-- 	                								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/> -->
-<!-- 												</hlayout> -->
+												<hlayout width="150px">
+													<radiogroup id="sexRadioGroup" selectedItem="@bind(fx.participant.courseParticipant.contact.sexMale)" />
+													<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" />
+	                								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/>
+												</hlayout>
 											</hlayout>
 										</cell>
 									</row>
