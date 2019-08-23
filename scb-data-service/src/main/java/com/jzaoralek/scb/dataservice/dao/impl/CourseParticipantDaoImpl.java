@@ -21,7 +21,6 @@ import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
-import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.IscusRole;
