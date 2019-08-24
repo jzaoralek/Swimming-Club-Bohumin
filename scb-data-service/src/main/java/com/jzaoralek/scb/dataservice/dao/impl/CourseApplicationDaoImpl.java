@@ -378,6 +378,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", cp.personal_number " +
 			", cp.iscus_role " +
 			", cp.iscus_partic_id " +
+			", cp.iscus_system_id " +
 			", con_part.sex_male " +
 			", con_part.citizenship " +
 			", con_repr.phone1 " +
@@ -572,6 +573,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 				courseParticInCourse.setBirthdate(courseApplication.getCourseParticipant().getBirthdate());
 				courseParticInCourse.setPersonalNo(courseApplication.getCourseParticipant().getPersonalNo());
 				courseParticInCourse.setIscusParticId(courseApplication.getCourseParticipant().getIscusParticId());
+				courseParticInCourse.setIscusSystemId(courseApplication.getCourseParticipant().getIscusSystemId());
 				courseParticInCourse.setIscusRole(courseApplication.getCourseParticipant().getIscusRole());
 				courseApplication.setCourseParticipant(courseParticInCourse);
 				ret.add(courseApplication);
@@ -691,7 +693,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 				courseParticipant.setIscusRole(IscusRole.valueOf(iscusRoleStr));				
 			}
 			courseParticipant.setIscusParticId(rs.getString("iscus_partic_id"));
-
+			courseParticipant.setIscusSystemId(rs.getString("iscus_system_id"));
+			
 			Contact courseParticipantContact = new Contact();
 			courseParticipantContact.setFirstname(rs.getString("firstname"));
 			courseParticipantContact.setSurname(rs.getString("surname"));

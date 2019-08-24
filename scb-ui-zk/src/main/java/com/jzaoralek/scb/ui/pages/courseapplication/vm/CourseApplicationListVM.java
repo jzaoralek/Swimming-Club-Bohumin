@@ -46,7 +46,6 @@ import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
-import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -462,7 +461,6 @@ public class CourseApplicationListVM extends BaseContextVM {
 		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
 
 		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_ISCUS_PATTERN);
-		String iscusSystemId = ConfigUtil.getIscusSystemId(configurationService);
 
 		// header
 		Object[] headerArray = new Object[17];
@@ -510,7 +508,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 								item.getCourseParticRepresentative().getContact().getEmail1(),
 								item.getCourseParticipant().getIscusParticId(),
 								"",
-								iscusSystemId});
+								item.getCourseParticipant().getIscusSystemId()});
 			}
 		}
 

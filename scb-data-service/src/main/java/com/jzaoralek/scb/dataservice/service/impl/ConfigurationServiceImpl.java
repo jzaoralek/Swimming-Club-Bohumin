@@ -152,11 +152,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 	
 	@Override
-	public String getIscusSystemId() {
-		return configurationDao.getByName(Config.ConfigName.ISCUS_SYSTEM_ID.name()).getValue();
-	}
-
-	@Override
 	public String getRecaptchaSecredkey() {
 		return this.recaptchaSecredkey;
 	}

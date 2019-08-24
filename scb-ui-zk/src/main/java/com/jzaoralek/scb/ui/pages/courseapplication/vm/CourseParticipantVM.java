@@ -232,10 +232,6 @@ public class CourseParticipantVM extends BaseVM {
 			BindUtils.postNotifyChange(null, null, this, "participant");
 		}
 	}
-	
-	public String getIscusSystemId() {
-		return ConfigUtil.getIscusSystemId(configurationService);
-	}
 
 	private void fillSwimStyleItemList() {
 		List<CodeListItem> swimStyleList = codeListService.getItemListByType(CodeListType.SWIMMING_STYLE);

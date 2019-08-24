@@ -58,6 +58,7 @@ public class CourseParticipant implements IdentEntity {
 	private Date courseParticipationInterruptedAt; 
 	private IscusRole iscusRole;
 	private String iscusParticId;
+	private String iscusSystemId;
 
 	/*
 	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
@@ -83,6 +84,7 @@ public class CourseParticipant implements IdentEntity {
 		this.coursePaymentVO = courseParticipant.coursePaymentVO;
 		this.iscusRole = courseParticipant.getIscusRole();
 		this.iscusParticId = courseParticipant.getIscusParticId();
+		this.iscusSystemId = courseParticipant.getIscusSystemId();
 	}
 
 	public CourseParticipant() {
@@ -251,6 +253,14 @@ public class CourseParticipant implements IdentEntity {
 		this.iscusParticId = iscusParticId;
 	}
 	
+	public String getIscusSystemId() {
+		return iscusSystemId;
+	}
+
+	public void setIscusSystemId(String iscusSystemId) {
+		this.iscusSystemId = iscusSystemId;
+	}
+	
 	public String getInCourseInfo() {
 		String ret = null;
 		String DELIMITER = ", ";
@@ -303,6 +313,6 @@ public class CourseParticipant implements IdentEntity {
 				+ varsymbolCore + ", notifiedSemester1PaymentAt=" + notifiedSemester1PaymentAt
 				+ ", notifiedSemester2PaymentAt=" + notifiedSemester2PaymentAt + ", courseParticipationInterruptedAt="
 				+ courseParticipationInterruptedAt + ", iscusRole=" + iscusRole + ", iscusParticId=" + iscusParticId
-				+ ", lessonAttendance=" + lessonAttendance + "]";
+				+ ", iscusSystemId=" + iscusSystemId + ", lessonAttendance=" + lessonAttendance + "]";
 	}
 }

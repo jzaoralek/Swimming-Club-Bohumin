@@ -68,17 +68,6 @@ public final class ConfigUtil {
 		}
 	}
 	
-	public static String getIscusSystemId(ConfigurationService configurationService) {
-		String iscusSystemIdSession = (String)WebUtils.getSessAtribute(ConfigName.ISCUS_SYSTEM_ID.name());
-		if (StringUtils.hasText(iscusSystemIdSession)) {
-			return iscusSystemIdSession;
-		} else {
-			String value = configurationService.getIscusSystemId();
-			addToSessionConfigCache(ConfigName.ISCUS_SYSTEM_ID, value); 
-			return value;
-		}
-	}
-	
 	public static void addToSessionConfigCache(ConfigName configName, Object value) {
 		WebUtils.setSessAtribute(configName.name(), value);
 	}

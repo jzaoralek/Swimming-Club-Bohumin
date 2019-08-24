@@ -50,6 +50,7 @@ CREATE TABLE course_participant(
 	contact_uuid varchar(36) REFERENCES contact(uuid),
     iscus_role ENUM('ACTIVE_SPORTSMAN','ACTIVE_SPORTSMAN_PROFESSIONAL','OTHER') NULL DEFAULT 'ACTIVE_SPORTSMAN',
     iscus_partic_id VARCHAR(32) NULL,
+    iscus_system_id VARCHAR(32) NULL,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)

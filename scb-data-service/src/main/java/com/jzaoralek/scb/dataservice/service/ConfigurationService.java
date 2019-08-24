@@ -25,7 +25,6 @@ public interface ConfigurationService {
 	String getCourseApplicationEmailSpecText();
 	String getOrgContactPerson();
 	String getBankAccountNumber();
-	String getIscusSystemId();
 	boolean isPaymentsAvailable();
 	boolean isAttendanceForParentsVisible();
 	List<Config> getAll();

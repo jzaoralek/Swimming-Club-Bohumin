@@ -5,3 +5,6 @@ INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_b
 VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499627', 'ISCUS_SYSTEM_ID', 'ID systému pro ISCUS', 'sportologic.cz', 'STRING', now(), 'SYSTEM');
 
 UPDATE course_participant SET iscus_role='ACTIVE_SPORTSMAN';
+
+ALTER TABLE course_participant ADD iscus_system_id VARCHAR(32) NULL;
+DELETE FROM configuration WHERE name='ISCUS_SYSTEM_ID';
