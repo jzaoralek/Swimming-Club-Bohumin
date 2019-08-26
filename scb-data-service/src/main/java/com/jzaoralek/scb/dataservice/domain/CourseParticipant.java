@@ -22,8 +22,8 @@ public class CourseParticipant implements IdentEntity {
 	}
 	
 	public enum IscusRole {
-		ACTIVE_SPORTSMAN("1"),
-		ACTIVE_SPORTSMAN_PROFESSIONAL("2"),
+		ACTIVE_SPORTSMAN_PROFESSIONAL("1"),
+		ACTIVE_SPORTSMAN("2"),
 		OTHER("3");
 		
 		private String abbr;

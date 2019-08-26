@@ -61,7 +61,7 @@
 									<menuitem label="${c:l('txt.ui.export.Cus')} ${c:l('txt.ui.export.XLS')}"
 										onClick="@command('exportToExcelISCUSCmd',listbox=courseApplicationList)" />
 									<menuitem label="${c:l('txt.ui.export.Cus')} ${c:l('txt.ui.export.CSV')}" 
-										disabled="true" />
+										onClick="@command('exportToCSVISCUSCmd',listbox=courseApplicationList)" />
 						       	</menupopup>
 	            				
             					<button iconSclass="z-icon-refresh" 

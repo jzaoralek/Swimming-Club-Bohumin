@@ -46,6 +46,7 @@ import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.utils.CSVUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -179,6 +180,12 @@ public class CourseApplicationListVM extends BaseContextVM {
 	public void exportToExcelISCUSCmd(@BindingParam("listbox") Listbox listbox) {
 		String filename = "seznam_ucastniku_iscus.xls";
 		ExcelUtil.exportToExcel(filename, buildExcelISCUSRowData(listbox));
+	}
+	
+	@Command
+	public void exportToCSVISCUSCmd(@BindingParam("listbox") Listbox listbox) {
+		String filename = "seznam_ucastniku_iscus.csv";
+		CSVUtil.exportToCSV(filename, buildExcelISCUSRowData(listbox));
 	}
 
 	@NotifyChange("*")
