@@ -463,9 +463,8 @@ public class CourseApplicationListVM extends BaseContextVM {
 		return data;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Map<String, Object[]> buildExcelISCUSRowData(@BindingParam("listbox") Listbox listbox) {
-		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
+		Map<String, Object[]> data = new LinkedHashMap<>();
 
 		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_ISCUS_PATTERN);
 
@@ -497,7 +496,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		for (int i = 0; i < model.getSize(); i++) {
 			if (model.getElementAt(i) instanceof CourseApplication) {
 				item = (CourseApplication)model.getElementAt(i);
-				data.put(String.valueOf(i+1),
+				data.put(item.getCourseParticipant().getPersonalNo(),
 						new Object[] { 
 								item.getCourseParticipant().getContact().isCzechCitizenship() ? "1" : "0",
 								item.getCourseParticipant().getPersonalNo(),

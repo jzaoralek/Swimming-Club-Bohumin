@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,8 @@ public final class CSVUtil {
 		
 		try {
 			stream = new ByteArrayOutputStream();
-			Map<String, List<String>> strData = new HashMap<>();
+			
+			Map<String, List<String>> strData = new LinkedHashMap<>();
 			List<String> rowItemList = null;
 			
 			for (String key : data.keySet()) {
@@ -51,7 +53,7 @@ public final class CSVUtil {
 				strData.put(key, rowItemList);
 			}
 
-			for (String key : strData. keySet()) {
+			for (String key : strData.keySet()) {
 				writeLine(stream, strData.get(key));
 			}
 
@@ -79,12 +81,8 @@ public final class CSVUtil {
 		}
 	}
 	
-	public static void writeLine(ByteArrayOutputStream w, List<String> values) throws IOException {
-		writeLine(w, values, DEFAULT_SEPARATOR, ' ');
-	}
-
-	public static void writeLine(ByteArrayOutputStream w, List<String> values, char separators) throws IOException {
-		writeLine(w, values, separators, ' ');
+	private static void writeLine(ByteArrayOutputStream w, List<String> values) throws IOException {
+		writeLine(w, values, ' ');
 	}
 
 	// https://tools.ietf.org/html/rfc4180
@@ -98,7 +96,7 @@ public final class CSVUtil {
 
 	}
 
-	public static void writeLine(ByteArrayOutputStream w, List<String> values, char separators, char customQuote) throws IOException {
+	private static void writeLine(ByteArrayOutputStream w, List<String> values, char customQuote) throws IOException {
 
 		boolean first = true;
 		
@@ -116,6 +114,6 @@ public final class CSVUtil {
 			first = false;
 		}
 		sb.append("\n");
-		w.write(sb.toString().getBytes());
+		w.write(sb.toString().getBytes("UTF-8"));
 	}
 }
