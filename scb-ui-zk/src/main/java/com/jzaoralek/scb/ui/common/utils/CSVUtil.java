@@ -61,7 +61,6 @@ public final class CSVUtil {
 			attachment.setByteArray(stream.toByteArray());
 			attachment.setContentType("application/file");
 			attachment.setName(filename);
-			Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
 			WebUtils.downloadAttachment(attachment);
 		} catch (FileNotFoundException e) {
 			LOG.error("exportToExcel():: FileNotFoundException caught.", e);
