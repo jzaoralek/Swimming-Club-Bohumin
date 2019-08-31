@@ -36,6 +36,7 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
@@ -387,7 +388,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 
 		// header
 		Listhead lh = listbox.getListhead();
-		Object[] headerArray = new Object[lh.getChildren().size() + 10];
+		Object[] headerArray = new Object[lh.getChildren().size() + 12];
 		for (int i = 0; i < lh.getChildren().size(); i++) {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
@@ -402,7 +403,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[lh.getChildren().size()+3] = Labels.getLabel("txt.ui.common.landRegNo");
 			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.houseNo");
 			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.city");
-			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.zipCode");			
+			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.zipCode");
+			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.course");	
+			headerArray[lh.getChildren().size()+8] = Labels.getLabel("txt.ui.common.courseLocation2");
 		} else {
 			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
 			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
@@ -420,14 +423,16 @@ public class CourseApplicationListVM extends BaseContextVM {
 		// rows
 		ListModel<Object> model = listbox.getListModel();
 		CourseApplication item = null;
+		Course course = null;
 		for (int i = 0; i < model.getSize(); i++) {
 			if (model.getElementAt(i) instanceof CourseApplication) {
 				item = (CourseApplication)model.getElementAt(i);
+				course = getCourseByCourseParticipant(item.getCourseParticipant());
 				if (this.pageMode == PageMode.COURSE_APPLICATION_LIST) {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
 								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
-								item.getCourseParticRepresentative().getContact().getCompleteName(),
+								item.getCourseParticRepresentative().getContact().getCompleteName(),								
 								dateFormat.format(item.getModifAt()),
 								item.getCourseParticipant().getInCourseInfo(),
 								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
@@ -438,7 +443,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 								getNotNullLong(item.getCourseParticipant().getContact().getLandRegistryNumber()),
 								getNotNullString(item.getCourseParticipant().getContact().getHouseNumber()),
 								getNotNullString(item.getCourseParticipant().getContact().getCity()),
-								getNotNullString(item.getCourseParticipant().getContact().getZipCode())
+								getNotNullString(item.getCourseParticipant().getContact().getZipCode()),
+								course != null ? course.getName() : "",
+								course != null && course.getCourseLocation() != null ? course.getCourseLocation().getName() : "",
 					});
 				} else {
 					data.put(String.valueOf(i+1),
@@ -461,6 +468,17 @@ public class CourseApplicationListVM extends BaseContextVM {
 		}
 
 		return data;
+	}
+	
+	private Course getCourseByCourseParticipant(CourseParticipant cp) {
+		if (!CollectionUtils.isEmpty(cp.getCourseList())) {
+			Course firstCourse = cp.getCourseList().get(0);
+			if (firstCourse != null) {
+				return firstCourse;
+			}
+		}
+		
+		return null;
 	}
 	
 	private Map<String, Object[]> buildExcelISCUSRowData(@BindingParam("listbox") Listbox listbox) {
