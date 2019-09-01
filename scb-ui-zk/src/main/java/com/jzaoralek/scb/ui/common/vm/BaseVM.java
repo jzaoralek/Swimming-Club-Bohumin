@@ -440,11 +440,13 @@ public class BaseVM {
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 			if (course.getCourseLocation() != null) {
 				// nazev a popis mista kurzu
+				mailToRepresentativeSb.append(System.getProperty("line.separator"));
 				mailToRepresentativeSb.append(course.getCourseLocation().getName() + (StringUtils.hasText(course.getCourseLocation().getDescription()) ? (", " + course.getCourseLocation().getDescription()) : ""));
 				mailToRepresentativeSb.append(System.getProperty("line.separator"));				
 			}
 			if (course.getLessonList() != null && !course.getLessonList().isEmpty()) {
 				// lekce
+				mailToRepresentativeSb.append(System.getProperty("line.separator"));
 				for (Lesson item : course.getLessonList()) {
 					mailToRepresentativeSb.append(getLessonToUi(item));
 					mailToRepresentativeSb.append(System.getProperty("line.separator"));
