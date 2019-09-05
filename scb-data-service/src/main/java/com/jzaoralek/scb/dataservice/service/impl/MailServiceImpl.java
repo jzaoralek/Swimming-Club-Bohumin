@@ -58,9 +58,9 @@ public class MailServiceImpl implements MailService {
         Properties properties = System.getProperties();
         properties.put("mail.smtp.host", mailSmtpHost);
         properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.starttls.enable", "false");
         properties.put("mail.smtp.port", mailSmtpPort);
-
+        
        // Get the default Session object.
        Authenticator auth = new SMTPAuthenticator();
        Session session = Session.getDefaultInstance(properties, auth);
