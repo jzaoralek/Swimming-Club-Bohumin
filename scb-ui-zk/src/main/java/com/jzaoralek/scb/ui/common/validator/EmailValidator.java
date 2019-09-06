@@ -13,6 +13,10 @@ public class EmailValidator extends ScbAbstractValidator {
 	@Override
 	public void validate(ValidationContext ctx) {
 		String value = (String) ctx.getProperty().getValue();
+		if (value != null) {
+			// remove whitespaces from input string
+			value = value.trim();
+		}
 		Boolean notNull = (Boolean)ctx.getBindContext().getValidatorArg("notNull");
 
 		if (notNull != null && notNull && StringUtils.isEmpty(value)) {

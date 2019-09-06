@@ -348,9 +348,10 @@ public class CourseApplicationVM extends BaseVM {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private boolean validateUniqueUsernameCore(String email, final CourseApplicationVM fx) {
-		final ScbUser scbUser = scbUserService.getByUsername(email);
+		String emailTrimmed = email.trim();
+		final ScbUser scbUser = scbUserService.getByUsername(emailTrimmed);
 		if (scbUser != null) {
-			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists",new Object[] {email, scbUser.getContact().getCompleteName()});			
+			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists",new Object[] {emailTrimmed, scbUser.getContact().getCompleteName()});			
 			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.OK, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
 			    public void onEvent(Event evt) throws InterruptedException {
 			        // vymazat email
