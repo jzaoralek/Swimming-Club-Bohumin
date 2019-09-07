@@ -26,6 +26,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig.CourseApplicationFileType;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
+import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -240,6 +241,10 @@ public class BaseVM {
 	}
 
 	protected void sendMailToNewUser(ScbUser user) {
+		mailService.sendMail(buildMailToNewUser(user));
+	}
+	
+	protected Mail buildMailToNewUser(ScbUser user) {
 		StringBuilder mailToUser = new StringBuilder();
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text0"));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
@@ -278,7 +283,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 		
-		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null, false);
+		return new Mail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
 	}
 	
 	public List<Boolean> getBooleanListItem() {
@@ -381,6 +386,13 @@ public class BaseVM {
 	}
 
 	public void sendMail(CourseApplication courseApplication, String headline) {
+		// mail to course participant representative
+		mailService.sendMail(buildMailCourseParticRepresentative(courseApplication, headline));
+		// mail to club
+		mailService.sendMail(buildMailToClub(courseApplication));
+	}
+	
+	public Mail buildMailCourseParticRepresentative(CourseApplication courseApplication, String headline) {
 		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
 		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
 		
@@ -396,24 +408,6 @@ public class BaseVM {
         		attachmentList.add(gdprFileConfig.getAttachment());
         	}
         }
-        // attachment gdpr
-//      byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
-//		if (gdprByteArray != null) {
-//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
-//		}
-//		byte[] gdprPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.pdf");
-//		if (gdprPdfByteArray != null) {
-//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprPdfByteArray,"souhlas-clena-klubu.pdf"));
-//		}
-		// attachment lekarska prohlidka
-//		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
-//		if (lekarskaProhlidkaByteArray != null) {
-//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
-//		}
-//		byte[] lekarskaProhlidkaPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.pdf");
-//		if (lekarskaProhlidkaPdfByteArray != null) {
-//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaPdfByteArray,"lekarska-prohlidka.pdf"));
-//		}
 		
 		StringBuilder mailToRepresentativeSb = new StringBuilder();
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
@@ -464,29 +458,19 @@ public class BaseVM {
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		}
 		
-//		if (attachmentList != null && !attachmentList.isEmpty()) {
-//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-//			if (attachmentList.size() == 1) {
-//				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text5"));
-//			} else {
-//				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text6"));
-//			}
-//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-//		}
-		
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(buildMailSignature());
 
 		// mail to course participant representative
-		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
+		return new Mail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
 				, null
 				, Labels.getLabel("txt.ui.menu.application")
 				, mailToRepresentativeSb.toString()
-				, attachmentList
-				, false);
-
+				, attachmentList);
+	}
+	
+	protected Mail buildMailToClub(CourseApplication courseApplication) {
 		StringBuilder mailToClupSb = new StringBuilder();
 		String courseApplicationYear = configurationService.getCourseApplicationYear();
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text0", new Object[] {courseApplicationYear}));
@@ -497,8 +481,7 @@ public class BaseVM {
 		String representativeInfo = courseApplication.getCourseParticRepresentative().getContact().getFirstname() + " " + courseApplication.getCourseParticRepresentative().getContact().getSurname() + ", " + courseApplication.getCourseParticRepresentative().getContact().getEmail1() + ", " + courseApplication.getCourseParticRepresentative().getContact().getPhone1();
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
 
-		// mail to club
-		mailService.sendMail(ConfigUtil.getOrgEmail(configurationService), null, Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, false);
+		return new Mail(ConfigUtil.getOrgEmail(configurationService), null, Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null);
 	}
 	
 	protected void sendMailWithResetpassword(ScbUser user) {

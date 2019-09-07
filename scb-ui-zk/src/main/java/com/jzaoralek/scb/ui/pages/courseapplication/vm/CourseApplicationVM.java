@@ -208,9 +208,11 @@ public class CourseApplicationVM extends BaseVM {
 					}
 				}
 				
-				// kontrola unikatnosti pole Email/prihlasovaci jmeno
-				if (!validateUniqueUsernameCore(this.application.getCourseParticRepresentative().getUsername(), this)) {
-					return;
+				if (!this.loggedByParticRepr) {
+					// kontrola unikatnosti pole Email/prihlasovaci jmeno
+					if (!validateUniqueUsernameCore(this.application.getCourseParticRepresentative().getContact().getEmail1(), this)) {
+						return;
+					}					
 				}
 				
 				// overeni validni adresy

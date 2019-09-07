@@ -43,8 +43,23 @@
 		            	<hlayout sclass="pull-right">
 		            		<!-- Rocnik -->
             				<include src="/pages/common/component/context-year.zul"/>
+            				
             				<!-- Zpravy -->
-				            <send-mail-button buttonSclass="toolbar-btn" />
+	            			<button tooltiptext="${c:l('txt.ui.common.Messaging')}" 
+	            				iconSclass="z-icon-at"
+	            				popup="messagePopup, position=after_start"
+	            				sclass="toolbar-btn"
+			            		if="${vm.isLoggedUserInRole('ADMIN')}" />
+			                <menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
+	            				<!-- Nova zprava vybranym ucastnikum. -->
+								<menuitem label="${c:l('txt.ui.common.NovaZprava')}" 
+									onClick="@command('goToSendEmailCmd')" />
+								<!-- Znovuodeslani mailu s informacemi o prihlasce. -->
+								<menuitem label="${c:l('txt.ui.common.confirmCourseApplicationEmail')}" 
+									onClick="@command('sendCourseApplicationEmailCmd')"
+									tooltiptext="${c:l('txt.ui.common.confirmCourseApplicationEmail.desc')}" />
+					       	</menupopup>
+            				
             				<button iconSclass="z-icon-download" 
             					onClick="@command('exportToExcel',listbox=courseApplicationList)" 
             					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 

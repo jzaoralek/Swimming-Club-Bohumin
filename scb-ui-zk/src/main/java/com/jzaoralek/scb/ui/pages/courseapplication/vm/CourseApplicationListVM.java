@@ -42,6 +42,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO.CoursePaymentState;
 import com.jzaoralek.scb.dataservice.domain.Mail;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -275,6 +276,49 @@ public class CourseApplicationListVM extends BaseContextVM {
 	@Command
 	public void goToSendEmailCmd() {
 		goToSendEmailCore(buildCourseParticipantContactSet(this.courseApplicationList));
+	}
+	
+	/**
+	 * Odesle email s prihlaskou na vybrane ucastniky.
+	 */
+	@Command
+	public void sendCourseApplicationEmailCmd() {
+		if (CollectionUtils.isEmpty(this.courseApplicationList)) {
+			return;
+		}
+		
+		final List<CourseApplication> courseApplicationListToSend = this.courseApplicationList;
+		
+		// dotaz
+		MessageBoxUtils.showDefaultConfirmDialog(
+			"msg.ui.quest.sendMailCourseApplication",
+			"msg.ui.title.sendMail",
+			new SzpEventListener() {
+				@Override
+				public void onOkEvent() {
+					List<Mail> mailToSendList = new ArrayList<>();
+					
+					for (CourseApplication item : courseApplicationListToSend) {
+						// potvrzujici mailu o prihlasce course participant representative
+						mailToSendList.add(buildMailCourseParticRepresentative(item, getNewCourseApplicationTitle()));
+						// potvrzujici mail o prihlasce klubu
+						mailToSendList.add(buildMailToClub(item));
+						if (!item.isCurrentParticipant()) {
+							ScbUser user = scbUserService.getByUsername(item.getCourseParticRepresentative().getContact().getEmail1());
+							if (user != null) {
+								// potvrzujiciho maila o zalozeni uzivatele
+								mailToSendList.add(buildMailToNewUser(user));
+							}
+						}
+					}
+					
+					// odeslani emailu
+					mailService.sendMailBatch(mailToSendList);
+					
+					WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseApplicationMailSent"));
+				}
+			}
+		);
 	}
 	
 	/**
