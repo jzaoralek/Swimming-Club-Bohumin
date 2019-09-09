@@ -27,6 +27,7 @@ public interface ConfigurationService {
 	String getBankAccountNumber();
 	boolean isPaymentsAvailable();
 	boolean isAttendanceForParentsVisible();
+	boolean isCourseApplNotVerifiedAddressAllowed();
 	List<Config> getAll();
 	void update(Config config);
 	

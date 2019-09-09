@@ -64,6 +64,7 @@ public class CourseApplicationVM extends BaseVM {
 	private List<Course> courseListAll;
 	private Set<Course> courseSelected;
 	private boolean courseSelectionRequired;
+	private boolean courseApplNotVerifiedAddressAllowed;
 	private List<CourseLocation> courseLocationList;
 	private CourseLocation courseLocationSelected;
 	private CourseApplicationFileConfig clubRulesAgreementConfig;
@@ -116,6 +117,7 @@ public class CourseApplicationVM extends BaseVM {
 		}
 		
 		this.courseSelectionRequired = configurationService.isCourseSelectionRequired();
+		this.courseApplNotVerifiedAddressAllowed = configurationService.isCourseApplNotVerifiedAddressAllowed();
 		
 		if (this.courseSelectionRequired) {
 			if (!this.securedMode) {
@@ -227,27 +229,32 @@ public class CourseApplicationVM extends BaseVM {
 						// adresa je validni, mozno ulozit
 						submitCore();
 					} else {
-						// adresa neni validni, zastaveni odeslani
-						MessageBoxUtils.showOkWarningDialog("msg.ui.warn.ProcessNotValidAddress", 
-								"msg.ui.quest.title.NotValidAddress", 
+						if (!this.courseApplNotVerifiedAddressAllowed) {
+							// neni povoleno odeslat prihlasku s nevalidni adresou
+							// adresa neni validni, zastaveni odeslani
+							MessageBoxUtils.showOkWarningDialog("msg.ui.warn.ProcessNotValidAddress", 
+									"msg.ui.quest.title.NotValidAddress", 
+									new SzpEventListener() {
+								@Override
+								public void onOkEvent() {
+									// nothing
+								}
+							});
+							
+						} else {
+							// je povoleno odeslat adresu s nevalidní adresou
+							// adresa neni validni, dotaz jestli pokracovat
+							MessageBoxUtils.showDefaultConfirmDialog(
+								"msg.ui.quest.ProcessNotValidAddress",
+								"msg.ui.quest.title.NotValidAddress",
 								new SzpEventListener() {
 									@Override
 									public void onOkEvent() {
-										// nothing
+										submitCore();
 									}
-								});
-						
-						// adresa neni validni, dotaz jestli pokracovat
-//						MessageBoxUtils.showDefaultConfirmDialog(
-//								"msg.ui.quest.ProcessNotValidAddress",
-//								"msg.ui.quest.title.NotValidAddress",
-//								new SzpEventListener() {
-//									@Override
-//									public void onOkEvent() {
-//										submitCore();
-//									}
-//								}
-//						);
+								}
+							);							
+						}	
 					}					
 				}
 			}

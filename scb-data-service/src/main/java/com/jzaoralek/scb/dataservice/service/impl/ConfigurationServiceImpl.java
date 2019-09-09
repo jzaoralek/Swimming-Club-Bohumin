@@ -145,6 +145,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public boolean isAttendanceForParentsVisible() {
 		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.ATTENDANCE_FOR_PARENTS_VISIBLE.name()).getValue());
 	}
+	
+	@Override
+	public boolean isCourseApplNotVerifiedAddressAllowed() {
+		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.ALLOW_COURSE_APPL_NOT_VALID_ADDRESS.name()).getValue());
+	}
 
 	@Override
 	public String getRecaptchaSitekey() {
