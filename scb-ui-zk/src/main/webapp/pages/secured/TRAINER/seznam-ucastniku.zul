@@ -35,7 +35,7 @@
 	            				<!-- Zpravy -->
 		            			<button tooltiptext="${c:l('txt.ui.common.Messaging')}" 
 		            				iconSclass="z-icon-at"
-		            				popup="messagePopup, position=after_start"
+		            				popup="messagePopup, position=after_end"
 		            				sclass="toolbar-btn"
 				            		if="${vm.isLoggedUserInRole('ADMIN')}" />
 				                <menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
@@ -47,8 +47,9 @@
 									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" />
 						       	</menupopup>
 						       	
+						       	<!-- Export do soubru -->
 	            				<button iconSclass="z-icon-download" 
-	            					popup="downloadPopup, position=after_start"
+	            					popup="downloadPopup, position=after_end"
 	            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
 	            					if="${vm.isLoggedUserInRole('ADMIN')}" 
 	            					sclass="toolbar-btn"/>
@@ -57,9 +58,14 @@
 									<menuitem label="${c:l('txt.ui.export.Standard')} ${c:l('txt.ui.export.XLS')}" 
 										onClick="@command('exportToExcel',listbox=courseApplicationList)" />
 									<menuseparator/>
-									<!-- Ceska unie sportu -->
+									<!-- Seznam ucastniku s neoverenou adresou -->
+									<menuitem label="${c:l('txt.ui.export.NotValidAddress')}" 
+										onClick="@command('exportToExcelNotValidAddrCmd',listbox=courseApplicationList)" />
+									<menuseparator/>
+									<!-- Ceska unie sportu - XLS -->
 									<menuitem label="${c:l('txt.ui.export.Cus')} ${c:l('txt.ui.export.XLS')}"
 										onClick="@command('exportToExcelISCUSCmd',listbox=courseApplicationList)" />
+									<!-- Ceska unie sportu - CSV -->
 									<menuitem label="${c:l('txt.ui.export.Cus')} ${c:l('txt.ui.export.CSV')}" 
 										onClick="@command('exportToCSVISCUSCmd',listbox=courseApplicationList)" />
 						       	</menupopup>

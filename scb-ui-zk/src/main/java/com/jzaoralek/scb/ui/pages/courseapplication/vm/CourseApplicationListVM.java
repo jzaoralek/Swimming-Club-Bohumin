@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,6 +177,12 @@ public class CourseApplicationListVM extends BaseContextVM {
 	public void exportToExcel(@BindingParam("listbox") Listbox listbox) {
 		String filename = this.pageMode == PageMode.COURSE_APPLICATION_LIST ? "seznam_prihlasek.xls" : "seznam_ucastniku.xls";
 		ExcelUtil.exportToExcel(filename, buildExcelRowData(listbox));
+	}
+	
+	@Command
+	public void exportToExcelNotValidAddrCmd(@BindingParam("listbox") Listbox listbox) {
+		String filename = this.pageMode == PageMode.COURSE_APPLICATION_LIST ? "seznam_prihlasek_neoverena_adresa.xls" : "seznam_ucastniku_neoverena_adresa.xls";
+		ExcelUtil.exportToExcel(filename, buildExcelNotValidAddrRowData(listbox));
 	}
 	
 	@Command
@@ -523,6 +530,100 @@ public class CourseApplicationListVM extends BaseContextVM {
 		}
 		
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, Object[]> buildExcelNotValidAddrRowData(@BindingParam("listbox") Listbox listbox) {
+		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
+		
+		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATETIME_PATTERN);
+
+		// header
+		Listhead lh = listbox.getListhead();
+		Object[] headerArray = new Object[lh.getChildren().size() + 12];
+		for (int i = 0; i < lh.getChildren().size(); i++) {
+			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
+		}
+		
+		String currency = " " + Labels.getLabel("txt.ui.common.CZK");
+		
+		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.birthNumber");
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.phone");
+			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.email");
+			headerArray[lh.getChildren().size()+2] = Labels.getLabel("txt.ui.common.street");
+			headerArray[lh.getChildren().size()+3] = Labels.getLabel("txt.ui.common.landRegNo");
+			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.houseNo");
+			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.city");
+			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.zipCode");
+			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.course");	
+			headerArray[lh.getChildren().size()+8] = Labels.getLabel("txt.ui.common.courseLocation2");
+		} else {
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
+			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.phone");
+			headerArray[lh.getChildren().size()+2] = Labels.getLabel("txt.ui.common.email");
+			headerArray[lh.getChildren().size()+3] = Labels.getLabel("txt.ui.common.street");
+			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.landRegNo");
+			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.houseNo");
+			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.city");
+			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.zipCode");	
+		}
+		data.put("0", headerArray);
+
+		
+		// rows
+		ListModel<Object> model = listbox.getListModel();
+		CourseApplication item = null;
+		Course course = null;
+		for (int i = 0; i < model.getSize(); i++) {
+			if (model.getElementAt(i) instanceof CourseApplication) {
+				item = (CourseApplication)model.getElementAt(i);
+				course = getCourseByCourseParticipant(item.getCourseParticipant());
+				if (this.pageMode == PageMode.COURSE_APPLICATION_LIST) {
+					if (!item.getCourseParticipant().getContact().isAddressValid()) {
+						data.put(String.valueOf(i+1),
+								new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
+										getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
+										item.getCourseParticRepresentative().getContact().getCompleteName(),								
+										dateFormat.format(item.getModifAt()),
+										item.getCourseParticipant().getInCourseInfo(),
+										!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
+												item.getCourseParticipant().getPersonalNo().replace("/", ""),
+												item.getCourseParticRepresentative().getContact().getPhone1(),
+												item.getCourseParticRepresentative().getContact().getEmail1(),								
+												getNotNullString(item.getCourseParticipant().getContact().getStreet()),
+												getNotNullLong(item.getCourseParticipant().getContact().getLandRegistryNumber()),
+												getNotNullString(item.getCourseParticipant().getContact().getHouseNumber()),
+												getNotNullString(item.getCourseParticipant().getContact().getCity()),
+												getNotNullString(item.getCourseParticipant().getContact().getZipCode()),
+												course != null ? course.getName() : "",
+														course != null && course.getCourseLocation() != null ? course.getCourseLocation().getName() : "",
+						});						
+					}
+				} else {
+					if (!item.getCourseParticipant().getContact().isAddressValid()) {
+						data.put(String.valueOf(i+1),
+								new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
+										item.getCourseParticipant().getCourseName(),
+										buildPaymentNotifiedInfo(item.getCourseParticipant()),
+										item.getCourseParticipant().getCoursePaymentVO() != null ? (item.getCourseParticipant().getCoursePaymentVO().isOverpayed() ? Labels.getLabel("enum.CoursePaymentState.OVERPAYED") : getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null)) : null,
+												item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getPaymentSum() : 0,
+														item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getTotalPrice() : 0,
+																item.getCourseParticRepresentative().getContact().getPhone1(),
+																item.getCourseParticRepresentative().getContact().getEmail1(),	
+																getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getStreet()),
+																getNotNullLongEmptyChar(item.getCourseParticipant().getContact().getLandRegistryNumber()),
+																getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
+																getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity()),
+																getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode())
+						});						
+					}
+				}
+			}
+		}
+
+		return data;
 	}
 	
 	private Map<String, Object[]> buildExcelISCUSRowData(@BindingParam("listbox") Listbox listbox) {
