@@ -18,4 +18,5 @@ public interface ScbUserService {
 	ScbUser getByUsername(String username);
 	List<Contact> getContactByEmail(String email);
 	List<String> getEmailAll();
+	void updateAddressValidStatus(Contact contact);
 }

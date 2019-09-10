@@ -51,7 +51,8 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 	private static final String SELECT_EMAIl_ALL = "SELECT DISTINCT email1 FROM contact";
 	private static final String DELETE = "DELETE FROM contact where uuid = :" + UUID_PARAM;
 	private static final String UPDATE = "UPDATE contact SET firstname=:"+FIRSTNAME_PARAM+", surname=:"+SURNAME_PARAM+", citizenship=:"+CITIZENSHIP_PARAM+", sex_male=:"+SEX_MALE_PARAM+", street=:"+STREET_PARAM+", land_registry_number=:"+LAND_REGISTRY_NUMBER_PARAM+", house_number=:"+HOUSE_NUMBER_PARAM+", city=:"+CITY_PARAM+", zip_code=:"+ZIPCODE_PARAM+", region=:"+REGION_PARAM+", evidence_number=:"+EVIDENCE_NUMBER_PARAM+", foreign_address=:"+FOREIGN_ADDRESS_PARAM+", address_validation_status=:"+ADDRESS_VALIDATION_STATUS_PARAM+", email1=:"+EMAIL1_PARAM+", email2=:"+EMAIL2_PARAM+", phone1=:"+PHONE1_PARAM+", phone2=:"+PHONE2_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
-
+	private static final String UPDATE_ADDRESS_VALID_STATUS = "UPDATE contact SET address_validation_status=:"+ADDRESS_VALIDATION_STATUS_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" WHERE uuid=:"+UUID_PARAM;
+	
 	@Autowired
 	public ContactDaoImpl(DataSource ds) {
 		super(ds);
@@ -133,6 +134,15 @@ public class ContactDaoImpl extends BaseJdbcDao implements ContactDao {
 		paramMap.addValue(PHONE2_PARAM, contact.getPhone2());
 
 		namedJdbcTemplate.update(UPDATE, paramMap);
+	}
+	
+	@Override
+	public void updateAddressValidStatus(Contact contact) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		fillIdentEntity(contact, paramMap);
+		paramMap.addValue(ADDRESS_VALIDATION_STATUS_PARAM, contact.getAddressValidationStatus() != null ? contact.getAddressValidationStatus().name() : AddressValidationStatus.NOT_VERIFIED.name());
+		
+		namedJdbcTemplate.update(UPDATE_ADDRESS_VALID_STATUS, paramMap);
 	}
 
 	@Override

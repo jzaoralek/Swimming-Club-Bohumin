@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jzaoralek.scb.dataservice.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
+import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 
 public class ContactDaoTest extends BaseTestCase {
@@ -77,6 +78,16 @@ public class ContactDaoTest extends BaseTestCase {
 		Assert.assertTrue((CONTACT_PHONE2+UPDATED_POSTFIX).equals(itemUpdated.getPhone2()));
 	}
 
+	@Test
+	public void updateAddressValidStatus() {
+		item.setAddressValidationStatus(AddressValidationStatus.VALID);
+		contactDao.updateAddressValidStatus(item);
+		
+		Contact itemUpdated = contactDao.getByUuid(ITEM_UUID);
+		Assert.assertNotNull(itemUpdated);
+		Assert.assertTrue(AddressValidationStatus.VALID == itemUpdated.getAddressValidationStatus());
+	}
+	
 	@Test
 	public void delete() {
 		contactDao.delete(item);

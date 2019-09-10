@@ -12,6 +12,9 @@ public class RuianStreet implements Serializable {
 				public int compare(RuianStreet street1, RuianStreet street2) {
 					String street1Name = street1.getStreetName();
 					String street2Name = street2.getStreetName();
+					if (street1Name == null) {
+						return -1;
+					}
 		            return street1Name.compareTo(street2Name);
 				}
 		};

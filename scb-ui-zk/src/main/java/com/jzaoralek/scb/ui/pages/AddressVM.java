@@ -271,7 +271,7 @@ public class AddressVM extends BaseVM {
 		this.contact.setStreet(this.streetNameSelected);
 		
 		List<RuianStreet> streetFilterred = this.streetList.stream()
-				.filter(i -> i.getStreetName().equals(this.streetNameSelected))
+				.filter(i -> i.getStreetName() != null && i.getStreetName().equals(this.streetNameSelected))
 				.collect(Collectors.toList());
 		
 		if (!CollectionUtils.isEmpty(streetFilterred)) {
@@ -309,6 +309,18 @@ public class AddressVM extends BaseVM {
 			LOG.error("RuntimeException caught, ", e);
 			WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressVerificationServiceNotAvailable"));
 		}
+	}
+	
+	@NotifyChange("contact")
+	@Command
+	public void validateAddressManualCmd() {
+		// check ADMIN permission
+		if (!isLoggedUserInRole("ADMIN")) {
+			return;
+		}
+		this.contact.setAddressValidationStatus(AddressValidationStatus.VALID);
+		scbUserService.updateAddressValidStatus(this.contact);
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.address.AddressValidated"));
 	}
 	
 	@NotifyChange({"placeList","placeStreetName"})

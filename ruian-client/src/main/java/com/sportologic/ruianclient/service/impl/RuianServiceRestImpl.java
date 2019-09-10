@@ -83,7 +83,7 @@ public class RuianServiceRestImpl implements RuianService {
 			if (response == null) {
 				return Collections.emptyList();
 			}
-			Collections.sort(response.getData(), RuianStreet.STREET_COMP);
+			// Collections.sort(response.getData(), RuianStreet.STREET_COMP);
 			return response.getData();
 		} catch (RestException e) {
 			LOG.error(REST_EXCEPT_CAUGHT, e);

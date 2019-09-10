@@ -14,4 +14,5 @@ public interface ContactDao {
 	void update(Contact contact);
 	void delete(Contact contact);
 	List<String> getEmailAll();
+	void updateAddressValidStatus(Contact contact);
 }

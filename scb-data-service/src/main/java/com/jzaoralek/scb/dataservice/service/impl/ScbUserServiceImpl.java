@@ -131,4 +131,9 @@ public class ScbUserServiceImpl extends BaseAbstractService implements ScbUserSe
 	public List<String> getEmailAll() {
 		return contactDao.getEmailAll();
 	}
+	
+	@Override
+	public void updateAddressValidStatus(Contact contact) {
+		contactDao.updateAddressValidStatus(contact);
+	}
 }
