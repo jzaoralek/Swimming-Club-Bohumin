@@ -1,5 +1,6 @@
 package com.sportologic.ruianclient.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -83,8 +84,15 @@ public class RuianServiceRestImpl implements RuianService {
 			if (response == null) {
 				return Collections.emptyList();
 			}
-			// Collections.sort(response.getData(), RuianStreet.STREET_COMP);
-			return response.getData();
+			// remove items with null values
+			List<RuianStreet> ret = new ArrayList<>();
+			for (RuianStreet item : response.getData()) {
+				if (item.getStreetName() != null) {
+					ret.add(item);
+				}
+			}
+			Collections.sort(ret, RuianStreet.STREET_COMP);
+			return ret;
 		} catch (RestException e) {
 			LOG.error(REST_EXCEPT_CAUGHT, e);
 			return Collections.emptyList();
