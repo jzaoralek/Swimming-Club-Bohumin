@@ -22,9 +22,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
 
-import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
-import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
@@ -45,7 +43,6 @@ import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
-import com.sportologic.ruianclient.model.RuianValidationResponse;
 
 public class CourseApplicationVM extends BaseVM {
 
@@ -217,46 +214,47 @@ public class CourseApplicationVM extends BaseVM {
 					}					
 				}
 				
-				// overeni validni adresy
-				if (this.application.getCourseParticipant().getContact().isAddressValid()) {
-					// adresa je validni, mozno ulozit
-					submitCore();
-				} else {
-					// automaticke overeni nevalidní adresy
-					placeValidation(this.application.getCourseParticipant().getContact());
-					// kontrola platnosti adresy po automatickem overeni
-					if (this.application.getCourseParticipant().getContact().isAddressValid()) {
-						// adresa je validni, mozno ulozit
-						submitCore();
-					} else {
-						if (!this.courseApplNotVerifiedAddressAllowed) {
-							// neni povoleno odeslat prihlasku s nevalidni adresou
-							// adresa neni validni, zastaveni odeslani
-							MessageBoxUtils.showOkWarningDialog("msg.ui.warn.ProcessNotValidAddress", 
-									"msg.ui.quest.title.NotValidAddress", 
-									new SzpEventListener() {
-								@Override
-								public void onOkEvent() {
-									// nothing
-								}
-							});
-							
-						} else {
-							// je povoleno odeslat adresu s nevalidní adresou
-							// adresa neni validni, dotaz jestli pokracovat
-							MessageBoxUtils.showDefaultConfirmDialog(
-								"msg.ui.quest.ProcessNotValidAddress",
-								"msg.ui.quest.title.NotValidAddress",
-								new SzpEventListener() {
-									@Override
-									public void onOkEvent() {
-										submitCore();
-									}
-								}
-							);							
-						}	
-					}					
-				}
+				// overeni validni adresy pred  submitem
+				addressValidationBeforeSubmit(this.application.getCourseParticipant().getContact(), this.courseApplNotVerifiedAddressAllowed, this::submitCore);
+//				if (this.application.getCourseParticipant().getContact().isAddressValid()) {
+//					// adresa je validni, mozno ulozit
+//					submitCore();
+//				} else {
+//					// automaticke overeni nevalidní adresy
+//					placeValidation(this.application.getCourseParticipant().getContact());
+//					// kontrola platnosti adresy po automatickem overeni
+//					if (this.application.getCourseParticipant().getContact().isAddressValid()) {
+//						// adresa je validni, mozno ulozit
+//						submitCore();
+//					} else {
+//						if (!this.courseApplNotVerifiedAddressAllowed) {
+//							// neni povoleno odeslat prihlasku s nevalidni adresou
+//							// adresa neni validni, zastaveni odeslani
+//							MessageBoxUtils.showOkWarningDialog("msg.ui.warn.ProcessNotValidAddress", 
+//									"msg.ui.quest.title.NotValidAddress", 
+//									new SzpEventListener() {
+//								@Override
+//								public void onOkEvent() {
+//									// nothing
+//								}
+//							});
+//							
+//						} else {
+//							// je povoleno odeslat adresu s nevalidní adresou
+//							// adresa neni validni, dotaz jestli pokracovat
+//							MessageBoxUtils.showDefaultConfirmDialog(
+//								"msg.ui.quest.ProcessNotValidAddress",
+//								"msg.ui.quest.title.NotValidAddress",
+//								new SzpEventListener() {
+//									@Override
+//									public void onOkEvent() {
+//										submitCore();
+//									}
+//								}
+//							);							
+//						}	
+//					}					
+//				}
 			}
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught for application: " + this.application, e);
@@ -315,30 +313,6 @@ public class CourseApplicationVM extends BaseVM {
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for application: " + this.application, e);
 			throw new RuntimeException(e);
-		}
-	}
-	
-	private void placeValidation(Contact contact) {
-		if (contact == null) {
-			return;
-		}
-		try {
-			RuianValidationResponse validationResponse = ruianServiceRest.validate(contact.getCity()
-					, contact.getZipCode()
-					, contact.getEvidenceNumber()
-					, contact.getHouseNumber()
-					, contact.getLandRegistryNumber() != null ? String.valueOf(contact.getLandRegistryNumber()) : ""
-					, contact.getStreet());
-			if (validationResponse != null && validationResponse.isValid()) {
-				contact.setAddressValidationStatus(AddressValidationStatus.VALID);
-			} else if (validationResponse != null && !validationResponse.isValid()) {
-				contact.setAddressValidationStatus(AddressValidationStatus.INVALID);
-			} else {
-				contact.setAddressValidationStatus(AddressValidationStatus.NOT_VERIFIED);
-			}
-		} catch (RuntimeException e) {
-			LOG.error("RuntimeException caught, ", e);
-			WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressVerificationServiceNotAvailable"));
 		}
 	}
 

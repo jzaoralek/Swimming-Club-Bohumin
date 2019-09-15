@@ -33,11 +33,11 @@ import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
-import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseParticipantVM;
 
 /**
  * Detail ucastnika zobrazeneho prihlasenym zakonnym zastupcem.
@@ -72,6 +72,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	private String paymentVarSymbolSecondSemester;
 	private int yearFrom;
 	private boolean attendanceForParentsVisible;
+	private boolean courseApplNotVerifiedAddressAllowed;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
@@ -89,6 +90,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.paymentVarSymbolFirstSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 1, this.courseParticipant.getVarsymbolCore());
 		this.paymentVarSymbolSecondSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 2, this.courseParticipant.getVarsymbolCore());
 		this.attendanceForParentsVisible = configurationService.isAttendanceForParentsVisible();
+		this.courseApplNotVerifiedAddressAllowed = configurationService.isCourseApplNotVerifiedAddressAllowed();
 	}
 	
 	protected void courseYearChangeCmdCore() {
@@ -126,6 +128,14 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	@NotifyChange("*")
 	@Command
     public void submit() {
+		if (!AddressUtils.isAddressValid()) {
+			return;
+		}
+		// overeni validni adresy pred  submitem
+		addressValidationBeforeSubmit(this.courseParticipant.getContact(), this.courseApplNotVerifiedAddressAllowed, this::submitCore);
+    }
+	
+	public void submitCore() {
 		try {
 			// update
 			if (LOG.isDebugEnabled()) {
@@ -136,6 +146,8 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for application: " + this.courseParticipant, e);
 			throw new RuntimeException(e);
+		} finally {
+			AddressUtils.setAddressInvalid();
 		}
     }
 	

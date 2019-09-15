@@ -7,6 +7,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
@@ -19,6 +21,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
@@ -38,18 +41,23 @@ import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.converter.Converters;
+import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.ManifestSolver;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.validator.ExistingUsernameValidator;
 import com.jzaoralek.scb.ui.common.validator.Validators;
+import com.sportologic.ruianclient.model.RuianValidationResponse;
 import com.sportologic.ruianclient.service.RuianService;
 
 public class BaseVM {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(BaseVM.class);
 
 	private final String appVersion = ManifestSolver.getMainAttributeValue("Application-version");
 	protected String pageHeadline;
@@ -511,6 +519,81 @@ public class BaseVM {
 		}
 		
 		return userListSessionCache;
+	}
+	
+	/**
+	 * Validace adresy pred submitem formulare.
+	 * @param application
+	 * @param courseApplNotVerifiedAddressAllowed
+	 * @param submitCore
+	 */
+	protected void addressValidationBeforeSubmit(Contact contact
+			, boolean courseApplNotVerifiedAddressAllowed
+			, Runnable submitCore) {
+		// overeni validni adresy
+		if (contact.isAddressValid()) {
+			// adresa je validni, mozno ulozit
+			submitCore.run();
+		} else {
+			// automaticke overeni nevalidní adresy
+			placeValidation(contact);
+			// kontrola platnosti adresy po automatickem overeni
+			if (contact.isAddressValid()) {
+				// adresa je validni, mozno ulozit
+				submitCore.run();
+			} else {
+				if (!courseApplNotVerifiedAddressAllowed) {
+					// neni povoleno odeslat prihlasku s nevalidni adresou
+					// adresa neni validni, zastaveni odeslani
+					MessageBoxUtils.showOkWarningDialog("msg.ui.warn.ProcessNotValidAddress", 
+							"msg.ui.quest.title.NotValidAddress", 
+							new SzpEventListener() {
+						@Override
+						public void onOkEvent() {
+							// nothing
+						}
+					});
+					
+				} else {
+					// je povoleno odeslat adresu s nevalidní adresou
+					// adresa neni validni, dotaz jestli pokracovat
+					MessageBoxUtils.showDefaultConfirmDialog(
+						"msg.ui.quest.ProcessNotValidAddress",
+						"msg.ui.quest.title.NotValidAddress",
+						new SzpEventListener() {
+							@Override
+							public void onOkEvent() {
+								submitCore.run();
+							}
+						}
+					);							
+				}	
+			}					
+		}
+	}
+	
+	protected void placeValidation(Contact contact) {
+		if (contact == null) {
+			return;
+		}
+		try {
+			RuianValidationResponse validationResponse = ruianServiceRest.validate(contact.getCity()
+					, contact.getZipCode()
+					, contact.getEvidenceNumber()
+					, contact.getHouseNumber()
+					, contact.getLandRegistryNumber() != null ? String.valueOf(contact.getLandRegistryNumber()) : ""
+					, contact.getStreet());
+			if (validationResponse != null && validationResponse.isValid()) {
+				contact.setAddressValidationStatus(AddressValidationStatus.VALID);
+			} else if (validationResponse != null && !validationResponse.isValid()) {
+				contact.setAddressValidationStatus(AddressValidationStatus.INVALID);
+			} else {
+				contact.setAddressValidationStatus(AddressValidationStatus.NOT_VERIFIED);
+			}
+		} catch (RuntimeException e) {
+			LOG.error("RuntimeException caught, ", e);
+			WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressVerificationServiceNotAvailable"));
+		}
 	}
 	
 	@Command
