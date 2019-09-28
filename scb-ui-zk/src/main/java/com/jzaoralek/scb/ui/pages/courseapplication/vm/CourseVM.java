@@ -1,7 +1,9 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,9 +40,9 @@ import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -202,14 +204,19 @@ public class CourseVM extends BaseVM {
 
 	@Command
 	public void addCourseParticipantsFromApplicationCmd() {
-		 EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_APPLICATION_DATA_EVENT, null, this.course);
-		 WebUtils.openModal("/pages/secured/ADMIN/participant-to-course-window.zul");
+		 addCoursePartic(true);
 	}
 
 	@Command
 	public void addCourseParticipantsFromCourseCmd() {
-		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_COURSE_DATA_EVENT, null, this.course);
-		WebUtils.openModal("/pages/secured/ADMIN/participant-to-course-window.zul");
+		addCoursePartic(false);
+	}
+	
+	private void addCoursePartic(boolean fromApplication) {
+		Map<String, Object> args = new HashMap<>();
+		args.put(WebConstants.COURSE_PARAM, this.course);
+		args.put(WebConstants.COURSE_APPLICATION_PARAM, fromApplication);
+		WebUtils.openModal("/pages/secured/ADMIN/participant-to-course-window.zul", null, args);
 	}
 
 	@Command

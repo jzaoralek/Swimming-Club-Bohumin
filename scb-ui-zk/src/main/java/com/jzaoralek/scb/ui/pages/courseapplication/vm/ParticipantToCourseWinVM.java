@@ -14,10 +14,6 @@ import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Window;
 
@@ -27,6 +23,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -58,20 +55,9 @@ public class ParticipantToCourseWinVM extends BaseVM {
 
 	@Init
 	public void init() {
-
-		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
-		eq.subscribe(new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) {
-				if (event.getName().equals(ScbEvent.COURSE_UUID_FROM_APPLICATION_DATA_EVENT.name())) {
-					initData((Course)event.getData(), true);
-					eq.unsubscribe(this);
-				} else if (event.getName().equals(ScbEvent.COURSE_UUID_FROM_COURSE_DATA_EVENT.name())) {
-					initData((Course)event.getData(), false);
-					eq.unsubscribe(this);
-				}
-			}
-		});
+		this.course = (Course) WebUtils.getArg(WebConstants.COURSE_PARAM);
+		boolean fromApplication = (Boolean)WebUtils.getArg(WebConstants.COURSE_APPLICATION_PARAM);
+		initData(this.course, fromApplication);
 	}
 
 	private void initData(Course course, boolean fromApplication) {
@@ -87,7 +73,13 @@ public class ParticipantToCourseWinVM extends BaseVM {
 			BindUtils.postNotifyChange(null, null, this, "courseApplicationList");
 		} else {
 			this.courseApplicationList = null;
-			this.courseList = courseService.getAllExceptCourse(this.course.getUuid());
+			
+			// get all courses for year and exclude target course
+			this.courseList = courseService.getAll(this.course.getYearFrom(), this.course.getYearTo(), false);
+			if (!CollectionUtils.isEmpty(this.courseList)) {
+				this.courseList.removeIf(i -> i.getUuid().toString().equals(this.course.getUuid().toString()));				
+			}
+			
 			this.courseApplicationListVisible = false;
 			this.selectCourseVisible = true;
 			BindUtils.postNotifyChange(null, null, this, "courseList");
