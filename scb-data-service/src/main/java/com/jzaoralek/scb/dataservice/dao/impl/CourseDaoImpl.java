@@ -20,9 +20,12 @@ import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseLocationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.LessonDao;
+import com.jzaoralek.scb.dataservice.dao.impl.ContactDaoImpl.ContactRowMapper;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 
 @Repository
 public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
@@ -68,6 +71,15 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			+ "WHERE ccp.course_uuid = c.uuid "
 			+ "AND ccp.course_participant_uuid = :" + UUID_PARAM + " AND c.year_from = :"+YEAR_FROM_PARAM+" AND c.year_to = :"+YEAR_TO_PARAM;
 	private static final String SELECT_BY_COURSE_LOCATION_COUNT = "SELECT count(*) FROM course WHERE course_location_uuid = :"+COURSE_LOCATION_UUID_PARAM;
+	
+	private static final String SELECT_TRAINERS_BY_COURSE = "SELECT * FROM user_trainer_course utc "
+			+ "JOIN user usr ON utc.user_trainer_uuid = usr.uuid "
+			+ "JOIN contact con ON usr.contact_uuid = con.uuid "
+			+ "WHERE usr.role != 'USER' "
+			+ "AND utc.course_uuid = :"+COURSE_UUID_PARAM;
+	private static final String INSERT_TRAINER_TO_COURSE = "INSERT INTO user_trainer_course " +
+			"(course_uuid, user_trainer_uuid) " +
+			"VALUES (:"+COURSE_UUID_PARAM+", :"+USER_UUID_PARAM+")";
 	
 	@Autowired
 	public CourseDaoImpl(DataSource ds) {
@@ -170,6 +182,44 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 		
 		namedJdbcTemplate.update(UPDATE, paramMap);
 
+	}
+	
+	@Override
+	public List<ScbUser> getTrainersByCourse(UUID courseUuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		return namedJdbcTemplate.query(SELECT_TRAINERS_BY_COURSE, paramMap, new CourseTrainerRowMapper());
+	}
+
+	@Override
+	public void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid) {
+		MapSqlParameterSource paramMap = null;
+		for (ScbUser user : trainers) {
+			paramMap = new MapSqlParameterSource();
+			paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
+			paramMap.addValue(USER_UUID_PARAM, user.getUuid().toString());
+			namedJdbcTemplate.update(INSERT_TRAINER_TO_COURSE, paramMap);			
+		}
+	}
+
+	@Override
+	public void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public static final class CourseTrainerRowMapper implements RowMapper<ScbUser> {
+
+		@Override
+		public ScbUser mapRow(ResultSet rs, int rowNum) throws SQLException {
+			ScbUser ret = new ScbUser();
+			fetchIdentEntity(rs, ret);
+			
+			ret.setRole(ScbUserRole.valueOf(rs.getString("role")));
+			ret.setUsername(rs.getString("username"));
+			// ret.setContact(new ContactRowMapper().mapRow(rs, rowNum));
+
+			return ret;
+		}
 	}
 
 	public static final class SimpleCourseRowMapper implements RowMapper<Course> {

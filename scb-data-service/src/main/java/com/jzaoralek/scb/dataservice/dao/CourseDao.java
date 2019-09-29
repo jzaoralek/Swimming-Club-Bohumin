@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 
 public interface CourseDao {
 
@@ -16,4 +17,7 @@ public interface CourseDao {
 	void update(Course course);
 	void delete(Course course);
 	boolean existsByCourseLocation(UUID courseLocationUuid);
+	List<ScbUser> getTrainersByCourse(UUID courseUuid);
+	void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid);
+	void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid);
 }

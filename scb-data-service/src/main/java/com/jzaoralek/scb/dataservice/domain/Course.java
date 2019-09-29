@@ -26,6 +26,7 @@ public class Course implements IdentEntity {
 	private CourseLocation courseLocation;
 	private Integer maxParticipantCount;
 	private CourseCourseParticipantVO courseCourseParticipantVO;
+	private List<ScbUser> trainerList;
 
 	public String getOccupancy() {
 		return getParticipantListCount() + " / " + (this.maxParticipantCount != null ? this.maxParticipantCount : 0);
@@ -157,13 +158,20 @@ public class Course implements IdentEntity {
 	public void setCourseCourseParticipantVO(CourseCourseParticipantVO courseCourseParticipantVO) {
 		this.courseCourseParticipantVO = courseCourseParticipantVO;
 	}
-	
+	public List<ScbUser> getTrainerList() {
+		return trainerList;
+	}
+	public void setTrainerList(List<ScbUser> trainerList) {
+		this.trainerList = trainerList;
+	}
+
 	@Override
 	public String toString() {
 		return "Course [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", name=" + name
 				+ ", description=" + description + ", yearFrom=" + yearFrom + ", yearTo=" + yearTo + ", priceSemester1="
 				+ priceSemester1 + ", priceSemester2=" + priceSemester2 + ", participantList=" + participantList
-				+ ", lessonList=" + lessonList + ", courseLocation=" + courseLocation + ", maxParticipantCount="
-				+ maxParticipantCount + "]";
+				+ ", participantCount=" + participantCount + ", lessonList=" + lessonList + ", courseLocation="
+				+ courseLocation + ", maxParticipantCount=" + maxParticipantCount + ", courseCourseParticipantVO="
+				+ courseCourseParticipantVO + ", trainerList=" + trainerList + "]";
 	}
 }
