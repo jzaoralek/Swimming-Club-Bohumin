@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.BaseTestCase;
+import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseLocationDao;
+import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
@@ -31,6 +33,12 @@ public class CourseDaoTest extends BaseTestCase {
 
 	@Autowired
 	private CourseDao courseDao;
+	
+	@Autowired
+	private ScbUserDao scbUserDao;
+	
+	@Autowired
+	private ContactDao contactDao;
 	
 	@Autowired
 	private CourseLocationDao courseLocationDao;
@@ -146,13 +154,26 @@ public class CourseDaoTest extends BaseTestCase {
 	
 	@Test
 	public void testGetTrainersByCourse() {
+		// test getTrainersByCourse()
 		List<ScbUser> trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
 		Assert.assertTrue(CollectionUtils.isEmpty(trainerList));
 		
+		// test addTrainersToCourse()
 		ScbUser userAdmin  = buildScbUser();
+		scbUserDao.insert(userAdmin);
+		contactDao.insert(userAdmin.getContact());
+		
 		courseDao.addTrainersToCourse(Arrays.asList(userAdmin), ITEM_UUID);
 		
 		trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
 		Assert.assertTrue(!CollectionUtils.isEmpty(trainerList) && trainerList.size() == 1);
+		ScbUser trainer = trainerList.get(0);
+		Assert.assertNotNull(trainer);
+		Assert.assertNotNull(trainer.getContact());
+		
+		// test removeTrainersFromCourse()
+		courseDao.removeTrainersFromCourse(Arrays.asList(userAdmin), ITEM_UUID);
+		trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
+		Assert.assertTrue(CollectionUtils.isEmpty(trainerList));
 	}	
 }

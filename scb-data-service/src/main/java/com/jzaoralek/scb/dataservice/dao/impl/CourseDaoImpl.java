@@ -80,6 +80,9 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	private static final String INSERT_TRAINER_TO_COURSE = "INSERT INTO user_trainer_course " +
 			"(course_uuid, user_trainer_uuid) " +
 			"VALUES (:"+COURSE_UUID_PARAM+", :"+USER_UUID_PARAM+")";
+	private static final String DELETE_TRAINER_FROM_COURSE = "DELETE FROM user_trainer_course "
+			+ "WHERE course_uuid = :" + COURSE_UUID_PARAM + "  "
+			+ "AND user_trainer_uuid = :" + USER_UUID_PARAM;
 	
 	@Autowired
 	public CourseDaoImpl(DataSource ds) {
@@ -192,19 +195,22 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 
 	@Override
 	public void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid) {
+		updateTrainersInCourse(INSERT_TRAINER_TO_COURSE, trainers, courseUuid);
+	}
+
+	@Override
+	public void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid) {
+		updateTrainersInCourse(DELETE_TRAINER_FROM_COURSE, trainers, courseUuid);
+	}
+	
+	private void updateTrainersInCourse(String sql, List<ScbUser> trainers, UUID courseUuid) {
 		MapSqlParameterSource paramMap = null;
 		for (ScbUser user : trainers) {
 			paramMap = new MapSqlParameterSource();
 			paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
 			paramMap.addValue(USER_UUID_PARAM, user.getUuid().toString());
-			namedJdbcTemplate.update(INSERT_TRAINER_TO_COURSE, paramMap);			
+			namedJdbcTemplate.update(sql, paramMap);			
 		}
-	}
-
-	@Override
-	public void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public static final class CourseTrainerRowMapper implements RowMapper<ScbUser> {
@@ -213,10 +219,9 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 		public ScbUser mapRow(ResultSet rs, int rowNum) throws SQLException {
 			ScbUser ret = new ScbUser();
 			fetchIdentEntity(rs, ret);
-			
 			ret.setRole(ScbUserRole.valueOf(rs.getString("role")));
 			ret.setUsername(rs.getString("username"));
-			// ret.setContact(new ContactRowMapper().mapRow(rs, rowNum));
+			ret.setContact(new ContactRowMapper().mapRow(rs, rowNum));
 
 			return ret;
 		}
