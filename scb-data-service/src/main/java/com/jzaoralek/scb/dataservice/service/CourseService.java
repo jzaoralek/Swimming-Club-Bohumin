@@ -7,6 +7,7 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 
 public interface CourseService {
@@ -42,4 +43,8 @@ public interface CourseService {
 	boolean existsByCourseLocation(UUID courseLocationUuid);
 	
 	CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid);
+	
+	List<ScbUser> getTrainersByCourse(UUID courseUuid);
+	void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid);
+	void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid);
 }
