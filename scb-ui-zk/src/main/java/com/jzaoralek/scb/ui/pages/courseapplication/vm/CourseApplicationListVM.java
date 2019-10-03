@@ -632,24 +632,26 @@ public class CourseApplicationListVM extends BaseContextVM {
 		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_ISCUS_PATTERN);
 
 		// header
-		Object[] headerArray = new Object[17];
-		headerArray[0] = Labels.getLabel("txt.ui.common.CzechCitizen");
-		headerArray[1] = Labels.getLabel("txt.ui.common.birthNumber");
-		headerArray[2] = Labels.getLabel("txt.ui.common.birthDate");
-		headerArray[3] = Labels.getLabel("txt.ui.common.Sex");
-		headerArray[4] = Labels.getLabel("txt.ui.iscus.particRole");
-		headerArray[5] = Labels.getLabel("txt.ui.iscus.IsTrainer");
-		headerArray[6] = Labels.getLabel("txt.ui.iscus.IsReferee");
-		headerArray[7] = Labels.getLabel("txt.ui.common.street");
-		headerArray[8] = Labels.getLabel("txt.ui.common.landRegNo.abbr");
-		headerArray[9] = Labels.getLabel("txt.ui.common.houseNo.abbr");
-		headerArray[10] = Labels.getLabel("txt.ui.common.city");
-		headerArray[11] = Labels.getLabel("txt.ui.common.zipCode");
-		headerArray[12] = Labels.getLabel("txt.ui.common.phone");
-		headerArray[13] = Labels.getLabel("txt.ui.common.email");
-		headerArray[14] = Labels.getLabel("txt.ui.iscus.particId");
-		headerArray[15] = Labels.getLabel("txt.ui.iscus.ClubLabels");
-		headerArray[16] = Labels.getLabel("txt.ui.iscus.systemIdNotEdit");
+		Object[] headerArray = new Object[19];
+		headerArray[0] = Labels.getLabel("txt.ui.common.surname");
+		headerArray[1] = Labels.getLabel("txt.ui.common.firstname");
+		headerArray[2] = Labels.getLabel("txt.ui.common.CzechCitizen");
+		headerArray[3] = Labels.getLabel("txt.ui.common.birthNumber");
+		headerArray[4] = Labels.getLabel("txt.ui.common.birthDate");
+		headerArray[5] = Labels.getLabel("txt.ui.common.Sex");
+		headerArray[6] = Labels.getLabel("txt.ui.iscus.particRole");
+		headerArray[7] = Labels.getLabel("txt.ui.iscus.IsTrainer");
+		headerArray[8] = Labels.getLabel("txt.ui.iscus.IsReferee");
+		headerArray[9] = Labels.getLabel("txt.ui.common.street");
+		headerArray[10] = Labels.getLabel("txt.ui.common.landRegNo.abbr");
+		headerArray[11] = Labels.getLabel("txt.ui.common.houseNo.abbr");
+		headerArray[12] = Labels.getLabel("txt.ui.common.city");
+		headerArray[13] = Labels.getLabel("txt.ui.common.zipCode");
+		headerArray[14] = Labels.getLabel("txt.ui.common.phone");
+		headerArray[15] = Labels.getLabel("txt.ui.common.email");
+		headerArray[16] = Labels.getLabel("txt.ui.iscus.particId");
+		headerArray[17] = Labels.getLabel("txt.ui.iscus.ClubLabels");
+		headerArray[17] = Labels.getLabel("txt.ui.iscus.systemIdNotEdit");
 		
 		data.put("0", headerArray);
 
@@ -660,7 +662,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 			if (model.getElementAt(i) instanceof CourseApplication) {
 				item = (CourseApplication)model.getElementAt(i);
 				data.put(item.getCourseParticipant().getPersonalNo(),
-						new Object[] { 
+						new Object[] {
+								item.getCourseParticipant().getContact().getSurname(),
+								item.getCourseParticipant().getContact().getFirstname(),
 								item.getCourseParticipant().getContact().isCzechCitizenship() ? "1" : "0",
 								item.getCourseParticipant().getPersonalNo(),
 								item.getCourseParticipant().getBirthdate() != null ? dateFormat.format(item.getCourseParticipant().getBirthdate()) : "",
