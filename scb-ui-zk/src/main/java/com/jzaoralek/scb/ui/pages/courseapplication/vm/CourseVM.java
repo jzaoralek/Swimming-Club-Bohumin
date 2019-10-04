@@ -1,11 +1,13 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +33,9 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
-import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -56,15 +59,15 @@ public class CourseVM extends BaseVM {
 	private Boolean updateMode;
 	private List<CourseParticipant> participantSelectedList;
 	private List<CourseLocation> courseLocationList;
+	private List<ScbUser> trainersAll;
+	private List<ScbUser> trainersToSelect;
+	private ScbUser trainerSelected;
 
 	@WireVariable
 	private CourseService courseService;
 
 	@WireVariable
 	private LessonService lessonService;
-
-	@WireVariable
-	private ConfigurationService configurationService;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -78,7 +81,6 @@ public class CourseVM extends BaseVM {
 		this.courseLocationList = courseService.getCourseLocationAll();
 		if (course != null) {
 			this.course = course;
-//			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseDetail");
 			this.updateMode = true;
 			this.courseYearSelected = course.getYear();
 			// misto kurzu
@@ -88,10 +90,9 @@ public class CourseVM extends BaseVM {
 						this.course.setCourseLocation(item);
 					}
 				}
-			}			
+			}
 		} else {
 			this.course = new Course();
-//			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseNew");
 			this.updateMode = false;
 			this.courseYearSelected = configurationService.getCourseApplicationYear();
 			// misto kurzu
@@ -127,6 +128,39 @@ public class CourseVM extends BaseVM {
 		this.course = courseService.getByUuid(uuid);
 		BindUtils.postNotifyChange(null, null, this, "course");
 	}
+	
+	@NotifyChange({"course"})
+	@Command
+	public void trainersTabSelectedCmd() {
+		if (this.course.getTrainerList() == null) {
+			loadTrainers();
+		}
+		
+		buildTrainersAll();
+		loadTrainerstToSelect();
+	}
+	
+	private void loadTrainers() {
+		this.course.setTrainerList(courseService.getTrainersByCourse(this.course.getUuid()));
+		BindUtils.postNotifyChange(null, null, this, "course");
+	}
+	
+	private void loadTrainerstToSelect() {
+		if (CollectionUtils.isEmpty(this.trainersAll)) {
+			return;
+		}
+		// TODO: vyfiltrovat prirazene trenery
+		this.trainersToSelect = this.trainersAll;
+		this.trainersToSelect.removeAll(this.course.getTrainerList());
+		BindUtils.postNotifyChange(null, null, this, "trainersToSelect");
+	}
+	
+	private void buildTrainersAll()  {
+		if (CollectionUtils.isEmpty(this.trainersAll)) {
+			List<ScbUser> userAll = scbUserService.getAll();
+			this.trainersAll = userAll.stream().filter(i -> i.getRole() != ScbUserRole.USER).collect(Collectors.toList());			
+		}
+	}
 
 	@NotifyChange("*")
 	@Command
@@ -140,7 +174,7 @@ public class CourseVM extends BaseVM {
 			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
 			this.updateMode = true;
 		} catch (ScbValidationException e) {
-			LOG.warn("ScbValidationException caught for course: " + this.course);
+			LOG.warn("ScbValidationException caught for course: " + this.course, e);
 			WebUtils.showNotificationError(e.getMessage());
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for course: " + this.course, e);
@@ -155,7 +189,7 @@ public class CourseVM extends BaseVM {
 			lessonService.delete(uuid);
 			loadData(this.course.getUuid());
 		} catch (ScbValidationException e) {
-			LOG.warn("ScbValidationException caught during deleting lesson uuid: "+ uuid+" for course: " + this.course);
+			LOG.warn("ScbValidationException caught during deleting lesson uuid: "+ uuid+" for course: " + this.course, e);
 			WebUtils.showNotificationError(e.getMessage());
 		}
 	}
@@ -210,6 +244,20 @@ public class CourseVM extends BaseVM {
 	@Command
 	public void addCourseParticipantsFromCourseCmd() {
 		addCoursePartic(false);
+	}
+	
+	@Command
+	public void addTrainerCmd() {
+		courseService.addTrainersToCourse(Arrays.asList(this.trainerSelected), this.course.getUuid());
+		loadTrainers();
+		loadTrainerstToSelect();
+	}
+	
+	@Command
+	public void removeTrainerCmd(@BindingParam(WebConstants.ITEM_PARAM) final ScbUser item) {
+		courseService.removeTrainersFromCourse(Arrays.asList(item), this.course.getUuid());
+		loadTrainers();
+		loadTrainerstToSelect();
 	}
 	
 	private void addCoursePartic(boolean fromApplication) {
@@ -311,4 +359,15 @@ public class CourseVM extends BaseVM {
 		return courseLocationList;
 	}
 	
+	public List<ScbUser> getTrainersToSelect() {
+		return trainersToSelect;
+	}
+	
+	public ScbUser getTrainerSelected() {
+		return trainerSelected;
+	}
+
+	public void setTrainerSelected(ScbUser trainerSelected) {
+		this.trainerSelected = trainerSelected;
+	}
 }
