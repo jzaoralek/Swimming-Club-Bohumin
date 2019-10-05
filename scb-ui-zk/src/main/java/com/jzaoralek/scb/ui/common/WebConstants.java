@@ -51,6 +51,7 @@ public final class WebConstants {
 	public static final String YEAR_SELECTED_PARAM = "yearSelected";
 	public static final String SEMESTER_PARAM = "semester";
 	public static final String BANK_ACCOUNT_NO_PARAM = "bankAccountNo";
+	public static final String COURSE_LIST_EXT_FILTER_PARAM = "courseListExtFilter";
 	
 	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 

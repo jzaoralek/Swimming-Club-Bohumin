@@ -5,9 +5,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -108,6 +110,8 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.courseList = new ArrayList<>();
 		for (Course item : courseListAll) {
 			if (item.getYearFrom() == yearFrom && item.getYearTo() == yearTo) {
+				// dotazeni treneru
+				item.setTrainerList(courseService.getTrainersByCourse(item.getUuid()));
 				this.courseList.add(item);
 			}
 		}
@@ -119,6 +123,17 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 				item.setCourseCourseParticipantVO(courseCourseParticipantVO);
 			}
 		}
+	}
+	
+	public String getTrainersToUi(Course course) {
+		if (course == null || CollectionUtils.isEmpty(course.getTrainerList())) {
+			return "";
+		}
+		List<String> names = course.getTrainerList().stream().map(i -> i.getContact().getCompleteName()).collect(Collectors.toList());
+		if (CollectionUtils.isEmpty(names)) {
+			return "";
+		}
+		return names.stream().collect(Collectors.joining(","));
 	}
 
 	public void loadCourseApplicationListData() {

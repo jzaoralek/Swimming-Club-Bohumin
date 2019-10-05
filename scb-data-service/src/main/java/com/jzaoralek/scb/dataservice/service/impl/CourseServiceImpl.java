@@ -60,12 +60,27 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	@Override
 	public List<Course> getAll(int yearFrom, int yearTo, boolean withLessons) {
 		List<Course> ret = courseDao.getAll(yearFrom, yearTo);
-		if (withLessons && ret != null && !ret.isEmpty()) {
-			for (Course item : ret) {
+		if (withLessons) {
+			addLessons(ret);
+		}
+		return ret;
+	}
+	
+	@Override
+	public List<Course> getByTrainer(UUID userUuid, int yearFrom, int yearTo, boolean withLessons) {
+		List<Course> ret = courseDao.getByTrainer(userUuid, yearFrom, yearTo);
+		if (withLessons) {
+			addLessons(ret);
+		}
+		return ret;
+	}
+	
+	private void addLessons(List<Course> courseList) {
+		if (courseList != null && !courseList.isEmpty()) {
+			for (Course item : courseList) {
 				item.setLessonList(lessonService.getByCourse(item.getUuid()));								
 			}
 		}
-		return ret;
 	}
 
 	@Override

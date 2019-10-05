@@ -13,6 +13,7 @@ import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 public interface CourseService {
 
 	List<Course> getAll(int yearFrom, int yearTo, boolean withLessons);
+	List<Course> getByTrainer(UUID userUuid, int yearFrom, int yearTo, boolean withLessons);
 	List<Course> getAllExceptCourse(UUID courseUuid);
 	List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid, boolean inclInterrupted);
 	List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid, int yearFrom, int yearTo);

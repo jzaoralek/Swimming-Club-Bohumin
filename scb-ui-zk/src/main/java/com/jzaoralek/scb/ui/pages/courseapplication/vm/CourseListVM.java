@@ -1,12 +1,12 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +34,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
@@ -44,6 +45,7 @@ import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
+import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseExternalFilter;
 import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseFilter;
 
 public class CourseListVM extends BaseContextVM {
@@ -56,6 +58,9 @@ public class CourseListVM extends BaseContextVM {
 	private boolean showCourseFilter;
 	private CourseLocation courseLocationSelected;
 	private final CourseFilter filter = new CourseFilter();
+	private Boolean myCourses = Boolean.TRUE;
+	/** Cache object for external filter */
+	private CourseExternalFilter externalFilter;
 
 	@WireVariable
 	private CourseService courseService;
@@ -64,6 +69,11 @@ public class CourseListVM extends BaseContextVM {
 	@Init
 	public void init() {
 		initYearContext();
+		// nacteni seznamu mist konani kurzu
+		initCourseLocations();
+		// nacteni externiho filtru ze session
+		initExternalFilterCache();
+		
 		loadData();
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
@@ -76,6 +86,32 @@ public class CourseListVM extends BaseContextVM {
 				}
 			}
 		});
+	}
+	
+	private void updateExternalFilterCache()  {
+		if (this.externalFilter == null) {
+			this.externalFilter =  new CourseExternalFilter(this.myCourses, this.courseLocationSelected.getUuid());
+		} else {
+			this.externalFilter.setMyCourses(this.myCourses);
+			this.externalFilter.setCourseLocationUuid(this.courseLocationSelected.getUuid());
+		}
+		
+		WebUtils.setSessAtribute(WebConstants.COURSE_LIST_EXT_FILTER_PARAM, this.externalFilter);
+	}
+	
+	private void initExternalFilterCache() {
+		this.externalFilter = (CourseExternalFilter)WebUtils.getSessAtribute(WebConstants.COURSE_LIST_EXT_FILTER_PARAM);
+		if (this.externalFilter != null) {
+			this.myCourses = this.externalFilter.getMyCourses();
+			
+			if (this.showCourseFilter) {
+				List<CourseLocation> courseLocFilterred = this.courseLocationList.
+							stream().
+							filter(i -> i.getUuid().toString().equals(this.externalFilter.getCourseLocationUuid().toString())).
+							collect(Collectors.toList());
+				this.courseLocationSelected = courseLocFilterred.stream().findFirst().orElse(null);
+			}
+		}
 	}
 
 	@Command
@@ -106,10 +142,18 @@ public class CourseListVM extends BaseContextVM {
 	@NotifyChange("*")
 	@Command
 	public void refreshDataCmd() {
+		updateExternalFilterCache();
 		loadData();
 		filter.setEmptyValues();
 	}
 
+	@NotifyChange("*")
+	@Command
+	public void filterByMyCoursesCmd() {
+		loadData();
+		updateExternalFilterCache();
+	}
+	
 	@NotifyChange("*")
 	@Command
     public void deleteCmd(@BindingParam(WebConstants.ITEM_PARAM) final Course item) {
@@ -159,7 +203,9 @@ public class CourseListVM extends BaseContextVM {
 	@NotifyChange("courseList")
 	@Command
 	public void filterByCourseLocationCmd() {
-		this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
+//		this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
+		loadData();
+		updateExternalFilterCache();
 	}
 	
 	/**
@@ -182,23 +228,29 @@ public class CourseListVM extends BaseContextVM {
 		
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
-
-		this.courseList = courseService.getAll(yearFrom, yearTo, false);
+		
+		// nacteni vsech nebo pouze prirazenych kurzu
+		this.courseList = this.myCourses ? courseService.getByTrainer(SecurityUtils.getLoggedUser().getUuid(), yearFrom, yearTo, false) : courseService.getAll(yearFrom, yearTo, false);
 		this.courseListBase = this.courseList;
 		
-		this.courseLocationList = courseService.getCourseLocationAll();
-		if (this.courseLocationList != null && this.courseLocationList.size() > 1) {
-			// pokud vice nez jedno misto konani, zobrazit vyber mist konani
-			this.showCourseFilter = true;
-			this.courseLocationSelected = this.courseLocationList.get(0);
+		if (this.showCourseFilter) {
+			if (this.courseLocationSelected == null) {
+				this.courseLocationSelected = this.courseLocationList.get(0);				
+			}
 			this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
 		}
-		
+
 		BindUtils.postNotifyChange(null, null, this, "courseList");
+	}
+	
+	private void initCourseLocations() {
+		this.courseLocationList = courseService.getCourseLocationAll();
+		// pokud vice nez jedno misto konani, zobrazit vyber mist konani
+		this.showCourseFilter = (this.courseLocationList != null && this.courseLocationList.size() > 1);
 	}
 
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
-		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
+		Map<String, Object[]> data = new LinkedHashMap<>();
 
 		// header
 		Listhead lh = listbox.getListhead();
@@ -226,24 +278,25 @@ public class CourseListVM extends BaseContextVM {
 	public List<Course> getCourseList() {
 		return courseList;
 	}
-	
 	public List<CourseLocation> getCourseLocationList() {
 		return courseLocationList;
 	}
-
 	public CourseFilter getFilter() {
 		return filter;
 	}
-	
 	public boolean isShowCourseFilter() {
 		return showCourseFilter;
 	}
-	
 	public CourseLocation getCourseLocationSelected() {
 		return courseLocationSelected;
 	}
-
 	public void setCourseLocationSelected(CourseLocation courseLocationSelected) {
 		this.courseLocationSelected = courseLocationSelected;
+	}
+	public Boolean getMyCourses() {
+		return myCourses;
+	}
+	public void setMyCourses(Boolean myCourses) {
+		this.myCourses = myCourses;
 	}
 }
