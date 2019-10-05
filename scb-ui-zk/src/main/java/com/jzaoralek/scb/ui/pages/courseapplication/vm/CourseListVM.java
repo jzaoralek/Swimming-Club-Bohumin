@@ -89,11 +89,16 @@ public class CourseListVM extends BaseContextVM {
 	}
 	
 	private void updateExternalFilterCache()  {
+		UUID courseLocSelUuid = null;
+		if (this.showCourseFilter && this.courseLocationSelected != null) {
+			courseLocSelUuid = this.courseLocationSelected.getUuid();
+		}
+		
 		if (this.externalFilter == null) {
-			this.externalFilter =  new CourseExternalFilter(this.myCourses, this.courseLocationSelected.getUuid());
+			this.externalFilter = new CourseExternalFilter(this.myCourses, courseLocSelUuid);
 		} else {
 			this.externalFilter.setMyCourses(this.myCourses);
-			this.externalFilter.setCourseLocationUuid(this.courseLocationSelected.getUuid());
+			this.externalFilter.setCourseLocationUuid(courseLocSelUuid);
 		}
 		
 		WebUtils.setSessAtribute(WebConstants.COURSE_LIST_EXT_FILTER_PARAM, this.externalFilter);
