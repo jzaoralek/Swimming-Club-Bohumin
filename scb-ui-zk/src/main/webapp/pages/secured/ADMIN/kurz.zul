@@ -32,7 +32,7 @@
         			<!-- Zpravy -->
 	            	<send-mail-button />
 	        		<button onClick="@command('deleteCmd')"
-						label="${c:l('txt.ui.common.Delete')}" 
+						tooltiptext="${c:l('txt.ui.common.Delete')}"
 						sclass="btn-danger" 
         				iconSclass="z-icon-times"
         				style="margin-left: 10px;"
@@ -316,33 +316,33 @@
 								pageSize="10"
 								visible="@load(vm.updateMode)"
 								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-								class="listbox-400" >
+								class="listbox-300" >
 						        <auxhead>
 						            <auxheader colspan="2" >
-						            	<button tooltiptext="${c:l('txt.ui.common.new')}" 
-				            					sclass="add-item-btn"  
-				            					iconSclass="z-icon-plus" 
-				            					popup="addTrainerPopup" />
-				            			
-				            			<popup id="addTrainerPopup">
-				            				<combobox id="trainerToSelect" 
+						            	<hlayout>
+						            		<button onClick="@command('openTrainerSelectCmd')" 
+				            					tooltiptext="${c:l('txt.ui.common.addTrainer')}" 
+				            					sclass="add-item-btn"
+				            					iconSclass="z-icon-plus" />
+							            	<combobox id="trainerToSelectCombo" 
 												model="@load(vm.trainersToSelect)"
 												onSelect="@command('addTrainerCmd')"
 												selectedItem="@bind(vm.trainerSelected)"
-												placeholder="*"
-												style="background: white;"
-												hflex="1"
+												placeholder="${c:l('txt.ui.common.addTrainer')}"
+												style="position: relative; left: -28px; height: 0px; width: Opx !important; opacity: 0.0 !important;"
+												buttonVisible="true"
+												width="0px"
 												readonly="true" >
 												<template name="model">
 									            	<comboitem label="${each.contact.completeName}"/>
 												</template>
 											</combobox>
-				            			</popup>
+						            	</hlayout>
 						            </auxheader>
 						        </auxhead>
 								
 						        <listhead>
-						            <listheader label="${c:l('txt.ui.common.firstname')}" sort="auto(contact.surname)" hflex="1" align="left" />
+						            <listheader label="${c:l('txt.ui.common.trainer')}" sort="auto(contact.surname)" hflex="1" align="left" />
 						            <listheader width="70px" align="center" />
 						        </listhead>
 						         

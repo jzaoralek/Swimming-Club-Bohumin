@@ -13,7 +13,7 @@ public class Contact implements IdentEntity {
 
 	public static final String CZECH_CITIZENSHIP_CODE = "CZE";
 	public static final String OTHER_CITIZENSHIP_CODE = "NON";
-	
+
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;

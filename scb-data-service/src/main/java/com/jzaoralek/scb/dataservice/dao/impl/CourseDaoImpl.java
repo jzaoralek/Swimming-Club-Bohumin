@@ -13,6 +13,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
@@ -83,6 +84,8 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	private static final String DELETE_TRAINER_FROM_COURSE = "DELETE FROM user_trainer_course "
 			+ "WHERE course_uuid = :" + COURSE_UUID_PARAM + "  "
 			+ "AND user_trainer_uuid = :" + USER_UUID_PARAM;
+	private static final String DELETE_ALL_TRAINER_FROM_COURSE = "DELETE FROM user_trainer_course "
+			+ "WHERE course_uuid = :" + COURSE_UUID_PARAM;
 	
 	@Autowired
 	public CourseDaoImpl(DataSource ds) {
@@ -136,6 +139,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	@Override
 	public void delete(Course course) {
 		courseParticipantDao.deleteAllFromCourse(course.getUuid());
+		removeAllTrainersFromCourse(course.getUuid());
 		namedJdbcTemplate.update(DELETE, new MapSqlParameterSource().addValue(UUID_PARAM, course.getUuid().toString()));
 	}
 
@@ -202,6 +206,14 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	public void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid) {
 		updateTrainersInCourse(DELETE_TRAINER_FROM_COURSE, trainers, courseUuid);
 	}
+	
+	@Override
+	public void removeAllTrainersFromCourse(UUID courseUuid) {		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		namedJdbcTemplate.update(DELETE_ALL_TRAINER_FROM_COURSE, paramMap);			
+	}
+	
 	
 	private void updateTrainersInCourse(String sql, List<ScbUser> trainers, UUID courseUuid) {
 		MapSqlParameterSource paramMap = null;
