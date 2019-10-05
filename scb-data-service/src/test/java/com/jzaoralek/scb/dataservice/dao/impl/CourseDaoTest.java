@@ -198,4 +198,26 @@ public class CourseDaoTest extends BaseTestCase {
 		trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
 		Assert.assertTrue(CollectionUtils.isEmpty(trainerList));
 	}
+	
+	@Test
+	public void testGetByTrainer() {
+		List<ScbUser> trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
+		Assert.assertTrue(CollectionUtils.isEmpty(trainerList));
+		
+		ScbUser userAdmin  = buildScbUser();
+		scbUserDao.insert(userAdmin);
+		contactDao.insert(userAdmin.getContact());
+		
+		courseDao.addTrainersToCourse(Arrays.asList(userAdmin), ITEM_UUID);
+		
+		List<Course> courseList = courseDao.getByTrainer(userAdmin.getUuid(), YEAR_FROM, YEAR_TO);
+		Assert.assertTrue(!CollectionUtils.isEmpty(courseList) && courseList.size() == 1);
+		Course course = courseList.get(0);
+		Assert.assertNotNull(course);
+		Assert.assertTrue(ITEM_UUID.toString().equals(course.getUuid().toString()));
+		
+		courseDao.removeAllTrainersFromCourse(ITEM_UUID);
+		courseList = courseDao.getByTrainer(userAdmin.getUuid(), YEAR_FROM, YEAR_TO);
+		Assert.assertTrue(CollectionUtils.isEmpty(courseList));
+	}
 }

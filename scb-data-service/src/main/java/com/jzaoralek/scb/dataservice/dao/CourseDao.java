@@ -10,6 +10,7 @@ public interface CourseDao {
 
 	List<Course> getAll(int yearFrom, int yearTo);
 	List<Course> getAllExceptCourse(UUID courseUuid);
+	List<Course> getByTrainer(UUID userUuid, int yearFrom, int yearTo);
 	Course getByUuid(UUID uuid);
 	Course getPlainByUuid(UUID uuid);
 	List<Course> getByCourseParticipantUuid(UUID courseParticipantUuid, int yearFrom, int yearTo);
@@ -21,4 +22,5 @@ public interface CourseDao {
 	void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid);
 	void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid);
 	void removeAllTrainersFromCourse(UUID courseUuid);
+	
 }

@@ -13,7 +13,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
@@ -61,6 +60,18 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			+ "LEFT JOIN course_location cl ON (c.course_location_uuid = cl.uuid) "
 			+ "WHERE year_from = :"+YEAR_FROM_PARAM+" AND year_to = :"+YEAR_TO_PARAM 
 			+ " ORDER BY c.name";
+	
+	private static final String SELECT_BY_TRAINER = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by, c.price_semester_1, c.price_semester_2, c.max_participant_count, "
+			+ "cl.uuid \"course_location_uuid\" , cl.name \"course_location_name\", cl.description  \"course_location_description\", "
+			+ "(select count(*) FROM course_course_participant ccp "
+					+ "WHERE ccp.course_uuid = c.uuid AND ccp.course_partic_interrupted_at is null) \"participant_count\"  "
+			+ "FROM course c "
+			+ "LEFT JOIN course_location cl ON (c.course_location_uuid = cl.uuid) "
+			+ "JOIN user_trainer_course utc ON c.uuid = utc.course_uuid "
+			+ "WHERE year_from = :"+YEAR_FROM_PARAM+" AND year_to = :"+YEAR_TO_PARAM+" "
+			+ "AND utc.user_trainer_uuid = :"+USER_UUID_PARAM+" "
+			+ "ORDER BY c.name";
+	
 	private static final String SELECT_ALL_EXCEPT_COURSE = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by, price_semester_1, price_semester_2, course_location_uuid, max_participant_count FROM course where uuid != :"+COURSE_UUID_PARAM;
 	private static final String SELECT_BY_UUID = "SELECT uuid, name, description, year_from, year_to, modif_at, modif_by, price_semester_1, price_semester_2, course_location_uuid, max_participant_count FROM course WHERE uuid=:" + UUID_PARAM;
 	private static final String SELECT_BY_COURSE_PARTICIPANT = "SELECT c.uuid, c.name, c.description, c.year_from, c.year_to, c.modif_at, c.modif_by, c.price_semester_1, c.price_semester_2, course_location_uuid, max_participant_count, "
@@ -102,6 +113,16 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	public List<Course> getAllExceptCourse(UUID courseUuid) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
 		return namedJdbcTemplate.query(SELECT_ALL_EXCEPT_COURSE, paramMap, new CourseDetailRowMapper(courseParticipantDao, lessonDao, courseLocationDao));
+	}
+	
+	@Override
+	public List<Course> getByTrainer(UUID userUuid, int yearFrom, int yearTo) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().
+				addValue(YEAR_FROM_PARAM, yearFrom).
+				addValue(YEAR_TO_PARAM, yearTo).
+				addValue(USER_UUID_PARAM, userUuid.toString());
+				
+		return namedJdbcTemplate.query(SELECT_BY_TRAINER, paramMap, new CourseRowMapper());
 	}
 
 	@Override
