@@ -12,6 +12,7 @@ public interface ScbUserService {
 
 	void changePassword(ScbUser scbUser, Cover<char[]> password);
 	List<ScbUser> getAll();
+	List<ScbUser> getTrainers();
 	ScbUser getByUuid(UUID uuid);
 	ScbUser store(ScbUser user) throws ScbValidationException;
 	void delete(UUID uuid) throws ScbValidationException;

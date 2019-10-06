@@ -1,11 +1,14 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jzaoralek.scb.dataservice.BaseTestCase;
+import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
@@ -15,6 +18,9 @@ public class ScbUserDaoTest extends BaseTestCase {
 
 	@Autowired
 	private ScbUserDao scbUserDao;
+	
+	@Autowired
+	private ContactDao contactDao;
 
 	private ScbUser item;
 
@@ -90,5 +96,13 @@ public class ScbUserDaoTest extends BaseTestCase {
 	@Test
 	public void testUserWithSameUsernameExists() {
 		Assert.assertTrue(scbUserDao.userWithSameUsernameExists(USERNAME));
+	}
+	
+	
+	@Test
+	public void testGetTrainers() {
+		contactDao.insert(item.getContact());
+		List<ScbUser> list = scbUserDao.getTrainers();
+		assertList(scbUserDao.getTrainers(), 1, ITEM_UUID);
 	}
 }

@@ -167,8 +167,9 @@ public class CourseVM extends BaseVM {
 	
 	private void buildTrainersAll()  {
 		if (CollectionUtils.isEmpty(this.trainersAll)) {
-			List<ScbUser> userAll = scbUserService.getAll();
-			this.trainersAll = userAll.stream().filter(i -> i.getRole() != ScbUserRole.USER).collect(Collectors.toList());
+//			List<ScbUser> userAll = scbUserService.getAll();
+//			this.trainersAll = userAll.stream().filter(i -> i.getRole() != ScbUserRole.USER).collect(Collectors.toList());
+			this.trainersAll = scbUserService.getTrainers();
 		}
 	}
 	

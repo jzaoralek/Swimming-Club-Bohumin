@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.utils.vo.Cover;
@@ -33,6 +34,7 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 			"(uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by) " +
 			"VALUES (:"+UUID_PARAM+", :"+USERNAME_PARAM+", :"+PASSWORD_PARAM+", :"+PASSWORD_GENERATED_PARAM+", :"+ROLE_PARAM+", :"+CONTACT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
 	private static final String SELECT_ALL ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user ORDER BY username";
+	private static final String SELECT_TRAINERS ="SELECT * FROM user usr JOIN contact con ON usr.contact_uuid = con.uuid WHERE usr.role != 'USER'";
 	private static final String SELECT_BY_UUID ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE uuid=:" + UUID_PARAM;
 	private static final String SELECT_BY_USERNAME ="SELECT uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by FROM user WHERE LCASE(username)=LCASE(:" + USERNAME_PARAM +")";
 	private static final String DELETE = "DELETE FROM user where uuid = :" + UUID_PARAM;
@@ -51,6 +53,11 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 	@Override
 	public List<ScbUser> getAll() {
 		return namedJdbcTemplate.query(SELECT_ALL, new ScbUserRowMapper(contactDao));
+	}
+	
+	@Override
+	public List<ScbUser> getTrainers() {
+		return namedJdbcTemplate.query(SELECT_TRAINERS, new ScbUserRowMapperSimple());
 	}
 
 	@Override
@@ -144,6 +151,32 @@ public class ScbUserDaoImpl extends BaseJdbcDao implements ScbUserDao {
 			ret.setRole(ScbUserRole.valueOf(rs.getString("role")));
 			ret.setUsername(rs.getString("username"));
 
+			return ret;
+		}
+	}
+	
+	/**
+	 * Fill complete user and basic data for contact.
+	 *
+	 */
+	public static final class ScbUserRowMapperSimple implements RowMapper<ScbUser> {
+		
+		@Override
+		public ScbUser mapRow(ResultSet rs, int rowNum) throws SQLException {
+			ScbUser ret = new ScbUser();
+			fetchIdentEntity(rs, ret);
+			
+
+			ret.setPassword(rs.getString("password"));
+			ret.setPasswordGenerated(rs.getInt("password_generated") == 1);
+			ret.setRole(ScbUserRole.valueOf(rs.getString("role")));
+			ret.setUsername(rs.getString("username"));
+
+			Contact contact = new Contact();
+			contact.setFirstname(rs.getString("firstname"));
+			contact.setSurname(rs.getString("surname"));
+			ret.setContact(contact);
+			
 			return ret;
 		}
 	}

@@ -9,6 +9,7 @@ import com.jzaoralek.scb.dataservice.utils.vo.Cover;
 public interface ScbUserDao {
 
 	List<ScbUser> getAll();
+	List<ScbUser> getTrainers();
 	ScbUser getByUuid(UUID uuid);
 	ScbUser getByUsername(String username);
 	void insert(ScbUser scbUser);

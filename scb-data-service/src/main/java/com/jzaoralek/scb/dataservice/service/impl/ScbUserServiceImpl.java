@@ -35,6 +35,11 @@ public class ScbUserServiceImpl extends BaseAbstractService implements ScbUserSe
 	public List<ScbUser> getAll() {
 		return scbUserDao.getAll();
 	}
+	
+	@Override
+	public List<ScbUser> getTrainers() {
+		return scbUserDao.getTrainers();
+	}
 
 	@Override
 	public ScbUser getByUuid(UUID uuid) {
