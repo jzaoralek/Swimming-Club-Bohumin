@@ -45,7 +45,7 @@ public class UserVM extends BaseVM {
 			this.updateMode = true;
 		} else {
 			this.user = new ScbUser();
-			this.roleSelected = getRoleListItem(ScbUserRole.ADMIN);
+			this.roleSelected = getRoleListItem(ScbUserRole.TRAINER);
 			this.updateMode = false;
 		}
 		buildPageHeadline();
