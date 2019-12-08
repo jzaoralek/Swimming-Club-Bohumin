@@ -58,7 +58,7 @@ public class CourseListVM extends BaseContextVM {
 	private boolean showCourseFilter;
 	private CourseLocation courseLocationSelected;
 	private final CourseFilter filter = new CourseFilter();
-	private Boolean myCourses = Boolean.TRUE;
+	private Boolean myCourses;
 	/** Cache object for external filter */
 	private CourseExternalFilter externalFilter;
 
@@ -71,6 +71,10 @@ public class CourseListVM extends BaseContextVM {
 		initYearContext();
 		// nacteni seznamu mist konani kurzu
 		initCourseLocations();
+		
+		// default zobrazeni moje kurzy jen pokud se nejadna o admina
+		this.myCourses = isLoggedUserAdmin() ? Boolean.FALSE : Boolean.TRUE;
+		
 		// nacteni externiho filtru ze session
 		initExternalFilterCache();
 		

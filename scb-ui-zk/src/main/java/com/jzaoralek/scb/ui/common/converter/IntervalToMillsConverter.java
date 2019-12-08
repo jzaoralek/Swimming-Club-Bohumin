@@ -63,9 +63,26 @@ public class IntervalToMillsConverter implements Converter<String, Long, Compone
         if (minutes > 0) {
         	sb.append(minutes + WebConstants.MINUTE_SECOND_DELIM);
         }
-        sb.append(seconds);
-        sb.append(WebConstants.SECOND_MILISECOND_DELIM + milisecundes);
+        sb.append(parseLongToStr(seconds));
+        sb.append(WebConstants.SECOND_MILISECOND_DELIM + parseLongToStr(milisecundes));
 
         return sb.toString();
+	}
+	
+	/**
+	 * Prevede long na String, pokud ma jit o dvouciferne cislo doplni nulu pred cislo.
+	 * @param value
+	 * @return
+	 */
+	private String parseLongToStr(long value) {
+		String valueStr = String.valueOf(value);
+		if (!StringUtils.hasText(valueStr)) {
+			return "00";
+		}
+		if  (valueStr.length() == 1) {
+			return "0" + value;
+		}
+		
+		return valueStr;
 	}
 }

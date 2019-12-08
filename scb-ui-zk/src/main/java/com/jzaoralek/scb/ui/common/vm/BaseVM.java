@@ -629,6 +629,10 @@ public class BaseVM {
     	return isUserLogged() && userInRole(role);
     }
     
+    public Boolean isLoggedUserAdmin() {
+    	return isUserLogged() && userInRole("ADMIN");
+    }
+    
 	/**
 	 * Kontrola povoleni podavani prihlasek.
 	 * @return

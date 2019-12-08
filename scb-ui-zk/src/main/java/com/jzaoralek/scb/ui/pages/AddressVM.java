@@ -192,7 +192,7 @@ public class AddressVM extends BaseVM {
 	}
 	
 	private void regionSelectCore() {
-		if (this.regionSelected == null) {
+		if (this.regionSelected == null || !StringUtils.hasText(this.regionSelected.getRegionId())) {
 			return;
 		}
 		
