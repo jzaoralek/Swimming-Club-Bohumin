@@ -1,5 +1,8 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,6 +34,8 @@ import org.zkoss.zul.Listheader;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseService;
@@ -126,6 +131,10 @@ public class CourseListVM extends BaseContextVM {
 	@Command
 	public void exportToExcel(@BindingParam("listbox") Listbox listbox) {
 		ExcelUtil.exportToExcel("seznam_kurzu.xls", buildExcelRowData(listbox));
+	}
+	@Command
+	public void exportCompleteCoursesToExcelCmd() {
+		ExcelUtil.exportToExcel("seznam_kurzu_"+getCourseLocationName()+".xls", buildExcelCompleteCourseRowData());
 	}
 
 	@Command
@@ -282,6 +291,100 @@ public class CourseListVM extends BaseContextVM {
 		}
 
 		return data;
+	}
+	
+	/**
+	 * Sestaveni dat pro detailni report o kurzech, vcetne ucastniku, lekci, treneru.
+	 * @param listbox
+	 * @return
+	 */
+	private Map<String, Object[]> buildExcelCompleteCourseRowData() {
+		Map<String, Object[]> data = new LinkedHashMap<>();
+
+		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_ISCUS_PATTERN);
+
+		int MAX_COLS = 20;
+		
+		// header, kurzy, lokace,  pocet
+		Object[] headerArray = getRow(Arrays.asList(Labels.getLabel("txt.ui.menu.courses"),
+				getCourseLocationName(),
+				this.getCourseYearSelected(),
+				Labels.getLabel("txt.ui.common.count") + WebConstants.COLON + (!CollectionUtils.isEmpty(this.courseList) ? this.courseList.size() : 0)));
+		data.put("0", headerArray);
+		
+		// empty  row
+		data.put("1", getEmptyRow(MAX_COLS));
+		
+		// courses
+		if (CollectionUtils.isEmpty(this.courseListBase)) {
+			// no data found
+			data.put("2", getRow(Arrays.asList(Labels.getLabel("txt.ui.common.noDataFound"))));
+		} else {
+			
+			int row  = 3;
+			Course courseDetail =  null;
+			for (Course course : this.courseList) {
+				courseDetail = courseService.getByUuid(course.getUuid());
+				// course summary
+				// Nazev kurzu | Lekce: {lekce}|Počet účastníků: {pocet}/{kapacita}
+				data.put(String.valueOf(row++), 
+						getRow(Arrays.asList(courseDetail.getName(), 
+								getLekceStr(courseDetail.getLessonList()), 
+								Labels.getLabel("txt.ui.common.Participants2") + WebConstants.COLON + courseDetail.getParticipantListCount() +"/"+course.getMaxParticipantCount())));
+				// course participants
+				if (!CollectionUtils.isEmpty(courseDetail.getParticipantList())) {
+					for (CourseParticipant coursePartic : courseDetail.getParticipantList()) {
+						data.put(String.valueOf(row++), 
+								getRow(Arrays.asList(coursePartic.getContact().getCompleteName(),
+										coursePartic.getBirthdate() != null ? dateFormat.format(coursePartic.getBirthdate()) : "",
+												getNotNullStringEmptyChar(coursePartic.getContact().getStreet()),
+												getNotNullLongEmptyChar(coursePartic.getContact().getLandRegistryNumber()),
+												getNotNullStringEmptyChar(coursePartic.getContact().getHouseNumber()),
+												getNotNullStringEmptyChar(coursePartic.getContact().getCity()),
+												getNotNullStringEmptyChar(coursePartic.getContact().getZipCode()))));
+					}
+					data.put(String.valueOf(row++), getEmptyRow(MAX_COLS));
+				}
+			}			
+		}
+
+		return data;
+	}
+	
+	private String getLekceStr(List<Lesson> lessonList) {
+		if (CollectionUtils.isEmpty(lessonList)) {
+			return null;
+		}
+		
+		return lessonList.stream().map(i-> getLessonToUi(i)).collect(Collectors.joining(", "));	
+	}
+	
+	private Object[] getEmptyRow(int cols) {
+		Object[] ret = new Object[cols];
+		
+		for (int i = 0;i < cols; i++) {
+			ret[i] = "";
+		}
+		
+		return ret;
+	}
+	
+	private Object[] getRow(List<Object> dataList) {
+		Object[] ret = new Object[dataList.size()];
+		
+		for (int i = 0;i < dataList.size(); i++) {
+			ret[i] = dataList.get(i);
+		}
+		
+		return ret;
+	}
+	
+	private String getCourseLocationName() {
+		if (this.courseLocationSelected == null) {
+			return "";
+		}
+		
+		return this.courseLocationSelected.getName();
 	}
 
 	public List<Course> getCourseList() {

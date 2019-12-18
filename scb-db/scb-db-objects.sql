@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS  payment;
 DROP TABLE IF EXISTS  course_location;
 DROP TABLE IF EXISTS  file;
 DROP TABLE IF EXISTS  course_application_file_config;
+DROP TABLE IF EXISTS  user_trainer_course;
 
 CREATE TABLE contact(
 	uuid varchar(36),
