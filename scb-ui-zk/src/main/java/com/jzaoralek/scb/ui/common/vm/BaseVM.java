@@ -191,10 +191,6 @@ public class BaseVM {
 		return Validators.getBirthnumbervalidator();
 	}
 
-	public Validator getCaptchaValidator() {
-		return Validators.getCaptchavalidator();
-	}
-
 	public Validator getTimeIntervalValidator() {
 		return Validators.getTimeintervalvalidator();
 	}

@@ -106,12 +106,6 @@
 			<version>${zk.version}</version>
 		</dependency>
 		
-		<dependency>
-			<groupId>org.zkforge.bwcaptcha</groupId>
-			<artifactId>Captcha</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		
 		<!-- CKEditor -->
 		<dependency>
 		    <groupId>org.zkoss.zkforge</groupId>
