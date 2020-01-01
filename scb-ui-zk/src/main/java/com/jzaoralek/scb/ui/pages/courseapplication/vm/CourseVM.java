@@ -39,6 +39,7 @@ import org.zkoss.zul.Combobox;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
@@ -107,6 +108,7 @@ public class CourseVM extends BaseVM {
 			buildTrainersAll();
 		} else {
 			this.course = new Course();
+			this.course.setCourseType(CourseType.STANDARD);
 			this.updateMode = false;
 			this.courseYearSelected = configurationService.getCourseApplicationYear();
 			// misto kurzu
@@ -355,6 +357,14 @@ public class CourseVM extends BaseVM {
 		contactList.addAll(WebUtils.getParticEmailAddressList(this.course, courseService, scbUserService));
 		
 		goToSendEmailCore(contactList);
+	}
+	
+	public List<CourseType> getCourseTypeList() {
+		return Arrays.asList(CourseType.values());
+	}
+	
+	public String getCourseTypeDesc(CourseType courseType) {
+		return Labels.getLabel("txt.ui.CourseType."+courseType.name()+".desc");
 	}
 	
 	private void addCoursePartic(boolean fromApplication) {
