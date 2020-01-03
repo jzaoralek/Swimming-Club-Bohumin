@@ -78,6 +78,7 @@
 																value="${each}"
 																checked="${each == fx.course.courseType}"
 																onCheck="@command('courseTypeChangeCmd')"
+																disabled="@load(vm.updateMode)"
 																tooltiptext="@load(vm.getCourseTypeDesc(each))" />
 														</template>
 													</radiogroup>
@@ -192,7 +193,7 @@
 													<label value="${c:l('txt.ui.common.priceSemester2')}"/>
 													<hbox align="center" hflex="min">
 														<intbox id="coursePriceSemester2"
-															value="@bind(fx.course.priceSemester2) @validator(vm.notNullObjectValidator)"
+															value="@bind(fx.course.priceSemester2) @validator(vm.notNullObjectValidator, required=!vm.course.courseStandard)"
 															placeholder="*"
 															style="height: 30px;"
 															width="75px"
