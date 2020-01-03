@@ -71,11 +71,13 @@
 												<label value="${c:l('txt.ui.common.CourseType')}"/>
 												<hlayout>
 	                								<radiogroup model="@load(vm.courseTypeList)" 
-														selectedItem="@bind(fx.course.courseType)"
+														selectedItem="@bind(vm.course.courseType)"
 														hflex="1">
 														<template name="model">
 															<radio label="@load(each) @converter(vm.enumLabelConverter)" 
-																value="${each}" 
+																value="${each}"
+																checked="${each == fx.course.courseType}"
+																onCheck="@command('courseTypeChangeCmd')"
 																tooltiptext="@load(vm.getCourseTypeDesc(each))" />
 														</template>
 													</radiogroup>
@@ -170,7 +172,8 @@
 										<cell sclass="form-grid-cell" >
 											<hbox hflex="1">
 												<vbox hflex="min" style="margin-right: 20px;">
-													<label value="${c:l('txt.ui.common.priceSemester1')}"/>
+													<label value="${c:l('txt.ui.common.priceSemester1')}" visible="@load(!vm.course.courseStandard)"/>
+													<label value="${c:l('txt.ui.common.Price')}" visible="@load(vm.course.courseStandard)"/>
 													<hbox align="center" hflex="min">
 														<intbox id="coursePriceSemester1"
 															value="@bind(fx.course.priceSemester1) @validator(vm.notNullObjectValidator)"
@@ -185,7 +188,7 @@
 														<validMsg vmsg="${vmsgs}" elem="${coursePriceSemester1}" />
 													</hbox>
 												</vbox>
-												<vbox hflex="min" >
+												<vbox hflex="min" visible="@load(!vm.course.courseStandard)" >
 													<label value="${c:l('txt.ui.common.priceSemester2')}"/>
 													<hbox align="center" hflex="min">
 														<intbox id="coursePriceSemester2"

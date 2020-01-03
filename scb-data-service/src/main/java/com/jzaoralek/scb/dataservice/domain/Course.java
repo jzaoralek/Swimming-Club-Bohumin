@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 
 public class Course implements IdentEntity {
@@ -144,6 +145,10 @@ public class Course implements IdentEntity {
 		}
 		this.yearFrom = Integer.valueOf(years[0]);
 		this.yearTo = Integer.valueOf(years[1]);
+	}
+	
+	public boolean isCourseStandard() {
+		return this.courseType == CourseType.STANDARD;
 	}
 	
 	public CourseLocation getCourseLocation() {

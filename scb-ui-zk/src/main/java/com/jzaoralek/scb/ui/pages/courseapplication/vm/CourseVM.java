@@ -36,6 +36,7 @@ import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Radio;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
@@ -97,13 +98,7 @@ public class CourseVM extends BaseVM {
 			this.updateMode = true;
 			this.courseYearSelected = course.getYear();
 			// misto kurzu
-			if (this.course.getCourseLocation() != null && this.courseLocationList != null && !this.courseLocationList.isEmpty()) {
-				for (CourseLocation item : this.courseLocationList) {
-					if (item.getUuid().toString().equals(this.course.getCourseLocation().getUuid().toString())) {
-						this.course.setCourseLocation(item);
-					}
-				}
-			}
+			buildCourseLocation();
 			// treneri
 			buildTrainersAll();
 		} else {
@@ -130,6 +125,16 @@ public class CourseVM extends BaseVM {
 		});
 	}
 	
+	private void buildCourseLocation() {
+		if (this.course.getCourseLocation() != null && this.courseLocationList != null && !this.courseLocationList.isEmpty()) {
+			for (CourseLocation item : this.courseLocationList) {
+				if (item.getUuid().toString().equals(this.course.getCourseLocation().getUuid().toString())) {
+					this.course.setCourseLocation(item);
+				}
+			}
+		}
+	}
+	
 	@AfterCompose
 	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
 		Selectors.wireComponents(view, this, false);
@@ -137,6 +142,9 @@ public class CourseVM extends BaseVM {
 	
 	private void loadData(UUID uuid) {
 		this.course = courseService.getByUuid(uuid);
+		// misto kurzu
+		buildCourseLocation();
+		// treneri
 		buildTrainersAll();
 		BindUtils.postNotifyChange(null, null, this, "course");
 	}
@@ -357,6 +365,12 @@ public class CourseVM extends BaseVM {
 		contactList.addAll(WebUtils.getParticEmailAddressList(this.course, courseService, scbUserService));
 		
 		goToSendEmailCore(contactList);
+	}
+	
+	@NotifyChange("course")
+	@Command
+	public void courseTypeChangeCmd() {
+		// potreba pro notifikaci na zul
 	}
 	
 	public List<CourseType> getCourseTypeList() {
