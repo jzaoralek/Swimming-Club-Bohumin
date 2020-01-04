@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 
@@ -20,5 +21,6 @@ public interface PaymentService {
 			, String paymentDeadline
 			, String optionalText
 			, String mailSignature
-			, boolean firstSemester);
+			, boolean firstSemester
+			, CourseType courseType);
 }

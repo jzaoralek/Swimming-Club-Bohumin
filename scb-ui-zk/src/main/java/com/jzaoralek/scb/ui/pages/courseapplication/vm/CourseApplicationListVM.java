@@ -398,61 +398,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 		args.put(WebConstants.SEMESTER_PARAM, firstSemester);
 		args.put(WebConstants.BANK_ACCOUNT_NO_PARAM, bankAccountNumber);
 		args.put(WebConstants.YEAR_FROM_TO_PARAM, yearFromTo);
+		args.put(WebConstants.COURSE_TYPE_PARAM, this.courseType);
 		
 		WebUtils.openModal(WebPages.PAYMENT_INSTRUCTION_WINDOW.getUrl(), null, args);
-		
-//		final int semester = firstSemester ? 1 : 2;		
-//		final List<CourseApplication> courseApplicationList = this.courseApplicationList;
-//		final int yearFrom = Integer.parseInt(years[0]);
-//		final Object[] msgParams = new Object[] {semester};
-//		MessageBoxUtils.showDefaultConfirmDialog(
-//			"msg.ui.quest.sendMailWithPaymentInstructions",
-//			"msg.ui.title.sendMail",
-//			new SzpEventListener() {
-//				@Override
-//				public void onOkEvent() {
-//					StringBuilder mailToUser = null;
-//					for (CourseApplication courseApplication : courseApplicationList) {
-//						mailToUser = new StringBuilder();
-//						mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text0"));
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text1", new Object[] {courseApplication.getCourseParticipant().getCourseName(), semester, yearFromTo}));
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//
-//						// cislo uctu
-//						mailToUser.append(Labels.getLabel("txt.ui.common.AccountNo"));
-//						mailToUser.append(": ");
-//						mailToUser.append(bankAccountNumber);
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						
-//						// castka
-//						long priceForSemester = firstSemester ? courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceFirstSemester() : courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceSecondSemester();
-//						mailToUser.append(Labels.getLabel("txt.ui.common.Amount"));
-//						mailToUser.append(": ");
-//						mailToUser.append(priceForSemester);
-//						mailToUser.append(" ");
-//						mailToUser.append(Labels.getLabel("txt.ui.common.CZK"));
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						
-//						// variabilni symbol
-//						mailToUser.append(Labels.getLabel("txt.ui.common.VarSymbol"));
-//						mailToUser.append(": ");
-//						mailToUser.append(buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore()));
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						
-//						// podpis
-//						mailToUser.append(buildMailSignature());
-//						
-//						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {courseApplication.getCourseParticipant().getCourseName(), semester, yearFromTo}), mailToUser.toString(), null);
-//						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
-//					}
-//				}
-//			},
-//			msgParams
-//		);
 	}
 	
 	@SuppressWarnings("unchecked")

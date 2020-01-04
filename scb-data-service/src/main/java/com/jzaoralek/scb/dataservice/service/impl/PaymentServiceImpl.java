@@ -21,6 +21,7 @@ import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
 
@@ -97,7 +98,8 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			, String paymentDeadline
 			, String optionalText
 			, String mailSignature
-			, boolean firstSemester) {
+			, boolean firstSemester
+			, CourseType courseType) { 
 		if (CollectionUtils.isEmpty(paymentInstructionList)) {
 			return;
 		}
@@ -113,7 +115,11 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text0", null, Locale.getDefault()));
 			mailToUser.append(lineSeparator);
 			mailToUser.append(lineSeparator);
-			mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text1", new Object[] {paymentInstruction.getCourseName(), paymentInstruction.getSemester(), yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()));
+			if (courseType == CourseType.STANDARD) {
+				mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text1.standard", new Object[] {paymentInstruction.getCourseName(), yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()));
+			} else {
+				mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text1.twoSemester", new Object[] {paymentInstruction.getCourseName(), paymentInstruction.getSemester(), yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()));				
+			}
 			mailToUser.append(lineSeparator);
 			mailToUser.append(lineSeparator);
 
@@ -166,7 +172,14 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			// podpis
 			mailToUser.append(mailSignature);
 			
-			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), null, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));
+			String subject = null;
+			if (courseType == CourseType.STANDARD) {
+				subject = messageSource.getMessage("msg.ui.mail.paymentInstruction.subject.standard", new Object[] {paymentInstruction.getCourseName(), yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault());
+			} else {
+				subject = messageSource.getMessage("msg.ui.mail.paymentInstruction.subject.twoSemester", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault());
+			}
+			
+			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), null, subject, mailToUser.toString(), null));
 			// odeslani na platby@sportologic.cz
 			mailService.sendMail(new Mail(DataServiceConstants.PLATBY_EMAIL, null, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));			
 			// aktualizace odeslani notifikace v course_course_participant
