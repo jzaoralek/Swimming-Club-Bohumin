@@ -46,7 +46,6 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 	private static final String PRICE_SEMESTER_2_PARAM = "PRICE_SEMESTER_2";
 	private static final String COURSE_LOCATION_UUID_PARAM = "COURSE_LOCATION_UUID";
 	private static final String MAX_PARTIC_COUNT_PARAM = "MAX_PARTIC_COUNT";
-	private static final String TYPE_PARAM = "TYPE";
 	
 	private static final String INSERT = "INSERT INTO course " +
 			"(uuid, name, description, year_from, year_to, modif_at, modif_by, price_semester_1, price_semester_2, course_location_uuid, max_participant_count, type) " +

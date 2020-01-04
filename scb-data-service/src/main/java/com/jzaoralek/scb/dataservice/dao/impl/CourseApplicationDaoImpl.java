@@ -331,6 +331,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", course c " +
 			"where " +
 			"c.uuid = ccp.course_uuid " +
+			"AND c.type = :"+TYPE_PARAM+ " " +
 			"AND ccp.course_partic_interrupted_at is null " +
 			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
 			"AND c.year_to = :"+YEAR_TO_PARAM;
@@ -453,8 +454,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	}
 
 	@Override
-	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
+	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo, CourseType courseType) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom)
+				.addValue(YEAR_TO_PARAM, yearTo)
+				.addValue(TYPE_PARAM, courseType.name());
 		
 		// vsechny prihlasky za dany rok
 		List<CourseApplication> courseApplicationAllByYear = namedJdbcTemplate.query(SELECT_COURSE_APPLICATION_BY_YEAR_FROM_TO_MIN, paramMap, new CourseApplicationMinRowMapper());

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,6 @@ import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Radio;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
@@ -45,7 +43,6 @@ import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
-import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
@@ -371,14 +368,6 @@ public class CourseVM extends BaseVM {
 	@Command
 	public void courseTypeChangeCmd() {
 		// potreba pro notifikaci na zul
-	}
-	
-	public List<CourseType> getCourseTypeList() {
-		return Arrays.asList(CourseType.values());
-	}
-	
-	public String getCourseTypeDesc(CourseType courseType) {
-		return Labels.getLabel("txt.ui.CourseType."+courseType.name()+".desc");
 	}
 	
 	private void addCoursePartic(boolean fromApplication) {

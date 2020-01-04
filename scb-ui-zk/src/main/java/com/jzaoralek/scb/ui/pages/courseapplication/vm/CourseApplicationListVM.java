@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +34,11 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Radio;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
@@ -81,11 +82,13 @@ public class CourseApplicationListVM extends BaseContextVM {
 	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.of(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER, PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER, PaymentNotifSendState.SENT_FIRST_SEMESTER, PaymentNotifSendState.SENT_SECOND_SEMESTER));
 	private String bankAccountNumber;
 	private int yearFrom;
+	private CourseType courseType;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init() {
 		initYearContext();
+		initCourseTypeCache();
 
 		setPageMode();
 		loadData();		
@@ -103,6 +106,18 @@ public class CourseApplicationListVM extends BaseContextVM {
 		});
 	}
 
+	private void initCourseTypeCache() {
+		this.courseType = (CourseType)WebUtils.getSessAtribute(WebConstants.COURSE_TYPE_PARAM);
+		if (this.courseType == null)  {
+			this.courseType = CourseType.TWO_SEMESTER;
+			updateCourseTypeCache(this.courseType);
+		}
+	}
+	
+	private void updateCourseTypeCache(CourseType courseType) {
+		WebUtils.setSessAtribute(WebConstants.COURSE_TYPE_PARAM, courseType);
+	}
+	
 	private void setPageMode() {
 		if (WebUtils.getCurrentUrl().contains(WebPages.APPLICATION_LIST.getUrl())) {
 			this.pageMode = PageMode.COURSE_APPLICATION_LIST;
@@ -347,6 +362,13 @@ public class CourseApplicationListVM extends BaseContextVM {
 			}
 		}
 		return ret;
+	}
+	
+	@Command
+	public void courseTypeChangeCmd(@BindingParam("radio") Radio radio) {
+		this.courseType = radio.getValue();
+		updateCourseTypeCache(this.courseType);
+		loadData();
 	}
 
 	/**
@@ -726,10 +748,10 @@ public class CourseApplicationListVM extends BaseContextVM {
 		if (this.unregToCurrYear) {
 			this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getUnregisteredToCurrYear(yearFrom, yearTo) : Collections.EMPTY_LIST;
 		} else {
-			this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getAll(yearFrom, yearTo) : courseApplicationService.getAssignedToCourse(yearFrom, yearTo);
+			this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getAll(yearFrom, yearTo) : courseApplicationService.getAssignedToCourse(yearFrom, yearTo, this.courseType);
 		}
 		this.courseApplicationListBase = this.courseApplicationList;
-		
+
 		BindUtils.postNotifyChange(null, null, this, "courseApplicationList");
 	}
 
@@ -771,5 +793,13 @@ public class CourseApplicationListVM extends BaseContextVM {
 	
 	public int getYearFrom() {
 		return yearFrom;
+	}
+	
+	public CourseType getCourseType() {
+		return courseType;
+	}
+
+	public void setCourseType(CourseType courseType) {
+		this.courseType = courseType;
 	}
 }

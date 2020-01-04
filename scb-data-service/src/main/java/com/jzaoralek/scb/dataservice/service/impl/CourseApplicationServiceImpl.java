@@ -24,6 +24,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -178,8 +179,8 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	}
 	
 	@Override
-	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
-		return courseApplicationDao.getAssignedToCourse(yearFrom, yearTo);
+	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo, CourseType courseType) {
+		return courseApplicationDao.getAssignedToCourse(yearFrom, yearTo, courseType);
 	}
 
 	private void storeCourseParticRepresentative(ScbUser courseParticRepresentative) {

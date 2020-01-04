@@ -25,7 +25,23 @@
 			        <auxhead>
 			            <auxheader class="header" colspan="5" >
 			            	<hlayout sclass="pull-left">
-			            		
+			            		<hbox hflex="1">
+			            			<!-- Prepinac typu kurzu -->
+									<label value="${c:l('txt.ui.menu.courses')}:" style="font-size: 16px; font-family: Helvetica Neue,Helvetica,Arial,sans-serif;"/>
+									<hlayout>
+										<radiogroup model="@load(vm.courseTypeList)" 
+											selectedItem="@bind(vm.courseType)"
+											hflex="1">
+											<template name="model">
+												<radio label="@load(each) @converter(vm.enumLabelConverter)" 
+													value="${each}"
+													checked="${each == vm.courseType}"
+													onCheck="@command('courseTypeChangeCmd', radio=self)"
+													tooltiptext="@load(vm.getCourseTypeDesc(each))" />
+											</template>
+										</radiogroup>
+									</hlayout>
+								</hbox>
 			            	</hlayout>
 			            	
 			            	<hlayout sclass="pull-right">
@@ -138,22 +154,25 @@
 			                		style="text-decoration: underline !important" />
 			                </listcell>
 			                <listcell label="${each.courseParticipant.courseName}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <!-- Instrukce k platbe -->
 			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
 			                	<hbox popup="paymentInstructionPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" hflex="1" pack="center">
-				                	<!-- Instrukce prvni pololeti -->
+				                	<!-- Instrukce prvni pololeti (two-semester) / platba (standard) -->
 				                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: green;"
 				                		visible="@load(!empty(each.courseParticipant.notifiedSemester1PaymentAt))"
 				                		tooltiptext="${each.courseParticipant.notifiedSemester1PaymentAt}"/>
 				                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: grey;"
 				                		visible="@load(empty(each.courseParticipant.notifiedSemester1PaymentAt))"
 				                		tooltiptext="${each.courseParticipant.notifiedSemester1PaymentAt}"/>
-				                	<!-- Instrukce druhe pololeti -->
-				                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: green;" 
-				                		visible="@load(!empty(each.courseParticipant.notifiedSemester2PaymentAt))"
-				                		tooltiptext="${each.courseParticipant.notifiedSemester2PaymentAt}" />
-				                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: grey;" 
-				                		visible="@load(empty(each.courseParticipant.notifiedSemester2PaymentAt))"
-				                		tooltiptext="${each.courseParticipant.notifiedSemester2PaymentAt}" />
+				                	<!-- Instrukce druhe pololeti (two-semester) -->
+				                	<hbox if="${!each.courseParticipant.courseStandard}">
+					                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: green;" 
+					                		visible="@load(!empty(each.courseParticipant.notifiedSemester2PaymentAt))"
+					                		tooltiptext="${each.courseParticipant.notifiedSemester2PaymentAt}" />
+					                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: grey;" 
+					                		visible="@load(empty(each.courseParticipant.notifiedSemester2PaymentAt))"
+					                		tooltiptext="${each.courseParticipant.notifiedSemester2PaymentAt}" />
+				                	</hbox>
 			                	</hbox>
 			                </listcell>
 			                <!-- Stav plateb -->
