@@ -257,6 +257,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			ret.setName(rs.getString("name"));
 			ret.setPriceSemester1(rs.getLong("price_semester_1"));
 			ret.setPriceSemester2(rs.getLong("price_semester_2"));
+			ret.setCourseType(CourseType.valueOf(rs.getString("type")));
 
 			return ret;
 		}

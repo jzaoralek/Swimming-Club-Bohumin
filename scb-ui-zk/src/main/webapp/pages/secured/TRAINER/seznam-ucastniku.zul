@@ -159,7 +159,7 @@
 			                <!-- Stav plateb -->
 			                <listcell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)" 
 			                	onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
-<a sclass="big-icon" iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+									<a sclass="big-icon" iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
 										visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'NO_PAYMENT')"
 										popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
 								    <a sclass="big-icon" iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
@@ -174,7 +174,7 @@
 								    	popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end"  />
 								    <popup id="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}">
 								    	<vbox style="margin: 5px;">											
-									    	<payment-instruction orgAccountNumber="${vm.bankAccountNumber}" 
+									    	<payment-instruction courseStandard="${each.courseParticipant.courseStandard}" orgAccountNumber="${vm.bankAccountNumber}" 
 									    		priceSemester1="${each.courseParticipant.coursePaymentVO.priceFirstSemester}"
 									    		priceSemester2="${each.courseParticipant.coursePaymentVO.priceSecondSemester}"
 									    		paymentVarSymbolFirstSemester="${vm.buildCoursePaymentVarsymbol(vm.yearFrom, 1 , each.courseParticipant.varsymbolCore)}"  
@@ -195,7 +195,8 @@
 												</columns>
 												<rows>
 													<row>
-														<label value="${c:l('txt.ui.common.Semester1')}" style="white-space: nowrap;" />
+														<label value="${c:l('txt.ui.common.Semester1')}" if="${!each.courseParticipant.courseStandard}" style="white-space: nowrap;" />
+														<label value="${c:l('txt.ui.common.payed')}" if="${each.courseParticipant.courseStandard}" style="white-space: nowrap;" />
 														<cell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateFirstSemester) @converter(vm.enumLabelConverter)">
 															<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
 																visible="@load(each.courseParticipant.coursePaymentVO.stateFirstSemester eq 'NO_PAYMENT')" />
@@ -209,7 +210,7 @@
 															/ <label value="@load(each.courseParticipant.coursePaymentVO.priceFirstSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" />
 														</cell>
 													</row>
-													<row>
+													<row if="${!each.courseParticipant.courseStandard}">
 														<label value="${c:l('txt.ui.common.Semester2')}" style="white-space: nowrap;" />
 														<cell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateSecondSemester) @converter(vm.enumLabelConverter)">
 															<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 

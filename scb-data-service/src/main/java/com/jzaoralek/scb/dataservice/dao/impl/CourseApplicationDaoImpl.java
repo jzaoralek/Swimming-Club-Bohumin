@@ -29,6 +29,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.IscusRole;
 
 @Repository
@@ -320,7 +321,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", ccp.notified_semester_2_payment_at " +
 			", ccp.course_partic_interrupted_at " +
 			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
-			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " + 
+			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
+			", c.type \"COURSE_TYPE_COURSE_PARTICIPANT_UUID\" " +
 			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\"  " +
 			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +
 			", (select sum(amount) from payment where payment.course_participant_uuid = ccp.course_participant_uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\" " +
@@ -642,14 +644,15 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipant.setNotifiedSemester1PaymentAt(rs.getTimestamp("notified_semester_1_payment_at"));
 			courseParticipant.setNotifiedSemester2PaymentAt(rs.getTimestamp("notified_semester_2_payment_at"));
 			courseParticipant.setCourseParticipationInterruptedAt(rs.getTimestamp("course_partic_interrupted_at"));
-			 String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
-			 String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");				
-			 if (StringUtils.hasText(courseCourseParticipantUuid)) {
+			String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
+			if (StringUtils.hasText(courseCourseParticipantUuid)) {
 				courseParticipant.setCourseUuid(UUID.fromString(courseCourseParticipantUuid)); 
 			}
+			String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");
 			if (StringUtils.hasText(courseNameCourseParticipantUuid)) {
 				courseParticipant.setCourseName(courseNameCourseParticipantUuid); 
 			}
+			courseParticipant.setCourseType(CourseType.valueOf(rs.getString("COURSE_TYPE_COURSE_PARTICIPANT_UUID")));
 			
 			// payment sum
 			long paymentSum = rs.getLong("PAYMENT_SUM");
