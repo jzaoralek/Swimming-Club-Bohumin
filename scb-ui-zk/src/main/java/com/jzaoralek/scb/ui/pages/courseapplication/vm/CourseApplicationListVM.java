@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
@@ -364,6 +365,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		return ret;
 	}
 	
+	@NotifyChange("courseType")
 	@Command
 	public void courseTypeChangeCmd(@BindingParam("radio") Radio radio) {
 		this.courseType = radio.getValue();
@@ -753,6 +755,11 @@ public class CourseApplicationListVM extends BaseContextVM {
 		this.courseApplicationListBase = this.courseApplicationList;
 
 		BindUtils.postNotifyChange(null, null, this, "courseApplicationList");
+	}
+	
+	@DependsOn("courseType")
+	public boolean isCourseStandard() {
+		return this.courseType == CourseType.STANDARD;
 	}
 
 	public List<CourseApplication> getCourseApplicationList() {

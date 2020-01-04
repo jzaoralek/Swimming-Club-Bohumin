@@ -57,10 +57,19 @@
 				                <menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
 		            				<!-- Nova zprava zobrazenym ucastnikum. -->
 									<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('goToSendEmailCmd')" if="${vm.isLoggedUserInRole('ADMIN')}" />
-									<!-- Odeslani instrukci k platbe za prvni pololeti. -->
-									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsFirstSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" />
-									<!-- Odeslani instrukci k platbe za druhe pololeti. -->
-									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" />
+									<menuseparator />
+									<!-- Odeslani instrukci k platbe, typ kurzu Standard. -->
+									<menuitem label="${c:l('txt.ui.common.PaymentInstruction')}" 
+										visible="@load(vm.courseStandard)"
+										onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" />
+									<!-- Odeslani instrukci k platbe za prvni pololeti, typ kurzu Two-Semester -->
+									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsFirstSemester')}"
+										visible="@load(!vm.courseStandard)"
+										onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" />
+									<!-- Odeslani instrukci k platbe za druhe pololeti, typ kurzu Two-Semester -->
+									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}"
+										visible="@load(!vm.courseStandard)" 
+										onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" />
 						       	</menupopup>
 						       	
 						       	<!-- Export do soubru -->
