@@ -28,6 +28,14 @@ public interface CourseService {
 	Course getPlainByUuid(UUID uuid);
 	Course store(Course course) throws ScbValidationException;
 	/**
+	 * Copy course from course by uuid.
+	 * @param courseUuid
+	 * @param courseApplicationYear
+	 * @return
+	 * @throws ScbValidationException
+	 */
+	Course copy(UUID courseUuid, String courseApplicationYear) throws ScbValidationException;
+	/**
 	 * Return course participant with one course.
 	 * @param courseCourseParticUuid
 	 * @return

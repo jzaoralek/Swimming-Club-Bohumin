@@ -19,6 +19,7 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
@@ -141,6 +142,52 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		}
 
 		return course;
+	}
+	
+	@Override
+	public Course copy(UUID courseUuid, String courseApplicationYear) throws ScbValidationException {
+		Objects.requireNonNull(courseUuid, "courseUuid is null");
+		Objects.requireNonNull(courseApplicationYear, "courseApplicationYear is null");
+		
+		Course courseOrig = getByUuid(courseUuid);
+		if (courseOrig == null) {
+			throw new IllegalArgumentException("courseOrig is null");
+		}
+		
+		// basic data
+		Course courseNew = new Course();
+		courseNew.fillYearFromTo(courseApplicationYear);
+		courseNew.setName(courseOrig.getName());
+		courseNew.setDescription(courseOrig.getDescription());
+		courseNew.setCourseType(courseOrig.getCourseType());
+		courseNew.setCourseLocation(courseOrig.getCourseLocation());
+		courseNew.setPriceSemester1(courseOrig.getPriceSemester1());
+		courseNew.setPriceSemester2(courseOrig.getPriceSemester2());
+		courseNew.setMaxParticipantCount(courseOrig.getMaxParticipantCount());
+		courseNew = store(courseNew);
+		
+		// trainers
+		List<ScbUser> trainerList = getTrainersByCourse(courseUuid);
+		if (!CollectionUtils.isEmpty(trainerList)) {
+			addTrainersToCourse(trainerList, courseNew.getUuid());			
+		}
+		
+		// lessons
+		List<Lesson> lessonList = courseNew.getLessonList();
+		if (!CollectionUtils.isEmpty(lessonList)) {
+			Lesson lessonToAdd = null;
+			for (Lesson lesson : lessonList) {
+				lessonToAdd =  new Lesson();
+				lessonToAdd.setCourseUuid(courseNew.getUuid());
+				lessonToAdd.setDayOfWeek(lesson.getDayOfWeek());
+				lessonToAdd.setTimeFrom(lesson.getTimeFrom());
+				lessonToAdd.setTimeTo(lesson.getTimeTo());
+				// save to database
+				lessonService.store(lessonToAdd);
+			}
+		}
+		
+		return courseNew;
 	}
 
 	@Override

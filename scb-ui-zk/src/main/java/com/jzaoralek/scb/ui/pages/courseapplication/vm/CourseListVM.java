@@ -25,7 +25,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
@@ -38,7 +37,6 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
-import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -49,11 +47,10 @@ import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
-import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseExternalFilter;
 import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseFilter;
 
-public class CourseListVM extends BaseContextVM {
+public class CourseListVM extends CourseAbstractVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseListVM.class);
 
@@ -66,9 +63,6 @@ public class CourseListVM extends BaseContextVM {
 	private Boolean myCourses;
 	/** Cache object for external filter */
 	private CourseExternalFilter externalFilter;
-
-	@WireVariable
-	private CourseService courseService;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -211,11 +205,6 @@ public class CourseListVM extends BaseContextVM {
 	@NotifyChange("courseList")
 	public void filterDomCmd() {
 		this.courseList = filter.getApplicationListFiltered(this.courseListBase);
-	}
-
-	@Command
-	public void newItemCmd() {
-		WebUtils.redirectToNewCourse();
 	}
 	
 	@NotifyChange("courseList")

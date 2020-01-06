@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
@@ -44,7 +42,6 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
-import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -55,12 +52,12 @@ import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
-import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-public class CourseVM extends BaseVM {
+public class CourseVM extends CourseAbstractVM {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CourseVM.class);
-
+	@WireVariable
+	protected LessonService lessonService;
+	
 	private Course course;
 	private List<String> courseYearList;
 	private String courseYearSelected;
@@ -71,12 +68,6 @@ public class CourseVM extends BaseVM {
 	private List<ScbUser> trainersToSelect;
 	private ScbUser trainerSelected;
 
-	@WireVariable
-	private CourseService courseService;
-
-	@WireVariable
-	private LessonService lessonService;
-	
 	@Wire
 	private Combobox trainerToSelectCombo;
 
@@ -319,11 +310,6 @@ public class CourseVM extends BaseVM {
 	}
 	
 	@Command
-	public void newItemCmd() {
-		WebUtils.redirectToNewCourse();
-	}
-	
-	@Command
     public void deleteCmd() {
 		if (!getUpdateMode()) {
 			return;
@@ -368,6 +354,11 @@ public class CourseVM extends BaseVM {
 	@Command
 	public void courseTypeChangeCmd() {
 		// potreba pro notifikaci na zul
+	}
+	
+	@Override
+	protected void courseYearChangeCmdCore() {
+		// not used	
 	}
 	
 	private void addCoursePartic(boolean fromApplication) {

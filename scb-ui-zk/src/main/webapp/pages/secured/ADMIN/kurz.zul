@@ -26,9 +26,15 @@
 						label="${c:l('txt.ui.common.new')}" 
         				iconSclass="z-icon-plus"
         				style="margin-left: 10px;"
-        				visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
+        				if="${vm.isLoggedUserInRole('ADMIN')}" />
             	
-            	<hlayout visible="@load(vm.updateMode)">
+            	<hlayout visible="@load(vm.updateMode)" 
+            		if="${vm.isLoggedUserInRole('ADMIN')}">
+            		<!-- Vytvorit kopii kurzu -->
+            		<button onClick="@command('copyItemCmd', uuid=vm.course.uuid, name=vm.course.name)"
+						tooltiptext="${c:l('txt.ui.common.copy.course.desc')}"
+        				iconSclass="z-icon-copy"
+        				style="margin-left: 10px;" />
         			<!-- Zpravy -->
 	            	<send-mail-button />
 	        		<button onClick="@command('deleteCmd')"
@@ -37,9 +43,7 @@
         				iconSclass="z-icon-times"
         				style="margin-left: 10px;"
         				visible="@load(vm.isLoggedUserInRole('ADMIN') and vm.updateMode)" />
-            	</hlayout>
-        		
-        				
+            	</hlayout>	
 			</hlayout>
 			
             <label value="@load(vm.pageHeadline)" sclass="scb-headline-big"/>
