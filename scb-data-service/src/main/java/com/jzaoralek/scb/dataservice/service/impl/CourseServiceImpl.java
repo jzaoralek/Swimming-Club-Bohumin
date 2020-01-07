@@ -157,7 +157,7 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		// basic data
 		Course courseNew = new Course();
 		courseNew.fillYearFromTo(courseApplicationYear);
-		courseNew.setName(courseOrig.getName());
+		courseNew.setName(courseOrig.getName() + " (kopie)");
 		courseNew.setDescription(courseOrig.getDescription());
 		courseNew.setCourseType(courseOrig.getCourseType());
 		courseNew.setCourseLocation(courseOrig.getCourseLocation());

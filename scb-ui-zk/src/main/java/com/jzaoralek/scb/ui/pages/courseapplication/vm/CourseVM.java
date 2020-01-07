@@ -314,29 +314,7 @@ public class CourseVM extends CourseAbstractVM {
 		if (!getUpdateMode()) {
 			return;
 		}
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting course with uuid: " + this.course.getUuid());
-		}
-		final Object[] msgParams = new Object[] {this.course.getName()};
-		final UUID uuid = this.course.getUuid();
-		MessageBoxUtils.showDefaultConfirmDialog(
-			"msg.ui.quest.deleteCourse",
-			"msg.ui.title.deleteRecord",
-			new SzpEventListener() {
-				@Override
-				public void onOkEvent() {
-					try {
-						courseService.delete(uuid);
-						WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseDeleted", msgParams));
-						Executions.sendRedirect(WebPages.COURSE_LIST.getUrl());
-					} catch (ScbValidationException e) {
-						LOG.warn("ScbValidationException caught for course with uuid: " + uuid);
-						WebUtils.showNotificationError(e.getMessage());
-					}
-				}
-			},
-			msgParams
-		);
+		deleteCore(this.course, true);
 	}
 	
 	/**

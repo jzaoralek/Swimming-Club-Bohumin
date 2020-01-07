@@ -166,7 +166,6 @@ public class CourseListVM extends CourseAbstractVM {
 		updateExternalFilterCache();
 	}
 	
-	@NotifyChange("*")
 	@Command
     public void deleteCmd(@BindingParam(WebConstants.ITEM_PARAM) final Course item) {
 		if (item ==  null) {
@@ -175,26 +174,8 @@ public class CourseListVM extends CourseAbstractVM {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Deleting course with uuid: " + item.getUuid());
 		}
-		final Object[] msgParams = new Object[] {item.getName()};
-		final UUID uuid = item.getUuid();
-		MessageBoxUtils.showDefaultConfirmDialog(
-			"msg.ui.quest.deleteCourse",
-			"msg.ui.title.deleteRecord",
-			new SzpEventListener() {
-				@Override
-				public void onOkEvent() {
-					try {
-						courseService.delete(uuid);
-						EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);
-						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseDeleted", msgParams));
-					} catch (ScbValidationException e) {
-						LOG.warn("ScbValidationException caught for course with uuid: " + uuid);
-						WebUtils.showNotificationError(e.getMessage());
-					}
-				}
-			},
-			msgParams
-		);
+		
+		deleteCore(item, false);
 	}
 
 	protected void courseYearChangeCmdCore() {

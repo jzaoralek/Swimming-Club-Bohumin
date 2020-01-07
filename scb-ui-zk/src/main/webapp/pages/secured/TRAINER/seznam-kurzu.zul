@@ -108,7 +108,7 @@
 		            	sort="auto(participantListCount)" 
 		            	align="center" 
 		            	hflex="min"  />
-		            <listheader width="115px" align="center" />
+		            <listheader width="185px" align="center" />
 		        </listhead>
 		         
 		        <template name="model">
@@ -118,11 +118,32 @@
 		                </listcell>
 		                <listcell label="${each.participantListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 		                <listcell>
-		                	<button label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
-<!-- 		                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourse_${each.uuid}, position=after_end" sclass="hide-on-mobile-platform" /> -->
-<!-- 		                	<menupopup id="menuCourse_${each.uuid}" > -->
-<!-- 								<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)" visible="${vm.isLoggedUserInRole('ADMIN')}"  /> -->
-<!-- 					       	</menupopup> -->
+		                	<hlayout>
+			                	<button label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
+<!-- 			            		<button onClick="@command('copyItemCmd', uuid=each.uuid, name=each.name)" -->
+<!-- 									tooltiptext="${c:l('txt.ui.common.copy.course.desc')}" -->
+<!-- 									if="${vm.isLoggedUserInRole('ADMIN')}" -->
+<!-- 									style="margin-left: 2px;margin-right: 5px;" -->
+<!-- 			        				iconSclass="z-icon-copy"
+										sclass="hide-on-mobile-platform" /> -->
+			                	<button iconSclass="z-icon-ellipsis-h"
+			                		if="${vm.isLoggedUserInRole('ADMIN')}"
+			                		popup="menuCourse_${each.uuid}, position=after_end" 
+			                		style="margin-left: 2px;margin-right: 5px;" />
+			                	<menupopup id="menuCourse_${each.uuid}" >
+				                	<!-- Kopie kurzu -->
+									<menuitem label="${c:l('txt.ui.common.copy')}" 
+										onClick="@command('copyItemCmd', uuid=each.uuid, name=each.name)"
+										tooltiptext="${c:l('txt.ui.common.copy.course.desc')}"
+										iconSclass="z-icon-copy"
+										if="${vm.isLoggedUserInRole('ADMIN')}" />
+									<!-- Odstraneni kurzu -->
+									<menuitem label="${c:l('txt.ui.common.Delete')}" 
+										onClick="@command('deleteCmd', item=each)"
+										iconSclass="z-icon-times"
+										if="${vm.isLoggedUserInRole('ADMIN')}" />
+						       	</menupopup>
+		                	</hlayout>
 		                </listcell>
 		            </listitem>
 		        </template>

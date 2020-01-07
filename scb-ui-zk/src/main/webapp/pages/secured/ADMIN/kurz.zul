@@ -30,7 +30,7 @@
             	
             	<hlayout visible="@load(vm.updateMode)" 
             		if="${vm.isLoggedUserInRole('ADMIN')}">
-            		<!-- Vytvorit kopii kurzu -->
+            		<!-- Kopie kurzu -->
             		<button onClick="@command('copyItemCmd', uuid=vm.course.uuid, name=vm.course.name)"
 						tooltiptext="${c:l('txt.ui.common.copy.course.desc')}"
         				iconSclass="z-icon-copy"
@@ -42,7 +42,8 @@
 						sclass="btn-danger" 
         				iconSclass="z-icon-times"
         				style="margin-left: 10px;"
-        				visible="@load(vm.isLoggedUserInRole('ADMIN') and vm.updateMode)" />
+        				if="${vm.isLoggedUserInRole('ADMIN')}"
+        				visible="@load(vm.updateMode)" />
             	</hlayout>	
 			</hlayout>
 			
