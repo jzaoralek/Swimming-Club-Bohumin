@@ -16,6 +16,7 @@ import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseLocationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
@@ -145,7 +146,7 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 	
 	@Override
-	public Course copy(UUID courseUuid, String courseApplicationYear) throws ScbValidationException {
+	public Course buildCopy(UUID courseUuid, String courseApplicationYear, boolean nameFromOrig) {
 		Objects.requireNonNull(courseUuid, "courseUuid is null");
 		Objects.requireNonNull(courseApplicationYear, "courseApplicationYear is null");
 		
@@ -154,40 +155,71 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 			throw new IllegalArgumentException("courseOrig is null");
 		}
 		
-		// basic data
 		Course courseNew = new Course();
 		courseNew.fillYearFromTo(courseApplicationYear);
-		courseNew.setName(courseOrig.getName() + " (kopie)");
+		if (nameFromOrig) {
+			//  set course name from orig course
+			courseNew.setName(messageSource.getMessage("txt.svc.course.name.copyFrom", 
+					new Object[] {courseOrig.getName(), courseOrig.getYear()}, Locale.getDefault()));
+		}
 		courseNew.setDescription(courseOrig.getDescription());
-		courseNew.setCourseType(courseOrig.getCourseType());
+		courseNew.setCourseType(CourseType.STANDARD);
 		courseNew.setCourseLocation(courseOrig.getCourseLocation());
 		courseNew.setPriceSemester1(courseOrig.getPriceSemester1());
 		courseNew.setPriceSemester2(courseOrig.getPriceSemester2());
 		courseNew.setMaxParticipantCount(courseOrig.getMaxParticipantCount());
-		courseNew = store(courseNew);
 		
-		// trainers
-		List<ScbUser> trainerList = getTrainersByCourse(courseUuid);
-		if (!CollectionUtils.isEmpty(trainerList)) {
-			addTrainersToCourse(trainerList, courseNew.getUuid());			
+		return courseNew;
+	}
+	
+	@Override
+	public Course copy(UUID courseUuid, 
+			Course courseNew,
+			boolean copyCoursePartics, 
+			boolean copyLessons, 
+			boolean copyTrainers) throws ScbValidationException {
+		Objects.requireNonNull(courseUuid, "courseUuid is null");
+		Objects.requireNonNull(courseNew, "courseNew is null");
+		
+		Course courseOrig = getByUuid(courseUuid);
+		if (courseOrig == null) {
+			throw new IllegalArgumentException("courseOrig is null");
+		}
+		
+		// create new course
+		Course ret = store(courseNew);
+		
+		// copy participants
+		if (copyCoursePartics) {
+			// TODO: copy participants			
+		}
+		
+		// copy trainers
+		if (copyTrainers) {
+			List<ScbUser> trainerList = getTrainersByCourse(courseUuid);
+			if (!CollectionUtils.isEmpty(trainerList)) {
+				addTrainersToCourse(trainerList, ret.getUuid());			
+			}			
 		}
 		
 		// lessons
-		List<Lesson> lessonList = courseNew.getLessonList();
-		if (!CollectionUtils.isEmpty(lessonList)) {
-			Lesson lessonToAdd = null;
-			for (Lesson lesson : lessonList) {
-				lessonToAdd =  new Lesson();
-				lessonToAdd.setCourseUuid(courseNew.getUuid());
-				lessonToAdd.setDayOfWeek(lesson.getDayOfWeek());
-				lessonToAdd.setTimeFrom(lesson.getTimeFrom());
-				lessonToAdd.setTimeTo(lesson.getTimeTo());
-				// save to database
-				lessonService.store(lessonToAdd);
-			}
+		if (copyLessons) {
+			List<Lesson> lessonList = courseOrig.getLessonList();
+			if (!CollectionUtils.isEmpty(lessonList)) {
+				Lesson lessonToAdd = null;
+				for (Lesson lesson : lessonList) {
+					lessonToAdd =  new Lesson();
+					lessonToAdd.setCourseUuid(ret.getUuid());
+					lessonToAdd.setDayOfWeek(lesson.getDayOfWeek());
+					lessonToAdd.setTimeFrom(lesson.getTimeFrom());
+					lessonToAdd.setTimeTo(lesson.getTimeTo());
+					// save to database
+					lessonService.store(lessonToAdd);
+				}
+			}			
 		}
 		
-		return courseNew;
+		return ret;
 	}
 
 	@Override

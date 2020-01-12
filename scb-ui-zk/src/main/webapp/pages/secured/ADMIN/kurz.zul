@@ -31,10 +31,15 @@
             	<hlayout visible="@load(vm.updateMode)" 
             		if="${vm.isLoggedUserInRole('ADMIN')}">
             		<!-- Kopie kurzu -->
-            		<button onClick="@command('copyItemCmd', uuid=vm.course.uuid, name=vm.course.name)"
-						tooltiptext="${c:l('txt.ui.common.copy.course.desc')}"
+<!--             		onClick="@command('copyItemCmd', uuid=vm.course.uuid, name=vm.course.name)" -->
+            		<button tooltiptext="${c:l('txt.ui.common.copy.course.desc')}"
         				iconSclass="z-icon-copy"
+        				popup="courseCopyPopupBtn"
+        				onClick="@command('buildCourseCopyCmd', uuid=vm.course.uuid, name=vm.course.name)"
         				style="margin-left: 10px;" />
+        			<popup id="courseCopyPopupBtn" vflex="1" >
+						<course-copy-params  course="${vm.course}" popup="${courseCopyPopupBtn}" />
+					</popup>
         			<!-- Zpravy -->
 	            	<send-mail-button />
 	        		<button onClick="@command('deleteCmd')"

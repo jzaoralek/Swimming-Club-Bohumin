@@ -6,15 +6,14 @@ import org.springframework.util.StringUtils;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.NotifyChange;
 
-import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
 public abstract class BaseContextVM extends BaseVM {
 
-	private List<String> courseYearList;
-	private String courseYearSelected;
+	protected List<String> courseYearList;
+	protected String courseYearSelected;
 	
 	protected abstract void courseYearChangeCmdCore();
 

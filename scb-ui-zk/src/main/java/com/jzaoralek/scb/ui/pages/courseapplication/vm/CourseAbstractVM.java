@@ -1,11 +1,13 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
@@ -18,10 +20,10 @@ import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
-import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 
 /**
@@ -35,14 +37,35 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	@WireVariable
 	protected CourseService courseService;
 	
+	protected Course courseCopy;
+	private String copyFrom;
+	private boolean copyParticipants;
+	private boolean copyLessons;
+	private boolean copyTrainers;
+
 	@Command
 	public void newItemCmd() {
 		WebUtils.redirectToNewCourse();
 	}
 	
+	@NotifyChange("courseCopy")
 	@Command
-	public void copyItemCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
+	public void buildCourseCopyCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
 			@BindingParam(WebConstants.NAME_PARAM) String courseName) {
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+		this.courseCopy = courseService.buildCopy(uuid, configurationService.getCourseApplicationYear(), true);
+		this.copyFrom = this.courseCopy.getName();
+	}
+	
+	@Command
+	public void copyItemCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid) {
+		Objects.requireNonNull(uuid, "uuid is null");
+		Objects.requireNonNull(this.courseCopy, "courseCopy is null");
+		
 		// check user role
 		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
 			return;
@@ -52,33 +75,33 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 			LOG.debug("Copying course uuid: " + uuid);
 		}
 		
-		final String actualYear = configurationService.getCourseApplicationYear();
-		final Object[] msgParams = new Object[] {courseName, actualYear};
+		Course courseNew = null;
+		try {
+			// copying course
+			courseNew = courseService.copy(uuid, this.courseCopy, this.copyParticipants, this.copyLessons, this.copyTrainers);
+			// redirect to new course
+			Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+courseNew.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+			WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseCopiedFromCourse", new Object[] {courseNew.getName(), this.copyFrom}));
+		} catch (ScbValidationException e) {
+			LOG.warn("ScbValidationException caught for course: " + courseNew, e);
+			WebUtils.showNotificationError(e.getMessage());
+		} catch (Exception e) {
+			LOG.error("Unexpected exception caught for course: " + courseNew, e);
+			throw new RuntimeException(e);
+		}
 		
-		MessageBoxUtils.showDefaultConfirmDialog(
-			"msg.ui.quest.copyCourse",
-			"msg.ui.title.copyRecord",
-			new SzpEventListener() {
-				@Override
-				public void onOkEvent() {
-					Course courseNew = null;
-					try {
-						// copying course
-						courseNew = courseService.copy(uuid, actualYear);
-						// redirect to new course
-						Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+courseNew.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
-						WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseCopiedFromCourse", new Object[] {courseNew.getName(), courseName}));
-					} catch (ScbValidationException e) {
-						LOG.warn("ScbValidationException caught for course: " + courseNew, e);
-						WebUtils.showNotificationError(e.getMessage());
-					} catch (Exception e) {
-						LOG.error("Unexpected exception caught for course: " + courseNew, e);
-						throw new RuntimeException(e);
-					}
-				}
-			},
-			msgParams
-		);
+//		final String actualYear = configurationService.getCourseApplicationYear();
+//		final Object[] msgParams = new Object[] {courseName, actualYear};
+//		MessageBoxUtils.showDefaultConfirmDialog(
+//			"msg.ui.quest.copyCourse",
+//			"msg.ui.title.copyRecord",
+//			new SzpEventListener() {
+//				@Override
+//				public void onOkEvent() {
+//				}
+//			},
+//			msgParams
+//		);
 	}
 	
 	protected void deleteCore(Course course, boolean redirectAfterAction) {
@@ -110,5 +133,30 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 			},
 			msgParams
 		);
+	}
+	
+	public Course getCourseCopy() {
+		return courseCopy;
+	}
+	public void setCourseCopy(Course courseCopy) {
+		this.courseCopy = courseCopy;
+	}
+	public boolean isCopyParticipants() {
+		return copyParticipants;
+	}
+	public void setCopyParticipants(boolean copyParticipants) {
+		this.copyParticipants = copyParticipants;
+	}
+	public boolean isCopyLessons() {
+		return copyLessons;
+	}
+	public void setCopyLessons(boolean copyLessons) {
+		this.copyLessons = copyLessons;
+	}
+	public boolean isCopyTrainers() {
+		return copyTrainers;
+	}
+	public void setCopyTrainers(boolean copyTrainers) {
+		this.copyTrainers = copyTrainers;
 	}
 }

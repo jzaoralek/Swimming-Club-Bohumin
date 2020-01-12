@@ -59,8 +59,6 @@ public class CourseVM extends CourseAbstractVM {
 	protected LessonService lessonService;
 	
 	private Course course;
-	private List<String> courseYearList;
-	private String courseYearSelected;
 	private Boolean updateMode;
 	private List<CourseParticipant> participantSelectedList;
 	private List<CourseLocation> courseLocationList;
@@ -348,18 +346,6 @@ public class CourseVM extends CourseAbstractVM {
 
 	public Course getCourse() {
 		return course;
-	}
-
-	public List<String> getCourseYearList() {
-		return courseYearList;
-	}
-
-	public String getCourseYearSelected() {
-		return courseYearSelected;
-	}
-
-	public void setCourseYearSelected(String courseYearSelected) {
-		this.courseYearSelected = courseYearSelected;
 	}
 
 	public Boolean getUpdateMode() {
