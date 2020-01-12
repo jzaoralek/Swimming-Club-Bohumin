@@ -6,12 +6,17 @@
 <?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
 
 <zk>
-	<div 	self="@{define(mainContent)}" 
+	<div self="@{define(mainContent)}" 
 			hflex="1" 
 			height="100%"
 			sclass="scb-view" 
 			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseListVM')">
-			
+		
+		<!-- Popup s parametry pro kopirovani kurzu. -->
+		<popup id="courseCopyPopup" vflex="1" >
+			<course-copy-params />
+		</popup>
+		
 		<vlayout hflex="1" sclass="listbox-wrapper">
 			<label value="${c:l('txt.ui.menu.courses')}" sclass="scb-headline-big"/>
 			
@@ -120,12 +125,6 @@
 		                <listcell>
 		                	<hlayout>
 			                	<button label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
-<!-- 			            		<button onClick="@command('copyItemCmd', uuid=each.uuid, name=each.name)" -->
-<!-- 									tooltiptext="${c:l('txt.ui.common.copy.course.desc')}" -->
-<!-- 									if="${vm.isLoggedUserInRole('ADMIN')}" -->
-<!-- 									style="margin-left: 2px;margin-right: 5px;" -->
-<!-- 			        				iconSclass="z-icon-copy"
-										sclass="hide-on-mobile-platform" /> -->
 			                	<button iconSclass="z-icon-ellipsis-h"
 			                		if="${vm.isLoggedUserInRole('ADMIN')}"
 			                		popup="menuCourse_${each.uuid}, position=after_end" 
@@ -133,10 +132,11 @@
 			                	<menupopup id="menuCourse_${each.uuid}" >
 				                	<!-- Kopie kurzu -->
 									<menuitem label="${c:l('txt.ui.common.copy')}" 
-										onClick="@command('copyItemCmd', uuid=each.uuid, name=each.name)"
+										onClick="@command('buildCourseCopyCmd', uuid=each.uuid, name=each.name, component=self)"
 										tooltiptext="${c:l('txt.ui.common.copy.course.desc')}"
 										iconSclass="z-icon-copy"
-										if="${vm.isLoggedUserInRole('ADMIN')}" />
+										if="${vm.isLoggedUserInRole('ADMIN')}" >
+									</menuitem>
 									<!-- Odstraneni kurzu -->
 									<menuitem label="${c:l('txt.ui.common.Delete')}" 
 										onClick="@command('deleteCmd', item=each)"

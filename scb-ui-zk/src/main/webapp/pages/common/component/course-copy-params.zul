@@ -1,8 +1,5 @@
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 <zk>
-	<custom-attributes course="${arg.course}" />
-	<custom-attributes popup="${arg.popup}" />
-	
 	<vlayout sclass="listbox-wrapper" width="320px">
        	<grid hflex="1" >
 			<auxhead>
@@ -33,7 +30,7 @@
 			</vlayout>
 			<vlayout style="margin-bottom: 15px;" >
 				<label value="${c:l('txt.ui.common.name')}" />
-				<textbox id="courseCopyName"
+				<textbox 
 					value="@load(vm.courseCopy.name) @save(vm.courseCopy.name, before='copyItemCmd') @validator(vm.notNullValidator)"
 					maxlength="@load(vm.getNameMaxlength())"
 					placeholder="*"
@@ -45,8 +42,7 @@
 			</vlayout>
 			<vlayout style="margin-bottom: 15px">
 				<label value="${c:l('txt.ui.common.year')}" />
-				<listbox id="courseYear" 
-					selectedItem="@bind(vm.courseCopy.year)" 
+				<listbox selectedItem="@bind(vm.courseCopy.year)" 
 					model="@load(vm.courseYearList)"
 					mold="select"
 					height="30px"  >
@@ -68,9 +64,9 @@
 		
 		<hlayout style="padding-bottom: 1px;">
 	    	<button label="${c:l('txt.ui.common.copy')}"
-				onClick="@command('copyItemCmd', uuid=course.uuid)"
+				onClick="@command('copyItemCmd')"
 				iconSclass="z-icon-check" />
-	    	<button onClick="popup.close()" 
+	    	<button onClick="@command('closeCopyPopupCmd')" 
 				label="${c:l('txt.ui.ToClose')}"
 				style="margin-left: 10px;"
 				sclass="btn-light"/>

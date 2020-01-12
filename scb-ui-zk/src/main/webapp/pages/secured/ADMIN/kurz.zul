@@ -15,6 +15,11 @@
 			validationMessages="@id('vmsgs')"
        		form="@id('fx') @load(vm) @save(vm, before='submit')" >
 		
+		<!-- Popup s parametry pro kopirovani kurzu. -->
+		<popup id="courseCopyPopup" vflex="1" >
+			<course-copy-params />
+		</popup>
+					
 		<vlayout>
 			<hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}">
 				<button onClick="@command('backCmd')" 
@@ -31,15 +36,10 @@
             	<hlayout visible="@load(vm.updateMode)" 
             		if="${vm.isLoggedUserInRole('ADMIN')}">
             		<!-- Kopie kurzu -->
-<!--             		onClick="@command('copyItemCmd', uuid=vm.course.uuid, name=vm.course.name)" -->
             		<button tooltiptext="${c:l('txt.ui.common.copy.course.desc')}"
         				iconSclass="z-icon-copy"
-        				popup="courseCopyPopupBtn"
-        				onClick="@command('buildCourseCopyCmd', uuid=vm.course.uuid, name=vm.course.name)"
+        				onClick="@command('buildCourseCopyCmd', uuid=vm.course.uuid, name=vm.course.name, component=self)"
         				style="margin-left: 10px;" />
-        			<popup id="courseCopyPopupBtn" vflex="1" >
-						<course-copy-params  course="${vm.course}" popup="${courseCopyPopupBtn}" />
-					</popup>
         			<!-- Zpravy -->
 	            	<send-mail-button />
 	        		<button onClick="@command('deleteCmd')"

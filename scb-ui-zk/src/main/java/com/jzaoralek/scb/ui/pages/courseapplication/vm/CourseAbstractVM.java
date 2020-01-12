@@ -5,12 +5,19 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.select.Selectors;
+import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
@@ -39,9 +46,18 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	
 	protected Course courseCopy;
 	private String copyFrom;
+	private UUID courseUuidFrom;
 	private boolean copyParticipants;
 	private boolean copyLessons;
 	private boolean copyTrainers;
+	
+	@Wire
+	private Popup courseCopyPopup;
+	
+	@AfterCompose
+	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
+		Selectors.wireComponents(view, this, false);
+	}
 
 	@Command
 	public void newItemCmd() {
@@ -51,19 +67,22 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	@NotifyChange("courseCopy")
 	@Command
 	public void buildCourseCopyCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
-			@BindingParam(WebConstants.NAME_PARAM) String courseName) {
+			@BindingParam(WebConstants.NAME_PARAM) String courseName, 
+			@BindingParam(WebConstants.COMPONENT_PARAM) Component component) {
 		// check user role
 		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
 			return;
 		}
 		
+		this.courseUuidFrom = uuid;
 		this.courseCopy = courseService.buildCopy(uuid, configurationService.getCourseApplicationYear(), true);
 		this.copyFrom = this.courseCopy.getName();
+		
+		courseCopyPopup.open(component);
 	}
 	
 	@Command
-	public void copyItemCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid) {
-		Objects.requireNonNull(uuid, "uuid is null");
+	public void copyItemCmd() {
 		Objects.requireNonNull(this.courseCopy, "courseCopy is null");
 		
 		// check user role
@@ -72,13 +91,13 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 		}
 				
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Copying course uuid: " + uuid);
+			LOG.debug("Copying course uuid: " + this.courseUuidFrom);
 		}
 		
 		Course courseNew = null;
 		try {
 			// copying course
-			courseNew = courseService.copy(uuid, this.courseCopy, this.copyParticipants, this.copyLessons, this.copyTrainers);
+			courseNew = courseService.copy(this.courseUuidFrom, this.courseCopy, this.copyParticipants, this.copyLessons, this.copyTrainers);
 			// redirect to new course
 			Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+courseNew.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 			WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseCopiedFromCourse", new Object[] {courseNew.getName(), this.copyFrom}));
@@ -89,19 +108,11 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 			LOG.error("Unexpected exception caught for course: " + courseNew, e);
 			throw new RuntimeException(e);
 		}
-		
-//		final String actualYear = configurationService.getCourseApplicationYear();
-//		final Object[] msgParams = new Object[] {courseName, actualYear};
-//		MessageBoxUtils.showDefaultConfirmDialog(
-//			"msg.ui.quest.copyCourse",
-//			"msg.ui.title.copyRecord",
-//			new SzpEventListener() {
-//				@Override
-//				public void onOkEvent() {
-//				}
-//			},
-//			msgParams
-//		);
+	}
+	
+	@Command
+	public void closeCopyPopupCmd() {
+		this.courseCopyPopup.close();
 	}
 	
 	protected void deleteCore(Course course, boolean redirectAfterAction) {
