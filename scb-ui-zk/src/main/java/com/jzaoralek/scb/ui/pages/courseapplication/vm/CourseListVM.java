@@ -2,11 +2,13 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -46,9 +48,9 @@ import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
@@ -68,6 +70,9 @@ public class CourseListVM extends CourseAbstractVM {
 	private Boolean myCourses;
 	/** Cache object for external filter */
 	private CourseExternalFilter externalFilter;
+	private List<Course> selectedItems;
+	private List<Course> courseCopyItems;
+	private boolean multipleMode;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -182,17 +187,136 @@ public class CourseListVM extends CourseAbstractVM {
 		if (item ==  null) {
 			throw new IllegalArgumentException("Course");
 		}
+		
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Deleting course with uuid: " + item.getUuid());
 		}
 		
 		deleteCore(item, false);
 	}
+	
+	/**
+	 * Course list delete.
+	 */
+	@Command
+	public void deleteListCmd() {
+		if (CollectionUtils.isEmpty(this.selectedItems)) {
+			return;
+		}
+		
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+
+		final List<Course> itemsToDelete = this.selectedItems;
+		
+		MessageBoxUtils.showDefaultConfirmDialog(
+			"msg.ui.quest.deleteCourseList",
+			"msg.ui.title.deleteRecord",
+			new SzpEventListener() {
+				@Override
+				public void onOkEvent() {
+					try {
+						for (Course item : itemsToDelete) {
+							if (LOG.isDebugEnabled()) {
+								LOG.debug("Deleting course with uuid: " + item.getUuid());
+							}
+							courseService.delete(item.getUuid());							
+						}
+						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseListDeleted"));
+						EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);						
+					} catch (ScbValidationException e) {
+						LOG.warn("ScbValidationException caught during deleting courses: " + itemsToDelete, e);
+						WebUtils.showNotificationError(e.getMessage());
+					}
+				}
+			}
+		);
+	}
+	
+	/**
+	 * Create selected course copy items and open dialog window.
+	 * @param uuid
+	 * @param courseName
+	 * @param component
+	 */
+	@NotifyChange("courseCopy")
+	@Command
+	public void buildCourseCopyItemsCmd(@BindingParam(WebConstants.COMPONENT_PARAM) Component component) {
+		if (CollectionUtils.isEmpty(this.selectedItems)) {
+			return;
+		}
+		
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+		this.courseCopyItems = new ArrayList<>();
+		
+		for (Course item : this.selectedItems) {
+			this.courseCopyItems.add(this.courseCopy = courseService.buildCopy(item.getUuid(), configurationService.getCourseApplicationYear(), true));			
+		}
+		
+		courseCopyPopup.open(component);
+	}
+	
+	/**
+	 * Persist course copy items.
+	 */
+	@Command
+	public void copyItemsCmd() {
+		if (CollectionUtils.isEmpty(this.selectedItems)) {
+			return;
+		}
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+				
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Copying courses: " + this.selectedItems);
+		}
+		
+		Course courseNew = null;
+		try {
+			for (Course item : this.selectedItems) {
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Copying course with uuid: " + item.getUuid());
+				}
+				// copying course
+				courseNew = courseService.copy(item.getUuid(), this.courseCopy, this.copyParticipants, this.copyLessons, this.copyTrainers);
+			}
+			// redirect to course list
+			//  TODO: redirect na seznam  kurzu v rocniku, do ktereho se kopirovalo
+//			Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+courseNew.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+			WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseListCopied", new Object[] {courseNew.getYear()}));
+		} catch (ScbValidationException e) {
+			LOG.warn("ScbValidationException caught for course: " + courseNew, e);
+			WebUtils.showNotificationError(e.getMessage());
+		} catch (Exception e) {
+			LOG.error("Unexpected exception caught for course: " + courseNew, e);
+			throw new RuntimeException(e);
+		}
+	}
 
 	protected void courseYearChangeCmdCore() {
 		loadData();
 	}
 
+	@NotifyChange("multipleMode")
+	@Command
+	public void onSelectCmd() {
+		this.multipleMode = this.selectedItems.size() > 1;
+	}
+	
 	@Command
 	@NotifyChange("courseList")
 	public void filterDomCmd() {
@@ -391,5 +515,14 @@ public class CourseListVM extends CourseAbstractVM {
 	}
 	public void setMyCourses(Boolean myCourses) {
 		this.myCourses = myCourses;
+	}
+	public List<Course> getSelectedItems() {
+		return selectedItems;
+	}
+	public void setSelectedItems(List<Course> selectedItems) {
+		this.selectedItems = selectedItems;
+	}
+	public boolean isMultipleMode() {
+		return multipleMode;
 	}
 }

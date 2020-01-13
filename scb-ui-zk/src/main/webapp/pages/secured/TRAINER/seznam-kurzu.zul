@@ -23,6 +23,10 @@
 			<listbox model="@load(vm.courseList)"
 					id="courseList"
 					hflex="1"
+					multiple="${vm.isLoggedUserInRole('ADMIN')}"
+					checkmark="${vm.isLoggedUserInRole('ADMIN')}"
+					selectedItems="@bind(vm.selectedItems)"
+					onSelect="@command('onSelectCmd')"
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 					class="listbox-400 mobile-inherit-width" >
 		        <auxhead>
@@ -33,7 +37,7 @@
             					sclass="add-item-btn" 
             					iconSclass="z-icon-plus"
             					style="margin-right: 10px;"
-            					visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
+            					if="${vm.isLoggedUserInRole('ADMIN')}" />
 			            	
 							<!-- Misto -->		
 		            		<hbox if="${vm.showCourseFilter}" style="margin-right: 10px;" >
@@ -60,7 +64,24 @@
 							</hlayout>
 		            	</hlayout>
 		            	
-		            	<hlayout sclass="pull-right">	
+		            	<hlayout sclass="pull-right">
+		            		<!-- Multiple akce -->
+							<hlayout hflex="min" 
+								if="${vm.isLoggedUserInRole('ADMIN')}"
+								visible="@load(vm.multipleMode)"
+								style="margin-right: 20px;" >
+								<!-- Kopírovat -->
+								<button tooltiptext="${c:l('txt.ui.common.copy.courseList.desc')}"
+			        				iconSclass="z-icon-copy"
+			        				onClick="@command('buildCourseCopyCmd', uuid=vm.course.uuid, name=vm.course.name, component=self)" />
+								<!-- Odstranit -->
+								<button onClick="@command('deleteListCmd')"
+									tooltiptext="${c:l('txt.ui.common.Delete')}"
+									sclass="btn-danger" 
+			        				iconSclass="z-icon-times"
+			        				style="margin-left: 10px;" />
+							</hlayout>
+								
 		            		<!-- Rocnik -->
             				<include src="/pages/common/component/context-year.zul"/>
             				

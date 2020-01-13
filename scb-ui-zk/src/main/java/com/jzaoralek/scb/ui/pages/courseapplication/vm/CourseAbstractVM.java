@@ -47,12 +47,12 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	protected Course courseCopy;
 	private String copyFrom;
 	private UUID courseUuidFrom;
-	private boolean copyParticipants;
-	private boolean copyLessons;
-	private boolean copyTrainers;
+	protected boolean copyParticipants;
+	protected boolean copyLessons;
+	protected boolean copyTrainers;
 	
 	@Wire
-	private Popup courseCopyPopup;
+	protected Popup courseCopyPopup;
 	
 	@AfterCompose
 	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
