@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseService;
@@ -50,6 +51,9 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	protected boolean copyParticipants;
 	protected boolean copyLessons;
 	protected boolean copyTrainers;
+	protected CourseType copyCourseType;
+	protected String copyCourseName;
+	protected String copyCourseYear;
 	
 	@Wire
 	protected Popup courseCopyPopup;
@@ -64,7 +68,7 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 		WebUtils.redirectToNewCourse();
 	}
 	
-	@NotifyChange("courseCopy")
+	@NotifyChange({"courseCopy","copyCourseType","copyCourseName","copyCourseYear"})
 	@Command
 	public void buildCourseCopyCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
 			@BindingParam(WebConstants.NAME_PARAM) String courseName, 
@@ -76,6 +80,9 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 		
 		this.courseUuidFrom = uuid;
 		this.courseCopy = courseService.buildCopy(uuid, configurationService.getCourseApplicationYear(), true);
+		this.copyCourseType = this.courseCopy.getCourseType();
+		this.copyCourseName = this.courseCopy.getName();
+		this.copyCourseYear = this.courseCopy.getYear();
 		this.copyFrom = this.courseCopy.getName();
 		
 		courseCopyPopup.open(component);
@@ -97,6 +104,9 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 		Course courseNew = null;
 		try {
 			// copying course
+			this.courseCopy.setCourseType(this.copyCourseType);
+			this.courseCopy.setName(this.copyCourseName);
+			this.courseCopy.fillYearFromTo(this.copyCourseYear);
 			courseNew = courseService.copy(this.courseUuidFrom, this.courseCopy, this.copyParticipants, this.copyLessons, this.copyTrainers);
 			// redirect to new course
 			Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+courseNew.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
@@ -169,5 +179,23 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	}
 	public void setCopyTrainers(boolean copyTrainers) {
 		this.copyTrainers = copyTrainers;
+	}
+	public CourseType getCopyCourseType() {
+		return copyCourseType;
+	}
+	public void setCopyCourseType(CourseType copyCourseType) {
+		this.copyCourseType = copyCourseType;
+	}
+	public String getCopyCourseName() {
+		return copyCourseName;
+	}
+	public void setCopyCourseName(String copyCourseName) {
+		this.copyCourseName = copyCourseName;
+	}
+	public String getCopyCourseYear() {
+		return copyCourseYear;
+	}
+	public void setCopyCourseYear(String copyCourseYear) {
+		this.copyCourseYear = copyCourseYear;
 	}
 }

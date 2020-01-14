@@ -18,12 +18,12 @@
 			<vlayout hflex="1" style="margin-bottom: 15px">
 				<label value="${c:l('txt.ui.common.CourseType')}" />
 				<radiogroup model="@load(vm.courseTypeList)" 
-					selectedItem="@bind(vm.courseCopy.courseType)"
+					selectedItem="@bind(vm.copyCourseType)"
 					hflex="1">
 					<template name="model" >
 						<radio label="@load(each) @converter(vm.enumLabelConverter)" 
 							value="${each}"
-							checked="${each == vm.courseCopy.courseType}"
+							checked="${each == vm.copyCourseType}"
 							tooltiptext="@load(vm.getCourseTypeDesc(each))" />
 					</template>
 				</radiogroup>
@@ -31,7 +31,7 @@
 			<vlayout style="margin-bottom: 15px;" >
 				<label value="${c:l('txt.ui.common.name')}" />
 				<textbox 
-					value="@load(vm.courseCopy.name) @save(vm.courseCopy.name, before='copyItemCmd') @validator(vm.notNullValidator)"
+					value="@load(vm.copyCourseName) @save(vm.copyCourseName, before='copyItemCmd') @validator(vm.notNullValidator)"
 					maxlength="@load(vm.getNameMaxlength())"
 					placeholder="*"
 					style="height: 30px;"
@@ -42,7 +42,7 @@
 			</vlayout>
 			<vlayout style="margin-bottom: 15px">
 				<label value="${c:l('txt.ui.common.year')}" />
-				<listbox selectedItem="@bind(vm.courseCopy.year)" 
+				<listbox selectedItem="@bind(vm.copyCourseYear)" 
 					model="@load(vm.courseYearList)"
 					mold="select"
 					height="30px"  >

@@ -43,6 +43,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -246,7 +247,7 @@ public class CourseListVM extends CourseAbstractVM {
 	 * @param courseName
 	 * @param component
 	 */
-	@NotifyChange("courseCopy")
+	@NotifyChange({"courseCopy","copyCourseType","copyCourseName","copyCourseYear"})
 	@Command
 	public void buildCourseCopyItemsCmd(@BindingParam(WebConstants.COMPONENT_PARAM) Component component) {
 		if (CollectionUtils.isEmpty(this.selectedItems)) {
@@ -259,6 +260,10 @@ public class CourseListVM extends CourseAbstractVM {
 		}
 		
 		this.courseCopyItems = new ArrayList<>();
+		
+		this.copyCourseType = CourseType.STANDARD;
+		this.copyCourseName = "TODO";
+		this.copyCourseYear = configurationService.getCourseApplicationYear();
 		
 		for (Course item : this.selectedItems) {
 			this.courseCopyItems.add(this.courseCopy = courseService.buildCopy(item.getUuid(), configurationService.getCourseApplicationYear(), true));			

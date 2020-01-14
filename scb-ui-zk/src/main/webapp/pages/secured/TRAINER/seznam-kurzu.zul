@@ -73,7 +73,7 @@
 								<!-- Kopírovat -->
 								<button tooltiptext="${c:l('txt.ui.common.copy.courseList.desc')}"
 			        				iconSclass="z-icon-copy"
-			        				onClick="@command('buildCourseCopyCmd', uuid=vm.course.uuid, name=vm.course.name, component=self)" />
+			        				onClick="@command('buildCourseCopyItemsCmd', component=self)" />
 								<!-- Odstranit -->
 								<button onClick="@command('deleteListCmd')"
 									tooltiptext="${c:l('txt.ui.common.Delete')}"
