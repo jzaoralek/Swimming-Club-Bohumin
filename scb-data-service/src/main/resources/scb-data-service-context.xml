@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jee="http://www.springframework.org/schema/jee"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:tx="http://www.springframework.org/schema/tx"
@@ -7,6 +8,7 @@
 	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.2.xsd
                 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
                 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
                 http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
@@ -21,10 +23,13 @@
 	<task:executor id="sportoLogicTaskExecutor" pool-size="5" />
 	<task:annotation-driven executor="sportoLogicTaskExecutor"/>
 
+	<jee:jndi-lookup id="dataSource" jndi-name="jdbc.sportlogic" />
+
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
 
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 
@@ -44,21 +49,6 @@
 			</list> 
 		</property> 
 	</bean>
-	
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="${db_url}" />
-		<property name="username" value="${db_user}" />
-		<property name="connectionProperties">
-			<props>
-				<prop key="useUnicode">yes</prop>
-				<prop key="characterEncoding">utf8</prop>
-			</props>
-		</property>
-		<property name="password" value="${db_pwd}"/>
-	</bean>
-	
 	<!-- Task scheduling -->
 	<task:scheduled-tasks>
 		<!-- Download new bank payments -->
@@ -66,5 +56,4 @@
 		<!-- Pairing of new bavnk payments -->
 		<task:scheduled ref="paymentTask" method="processPaymentPairing" cron="0 5 5 * * ?"/>
 	</task:scheduled-tasks>
-	
 </beans>
