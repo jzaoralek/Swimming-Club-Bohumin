@@ -118,7 +118,7 @@ public class CourseListVM extends BaseContextVM {
 		if (this.externalFilter != null) {
 			this.myCourses = this.externalFilter.getMyCourses();
 			
-			if (this.showCourseFilter) {
+			if (this.showCourseFilter && this.externalFilter.getCourseLocationUuid() != null) {
 				List<CourseLocation> courseLocFilterred = this.courseLocationList.
 							stream().
 							filter(i -> i.getUuid().toString().equals(this.externalFilter.getCourseLocationUuid().toString())).
