@@ -1,5 +1,7 @@
 <?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 <zk>
+	<custom-attributes copyCmd="${arg.copyCmd}" />
+	
 	<vlayout sclass="listbox-wrapper" width="320px">
        	<grid hflex="1" >
 			<auxhead>
@@ -64,7 +66,7 @@
 		
 		<hlayout style="padding-bottom: 1px;">
 	    	<button label="${c:l('txt.ui.common.copy')}"
-				onClick="@command('copyItemCmd')"
+				onClick="@command(copyCmd)"
 				iconSclass="z-icon-check" />
 	    	<button onClick="@command('closeCopyPopupCmd')" 
 				label="${c:l('txt.ui.ToClose')}"

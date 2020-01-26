@@ -8,11 +8,11 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -32,26 +32,28 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.Selectors;
+import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
+import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
-import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
@@ -72,8 +74,12 @@ public class CourseListVM extends CourseAbstractVM {
 	/** Cache object for external filter */
 	private CourseExternalFilter externalFilter;
 	private List<Course> selectedItems;
-	private List<Course> courseCopyItems;
+	/** Course copy structure Pair<source UUID, new course> */
+	private List<Pair<UUID,Course>> courseCopyItems;
 	private boolean multipleMode;
+	
+	@Wire
+	protected Popup courseListCopyPopup;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -262,14 +268,14 @@ public class CourseListVM extends CourseAbstractVM {
 		this.courseCopyItems = new ArrayList<>();
 		
 		this.copyCourseType = CourseType.STANDARD;
-		this.copyCourseName = "TODO";
+		this.copyCourseName = "Kopie z ${název kurzu}";
 		this.copyCourseYear = configurationService.getCourseApplicationYear();
 		
 		for (Course item : this.selectedItems) {
-			this.courseCopyItems.add(this.courseCopy = courseService.buildCopy(item.getUuid(), configurationService.getCourseApplicationYear(), true));			
+			this.courseCopyItems.add(new Pair<>(item.getUuid(), courseService.buildCopy(item.getUuid(), configurationService.getCourseApplicationYear(), true)));			
 		}
 		
-		courseCopyPopup.open(component);
+		courseListCopyPopup.open(component);
 	}
 	
 	/**
@@ -292,17 +298,26 @@ public class CourseListVM extends CourseAbstractVM {
 		
 		Course courseNew = null;
 		try {
-			for (Course item : this.selectedItems) {
+			for (Pair<UUID,Course> item : this.courseCopyItems) {
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("Copying course with uuid: " + item.getUuid());
+					LOG.debug("Copying course with uuid: " + item.getValue0());
 				}
+				// fill shared attributes
+				item.getValue1().setCourseType(this.copyCourseType);
+				item.getValue1().fillYearFromTo(this.copyCourseYear);
 				// copying course
-				courseNew = courseService.copy(item.getUuid(), this.courseCopy, this.copyParticipants, this.copyLessons, this.copyTrainers);
+				courseNew = courseService.copy(item.getValue0(), item.getValue1(), this.copyParticipants, this.copyLessons, this.copyTrainers);
 			}
-			// redirect to course list
-			//  TODO: redirect na seznam  kurzu v rocniku, do ktereho se kopirovalo
-//			Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+courseNew.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
-			WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseListCopied", new Object[] {courseNew.getYear()}));
+			
+//			if (!getCourseYearSelected().equals(this.copyCourseYear)) {
+//				// selected year is different
+//				this.courseYearSelected = this.copyCourseYear;
+//				courseYearChangeCmd();
+//			}
+//			loadData();
+			courseListCopyPopup.close();
+			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseListCopied", new Object[] {courseNew.getYear()}));
+			
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught for course: " + courseNew, e);
 			WebUtils.showNotificationError(e.getMessage());

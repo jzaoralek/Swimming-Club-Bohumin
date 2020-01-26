@@ -17,7 +17,7 @@
 		
 		<!-- Popup s parametry pro kopirovani kurzu. -->
 		<popup id="courseCopyPopup" vflex="1" >
-			<course-copy-params />
+			<course-copy-params copyCmd="copyItemCmd" />
 		</popup>
 					
 		<vlayout>
