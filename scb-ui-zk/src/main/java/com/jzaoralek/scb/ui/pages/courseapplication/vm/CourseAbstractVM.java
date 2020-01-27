@@ -5,11 +5,14 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
+import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -27,9 +30,6 @@ import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
@@ -54,9 +54,14 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	protected CourseType copyCourseType;
 	protected String copyCourseName;
 	protected String copyCourseYear;
+	protected String currentCourseYear;
+	protected boolean copyMultipleItemsMode;
 	
 	@Wire
 	protected Popup courseCopyPopup;
+	
+	@Wire
+	protected Popup courseListCopyPopup;
 	
 	@AfterCompose
 	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
@@ -68,7 +73,7 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 		WebUtils.redirectToNewCourse();
 	}
 	
-	@NotifyChange({"courseCopy","copyCourseType","copyCourseName","copyCourseYear"})
+	@NotifyChange({"courseCopy","copyCourseType","copyCourseName","copyCourseYear","copyMultipleItemsMode","currentCourseYear"})
 	@Command
 	public void buildCourseCopyCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
 			@BindingParam(WebConstants.NAME_PARAM) String courseName, 
@@ -77,15 +82,20 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
 			return;
 		}
-		
+		buildCurrentCourseYear();
 		this.courseUuidFrom = uuid;
-		this.courseCopy = courseService.buildCopy(uuid, configurationService.getCourseApplicationYear(), true);
+		this.courseCopy = courseService.buildCopy(uuid, this.currentCourseYear, true);
 		this.copyCourseType = this.courseCopy.getCourseType();
 		this.copyCourseName = this.courseCopy.getName();
 		this.copyCourseYear = this.courseCopy.getYear();
 		this.copyFrom = this.courseCopy.getName();
+		this.copyMultipleItemsMode = false;
 		
 		courseCopyPopup.open(component);
+	}
+	
+	protected void buildCurrentCourseYear() {
+		this.currentCourseYear = configurationService.getCourseApplicationYear();
 	}
 	
 	@Command
@@ -107,6 +117,10 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 			this.courseCopy.setCourseType(this.copyCourseType);
 			this.courseCopy.setName(this.copyCourseName);
 			this.courseCopy.fillYearFromTo(this.copyCourseYear);
+			// copy participants allow only in same year
+			if (!isCopyCourseYearSameAsCurrent()) {
+				this.copyParticipants = false;
+			}
 			courseNew = courseService.copy(this.courseUuidFrom, this.courseCopy, this.copyParticipants, this.copyLessons, this.copyTrainers);
 			// redirect to new course
 			Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+courseNew.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
@@ -121,11 +135,20 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	}
 	
 	@Command
-	public void closeCopyPopupCmd() {
-		this.courseCopyPopup.close();
+	public void copyCourseYearSelectCmd() {
+		if (!isCopyCourseYearSameAsCurrent()) {
+			this.copyParticipants = false;
+			BindUtils.postNotifyChange(null, null, this, "copyParticipants");
+		}
 	}
 	
-	protected void deleteCore(Course course, boolean redirectAfterAction) {
+	@Command
+	public void closeCopyPopupCmd() {
+		this.courseCopyPopup.close();
+		this.courseListCopyPopup.close();
+	}
+	
+	protected void deleteCore(Course course, boolean redirectAfterAction, Runnable postDelete) {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Deleting course with uuid: " + course.getUuid());
 		}
@@ -144,7 +167,8 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 							Executions.sendRedirect(WebPages.COURSE_LIST.getUrl());							
 						} else {
 							WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseDeleted", msgParams));
-							EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);
+							postDelete.run();
+//							EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);
 						}
 					} catch (ScbValidationException e) {
 						LOG.warn("ScbValidationException caught during deleting course uuid: " + uuid, e);
@@ -154,6 +178,15 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 			},
 			msgParams
 		);
+	}
+	
+	@DependsOn("copyCourseYear")
+	public boolean isCopyCourseYearSameAsCurrent() {
+		if (StringUtils.hasText(this.currentCourseYear) 
+				&& StringUtils.hasText(this.copyCourseYear)) {
+			return this.currentCourseYear.equals(this.copyCourseYear);
+		}
+		return false;
 	}
 	
 	public Course getCourseCopy() {
@@ -197,5 +230,8 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	}
 	public void setCopyCourseYear(String copyCourseYear) {
 		this.copyCourseYear = copyCourseYear;
+	}
+	public boolean isCopyMultipleItemsMode() {
+		return copyMultipleItemsMode;
 	}
 }

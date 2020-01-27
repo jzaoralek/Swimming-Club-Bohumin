@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -77,9 +78,6 @@ public class CourseListVM extends CourseAbstractVM {
 	/** Course copy structure Pair<source UUID, new course> */
 	private List<Pair<UUID,Course>> courseCopyItems;
 	private boolean multipleMode;
-	
-	@Wire
-	protected Popup courseListCopyPopup;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -204,7 +202,7 @@ public class CourseListVM extends CourseAbstractVM {
 			LOG.debug("Deleting course with uuid: " + item.getUuid());
 		}
 		
-		deleteCore(item, false);
+		deleteCore(item, false, this::loadData);
 	}
 	
 	/**
@@ -234,10 +232,10 @@ public class CourseListVM extends CourseAbstractVM {
 							if (LOG.isDebugEnabled()) {
 								LOG.debug("Deleting course with uuid: " + item.getUuid());
 							}
-							courseService.delete(item.getUuid());							
+							courseService.delete(item.getUuid());
 						}
 						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseListDeleted"));
-						EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);						
+						loadData();
 					} catch (ScbValidationException e) {
 						LOG.warn("ScbValidationException caught during deleting courses: " + itemsToDelete, e);
 						WebUtils.showNotificationError(e.getMessage());
@@ -253,7 +251,7 @@ public class CourseListVM extends CourseAbstractVM {
 	 * @param courseName
 	 * @param component
 	 */
-	@NotifyChange({"courseCopy","copyCourseType","copyCourseName","copyCourseYear"})
+	@NotifyChange({"courseCopy","copyCourseType","copyCourseName","copyCourseYear","copyMultipleItemsMode","buildCurrentCourseYear()"})
 	@Command
 	public void buildCourseCopyItemsCmd(@BindingParam(WebConstants.COMPONENT_PARAM) Component component) {
 		if (CollectionUtils.isEmpty(this.selectedItems)) {
@@ -264,16 +262,17 @@ public class CourseListVM extends CourseAbstractVM {
 		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
 			return;
 		}
-		
+		buildCurrentCourseYear();
 		this.courseCopyItems = new ArrayList<>();
-		
 		this.copyCourseType = CourseType.STANDARD;
 		this.copyCourseName = "Kopie z ${název kurzu}";
-		this.copyCourseYear = configurationService.getCourseApplicationYear();
+		this.copyCourseYear = this.currentCourseYear;
 		
 		for (Course item : this.selectedItems) {
 			this.courseCopyItems.add(new Pair<>(item.getUuid(), courseService.buildCopy(item.getUuid(), configurationService.getCourseApplicationYear(), true)));			
 		}
+		
+		this.copyMultipleItemsMode = true;
 		
 		courseListCopyPopup.open(component);
 	}
@@ -305,6 +304,10 @@ public class CourseListVM extends CourseAbstractVM {
 				// fill shared attributes
 				item.getValue1().setCourseType(this.copyCourseType);
 				item.getValue1().fillYearFromTo(this.copyCourseYear);
+				// copy participants allow only in same year
+				if (!isCopyCourseYearSameAsCurrent()) {
+					this.copyParticipants = false;
+				}
 				// copying course
 				courseNew = courseService.copy(item.getValue0(), item.getValue1(), this.copyParticipants, this.copyLessons, this.copyTrainers);
 			}
@@ -383,7 +386,12 @@ public class CourseListVM extends CourseAbstractVM {
 			this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
 		}
 
+		this.selectedItems = Collections.emptyList();
+		this.multipleMode = false;
+		
 		BindUtils.postNotifyChange(null, null, this, "courseList");
+		BindUtils.postNotifyChange(null, null, this, "selectedItems");
+		BindUtils.postNotifyChange(null, null, this, "multipleMode");
 	}
 	
 	private void initCourseLocations() {

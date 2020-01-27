@@ -312,7 +312,7 @@ public class CourseVM extends CourseAbstractVM {
 		if (!getUpdateMode()) {
 			return;
 		}
-		deleteCore(this.course, true);
+		deleteCore(this.course, true, null);
 	}
 	
 	/**

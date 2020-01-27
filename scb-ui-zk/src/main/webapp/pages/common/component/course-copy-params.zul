@@ -36,6 +36,7 @@
 					value="@load(vm.copyCourseName) @save(vm.copyCourseName, before='copyItemCmd') @validator(vm.notNullValidator)"
 					maxlength="@load(vm.getNameMaxlength())"
 					placeholder="*"
+					readonly="@load(vm.copyMultipleItemsMode)"
 					style="height: 30px;"
 					width="100%" />
 				<hbox width="100%" align="end" pack="end" style="height: 30px">
@@ -44,15 +45,17 @@
 			</vlayout>
 			<vlayout style="margin-bottom: 15px">
 				<label value="${c:l('txt.ui.common.year')}" />
-				<listbox selectedItem="@bind(vm.copyCourseYear)" 
+				<listbox selectedItem="@bind(vm.copyCourseYear)"
+					onSelect="@command('copyCourseYearSelectCmd')"
 					model="@load(vm.courseYearList)"
 					mold="select"
 					height="30px"  >
 				</listbox>
 			</vlayout>
 			<hlayout style="margin-bottom: 15px">
-				<checkbox checked="@bind(vm.copyParticipants)" />
+				<checkbox checked="@bind(vm.copyParticipants)" disabled="@load(!vm.copyCourseYearSameAsCurrent)" />
 				<label value="${c:l('txt.ui.common.copy.courseParticipants')}" style="margin-left: 5px;" />
+				<label value="(${c:l('txt.ui.common.allowedOnlyInSameYear')})" style="margin-left: 5px; font-size: 12px;"/>
 			</hlayout>
 			<hlayout style="margin-bottom: 15px">
 				<checkbox checked="@bind(vm.copyLessons)" />
