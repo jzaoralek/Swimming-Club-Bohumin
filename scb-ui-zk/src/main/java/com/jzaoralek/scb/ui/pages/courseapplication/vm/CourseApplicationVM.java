@@ -6,9 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -122,6 +124,10 @@ public class CourseApplicationVM extends BaseVM {
 				this.courseLocationList = courseService.getCourseLocationAll();
 				// seznam vsech kurzu
 				this.courseListAll = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
+				// vyfiltrovat pouze aktivni
+				if (!CollectionUtils.isEmpty(this.courseListAll))  {
+					this.courseListAll = this.courseListAll.stream().filter(i -> i.isActive()).collect(Collectors.toList());
+				}
 			} else {
 				// seznam vybranych kurzu
 				this.courseList = courseService.getByCourseParticipantUuid(this.application.getCourseParticipant().getUuid(), this.application.getYearFrom(), this.application.getYearTo());

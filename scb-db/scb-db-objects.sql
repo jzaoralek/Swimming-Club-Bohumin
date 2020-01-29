@@ -93,6 +93,8 @@ CREATE TABLE course(
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	max_participant_count INT,
+	TYPE ENUM('STANDARD','TWO_SEMESTER') NULL DEFAULT 'TWO_SEMESTER',
+	ACTIVE ENUM('0','1') NOT NULL DEFAULT '1',
 	course_location_uuid varchar(36) REFERENCES course_location(uuid),
 	PRIMARY KEY (uuid)
 );

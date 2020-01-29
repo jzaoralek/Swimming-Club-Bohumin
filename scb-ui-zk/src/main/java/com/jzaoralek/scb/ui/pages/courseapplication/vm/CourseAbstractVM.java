@@ -54,7 +54,6 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	protected CourseType copyCourseType;
 	protected String copyCourseName;
 	protected String copyCourseYear;
-	protected String currentCourseYear;
 	protected boolean copyMultipleItemsMode;
 	
 	@Wire
@@ -82,9 +81,8 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
 			return;
 		}
-		buildCurrentCourseYear();
 		this.courseUuidFrom = uuid;
-		this.courseCopy = courseService.buildCopy(uuid, this.currentCourseYear, true);
+		this.courseCopy = courseService.buildCopy(uuid, configurationService.getCourseApplicationYear(), true);
 		this.copyCourseType = this.courseCopy.getCourseType();
 		this.copyCourseName = this.courseCopy.getName();
 		this.copyCourseYear = this.courseCopy.getYear();
@@ -94,9 +92,9 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 		courseCopyPopup.open(component);
 	}
 	
-	protected void buildCurrentCourseYear() {
-		this.currentCourseYear = configurationService.getCourseApplicationYear();
-	}
+//	protected void buildCurrentCourseYear() {
+//		this.currentCourseYear = this.courseYearSelected;
+//	}
 	
 	@Command
 	public void copyItemCmd() {
@@ -182,9 +180,9 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	
 	@DependsOn("copyCourseYear")
 	public boolean isCopyCourseYearSameAsCurrent() {
-		if (StringUtils.hasText(this.currentCourseYear) 
+		if (StringUtils.hasText(this.courseYearSelected) 
 				&& StringUtils.hasText(this.copyCourseYear)) {
-			return this.currentCourseYear.equals(this.copyCourseYear);
+			return this.courseYearSelected.equals(this.copyCourseYear);
 		}
 		return false;
 	}

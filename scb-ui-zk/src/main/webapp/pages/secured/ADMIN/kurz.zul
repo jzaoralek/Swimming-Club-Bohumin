@@ -236,7 +236,15 @@
 												</vbox>
 											</hbox>
 										</cell>
-									</row>	
+									</row>
+									<row sclass="form-grid-row" style="border: none; padding: 0px 0px 30px 30px;" >
+										<cell sclass="form-grid-cell" >
+											<hlayout hflex="1">
+												<checkbox checked="@bind(fx.course.active)" />
+												<label value="${c:l('txt.ui.common.active')}" style="margin-left: 5px;" />
+											</hlayout>
+										</cell>
+									</row>
 								</rows>
 							</grid>
 							<button label="Uložit"

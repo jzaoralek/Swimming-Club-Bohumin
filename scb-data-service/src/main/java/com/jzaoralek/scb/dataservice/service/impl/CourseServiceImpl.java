@@ -191,7 +191,7 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		
 		// copy participants
 		if (copyCoursePartics) {
-			// TODO: copy participants			
+			courseParticipantDao.insetToCourse(courseOrig.getParticipantList(), ret.getUuid());	
 		}
 		
 		// copy trainers

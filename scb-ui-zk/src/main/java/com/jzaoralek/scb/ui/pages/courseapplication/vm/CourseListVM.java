@@ -262,11 +262,10 @@ public class CourseListVM extends CourseAbstractVM {
 		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
 			return;
 		}
-		buildCurrentCourseYear();
 		this.courseCopyItems = new ArrayList<>();
 		this.copyCourseType = CourseType.STANDARD;
 		this.copyCourseName = "Kopie z ${název kurzu}";
-		this.copyCourseYear = this.currentCourseYear;
+		this.copyCourseYear = configurationService.getCourseApplicationYear();;
 		
 		for (Course item : this.selectedItems) {
 			this.courseCopyItems.add(new Pair<>(item.getUuid(), courseService.buildCopy(item.getUuid(), configurationService.getCourseApplicationYear(), true)));			
@@ -312,12 +311,8 @@ public class CourseListVM extends CourseAbstractVM {
 				courseNew = courseService.copy(item.getValue0(), item.getValue1(), this.copyParticipants, this.copyLessons, this.copyTrainers);
 			}
 			
-//			if (!getCourseYearSelected().equals(this.copyCourseYear)) {
-//				// selected year is different
-//				this.courseYearSelected = this.copyCourseYear;
-//				courseYearChangeCmd();
-//			}
-//			loadData();
+			loadData();
+			
 			courseListCopyPopup.close();
 			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseListCopied", new Object[] {courseNew.getYear()}));
 			

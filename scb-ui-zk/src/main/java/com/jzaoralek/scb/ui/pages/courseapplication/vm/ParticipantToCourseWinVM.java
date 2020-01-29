@@ -153,7 +153,7 @@ public class ParticipantToCourseWinVM extends BaseVM {
 			EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT, null, courseUuid);
 			window.detach();
 		} catch (ScbValidationException e) {
-			LOG.warn("ScbValidationException caught during addin courseParticipantList to course uuid: " + courseUuid);
+			LOG.warn("ScbValidationException caught during adding courseParticipantList to course uuid: " + courseUuid);
 			WebUtils.showNotificationError(e.getMessage());
 		}
 	}

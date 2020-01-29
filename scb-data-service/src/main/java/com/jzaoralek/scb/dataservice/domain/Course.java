@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 
 public class Course implements IdentEntity {
@@ -34,6 +33,7 @@ public class Course implements IdentEntity {
 	private CourseCourseParticipantVO courseCourseParticipantVO;
 	private List<ScbUser> trainerList;
 	private CourseType courseType;
+	private boolean active;
 
 	public String getOccupancy() {
 		return getParticipantListCount() + " / " + (this.maxParticipantCount != null ? this.maxParticipantCount : 0);
@@ -181,6 +181,12 @@ public class Course implements IdentEntity {
 	public void setCourseType(CourseType courseType) {
 		this.courseType = courseType;
 	}
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
 	@Override
 	public String toString() {
@@ -189,6 +195,7 @@ public class Course implements IdentEntity {
 				+ priceSemester1 + ", priceSemester2=" + priceSemester2 + ", participantList=" + participantList
 				+ ", participantCount=" + participantCount + ", lessonList=" + lessonList + ", courseLocation="
 				+ courseLocation + ", maxParticipantCount=" + maxParticipantCount + ", courseCourseParticipantVO="
-				+ courseCourseParticipantVO + ", trainerList=" + trainerList + ", courseType=" + courseType + "]";
+				+ courseCourseParticipantVO + ", trainerList=" + trainerList + ", courseType=" + courseType
+				+ ", active=" + active + "]";
 	}
 }
