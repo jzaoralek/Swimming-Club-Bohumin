@@ -160,7 +160,7 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		if (nameFromOrig) {
 			//  set course name from orig course
 			courseNew.setName(messageSource.getMessage("txt.svc.course.name.copyFrom", 
-					new Object[] {courseOrig.getName(), courseOrig.getYear()}, Locale.getDefault()));
+					new Object[] {courseOrig.getName()}, Locale.getDefault()));
 		}
 		courseNew.setDescription(courseOrig.getDescription());
 		courseNew.setCourseType(CourseType.STANDARD);
@@ -366,5 +366,13 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 			return;
 		}
 		courseDao.removeTrainersFromCourse(trainers, courseUuid);
+	}
+
+	@Override
+	public void updateState(List<UUID> courseUuidList, boolean active) {
+		if (CollectionUtils.isEmpty(courseUuidList)) {
+			return;
+		}
+		courseDao.updateState(courseUuidList, active);
 	}
 }

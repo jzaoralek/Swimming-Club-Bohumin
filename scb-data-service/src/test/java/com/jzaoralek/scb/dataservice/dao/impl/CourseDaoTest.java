@@ -220,4 +220,15 @@ public class CourseDaoTest extends BaseTestCase {
 		courseList = courseDao.getByTrainer(userAdmin.getUuid(), YEAR_FROM, YEAR_TO);
 		Assert.assertTrue(CollectionUtils.isEmpty(courseList));
 	}
+	
+	@Test
+	public void testUpdateState() {
+		Course course = courseDao.getByUuid(ITEM_UUID);
+		Assert.assertFalse(course.isActive());
+		
+		courseDao.updateState(Arrays.asList(ITEM_UUID), true);
+		
+		course = courseDao.getByUuid(ITEM_UUID);
+		Assert.assertTrue(course.isActive());
+	}
 }

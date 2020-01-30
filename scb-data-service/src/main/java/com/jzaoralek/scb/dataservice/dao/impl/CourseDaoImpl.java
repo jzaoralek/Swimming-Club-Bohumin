@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -99,6 +100,7 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 			+ "AND user_trainer_uuid = :" + USER_UUID_PARAM;
 	private static final String DELETE_ALL_TRAINER_FROM_COURSE = "DELETE FROM user_trainer_course "
 			+ "WHERE course_uuid = :" + COURSE_UUID_PARAM;
+	private static final String UPDATE_STATE = "UPDATE course SET active = :" + ACTIVE_PARAM + " WHERE uuid in (:uuids)";
 	
 	@Autowired
 	public CourseDaoImpl(DataSource ds) {
@@ -221,6 +223,16 @@ public class CourseDaoImpl extends BaseJdbcDao implements CourseDao {
 		namedJdbcTemplate.update(DELETE_ALL_TRAINER_FROM_COURSE, paramMap);			
 	}
 	
+	@Override
+	public void updateState(List<UUID> courseUuidList, boolean active) {
+		List<String> uuidList = new ArrayList<>();
+		courseUuidList.forEach(i -> uuidList.add(i.toString()));
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("uuids", uuidList);
+		paramMap.addValue(ACTIVE_PARAM, active ? "1" : "0");
+		namedJdbcTemplate.update(UPDATE_STATE, paramMap);	
+	}
 	
 	private void updateTrainersInCourse(String sql, List<ScbUser> trainers, UUID courseUuid) {
 		MapSqlParameterSource paramMap = null;

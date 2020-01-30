@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -91,10 +92,6 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 		
 		courseCopyPopup.open(component);
 	}
-	
-//	protected void buildCurrentCourseYear() {
-//		this.currentCourseYear = this.courseYearSelected;
-//	}
 	
 	@Command
 	public void copyItemCmd() {

@@ -46,6 +46,7 @@ public final class WebConstants {
 	public static final String USER_LIST_CACHE_PARAM = "userListCache";
 	public static final String NAME_PARAM = "name";
 	public static final String COMPONENT_PARAM = "component";
+	public static final String ACTIVE_PARAM = "active";
 	
 	public static final String YEAR_FROM_PARAM = "yearFrom";
 	public static final String YEAR_TO_PARAM = "yearTo";

@@ -40,6 +40,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.LessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -326,6 +327,22 @@ public class CourseVM extends CourseAbstractVM {
 	@Command
 	public void courseTypeChangeCmd() {
 		// potreba pro notifikaci na zul
+	}
+	
+	@NotifyChange("*")
+	@Command
+	public void changeStateCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
+			@BindingParam(WebConstants.ACTIVE_PARAM) boolean active) {
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+		courseService.updateState(Arrays.asList(uuid), active);
+		loadData(uuid);
+		
+		String msg = active ? "msg.ui.info.courseStarted" : "msg.ui.info.courseStopped";
+		WebUtils.showNotificationInfo(Labels.getLabel(msg, new Object[] {this.course.getName()}));
 	}
 	
 	@Override

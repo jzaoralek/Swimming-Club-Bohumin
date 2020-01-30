@@ -22,5 +22,6 @@ public interface CourseDao {
 	void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid);
 	void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid);
 	void removeAllTrainersFromCourse(UUID courseUuid);
+	void updateState(List<UUID> courseUuidList, boolean active);
 	
 }

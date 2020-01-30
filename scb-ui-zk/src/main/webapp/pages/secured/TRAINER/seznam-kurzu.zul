@@ -75,10 +75,22 @@
 								if="${vm.isLoggedUserInRole('ADMIN')}"
 								visible="@load(vm.multipleMode)"
 								style="margin-right: 20px;" >
+								
+								<!-- Aktivovat -->
+								<button tooltiptext="${c:l('txt.ui.common.start')}"
+			        				iconSclass="z-icon-play"
+			        				onClick="@command('changeStateListCmd', active=true)" />
+			        			<!-- Deaktivovat -->
+			        			<button tooltiptext="${c:l('txt.ui.common.stop')}"
+			        				iconSclass="z-icon-stop"
+			        				onClick="@command('changeStateListCmd', active=false)"
+			        				style="margin-left: 10px;" />
+			        			
 								<!-- Kopírovat -->
 								<button tooltiptext="${c:l('txt.ui.common.copy.courseList.desc')}"
 			        				iconSclass="z-icon-copy"
-			        				onClick="@command('buildCourseCopyItemsCmd', component=self)" />
+			        				onClick="@command('buildCourseCopyItemsCmd', component=self)"
+			        				style="margin-left: 10px;" />
 								<!-- Odstranit -->
 								<button onClick="@command('deleteListCmd')"
 									tooltiptext="${c:l('txt.ui.common.Delete')}"
@@ -133,7 +145,7 @@
 				</auxhead>
 				
 		        <listhead>
-		            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" />
+		            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" valign="middle" />
 		            <listheader label="${c:l('txt.ui.common.participantCountAbbr')}" 
 		            	tooltiptext="${c:l('txt.ui.common.participantCount')}" 
 		            	sort="auto(participantListCount)" 
@@ -145,7 +157,11 @@
 		        <template name="model">
 		            <listitem>
 		                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
-		                	<label value="${each.name}" onClick="@command('detailCmd', uuid=each.uuid)" style="text-decoration: underline !important" />
+					        <a iconSclass="z-icon-check-circle"
+					        	style="${each.active ? 'color: #78C128; margin-right: 5px;' : 'color: grey; margin-right: 5px;'}"
+					        	tooltiptext="${each.active ? c:l('txt.ui.common.active') : c:l('txt.ui.common.inactive')}"
+					        	if="${vm.isLoggedUserInRole('ADMIN')}" />
+					        <label value="${each.name}" onClick="@command('detailCmd', uuid=each.uuid)" style="text-decoration: underline !important" />
 		                </listcell>
 		                <listcell label="${each.participantListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 		                <listcell>
@@ -156,6 +172,12 @@
 			                		popup="menuCourse_${each.uuid}, position=after_end" 
 			                		style="margin-left: 2px;margin-right: 5px;" />
 			                	<menupopup id="menuCourse_${each.uuid}" >
+				                	<!-- Aktivace/Deaktivace -->
+									<menuitem label="${each.active ? c:l('txt.ui.common.stop') : c:l('txt.ui.common.start')}" 
+										onClick="@command('changeStateCmd', uuid=each.uuid, active=!each.active, name=each.name)"
+										iconSclass="${each.active ? 'z-icon-stop' : 'z-icon-play'}"
+										if="${vm.isLoggedUserInRole('ADMIN')}" >
+									</menuitem>
 				                	<!-- Kopie kurzu -->
 									<menuitem label="${c:l('txt.ui.common.copy')}" 
 										onClick="@command('buildCourseCopyCmd', uuid=each.uuid, name=each.name, component=self)"

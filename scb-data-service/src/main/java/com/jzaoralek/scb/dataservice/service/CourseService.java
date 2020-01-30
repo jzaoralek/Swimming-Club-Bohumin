@@ -74,4 +74,5 @@ public interface CourseService {
 	List<ScbUser> getTrainersByCourse(UUID courseUuid);
 	void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid);
 	void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid);
+	void updateState(List<UUID> courseUuidList, boolean active);
 }

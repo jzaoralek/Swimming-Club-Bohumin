@@ -33,12 +33,10 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.Selectors;
-import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
-import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
@@ -52,7 +50,6 @@ import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
@@ -264,7 +261,7 @@ public class CourseListVM extends CourseAbstractVM {
 		}
 		this.courseCopyItems = new ArrayList<>();
 		this.copyCourseType = CourseType.STANDARD;
-		this.copyCourseName = "Kopie z ${název kurzu}";
+		this.copyCourseName = "Kopie ${název kurzu}";
 		this.copyCourseYear = configurationService.getCourseApplicationYear();;
 		
 		for (Course item : this.selectedItems) {
@@ -363,6 +360,41 @@ public class CourseListVM extends CourseAbstractVM {
 		
 		goToSendEmailCore(contactList);
 	}
+	
+	@NotifyChange("courseList")
+	@Command
+	public void changeStateCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
+			@BindingParam(WebConstants.ACTIVE_PARAM) boolean active, 
+			@BindingParam(WebConstants.NAME_PARAM) String name) {
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+		courseService.updateState(Arrays.asList(uuid), active);
+		loadData();
+				
+		String msg = active ? "msg.ui.info.courseStarted" : "msg.ui.info.courseStopped";
+		WebUtils.showNotificationInfo(Labels.getLabel(msg, new Object[]{name}));		
+	}
+	
+	@NotifyChange("courseList")
+	@Command
+	public void changeStateListCmd(@BindingParam(WebConstants.ACTIVE_PARAM) boolean active) {
+		if (CollectionUtils.isEmpty(this.selectedItems)) {
+			return;
+		}
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+		courseService.updateState(this.selectedItems.stream().map(i -> i.getUuid()).collect(Collectors.toList()), active);
+		loadData();
+				
+		String msg = active ? "msg.ui.info.courseListStarted" : "msg.ui.info.courseListStopped";
+		WebUtils.showNotificationInfo(Labels.getLabel(msg));		
+	}
 
 	public void loadData() {
 		String[] years = getYearsFromContext();
@@ -372,6 +404,10 @@ public class CourseListVM extends CourseAbstractVM {
 		
 		// nacteni vsech nebo pouze prirazenych kurzu
 		this.courseList = this.myCourses ? courseService.getByTrainer(SecurityUtils.getLoggedUser().getUuid(), yearFrom, yearTo, false) : courseService.getAll(yearFrom, yearTo, false);
+		if (!isLoggedUserAdmin()) {
+			// filter active active courses for trainers
+			this.courseList = this.courseList.stream().filter(i -> i.isActive()).collect(Collectors.toList());
+		}
 		this.courseListBase = this.courseList;
 		
 		if (this.showCourseFilter) {

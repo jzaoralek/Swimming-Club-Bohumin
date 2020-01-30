@@ -133,6 +133,36 @@
 											</vlayout>
 										</cell>
 									</row>
+									
+									<!-- Stav -->
+									<row sclass="form-grid-row" style="border: none; padding: 0px 30px 20px 30px;" >
+										<cell sclass="form-grid-cell" >
+											<vlayout hflex="1">
+												<hlayout style="padding-top:10px;" height="50px;" >
+													<a iconSclass="z-icon-check-circle"
+														style="@load(vm.course.active ? 'color: #78C128; font-size: 52px;' : 'color: grey; font-size: 52px;')" />
+													<!-- Aktivni -->
+													<hbox visible="@load(vm.course.active)" align="start" pack="start" style="margin-left: 7px;" >
+														<label value="${c:l('txt.ui.common.active')}" style="margin-left: 5px;" />
+														<a label="${c:l('txt.ui.common.stop')}" 
+															onClick="@command('changeStateCmd', uuid=vm.course.uuid, active=false)"
+															visible="@load(vm.updateMode)"
+															style="margin-left: 5px;" />										
+													</hbox>
+													
+													<!-- Neaktivni -->
+													<hbox visible="@load(!vm.course.active)" align="start"  pack="start" hflex="1">
+														<label value="${c:l('txt.ui.common.inactive')}" style="margin-left: 10px;"/>
+														<a label="${c:l('txt.ui.common.start')}"
+															onClick="@command('changeStateCmd', uuid=vm.course.uuid, active=true)"
+															visible="@load(vm.updateMode)"
+															style="margin-left: 5px;" />
+													</hbox>
+												</hlayout>
+											</vlayout>
+										</cell>
+									</row>
+									
 									<row sclass="form-grid-row" style="border: none; padding: 0px 30px 0px 30px;" >
 										<cell sclass="form-grid-cell" >
 											<vlayout hflex="1">
@@ -235,14 +265,6 @@
 													</hbox>
 												</vbox>
 											</hbox>
-										</cell>
-									</row>
-									<row sclass="form-grid-row" style="border: none; padding: 0px 0px 30px 30px;" >
-										<cell sclass="form-grid-cell" >
-											<hlayout hflex="1">
-												<checkbox checked="@bind(fx.course.active)" />
-												<label value="${c:l('txt.ui.common.active')}" style="margin-left: 5px;" />
-											</hlayout>
 										</cell>
 									</row>
 								</rows>
