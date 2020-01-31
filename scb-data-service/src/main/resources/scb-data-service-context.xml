@@ -41,14 +41,13 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
-		<property name="locations">
-			<list>
-				<value>classpath:config/${user.name}.properties</value>
-				<value>classpath:config/smtp.properties</value>
-			</list> 
-		</property> 
-	</bean>
+	
+	<context:property-placeholder 
+		location="classpath:config/${user.name}.properties,classpath:config/smtp.properties" 
+		ignore-unresolvable="true"
+		ignore-resource-not-found="true"/>
+	
+	
 	<!-- Task scheduling -->
 	<task:scheduled-tasks>
 		<!-- Download new bank payments -->
