@@ -294,8 +294,8 @@
 				            					popup="addCourseParticipantsFromApplicationPopup"/>
 				            					
 				            			<menupopup id="addCourseParticipantsFromApplicationPopup" >
-											<menuitem label="Z přihlášky" onClick="@command('addCourseParticipantsFromApplicationCmd')" />
-											<menuitem label="Z Kurzu" onClick="@command('addCourseParticipantsFromCourseCmd')" />
+											<menuitem label="${c:l('txt.ui.common.fromCourseParticipant')}" onClick="@command('addCourseParticipantsFromApplicationCmd')" />
+											<menuitem label="${c:l('txt.ui.common.moveFromAnotherCourse')}" onClick="@command('addCourseParticipantsFromCourseCmd')" />
 								       	</menupopup>
 						            </auxheader>
 						        </auxhead>
