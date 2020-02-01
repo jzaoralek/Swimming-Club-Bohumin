@@ -84,6 +84,11 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 
 		return payment;
 	}
+	
+	@Override
+	public void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid) {
+		paymentDao.deleteByCourseAndParticipant(courseUuid, courseParticipantUuid);
+	}
 
 	@Override
 	public void processPayments() {

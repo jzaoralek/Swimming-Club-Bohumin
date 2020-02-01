@@ -144,6 +144,14 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 		courseApplicationDao.updateCourseParticInterruption(courseParticUuidList, interrupetdAt);
 	}
+	
+	@Override
+	public void updateCourseParticCourseUuid(List<UUID> courseParticUuidList, UUID courseUuid) {
+		if (CollectionUtils.isEmpty(courseParticUuidList)) {
+			return;
+		}
+		courseApplicationDao.updateCourseParticCourseUuid(courseParticUuidList, courseUuid);
+	}
 
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)

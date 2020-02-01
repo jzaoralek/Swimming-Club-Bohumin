@@ -309,7 +309,6 @@
 						         
 						        <template name="model">
 						            <listitem>
-<!-- 						            	<listcell/> -->
 						                <listcell label="${each.contact.surname} ${each.contact.firstname}" />
 						                <listcell label="@load(each.birthdate) @converter(vm.dateConverter)" />	                	
 						                <listcell>

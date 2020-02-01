@@ -102,6 +102,11 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	}
 	
 	@Test
+	public void testUpdateCourseParticCourseUuid() {
+		courseApplicationDao.updateCourseParticCourseUuid(Arrays.asList(COURSE_PARTICIPANT_UUID), COURSE_UUID);
+	}
+	
+	@Test
 	public void testGetByCourseParticipantUuid() {
 		assertList(courseApplicationDao.getByCourseParticipantUuid(COURSE_PARTICIPANT_UUID), 1, item.getUuid());
 	}

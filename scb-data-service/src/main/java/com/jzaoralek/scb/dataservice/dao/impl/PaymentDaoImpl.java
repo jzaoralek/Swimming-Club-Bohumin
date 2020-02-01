@@ -43,6 +43,9 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 	private static final String UPDATE = "UPDATE payment SET amount = :"+AMOUNT_PARAM+", type = :"+TYPE_PARAM+", description = :"+DESCRIPTION_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+", course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM+", "
 			+ "course_uuid = :"+COURSE_UUID_PARAM+", payment_date = :"+PAYMENT_DATE_PARAM+", process_type = :"+PROCESS_TYPE_PARAM+", bank_transaction_id_pohybu = :"+BANK_TRANSACTION_ID_POHYBU+" WHERE uuid=:"+UUID_PARAM;
 	private static final String DELETE = "DELETE FROM payment where uuid = :" + UUID_PARAM;
+	
+	private static final String DELETE_BY_COURSE_COURSEPARTICIPANT = "DELETE FROM payment where course_uuid = :" + COURSE_UUID_PARAM + " AND course_participant_uuid = :" + COURSE_PARTIC_UUID_PARAM;
+	
 	private static final String SELECT_BY_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type, bank_transaction_id_pohybu FROM payment WHERE uuid=:" + UUID_PARAM;
 	private static final String SELECT_BY_COURSE_COURSE_PARTICIPANT_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type, bank_transaction_id_pohybu "
 			+ "FROM payment WHERE course_participant_uuid=:" + COURSE_PARTIC_UUID_PARAM + " AND course_uuid=:" + COURSE_UUID_PARAM + " AND payment_date BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM +
@@ -126,6 +129,13 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 	@Override
 	public void delete(Payment course) {
 		namedJdbcTemplate.update(DELETE, new MapSqlParameterSource().addValue(UUID_PARAM, course.getUuid().toString()));
+	}
+	
+	@Override
+	public void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid) {
+		namedJdbcTemplate.update(DELETE_BY_COURSE_COURSEPARTICIPANT, new MapSqlParameterSource().
+				addValue(COURSE_UUID_PARAM, courseUuid.toString()).
+				addValue(COURSE_PARTIC_UUID_PARAM, courseParticipantUuid.toString()));
 	}
 	
 	@Override

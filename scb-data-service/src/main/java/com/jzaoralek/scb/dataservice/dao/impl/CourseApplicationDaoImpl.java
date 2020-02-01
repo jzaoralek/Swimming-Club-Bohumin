@@ -343,6 +343,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER1 = "UPDATE course_course_participant SET notified_semester_1_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
 	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER2 = "UPDATE course_course_participant SET notified_semester_2_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
 	private static final String UPDATE_COURSE_PARTIC_INTERRUPTED_AT = "UPDATE course_course_participant SET course_partic_interrupted_at = :course_partic_interrupted_at where uuid IN ( :uuids ) ";
+	private static final String UPDATE_COURSE_PARTIC_COURSE_UUID = "UPDATE course_course_participant SET course_uuid = :" + COURSE_UUID_PARAM + " where uuid IN ( :uuids ) ";
 	
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
@@ -409,6 +410,19 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		paramMap.addValue("uuids", uuidList);
 		paramMap.addValue("course_partic_interrupted_at", interrupetdAt);
 		namedJdbcTemplate.update(UPDATE_COURSE_PARTIC_INTERRUPTED_AT, paramMap);
+	}
+	
+	@Override
+	public void updateCourseParticCourseUuid(List<UUID> courseCourseParticUuidList, UUID  courseUuid) {
+		List<String> uuidList = new ArrayList<>();
+		for (UUID item : courseCourseParticUuidList) {
+			uuidList.add(item.toString());
+		}
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("uuids", uuidList);
+		paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		namedJdbcTemplate.update(UPDATE_COURSE_PARTIC_COURSE_UUID, paramMap);
 	}
 	
 	@Override

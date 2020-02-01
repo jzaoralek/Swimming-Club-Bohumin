@@ -1,10 +1,13 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +26,12 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
+import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
+import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
+import com.jzaoralek.scb.dataservice.service.PaymentService;
 
 @Service("courseService")
 public class CourseServiceImpl extends BaseAbstractService implements CourseService {
@@ -39,10 +45,19 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	private CourseParticipantDao courseParticipantDao;
 	
 	@Autowired
+	private CourseApplicationService courseApplicationService;
+	
+	@Autowired
 	private LessonService lessonService;
 	
 	@Autowired
 	private CourseLocationDao courseLocationDao;
+	
+	@Autowired
+	private BankPaymentService bankPaymentService;
+	
+	@Autowired
+	private PaymentService paymentService;
 
 	@Override
 	public void delete(UUID uuid) throws ScbValidationException {
@@ -374,5 +389,39 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 			return;
 		}
 		courseDao.updateState(courseUuidList, active);
+	}
+	
+	@Override
+	public void moveParticListToCourse(List<CourseParticipant> courseParticipantList, 
+			UUID courseUuidSrc,
+			UUID courseUuidDest,
+			Calendar from, 
+			Calendar to) {
+		List<CourseCourseParticipantVO> courseCourseParticipantVOList = new ArrayList<>();
+		for (CourseParticipant item : courseParticipantList) {
+			// odstraneni z course_course_participant, puvodni reseni
+//			courseService.deleteParticipantFromCourse(item.getUuid(), courseSelectedUuid);
+			courseCourseParticipantVOList.add(getCourseCourseParticipantVO(item.getUuid(), courseUuidDest));
+		}
+		// aktualizace course_uuid v course_course_participant, cilem je nemenit varsymbol
+		courseApplicationService.updateCourseParticCourseUuid(
+				courseCourseParticipantVOList.stream().map(i -> i.getUuid()).collect(Collectors.toList()), 
+				courseUuidSrc);
+		
+		// odstraneni plateb ucastnika v kurzu
+		courseParticipantList.forEach(i -> paymentService.deleteByCourseAndParticipant(courseUuidDest, i.getUuid()));
+		// znovu spusteni sparovani
+		bankPaymentService.processPaymentPairing(from, to);
+
+		/*
+		 * Nastaveni ukonceni v kurzu pro penechani dochazky
+		 * Problem:
+		 * 	- zůstávají neunikátná záznamy v course_course_participant pro dvojici course_uuid  a course_participant_uuid, pada pri zpetnem  prirazeni
+		 * 	- nepůjde odstranit přihlášku, protože neaktiví účastnící nejsou na detailu vidět a nejde je odebrat
+		*/
+//		courseApplicationService.updateCourseParticInterruption(
+//				courseCourseParticipantVOList.stream().map(i -> i.getUuid()).collect(Collectors.toList()), 
+//				Calendar.getInstance().getTime());
+		
 	}
 }
