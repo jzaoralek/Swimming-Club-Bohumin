@@ -107,6 +107,11 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	}
 	
 	@Test
+	public void testInsertCourseParticInterruption() {
+		courseApplicationDao.insertCourseParticInterruption(UUID.randomUUID(), COURSE_PARTICIPANT_UUID, COURSE_UUID, Calendar.getInstance().getTime());
+	}
+	
+	@Test
 	public void testGetByCourseParticipantUuid() {
 		assertList(courseApplicationDao.getByCourseParticipantUuid(COURSE_PARTICIPANT_UUID), 1, item.getUuid());
 	}

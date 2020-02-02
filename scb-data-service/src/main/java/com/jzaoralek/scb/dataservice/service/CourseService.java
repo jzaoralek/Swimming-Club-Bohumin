@@ -1,7 +1,6 @@
 package com.jzaoralek.scb.dataservice.service;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,7 +70,7 @@ public interface CourseService {
 	void deleteCourseLocation(CourseLocation courseLocatiom);
 	boolean existsByCourseLocation(UUID courseLocationUuid);
 	
-	CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid);
+	CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid, boolean interrupted);
 	
 	List<ScbUser> getTrainersByCourse(UUID courseUuid);
 	void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid);
@@ -80,14 +79,14 @@ public interface CourseService {
 	/**
 	 * Move course participant list to another course.
 	 * @param courseParticipantList
-	 * @param courseUuidSrc
 	 * @param courseUuidDest
+	 * @param courseUuidOrig
 	 * @param from
 	 * @param to
 	 */
 	void moveParticListToCourse(List<CourseParticipant> courseParticipantList, 
-			UUID courseUuidSrc, 
-			UUID courseUuidDest, 
+			UUID courseUuidDest,
+			UUID courseUuidOrig, 
 			Calendar from, 
 			Calendar to);
 }

@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -151,6 +152,15 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 			return;
 		}
 		courseApplicationDao.updateCourseParticCourseUuid(courseParticUuidList, courseUuid);
+	}
+	
+	@Override
+	public void insertCourseParticInterruption(UUID courseCourseParticUuid, UUID courseUuid, Date interrupetdAt) {
+		Objects.requireNonNull(courseCourseParticUuid);
+		Objects.requireNonNull(courseUuid);
+		Objects.requireNonNull(interrupetdAt);
+		
+		courseApplicationDao.insertCourseParticInterruption(UUID.randomUUID(), courseCourseParticUuid, courseUuid, interrupetdAt);
 	}
 
 	@Override

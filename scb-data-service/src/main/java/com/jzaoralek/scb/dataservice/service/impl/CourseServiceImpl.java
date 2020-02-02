@@ -2,7 +2,6 @@ package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -344,8 +343,8 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 
 	@Override
-	public CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid) {
-		return courseParticipantDao.getCourseCourseParticipantVO(courseParticUuid, courseUuid);
+	public CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid, boolean interrupted) {
+		return courseParticipantDao.getCourseCourseParticipantVO(courseParticUuid, courseUuid, interrupted);
 	}
 	
 	@Override
@@ -393,24 +392,31 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	
 	@Override
 	public void moveParticListToCourse(List<CourseParticipant> courseParticipantList, 
-			UUID courseUuidSrc,
 			UUID courseUuidDest,
+			UUID courseUuidOrig,
 			Calendar from, 
 			Calendar to) {
 		List<CourseCourseParticipantVO> courseCourseParticipantVOList = new ArrayList<>();
 		for (CourseParticipant item : courseParticipantList) {
-			// odstraneni z course_course_participant, puvodni reseni
-//			courseService.deleteParticipantFromCourse(item.getUuid(), courseSelectedUuid);
-			courseCourseParticipantVOList.add(getCourseCourseParticipantVO(item.getUuid(), courseUuidDest));
+			courseCourseParticipantVOList.add(getCourseCourseParticipantVO(item.getUuid(), courseUuidOrig, false));
 		}
 		// aktualizace course_uuid v course_course_participant, cilem je nemenit varsymbol
 		courseApplicationService.updateCourseParticCourseUuid(
 				courseCourseParticipantVOList.stream().map(i -> i.getUuid()).collect(Collectors.toList()), 
-				courseUuidSrc);
+				courseUuidDest);
 		
-		// odstraneni plateb ucastnika v kurzu
-		courseParticipantList.forEach(i -> paymentService.deleteByCourseAndParticipant(courseUuidDest, i.getUuid()));
-		// znovu spusteni sparovani
+		// Potreba zachovat dochazku i pro kurz, ze ktereho byl ucastnik prerazen 
+		// 1. Vyhledat v COURSE_COURSE_PARTICIPANT podle course a course_participant
+		// 2. Pokud neexistuje vytvorit zaznam v COURSE_COURSE_PARTICIPANT s course_partic_interrupted_at
+		for (CourseParticipant item : courseParticipantList) {
+			if (getCourseCourseParticipantVO(item.getUuid(), courseUuidOrig, true) == null) {
+				courseApplicationService.insertCourseParticInterruption(item.getUuid(), courseUuidOrig, Calendar.getInstance().getTime());
+			}
+		}
+		
+		// Odstraneni sparovanych plateb ucastnika v puvodnim kurzu
+		courseParticipantList.forEach(i -> paymentService.deleteByCourseAndParticipant(courseUuidOrig, i.getUuid()));
+		// Znovu spusteni sparovani, platba pote evidovana pod novym kurzem
 		bankPaymentService.processPaymentPairing(from, to);
 
 		/*

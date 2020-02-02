@@ -3,7 +3,9 @@ package com.jzaoralek.scb.dataservice.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,13 +86,23 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 
 	@Override
 	public LearningLessonStatsWrapper buildCourseStatistics(UUID courseUuid, UUID participantUuid) {
-		List<LearningLessonStats> learnLessonsStatsList = new ArrayList<LearningLessonStats>();
+		List<LearningLessonStats> learnLessonsStatsList = new ArrayList<>();
 		// oducene vyucovaci hodiny s ucastniky na hodine
 		List<LearningLesson> learningLessonList = learningLessonDao.getByCourseWithFilledParticipantList(courseUuid);
-		List<CourseParticipant> courseParticipantList = new ArrayList<CourseParticipant>();
+		List<CourseParticipant> courseParticipantList = new ArrayList<>();
 		if (participantUuid == null) {
-			// vsichni ucastnici kurzu
-			courseParticipantList.addAll(courseParticipantDao.getByCourseUuid(courseUuid));			
+			// vsichni ucastnici kurzu, kteri nejsou interruped
+			courseParticipantList.addAll(courseParticipantDao.getByCourseUuid(courseUuid));
+			Set<String> notInterruptedUuids = courseParticipantList.stream().map(i -> i.getUuid().toString()).collect(Collectors.toSet());
+			// pridani interrupted ucastniku, kteri nejsou v prvnim seznamu
+			List<CourseParticipant> courseParticipantInterruptedList = courseParticipantDao.getByCourseUuidInterrupted(courseUuid);
+			if (!CollectionUtils.isEmpty(notInterruptedUuids)) {
+				for (CourseParticipant courseParticInterrupted:courseParticipantInterruptedList) {
+					if (!notInterruptedUuids.contains(courseParticInterrupted.getUuid().toString())) {
+						courseParticipantList.add(courseParticInterrupted);
+					}
+				}
+			}
 		} else {
 			// jeden ucastnik
 			courseParticipantList.add(courseParticipantDao.getByUuid(participantUuid, false));			
@@ -100,7 +112,7 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 		CourseParticipant courseParticAttendace = null;
 		for (LearningLesson learninLesson : learningLessonList) {
 			// sestavit seznam ucastniku s ucasti na hodine
-			courseParticAttendaceList = new ArrayList<CourseParticipant>();
+			courseParticAttendaceList = new ArrayList<>();
 			for (CourseParticipant courseParticipant : courseParticipantList) {
 				// pro kazdeho ucastnika kurzu zjistit zda-li ma ucast na hodine
 				courseParticAttendace = new CourseParticipant(courseParticipant);

@@ -24,5 +24,6 @@ public interface CourseApplicationService {
 	void updateNotifiedPayment(List<UUID> courseParticUuidList, boolean firstSemester);
 	void updateCourseParticInterruption(List<UUID> courseParticUuidList, Date interrupetdAt);
 	void updateCourseParticCourseUuid(List<UUID> courseParticUuidList, UUID courseUuid);
+	void insertCourseParticInterruption(UUID courseCourseParticUuid, UUID courseUuid, Date interrupetdAt);
 	void delete(UUID uuid) throws ScbValidationException;
 }

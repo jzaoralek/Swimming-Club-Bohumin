@@ -40,6 +40,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	private static final String COURSE_PARTICIPANT_UUID_PARAM = "COURSE_PARTICIPANT_UUID";
 	private static final String PAYED_PARAM = "PAYED";
+	private static final String COURSE_PARTIC_INTERRUPED_AT_PARAM = "COURSE_PARTIC_INTERRUPED_AT";
 
 	private static final String INSERT = "INSERT INTO course_application (uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by) values (:"+UUID_PARAM+",:"+YEAR_FROM_PARAM+",:"+YEAR_TO_PARAM+",:"+COURSE_PARTICIPANT_UUID_PARAM+",:"+USER_UUID_PARAM+",:"+MODIF_AT_PARAM+",:"+MODIF_BY_PARAM+")";
 	private static final String SELECT_ALL = "select " +
@@ -345,6 +346,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	private static final String UPDATE_COURSE_PARTIC_INTERRUPTED_AT = "UPDATE course_course_participant SET course_partic_interrupted_at = :course_partic_interrupted_at where uuid IN ( :uuids ) ";
 	private static final String UPDATE_COURSE_PARTIC_COURSE_UUID = "UPDATE course_course_participant SET course_uuid = :" + COURSE_UUID_PARAM + " where uuid IN ( :uuids ) ";
 	
+	private static final String INSERT_COURSE_COURSE_PARTICIPANT = "INSERT INTO course_course_participant " +
+			"(uuid, course_participant_uuid, course_uuid, course_partic_interrupted_at) " +
+			" VALUES (:"+UUID_PARAM+", :"+COURSE_PARTICIPANT_UUID_PARAM+", :"+COURSE_UUID_PARAM+", :"+COURSE_PARTIC_INTERRUPED_AT_PARAM+")";
+	
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
 
@@ -423,6 +428,17 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 		paramMap.addValue("uuids", uuidList);
 		paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
 		namedJdbcTemplate.update(UPDATE_COURSE_PARTIC_COURSE_UUID, paramMap);
+	}
+	
+	@Override
+	public void insertCourseParticInterruption(UUID uuid, UUID courseCourseParticUuid, UUID courseUuid, Date interrupetdAt) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue(UUID_PARAM, uuid.toString());
+		paramMap.addValue(COURSE_PARTICIPANT_UUID_PARAM, courseCourseParticUuid.toString());
+		paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		paramMap.addValue(COURSE_PARTIC_INTERRUPED_AT_PARAM, interrupetdAt);
+		
+		namedJdbcTemplate.update(INSERT_COURSE_COURSE_PARTICIPANT, paramMap);
 	}
 	
 	@Override
