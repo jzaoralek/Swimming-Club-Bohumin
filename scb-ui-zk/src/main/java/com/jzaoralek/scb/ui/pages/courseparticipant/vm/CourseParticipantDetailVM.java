@@ -118,7 +118,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		
 		CourseCourseParticipantVO courseCourseParticipantVO = null;
 		for (Course item : this.courseList) {
-			courseCourseParticipantVO = courseService.getCourseCourseParticipantVO(this.courseParticipant.getUuid(), item.getUuid());
+			courseCourseParticipantVO = courseService.getCourseCourseParticipantVO(this.courseParticipant.getUuid(), item.getUuid(), false);
 			if (courseCourseParticipantVO != null) {
 				item.setCourseCourseParticipantVO(courseCourseParticipantVO);
 			}

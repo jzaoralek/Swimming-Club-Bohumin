@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 
 public class CourseParticipant implements IdentEntity {
 
@@ -51,6 +52,7 @@ public class CourseParticipant implements IdentEntity {
 	private UUID representativeUuid;
 	private UUID courseUuid;
 	private String courseName;
+	private CourseType courseType;
 	private CoursePaymentVO coursePaymentVO;
 	private int varsymbolCore;
 	private Date notifiedSemester1PaymentAt;
@@ -260,6 +262,12 @@ public class CourseParticipant implements IdentEntity {
 	public void setIscusSystemId(String iscusSystemId) {
 		this.iscusSystemId = iscusSystemId;
 	}
+	public CourseType getCourseType() {
+		return courseType;
+	}
+	public void setCourseType(CourseType courseType) {
+		this.courseType = courseType;
+	}
 	
 	public String getInCourseInfo() {
 		String ret = null;
@@ -274,6 +282,10 @@ public class CourseParticipant implements IdentEntity {
 		}
 
 		return ret;
+	}
+	
+	public boolean isCourseStandard() {
+		return this.courseType == CourseType.STANDARD;
 	}
 	
 	public Set<PaymentNotifSendState> getPaymentNotifSendState() {
@@ -309,8 +321,8 @@ public class CourseParticipant implements IdentEntity {
 				+ contact + ", birthdate=" + birthdate + ", personalNo=" + personalNo + ", healthInsurance="
 				+ healthInsurance + ", healthInfo=" + healthInfo + ", resultList=" + resultList + ", courseList="
 				+ courseList + ", representativeUuid=" + representativeUuid + ", courseUuid=" + courseUuid
-				+ ", courseName=" + courseName + ", coursePaymentVO=" + coursePaymentVO + ", varsymbolCore="
-				+ varsymbolCore + ", notifiedSemester1PaymentAt=" + notifiedSemester1PaymentAt
+				+ ", courseName=" + courseName + ", courseType=" + courseType + ", coursePaymentVO=" + coursePaymentVO
+				+ ", varsymbolCore=" + varsymbolCore + ", notifiedSemester1PaymentAt=" + notifiedSemester1PaymentAt
 				+ ", notifiedSemester2PaymentAt=" + notifiedSemester2PaymentAt + ", courseParticipationInterruptedAt="
 				+ courseParticipationInterruptedAt + ", iscusRole=" + iscusRole + ", iscusParticId=" + iscusParticId
 				+ ", iscusSystemId=" + iscusSystemId + ", lessonAttendance=" + lessonAttendance + "]";

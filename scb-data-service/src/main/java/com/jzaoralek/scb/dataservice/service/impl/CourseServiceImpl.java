@@ -1,10 +1,12 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +18,19 @@ import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseLocationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
+import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
+import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
+import com.jzaoralek.scb.dataservice.service.PaymentService;
 
 @Service("courseService")
 public class CourseServiceImpl extends BaseAbstractService implements CourseService {
@@ -37,10 +44,19 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	private CourseParticipantDao courseParticipantDao;
 	
 	@Autowired
+	private CourseApplicationService courseApplicationService;
+	
+	@Autowired
 	private LessonService lessonService;
 	
 	@Autowired
 	private CourseLocationDao courseLocationDao;
+	
+	@Autowired
+	private BankPaymentService bankPaymentService;
+	
+	@Autowired
+	private PaymentService paymentService;
 
 	@Override
 	public void delete(UUID uuid) throws ScbValidationException {
@@ -129,6 +145,11 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 
 		boolean insert = course.getUuid() == null;
 		fillIdentEntity(course);
+		
+		if (course.isCourseStandard()) {
+			course.setPriceSemester2(0L);
+		}
+		
 		if (insert) {
 			courseDao.insert(course);
 		} else {
@@ -136,6 +157,83 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 		}
 
 		return course;
+	}
+	
+	@Override
+	public Course buildCopy(UUID courseUuid, String courseApplicationYear, boolean nameFromOrig) {
+		Objects.requireNonNull(courseUuid, "courseUuid is null");
+		Objects.requireNonNull(courseApplicationYear, "courseApplicationYear is null");
+		
+		Course courseOrig = getByUuid(courseUuid);
+		if (courseOrig == null) {
+			throw new IllegalArgumentException("courseOrig is null");
+		}
+		
+		Course courseNew = new Course();
+		courseNew.fillYearFromTo(courseApplicationYear);
+		if (nameFromOrig) {
+			//  set course name from orig course
+			courseNew.setName(messageSource.getMessage("txt.svc.course.name.copyFrom", 
+					new Object[] {courseOrig.getName()}, Locale.getDefault()));
+		}
+		courseNew.setDescription(courseOrig.getDescription());
+		courseNew.setCourseType(CourseType.STANDARD);
+		courseNew.setCourseLocation(courseOrig.getCourseLocation());
+		courseNew.setPriceSemester1(courseOrig.getPriceSemester1());
+		courseNew.setPriceSemester2(courseOrig.getPriceSemester2());
+		courseNew.setMaxParticipantCount(courseOrig.getMaxParticipantCount());
+		
+		return courseNew;
+	}
+	
+	@Override
+	public Course copy(UUID courseUuid, 
+			Course courseNew,
+			boolean copyCoursePartics, 
+			boolean copyLessons, 
+			boolean copyTrainers) throws ScbValidationException {
+		Objects.requireNonNull(courseUuid, "courseUuid is null");
+		Objects.requireNonNull(courseNew, "courseNew is null");
+		
+		Course courseOrig = getByUuid(courseUuid);
+		if (courseOrig == null) {
+			throw new IllegalArgumentException("courseOrig is null");
+		}
+		
+		// create new course
+		Course ret = store(courseNew);
+		
+		// copy participants
+		if (copyCoursePartics) {
+			courseParticipantDao.insetToCourse(courseOrig.getParticipantList(), ret.getUuid());	
+		}
+		
+		// copy trainers
+		if (copyTrainers) {
+			List<ScbUser> trainerList = getTrainersByCourse(courseUuid);
+			if (!CollectionUtils.isEmpty(trainerList)) {
+				addTrainersToCourse(trainerList, ret.getUuid());			
+			}			
+		}
+		
+		// lessons
+		if (copyLessons) {
+			List<Lesson> lessonList = courseOrig.getLessonList();
+			if (!CollectionUtils.isEmpty(lessonList)) {
+				Lesson lessonToAdd = null;
+				for (Lesson lesson : lessonList) {
+					lessonToAdd =  new Lesson();
+					lessonToAdd.setCourseUuid(ret.getUuid());
+					lessonToAdd.setDayOfWeek(lesson.getDayOfWeek());
+					lessonToAdd.setTimeFrom(lesson.getTimeFrom());
+					lessonToAdd.setTimeTo(lesson.getTimeTo());
+					// save to database
+					lessonService.store(lessonToAdd);
+				}
+			}			
+		}
+		
+		return ret;
 	}
 
 	@Override
@@ -245,8 +343,8 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 
 	@Override
-	public CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid) {
-		return courseParticipantDao.getCourseCourseParticipantVO(courseParticUuid, courseUuid);
+	public CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid, boolean interrupted) {
+		return courseParticipantDao.getCourseCourseParticipantVO(courseParticUuid, courseUuid, interrupted);
 	}
 	
 	@Override
@@ -282,5 +380,54 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 			return;
 		}
 		courseDao.removeTrainersFromCourse(trainers, courseUuid);
+	}
+
+	@Override
+	public void updateState(List<UUID> courseUuidList, boolean active) {
+		if (CollectionUtils.isEmpty(courseUuidList)) {
+			return;
+		}
+		courseDao.updateState(courseUuidList, active);
+	}
+	
+	@Override
+	public void moveParticListToCourse(List<CourseParticipant> courseParticipantList, 
+			UUID courseUuidDest,
+			UUID courseUuidOrig,
+			Calendar from, 
+			Calendar to) {
+		List<CourseCourseParticipantVO> courseCourseParticipantVOList = new ArrayList<>();
+		for (CourseParticipant item : courseParticipantList) {
+			courseCourseParticipantVOList.add(getCourseCourseParticipantVO(item.getUuid(), courseUuidOrig, false));
+		}
+		// aktualizace course_uuid v course_course_participant, cilem je nemenit varsymbol
+		courseApplicationService.updateCourseParticCourseUuid(
+				courseCourseParticipantVOList.stream().map(i -> i.getUuid()).collect(Collectors.toList()), 
+				courseUuidDest);
+		
+		// Potreba zachovat dochazku i pro kurz, ze ktereho byl ucastnik prerazen 
+		// 1. Vyhledat v COURSE_COURSE_PARTICIPANT podle course a course_participant
+		// 2. Pokud neexistuje vytvorit zaznam v COURSE_COURSE_PARTICIPANT s course_partic_interrupted_at
+		for (CourseParticipant item : courseParticipantList) {
+			if (getCourseCourseParticipantVO(item.getUuid(), courseUuidOrig, true) == null) {
+				courseApplicationService.insertCourseParticInterruption(item.getUuid(), courseUuidOrig, Calendar.getInstance().getTime());
+			}
+		}
+		
+		// Odstraneni sparovanych plateb ucastnika v puvodnim kurzu
+		courseParticipantList.forEach(i -> paymentService.deleteByCourseAndParticipant(courseUuidOrig, i.getUuid()));
+		// Znovu spusteni sparovani, platba pote evidovana pod novym kurzem
+		bankPaymentService.processPaymentPairing(from, to);
+
+		/*
+		 * Nastaveni ukonceni v kurzu pro penechani dochazky
+		 * Problem:
+		 * 	- zůstávají neunikátná záznamy v course_course_participant pro dvojici course_uuid  a course_participant_uuid, pada pri zpetnem  prirazeni
+		 * 	- nepůjde odstranit přihlášku, protože neaktiví účastnící nejsou na detailu vidět a nejde je odebrat
+		*/
+//		courseApplicationService.updateCourseParticInterruption(
+//				courseCourseParticipantVOList.stream().map(i -> i.getUuid()).collect(Collectors.toList()), 
+//				Calendar.getInstance().getTime());
+		
 	}
 }

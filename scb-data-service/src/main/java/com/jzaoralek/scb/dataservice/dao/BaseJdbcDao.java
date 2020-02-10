@@ -29,6 +29,7 @@ public abstract class BaseJdbcDao {
 	protected static final String USER_UUID_PARAM = "USER_UUID";
 	protected static final String DATE_FROM_PARAM = "DATE_FROM";
 	protected static final String DATE_TO_PARAM = "DATE_TO";
+	protected static final String TYPE_PARAM = "TYPE";
 
 	protected final JdbcTemplate jdbcTemplate;
 	protected final NamedParameterJdbcTemplate namedJdbcTemplate;

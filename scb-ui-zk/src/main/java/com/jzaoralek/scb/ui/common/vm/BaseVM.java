@@ -25,6 +25,7 @@ import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig.CourseApplicationFileType;
@@ -628,6 +629,23 @@ public class BaseVM {
     public Boolean isLoggedUserAdmin() {
     	return isUserLogged() && userInRole("ADMIN");
     }
+    
+    /**
+     * Seznam typu kurzu.
+     * @return
+     */
+    public List<CourseType> getCourseTypeList() {
+		return Arrays.asList(CourseType.values());
+	}
+    
+    /**
+     * Popis pro typ kurzu.
+     * @param courseType
+     * @return
+     */
+    public String getCourseTypeDesc(CourseType courseType) {
+		return Labels.getLabel("txt.ui.CourseType."+courseType.name()+".desc");
+	}
     
 	/**
 	 * Kontrola povoleni podavani prihlasek.

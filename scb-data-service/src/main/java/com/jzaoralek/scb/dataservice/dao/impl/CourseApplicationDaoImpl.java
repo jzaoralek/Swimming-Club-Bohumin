@@ -29,6 +29,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.IscusRole;
 
 @Repository
@@ -39,6 +40,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	private static final String COURSE_PARTICIPANT_UUID_PARAM = "COURSE_PARTICIPANT_UUID";
 	private static final String PAYED_PARAM = "PAYED";
+	private static final String COURSE_PARTIC_INTERRUPED_AT_PARAM = "COURSE_PARTIC_INTERRUPED_AT";
 
 	private static final String INSERT = "INSERT INTO course_application (uuid, year_from, year_to, course_participant_uuid, user_uuid, modif_at, modif_by) values (:"+UUID_PARAM+",:"+YEAR_FROM_PARAM+",:"+YEAR_TO_PARAM+",:"+COURSE_PARTICIPANT_UUID_PARAM+",:"+USER_UUID_PARAM+",:"+MODIF_AT_PARAM+",:"+MODIF_BY_PARAM+")";
 	private static final String SELECT_ALL = "select " +
@@ -320,7 +322,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", ccp.notified_semester_2_payment_at " +
 			", ccp.course_partic_interrupted_at " +
 			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
-			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " + 
+			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
+			", c.type \"COURSE_TYPE_COURSE_PARTICIPANT_UUID\" " +
 			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\"  " +
 			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +
 			", (select sum(amount) from payment where payment.course_participant_uuid = ccp.course_participant_uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\" " +
@@ -329,6 +332,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", course c " +
 			"where " +
 			"c.uuid = ccp.course_uuid " +
+			"AND c.type = :"+TYPE_PARAM+ " " +
 			"AND ccp.course_partic_interrupted_at is null " +
 			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
 			"AND c.year_to = :"+YEAR_TO_PARAM;
@@ -340,6 +344,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER1 = "UPDATE course_course_participant SET notified_semester_1_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
 	private static final String UPDATE_NOTIFIED_PAYMENT_SEMESTER2 = "UPDATE course_course_participant SET notified_semester_2_payment_at = :notifiedAt where course_participant_uuid IN ( :uuids ) ";
 	private static final String UPDATE_COURSE_PARTIC_INTERRUPTED_AT = "UPDATE course_course_participant SET course_partic_interrupted_at = :course_partic_interrupted_at where uuid IN ( :uuids ) ";
+	private static final String UPDATE_COURSE_PARTIC_COURSE_UUID = "UPDATE course_course_participant SET course_uuid = :" + COURSE_UUID_PARAM + " where uuid IN ( :uuids ) ";
+	
+	private static final String INSERT_COURSE_COURSE_PARTICIPANT = "INSERT INTO course_course_participant " +
+			"(uuid, course_participant_uuid, course_uuid, course_partic_interrupted_at) " +
+			" VALUES (:"+UUID_PARAM+", :"+COURSE_PARTICIPANT_UUID_PARAM+", :"+COURSE_UUID_PARAM+", :"+COURSE_PARTIC_INTERRUPED_AT_PARAM+")";
 	
 	@Autowired
 	private CourseParticipantDao courseParticipantDao;
@@ -409,6 +418,30 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	}
 	
 	@Override
+	public void updateCourseParticCourseUuid(List<UUID> courseCourseParticUuidList, UUID  courseUuid) {
+		List<String> uuidList = new ArrayList<>();
+		for (UUID item : courseCourseParticUuidList) {
+			uuidList.add(item.toString());
+		}
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("uuids", uuidList);
+		paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		namedJdbcTemplate.update(UPDATE_COURSE_PARTIC_COURSE_UUID, paramMap);
+	}
+	
+	@Override
+	public void insertCourseParticInterruption(UUID uuid, UUID courseCourseParticUuid, UUID courseUuid, Date interrupetdAt) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue(UUID_PARAM, uuid.toString());
+		paramMap.addValue(COURSE_PARTICIPANT_UUID_PARAM, courseCourseParticUuid.toString());
+		paramMap.addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		paramMap.addValue(COURSE_PARTIC_INTERRUPED_AT_PARAM, interrupetdAt);
+		
+		namedJdbcTemplate.update(INSERT_COURSE_COURSE_PARTICIPANT, paramMap);
+	}
+	
+	@Override
 	public void updatePayed(CourseApplication courseApplication, boolean payed) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		fillIdentEntity(courseApplication, paramMap);
@@ -451,8 +484,10 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 	}
 
 	@Override
-	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom).addValue(YEAR_TO_PARAM, yearTo);
+	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo, CourseType courseType) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(YEAR_FROM_PARAM, yearFrom)
+				.addValue(YEAR_TO_PARAM, yearTo)
+				.addValue(TYPE_PARAM, courseType.name());
 		
 		// vsechny prihlasky za dany rok
 		List<CourseApplication> courseApplicationAllByYear = namedJdbcTemplate.query(SELECT_COURSE_APPLICATION_BY_YEAR_FROM_TO_MIN, paramMap, new CourseApplicationMinRowMapper());
@@ -642,14 +677,15 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipant.setNotifiedSemester1PaymentAt(rs.getTimestamp("notified_semester_1_payment_at"));
 			courseParticipant.setNotifiedSemester2PaymentAt(rs.getTimestamp("notified_semester_2_payment_at"));
 			courseParticipant.setCourseParticipationInterruptedAt(rs.getTimestamp("course_partic_interrupted_at"));
-			 String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
-			 String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");				
-			 if (StringUtils.hasText(courseCourseParticipantUuid)) {
+			String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
+			if (StringUtils.hasText(courseCourseParticipantUuid)) {
 				courseParticipant.setCourseUuid(UUID.fromString(courseCourseParticipantUuid)); 
 			}
+			String courseNameCourseParticipantUuid = rs.getString("COURSE_NAME_COURSE_PARTICIPANT_UUID");
 			if (StringUtils.hasText(courseNameCourseParticipantUuid)) {
 				courseParticipant.setCourseName(courseNameCourseParticipantUuid); 
 			}
+			courseParticipant.setCourseType(CourseType.valueOf(rs.getString("COURSE_TYPE_COURSE_PARTICIPANT_UUID")));
 			
 			// payment sum
 			long paymentSum = rs.getLong("PAYMENT_SUM");

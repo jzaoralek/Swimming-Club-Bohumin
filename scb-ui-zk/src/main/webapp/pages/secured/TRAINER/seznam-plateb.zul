@@ -34,7 +34,8 @@
 						</columns>
 						<rows>
 							<row>
-								<label value="${c:l('txt.ui.common.Semester1')}" style="white-space: nowrap;" />
+								<label value="${c:l('txt.ui.common.Semester1')}" if="${!vm.course.courseStandard}" style="white-space: nowrap;" />
+								<label value="${c:l('txt.ui.common.payed')}" if="${vm.course.courseStandard}" style="white-space: nowrap;" />
 								<cell>
 									<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
 										visible="@load(vm.coursePaymentVO.stateFirstSemester eq 'NO_PAYMENT')"
@@ -60,7 +61,7 @@
 									/ <label value="@load(vm.coursePaymentVO.priceFirstSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" />
 								</cell>
 							</row>
-							<row>
+							<row if="${!vm.course.courseStandard}">
 								<label value="${c:l('txt.ui.common.Semester2')}" style="white-space: nowrap;" />
 								<cell>
 									<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 

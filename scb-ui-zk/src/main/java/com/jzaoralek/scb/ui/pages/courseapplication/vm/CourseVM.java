@@ -9,10 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
@@ -27,7 +24,6 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
@@ -39,32 +35,27 @@ import org.zkoss.zul.Combobox;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
-import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
-import com.jzaoralek.scb.ui.common.WebPages;
-import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
-import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
-import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-public class CourseVM extends BaseVM {
+public class CourseVM extends CourseAbstractVM {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CourseVM.class);
-
+	@WireVariable
+	protected LessonService lessonService;
+	
 	private Course course;
-	private List<String> courseYearList;
-	private String courseYearSelected;
 	private Boolean updateMode;
 	private List<CourseParticipant> participantSelectedList;
 	private List<CourseLocation> courseLocationList;
@@ -72,12 +63,6 @@ public class CourseVM extends BaseVM {
 	private List<ScbUser> trainersToSelect;
 	private ScbUser trainerSelected;
 
-	@WireVariable
-	private CourseService courseService;
-
-	@WireVariable
-	private LessonService lessonService;
-	
 	@Wire
 	private Combobox trainerToSelectCombo;
 
@@ -96,17 +81,12 @@ public class CourseVM extends BaseVM {
 			this.updateMode = true;
 			this.courseYearSelected = course.getYear();
 			// misto kurzu
-			if (this.course.getCourseLocation() != null && this.courseLocationList != null && !this.courseLocationList.isEmpty()) {
-				for (CourseLocation item : this.courseLocationList) {
-					if (item.getUuid().toString().equals(this.course.getCourseLocation().getUuid().toString())) {
-						this.course.setCourseLocation(item);
-					}
-				}
-			}
+			buildCourseLocation();
 			// treneri
 			buildTrainersAll();
 		} else {
 			this.course = new Course();
+			this.course.setCourseType(CourseType.STANDARD);
 			this.updateMode = false;
 			this.courseYearSelected = configurationService.getCourseApplicationYear();
 			// misto kurzu
@@ -128,6 +108,16 @@ public class CourseVM extends BaseVM {
 		});
 	}
 	
+	private void buildCourseLocation() {
+		if (this.course.getCourseLocation() != null && this.courseLocationList != null && !this.courseLocationList.isEmpty()) {
+			for (CourseLocation item : this.courseLocationList) {
+				if (item.getUuid().toString().equals(this.course.getCourseLocation().getUuid().toString())) {
+					this.course.setCourseLocation(item);
+				}
+			}
+		}
+	}
+	
 	@AfterCompose
 	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
 		Selectors.wireComponents(view, this, false);
@@ -135,6 +125,9 @@ public class CourseVM extends BaseVM {
 	
 	private void loadData(UUID uuid) {
 		this.course = courseService.getByUuid(uuid);
+		// misto kurzu
+		buildCourseLocation();
+		// treneri
 		buildTrainersAll();
 		BindUtils.postNotifyChange(null, null, this, "course");
 	}
@@ -312,38 +305,11 @@ public class CourseVM extends BaseVM {
 	}
 	
 	@Command
-	public void newItemCmd() {
-		WebUtils.redirectToNewCourse();
-	}
-	
-	@Command
     public void deleteCmd() {
 		if (!getUpdateMode()) {
 			return;
 		}
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting course with uuid: " + this.course.getUuid());
-		}
-		final Object[] msgParams = new Object[] {this.course.getName()};
-		final UUID uuid = this.course.getUuid();
-		MessageBoxUtils.showDefaultConfirmDialog(
-			"msg.ui.quest.deleteCourse",
-			"msg.ui.title.deleteRecord",
-			new SzpEventListener() {
-				@Override
-				public void onOkEvent() {
-					try {
-						courseService.delete(uuid);
-						WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseDeleted", msgParams));
-						Executions.sendRedirect(WebPages.COURSE_LIST.getUrl());
-					} catch (ScbValidationException e) {
-						LOG.warn("ScbValidationException caught for course with uuid: " + uuid);
-						WebUtils.showNotificationError(e.getMessage());
-					}
-				}
-			},
-			msgParams
-		);
+		deleteCore(this.course, true, null);
 	}
 	
 	/**
@@ -357,6 +323,33 @@ public class CourseVM extends BaseVM {
 		goToSendEmailCore(contactList);
 	}
 	
+	@NotifyChange("course")
+	@Command
+	public void courseTypeChangeCmd() {
+		// potreba pro notifikaci na zul
+	}
+	
+	@NotifyChange("*")
+	@Command
+	public void changeStateCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
+			@BindingParam(WebConstants.ACTIVE_PARAM) boolean active) {
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+		courseService.updateState(Arrays.asList(uuid), active);
+		loadData(uuid);
+		
+		String msg = active ? "msg.ui.info.courseStarted" : "msg.ui.info.courseStopped";
+		WebUtils.showNotificationInfo(Labels.getLabel(msg, new Object[] {this.course.getName()}));
+	}
+	
+	@Override
+	protected void courseYearChangeCmdCore() {
+		// not used	
+	}
+	
 	private void addCoursePartic(boolean fromApplication) {
 		Map<String, Object> args = new HashMap<>();
 		args.put(WebConstants.COURSE_PARAM, this.course);
@@ -366,18 +359,6 @@ public class CourseVM extends BaseVM {
 
 	public Course getCourse() {
 		return course;
-	}
-
-	public List<String> getCourseYearList() {
-		return courseYearList;
-	}
-
-	public String getCourseYearSelected() {
-		return courseYearSelected;
-	}
-
-	public void setCourseYearSelected(String courseYearSelected) {
-		this.courseYearSelected = courseYearSelected;
 	}
 
 	public Boolean getUpdateMode() {

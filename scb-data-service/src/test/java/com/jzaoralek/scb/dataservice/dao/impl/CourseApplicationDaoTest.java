@@ -17,6 +17,7 @@ import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 
 
 public class CourseApplicationDaoTest extends BaseTestCase {
@@ -87,7 +88,7 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 
 	@Test
 	public void testGetAssignedToCourse() {
-		assertList(courseApplicationDao.getAssignedToCourse(YEAR_FROM, YEAR_TO), 0, ITEM_UUID);
+		assertList(courseApplicationDao.getAssignedToCourse(YEAR_FROM, YEAR_TO, CourseType.STANDARD), 0, ITEM_UUID);
 	}
 	
 	@Test
@@ -98,6 +99,16 @@ public class CourseApplicationDaoTest extends BaseTestCase {
 	@Test
 	public void testUpdateCourseParticInterruption() {
 		courseApplicationDao.updateCourseParticInterruption(Arrays.asList(COURSE_PARTICIPANT_UUID), Calendar.getInstance().getTime());
+	}
+	
+	@Test
+	public void testUpdateCourseParticCourseUuid() {
+		courseApplicationDao.updateCourseParticCourseUuid(Arrays.asList(COURSE_PARTICIPANT_UUID), COURSE_UUID);
+	}
+	
+	@Test
+	public void testInsertCourseParticInterruption() {
+		courseApplicationDao.insertCourseParticInterruption(UUID.randomUUID(), COURSE_PARTICIPANT_UUID, COURSE_UUID, Calendar.getInstance().getTime());
 	}
 	
 	@Test

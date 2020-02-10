@@ -15,10 +15,11 @@ public interface CourseParticipantDao {
 	 * @return
 	 */
 	CourseParticipant getCourseParticInOneCourse(UUID courseCourseParticUuid);
-	CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid);
+	CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid, boolean interrupted);
 	boolean existsByPersonalNumber(String personalNumber);
 	CourseParticipant getByVarsymbolAndInterval(String varsymbolCore, int yearFrom, int yearTo);
 	List<CourseParticipant> getByCourseUuid(UUID courseUuid);
+	List<CourseParticipant> getByCourseUuidInterrupted(UUID courseUuid);
 	List<CourseParticipant> getByCourseIncInterruptedUuid(UUID courseUuid);
 	List<CourseParticipant> getByLearningLessonUuid(UUID learningLessonUuid);
 	List<CourseParticipant> getByUserUuid(UUID userUuid);

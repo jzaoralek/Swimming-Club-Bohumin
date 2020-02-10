@@ -44,6 +44,9 @@ public final class WebConstants {
 	public static final String EMAIL_RECIPIENT_LIST_PARAM = "emailRecipientList";
 	public static final String COURSE_LEARN_LESSONS_MONTH_SELECTED_PARAM = "courseLearnLessonsMonthSelected";
 	public static final String USER_LIST_CACHE_PARAM = "userListCache";
+	public static final String NAME_PARAM = "name";
+	public static final String COMPONENT_PARAM = "component";
+	public static final String ACTIVE_PARAM = "active";
 	
 	public static final String YEAR_FROM_PARAM = "yearFrom";
 	public static final String YEAR_TO_PARAM = "yearTo";
@@ -52,6 +55,7 @@ public final class WebConstants {
 	public static final String SEMESTER_PARAM = "semester";
 	public static final String BANK_ACCOUNT_NO_PARAM = "bankAccountNo";
 	public static final String COURSE_LIST_EXT_FILTER_PARAM = "courseListExtFilter";
+	public static final String COURSE_TYPE_PARAM = "courseType";
 	
 	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 
