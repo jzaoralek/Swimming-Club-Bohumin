@@ -225,7 +225,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					"and usr.contact_uuid = con_repr.uuid " +
 					"AND ca.year_from = :"+YEAR_FROM_PARAM+" " +
 					"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
-					"AND cp.uuid NOT IN (SELECT ccp.course_participant_uuid FROM course_course_participant ccp WHERE ccp.course_uuid = :"+COURSE_UUID_PARAM+") " +
+					"AND cp.uuid NOT IN (SELECT ccp.course_participant_uuid FROM course_course_participant ccp WHERE ccp.course_uuid = :"+COURSE_UUID_PARAM+" AND ccp.course_partic_interrupted_at is null) " +
 					"order by ca.modif_at desc ";
 
 	private static final String SELECT_IN_COURSE = "select " +

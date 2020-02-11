@@ -11,8 +11,8 @@
         </Arg>
         <Arg>jdbc.sportlogic</Arg>
         <Arg>
-            <New class = "org.h2.jdbcx.JdbcDataSource">
-                <Set name = "URL"><SystemProperty name="db.url" default="jdbc:h2:~/scb"/></Set>
+            <New class="com.mysql.jdbc.jdbc2.optional.MysqlDataSource">
+                <Set name = "URL"><SystemProperty name="db.url" default="jdbc:mysql://localhost:3306/scb"/></Set>
                 <Set name = "User"><SystemProperty name="db.user" default="scb"/></Set>
                 <Set name = "Password"><SystemProperty name="db.password" default="scb"/></Set>
             </New>
