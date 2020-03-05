@@ -383,7 +383,7 @@ public final class WebUtils {
 	 * @param rcDatePart
 	 * @return
 	 */
-	public static Date parseRcDatePart(String rcDatePart) {
+	public static Pair<Boolean, Date> parseRcDatePart(String rcDatePart) {
 		// validace delka
 		if (rcDatePart.length() != 6) {
 			throw new IllegalArgumentException("Nespravna delka: " + rcDatePart.length());
@@ -407,19 +407,25 @@ public final class WebUtils {
 		}
 
 		// MONTH
+		Boolean male = null;
 		Integer monthInt = Integer.parseInt(rcDatePart.substring(2, 4)) - 1;
 		Integer monthFinal = null;
 		if (monthInt >= 0 && monthInt <= 11) {
+			// muz - normalni
 			monthFinal = monthInt;
+			male = true;
 		} else if (monthInt >= 20 && monthInt <= 31) {
 			// muz - pripocteni 20
 			monthFinal = monthInt - 20;
+			male = true;
 		} else if (monthInt >= 50 && monthInt <= 61) {
 			// zena - normalni (pripocteni 50)
 			monthFinal = monthInt - 50;
+			male = false;
 		} else if (monthInt >= 70 && monthInt <= 81) {
 			// zena - pripocteni 50 + 20
 			monthFinal = monthInt - (50 + 20);
+			male = false;
 		}
 
 		if (monthFinal == null || monthFinal < 0 || monthFinal > 11) {
@@ -442,7 +448,7 @@ public final class WebUtils {
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 
-		return cal.getTime();
+		return new Pair<>(male, cal.getTime());
 	}
 	
 	public static boolean setBirthdateByBirthNumer(String birtNumber, CourseParticipant courseParticipant) {
@@ -454,8 +460,9 @@ public final class WebUtils {
 		}
 		
 		try {
-			Date birthDate = WebUtils.parseRcDatePart(birtNumber.substring(0, birtNumber.indexOf("/")));
-			courseParticipant.setBirthdate(birthDate);
+			Pair<Boolean, Date> sexMaleBirthDate = WebUtils.parseRcDatePart(birtNumber.substring(0, birtNumber.indexOf("/")));
+			courseParticipant.setBirthdate(sexMaleBirthDate.getValue1());
+			courseParticipant.getContact().setSexMale(sexMaleBirthDate.getValue0());
 			return true;
 		} catch (Exception e) {
 			logger.error("Exception caught for personalNumber: " + birtNumber, e);

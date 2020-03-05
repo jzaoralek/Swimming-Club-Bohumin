@@ -34,7 +34,7 @@ public class BirthNumberValidator extends ScbAbstractValidator {
 			try {
 				// DATE PART
 				String valuePreDelim = value.substring(0, value.indexOf("/"));
-				WebUtils.parseRcDatePart(valuePreDelim);			
+				WebUtils.parseRcDatePart(valuePreDelim).getValue1();			
 			} catch (IllegalArgumentException e) {
 				super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaBirthNumber"));
 				return;
