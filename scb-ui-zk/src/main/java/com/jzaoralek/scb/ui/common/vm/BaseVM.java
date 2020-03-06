@@ -204,6 +204,10 @@ public class BaseVM {
 		return this.existingUsernameValidator;
 	}
 	
+	public Validator getSexMaleValidator() {
+		return Validators.getSexmalevalidator();
+	}
+	
 	public Converter<String, Date, Component> getDateConverter() {
 		return Converters.getDateconverter();
 	}

@@ -50,17 +50,35 @@
 								<rows>
 									<row>
 										<cell>
-											<hlayout hflex="1">
-												<hlayout width="150px">
-													<checkbox checked="@bind(fx.participant.courseParticipant.contact.czechCitizenship)" />
-													<label value="${c:l('txt.ui.common.CzechCitizen')}"/>
+<!-- 											<hlayout hflex="1"> -->
+<!-- 												<hlayout width="150px"> -->
+<!-- 													<checkbox checked="@bind(fx.participant.courseParticipant.contact.czechCitizenship)" /> -->
+<!-- 													<label value="${c:l('txt.ui.common.CzechCitizen')}"/> -->
+<!-- 												</hlayout> -->
+<!-- 												<hlayout width="150px"> -->
+<!-- 													<radiogroup id="sexRadioGroup" selectedItem="@bind(fx.participant.courseParticipant.contact.sexMale)" /> -->
+<!-- 													<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" /> -->
+<!-- 	                								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/> -->
+<!-- 												</hlayout> -->
+<!-- 											</hlayout> -->
+											<vlayout style="margin-top: 10px;" width="300px" height="46px">
+												<hlayout hflex="1">
+													<hlayout width="150px">
+														<checkbox checked="@bind(fx.participant.courseParticipant.contact.czechCitizenship)" />
+														<label value="${c:l('txt.ui.common.CzechCitizen')}"/>
+													</hlayout>
+													<hlayout width="150px">
+														<radiogroup id="sexRadioGroup" selectedItem="@bind(fx.participant.courseParticipant.contact.sexMale) @validator(vm.sexMaleValidator, validateBirthNumber=fx.participant.courseParticipant.contact.czechCitizenship, birthNumber=fx.participant.courseParticipant.personalNo)"  />
+														<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" />
+		                								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/>
+													</hlayout>
 												</hlayout>
-												<hlayout width="150px">
-													<radiogroup id="sexRadioGroup" selectedItem="@bind(fx.participant.courseParticipant.contact.sexMale)" />
-													<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" />
-	                								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/>
-												</hlayout>
-											</hlayout>
+		              							<hbox width="300px" align="end" pack="end" sclass="form-grid-validation-hbox">
+													<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[sexRadioGroup])" >
+														<label value="@bind(vmsgs[sexRadioGroup])" />
+													</span>
+												</hbox>										
+											</vlayout>
 										</cell>
 									</row>
 									<row>

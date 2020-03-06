@@ -38,7 +38,14 @@ public class BirthNumberValidator extends ScbAbstractValidator {
 			} catch (IllegalArgumentException e) {
 				super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaBirthNumber"));
 				return;
-			}			
+			}
+			
+			// CHECKSUM, modulo ze součet čísel bez posledního / 11 se musí rovnat poslednímu číslu
+//			if (StringUtils.hasText(valueWithoutDelim) 
+//					&& !WebUtils.validateRcCheckSum(valueWithoutDelim)) {
+//				super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.birthNumberNotValid"));
+//				return;
+//			}
 		}
 
         removeValidationStyle(ctx);

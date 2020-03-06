@@ -5,8 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.AssertTrue;
+
 import org.javatuples.Pair;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.util.CollectionUtils;
 
@@ -129,6 +132,23 @@ public class WebUtilsTest {
 		} catch (ParseException e) {
 			Assert.fail();
 		}
+	}
+	
+	@Ignore
+	@Test
+	public void testValidateRcCheckSum() {
+		// valid personal numbers
+		Assert.assertTrue(WebUtils.validateRcCheckSum("1160080933"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("1162090721"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("0905263678"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("0601201865"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("1002113706"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("0704203555"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("0659113763"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("0556081900"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("0357315926"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("0604073558"));
+		Assert.assertTrue(WebUtils.validateRcCheckSum("8105045553"));
 	}
 	
 	protected void assertEqualsDates(Date date1, Date date2) {

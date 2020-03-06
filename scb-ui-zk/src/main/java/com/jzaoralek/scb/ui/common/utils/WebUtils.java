@@ -373,6 +373,25 @@ public final class WebUtils {
 	}
 	
 	/**
+	 * Validation personal number checksum.
+	 * Number sum without last % 11 == last number.
+	 * @param rcValue
+	 * @return
+	 */
+	public static boolean validateRcCheckSum(String rcValue) {
+		if (!StringUtils.hasText(rcValue)) {
+			return true;
+		}
+		int sum = 0;
+		int item = 0;
+		for (int i = 0; i < rcValue.length(); i++) {
+			item = Integer.valueOf(String.valueOf(rcValue.charAt(i)));
+			sum = sum + item; 
+		} 
+		return sum%11 == Integer.valueOf(String.valueOf(rcValue.charAt(rcValue.length()-1)));
+	}
+	
+	/**
 	 * Parse birth number (RČ) part to Date.
 	 * Na vstupu šestimístné číslo obsahující datum narození.
 	 * Pravidla:

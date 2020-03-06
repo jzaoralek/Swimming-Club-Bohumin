@@ -17,7 +17,11 @@ public final class Validators {
 	private static final BirthNumberValidator birthNumberValidator = new BirthNumberValidator();
 	private static final TimeIntervalValidator timeIntervalValidator = new TimeIntervalValidator();
 	private static final PasswordValidator passwordValidator = new PasswordValidator();
+	private static final SexMaleValidator sexMaleValidator = new SexMaleValidator();
 	
+	public static SexMaleValidator getSexmalevalidator() {
+		return sexMaleValidator;
+	}
 	public static Validator getEmailValidator() {
 		return emailValidator;
 	}
