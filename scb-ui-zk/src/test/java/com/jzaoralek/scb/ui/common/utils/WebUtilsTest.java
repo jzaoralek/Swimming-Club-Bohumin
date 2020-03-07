@@ -5,11 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.AssertTrue;
-
 import org.javatuples.Pair;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.util.CollectionUtils;
 
@@ -134,21 +131,36 @@ public class WebUtilsTest {
 		}
 	}
 	
-	@Ignore
 	@Test
-	public void testValidateRcCheckSum() {
+	public void testValidateBirthNoCheckSum() {
 		// valid personal numbers
-		Assert.assertTrue(WebUtils.validateRcCheckSum("1160080933"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("1162090721"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("0905263678"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("0601201865"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("1002113706"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("0704203555"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("0659113763"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("0556081900"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("0357315926"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("0604073558"));
-		Assert.assertTrue(WebUtils.validateRcCheckSum("8105045553"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("8105045553"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("8254025857"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("1160080933"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("1162090721"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("0905263678"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("0601201865"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("1002113706"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("0704203555"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("0659113763"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("0556081900"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("0357315926"));
+		Assert.assertTrue(WebUtils.validateBirthNoCheckSum("0604073558"));
+		
+		// not valid personal numbers
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("8105045552"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("8254025856"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("1160080930"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("1162090728"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("0905263675"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("0601201868"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("1002113707"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("0704203551"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("0659113768"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("0556081904"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("0357315925"));
+		Assert.assertFalse(WebUtils.validateBirthNoCheckSum("0604073559"));
+		
 	}
 	
 	protected void assertEqualsDates(Date date1, Date date2) {

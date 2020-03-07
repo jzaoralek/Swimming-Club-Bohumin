@@ -13,7 +13,7 @@ public class BirthNumberValidator extends ScbAbstractValidator {
 		String value = (String) ctx.getProperty().getValue();
 		Boolean notNull = (Boolean)ctx.getBindContext().getValidatorArg("notNull");
 		
-		String valueWithoutDelim = value.replace("/", "").replace("_", "");
+		String valueWithoutDelim = WebUtils.getBirthDateWithoutDelims(value);
 		if (notNull != null && notNull && StringUtils.isEmpty(valueWithoutDelim)) {
 			// NOT NULL
 			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.valueRequired"));
@@ -40,12 +40,12 @@ public class BirthNumberValidator extends ScbAbstractValidator {
 				return;
 			}
 			
-			// CHECKSUM, modulo ze součet čísel bez posledního / 11 se musí rovnat poslednímu číslu
-//			if (StringUtils.hasText(valueWithoutDelim) 
-//					&& !WebUtils.validateRcCheckSum(valueWithoutDelim)) {
-//				super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.birthNumberNotValid"));
-//				return;
-//			}
+			// CHECKSUM
+			if (StringUtils.hasText(valueWithoutDelim) 
+					&& !WebUtils.validateBirthNoCheckSum(valueWithoutDelim)) {
+				super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaBirthNumber"));
+				return;
+			}
 		}
 
         removeValidationStyle(ctx);

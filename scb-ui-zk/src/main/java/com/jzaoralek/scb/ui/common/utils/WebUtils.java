@@ -373,22 +373,26 @@ public final class WebUtils {
 	}
 	
 	/**
-	 * Validation personal number checksum.
+	 * Validation personal number CHECKSUM.
 	 * Number sum without last % 11 == last number.
-	 * @param rcValue
+	 * Spočti zbytek po dělení prvních devíti číslic a čísla 11.
+	 * Je-li zbytek 10, musí být poslední číslice 0.
+	 * Jinak poslední číslice musí být rovna zbytku.
+	 * @param birthNo
 	 * @return
 	 */
-	public static boolean validateRcCheckSum(String rcValue) {
-		if (!StringUtils.hasText(rcValue)) {
+	public static boolean validateBirthNoCheckSum(String birthNo) {
+		if (!StringUtils.hasText(birthNo)) {
 			return true;
 		}
-		int sum = 0;
-		int item = 0;
-		for (int i = 0; i < rcValue.length(); i++) {
-			item = Integer.valueOf(String.valueOf(rcValue.charAt(i)));
-			sum = sum + item; 
-		} 
-		return sum%11 == Integer.valueOf(String.valueOf(rcValue.charAt(rcValue.length()-1)));
+		int rcWithoutLastNo = Integer.parseInt(birthNo.substring(0, 9));
+		int modulo = rcWithoutLastNo%11;
+		int lastNo = Integer.parseInt(String.valueOf(birthNo.charAt(birthNo.length()-1)));
+		if (modulo == 10) {
+			return lastNo == 0;
+		} else {
+			return lastNo == modulo;			
+		}
 	}
 	
 	/**
@@ -479,6 +483,9 @@ public final class WebUtils {
 		}
 		
 		try {
+			if (!WebUtils.validateBirthNoCheckSum(WebUtils.getBirthDateWithoutDelims(birtNumber)))  {
+				return false;
+			}
 			Pair<Boolean, Date> sexMaleBirthDate = WebUtils.parseRcDatePart(birtNumber.substring(0, birtNumber.indexOf("/")));
 			courseParticipant.setBirthdate(sexMaleBirthDate.getValue1());
 			courseParticipant.getContact().setSexMale(sexMaleBirthDate.getValue0());
@@ -487,5 +494,18 @@ public final class WebUtils {
 			logger.error("Exception caught for personalNumber: " + birtNumber, e);
 			return false;
 		}
+	}
+	
+	/**
+	 * Return birth number without delimiters.
+	 * @param value
+	 * @return
+	 */
+	public static String getBirthDateWithoutDelims(String value) {
+		if (!StringUtils.hasText(value)) {
+			return null;
+		}
+		
+		return value.replace("/", "").replace("_", "");
 	}
 }
