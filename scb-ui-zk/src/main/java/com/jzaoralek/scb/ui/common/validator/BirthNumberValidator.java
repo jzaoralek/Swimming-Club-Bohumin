@@ -4,10 +4,17 @@ import org.springframework.util.StringUtils;
 import org.zkoss.bind.ValidationContext;
 import org.zkoss.util.resource.Labels;
 
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
 public class BirthNumberValidator extends ScbAbstractValidator {
 
+	private ConfigurationService configurationService;
+	
+	public BirthNumberValidator(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+	
 	@Override
 	public void validate(ValidationContext ctx) {
 		String value = (String) ctx.getProperty().getValue();
@@ -41,7 +48,8 @@ public class BirthNumberValidator extends ScbAbstractValidator {
 			}
 			
 			// CHECKSUM
-			if (StringUtils.hasText(valueWithoutDelim) 
+			if (configurationService.isCheckSumBirthNumAllowed() 
+					&& StringUtils.hasText(valueWithoutDelim) 
 					&& !WebUtils.validateBirthNoCheckSum(valueWithoutDelim)) {
 				super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaBirthNumber"));
 				return;

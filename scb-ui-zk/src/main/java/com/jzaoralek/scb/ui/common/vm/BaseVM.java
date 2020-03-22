@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.ui.common.vm;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -51,6 +52,7 @@ import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.ManifestSolver;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
+import com.jzaoralek.scb.ui.common.validator.BirthNumberValidator;
 import com.jzaoralek.scb.ui.common.validator.ExistingUsernameValidator;
 import com.jzaoralek.scb.ui.common.validator.Validators;
 import com.sportologic.ruianclient.model.RuianValidationResponse;
@@ -92,10 +94,12 @@ public class BaseVM {
 	protected String returnToUrl;
 	
 	private ExistingUsernameValidator existingUsernameValidator;
+	private BirthNumberValidator birthNumberValidator;
 	
 	@Init
 	public void init() {
 		this.existingUsernameValidator = new ExistingUsernameValidator(scbUserService);
+		this.birthNumberValidator = new BirthNumberValidator(configurationService);
 		
 		// naplneni cashovanych hodnot z konfigurace
 		if (configurationService != null) {
@@ -189,7 +193,7 @@ public class BaseVM {
 	}
 
 	public Validator getBirthNumberValidator() {
-		return Validators.getBirthnumbervalidator();
+		return this.birthNumberValidator;
 	}
 
 	public Validator getTimeIntervalValidator() {
@@ -212,27 +216,27 @@ public class BaseVM {
 		return Converters.getDateconverter();
 	}
 
-	public Converter getDateTimeConverter() {
+	public Converter<String, Date, Component> getDateTimeConverter() {
 		return Converters.getDateTimeConverter();
 	}
 
-	public Converter getTimeConverter() {
+	public Converter<String, Time, Component> getTimeConverter() {
 		return Converters.getTimeconverter();
 	}
 
-	public Converter getEnumLabelConverter() {
+	public Converter<String, Enum<?>, Component> getEnumLabelConverter() {
 		return Converters.getEnumlabelconverter();
 	}
 
-	public Converter getTimeSecondConverter() {
+	public Converter<String, Time, Component> getTimeSecondConverter() {
 		return Converters.getTimeSecondconverter();
 	}
 
-	public Converter getIntervaltomillsConverter() {
+	public Converter<String, Long, Component> getIntervaltomillsConverter() {
 		return Converters.getIntervaltomillsconverter();
 	}
 
-	public Converter getMonthConverter() {
+	public Converter<String, Date, Component> getMonthConverter() {
 		return Converters.getMonthConverter();
 	}
 	
@@ -420,39 +424,39 @@ public class BaseVM {
 		
 		StringBuilder mailToRepresentativeSb = new StringBuilder();
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(getLineSeparator());
+		mailToRepresentativeSb.append(getLineSeparator());
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text1"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(getLineSeparator());
+		mailToRepresentativeSb.append(getLineSeparator());
 		
 		// Ucastnik
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text3"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(getLineSeparator());
 		mailToRepresentativeSb.append(courseApplication.getCourseParticipant().getContact().getCompleteName());
 		
 		// Kurz
 		if (courseApplication.getCourseParticipant().getCourseList() != null && !courseApplication.getCourseParticipant().getCourseList().isEmpty()) {
 			Course course = courseApplication.getCourseParticipant().getCourseList().get(0);
-			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(getLineSeparator());
+			mailToRepresentativeSb.append(getLineSeparator());
 			mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text4"));
-			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(getLineSeparator());
 			// nazev a popis
 			mailToRepresentativeSb.append(course.getName() + (StringUtils.hasText(course.getDescription()) ? (", " + course.getDescription()) : ""));
-			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(getLineSeparator());
 			if (course.getCourseLocation() != null) {
 				// nazev a popis mista kurzu
-				mailToRepresentativeSb.append(System.getProperty("line.separator"));
+				mailToRepresentativeSb.append(getLineSeparator());
 				mailToRepresentativeSb.append(course.getCourseLocation().getName() + (StringUtils.hasText(course.getCourseLocation().getDescription()) ? (", " + course.getCourseLocation().getDescription()) : ""));
-				mailToRepresentativeSb.append(System.getProperty("line.separator"));				
+				mailToRepresentativeSb.append(getLineSeparator());				
 			}
 			if (course.getLessonList() != null && !course.getLessonList().isEmpty()) {
 				// lekce
-				mailToRepresentativeSb.append(System.getProperty("line.separator"));
+				mailToRepresentativeSb.append(getLineSeparator());
 				for (Lesson item : course.getLessonList()) {
 					mailToRepresentativeSb.append(getLessonToUi(item));
-					mailToRepresentativeSb.append(System.getProperty("line.separator"));
+					mailToRepresentativeSb.append(getLineSeparator());
 				}
 			}
 			
@@ -461,14 +465,14 @@ public class BaseVM {
 		// specificky text z konfigurace
 		String specText = configurationService.getCourseApplicationEmailSpecText();
 		if (StringUtils.hasText(specText)) {
-			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(getLineSeparator());
+			mailToRepresentativeSb.append(getLineSeparator());
 			mailToRepresentativeSb.append(specText);
-			mailToRepresentativeSb.append(System.getProperty("line.separator"));
+			mailToRepresentativeSb.append(getLineSeparator());
 		}
 		
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
-		mailToRepresentativeSb.append(System.getProperty("line.separator"));
+		mailToRepresentativeSb.append(getLineSeparator());
+		mailToRepresentativeSb.append(getLineSeparator());
 		mailToRepresentativeSb.append(buildMailSignature());
 
 		// mail to course participant representative
@@ -479,14 +483,18 @@ public class BaseVM {
 				, attachmentList);
 	}
 	
+	private String getLineSeparator() {
+		return System.getProperty("line.separator");
+	}
+	
 	protected Mail buildMailToClub(CourseApplication courseApplication) {
 		StringBuilder mailToClupSb = new StringBuilder();
 		String courseApplicationYear = configurationService.getCourseApplicationYear();
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text0", new Object[] {courseApplicationYear}));
-		mailToClupSb.append(System.getProperty("line.separator"));
+		mailToClupSb.append(getLineSeparator());
 		String participantInfo = courseApplication.getCourseParticipant().getContact().getFirstname() + " " + courseApplication.getCourseParticipant().getContact().getSurname() + ", " + getDateConverter().coerceToUi(courseApplication.getCourseParticipant().getBirthdate(), null, null);
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text1", new Object[] {participantInfo}));
-		mailToClupSb.append(System.getProperty("line.separator"));
+		mailToClupSb.append(getLineSeparator());
 		String representativeInfo = courseApplication.getCourseParticRepresentative().getContact().getFirstname() + " " + courseApplication.getCourseParticRepresentative().getContact().getSurname() + ", " + courseApplication.getCourseParticRepresentative().getContact().getEmail1() + ", " + courseApplication.getCourseParticRepresentative().getContact().getPhone1();
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
 

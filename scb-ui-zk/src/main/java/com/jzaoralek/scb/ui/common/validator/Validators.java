@@ -14,7 +14,6 @@ public final class Validators {
 	private static final Validator emailValidator = new EmailValidator();
 	private static final NotNullValidator notNullValidator = new NotNullValidator();
 	private static final NotNullObjectValidator notNullObjectValidator = new NotNullObjectValidator();
-	private static final BirthNumberValidator birthNumberValidator = new BirthNumberValidator();
 	private static final TimeIntervalValidator timeIntervalValidator = new TimeIntervalValidator();
 	private static final PasswordValidator passwordValidator = new PasswordValidator();
 	private static final SexMaleValidator sexMaleValidator = new SexMaleValidator();
@@ -30,9 +29,6 @@ public final class Validators {
 	}
 	public static NotNullObjectValidator getNotNullObjectValidator() {
 		return notNullObjectValidator;
-	}
-	public static BirthNumberValidator getBirthnumbervalidator() {
-		return birthNumberValidator;
 	}
 	public static TimeIntervalValidator getTimeintervalvalidator() {
 		return timeIntervalValidator;
