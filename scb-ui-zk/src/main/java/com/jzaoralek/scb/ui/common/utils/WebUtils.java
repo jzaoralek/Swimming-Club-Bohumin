@@ -40,6 +40,7 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -379,12 +380,19 @@ public final class WebUtils {
 	 * Je-li zbytek 10, musí být poslední číslice 0.
 	 * Jinak poslední číslice musí být rovna zbytku.
 	 * @param birthNo
+	 * @param configurationService
 	 * @return
 	 */
-	public static boolean validateBirthNoCheckSum(String birthNo) {
+	public static boolean validateBirthNoCheckSum(String birthNo, 
+			boolean checkSumBirthNumAllowed) {
 		if (!StringUtils.hasText(birthNo)) {
 			return true;
 		}
+		
+		if (!checkSumBirthNumAllowed) {
+			return true;
+		}
+		
 		int rcWithoutLastNo = Integer.parseInt(birthNo.substring(0, 9));
 		int modulo = rcWithoutLastNo%11;
 		int lastNo = Integer.parseInt(String.valueOf(birthNo.charAt(birthNo.length()-1)));
@@ -474,7 +482,9 @@ public final class WebUtils {
 		return new Pair<>(male, cal.getTime());
 	}
 	
-	public static boolean setBirthdateByBirthNumer(String birtNumber, CourseParticipant courseParticipant) {
+	public static boolean setBirthdateByBirthNumer(String birtNumber, 
+			CourseParticipant courseParticipant,
+			ConfigurationService configurationService) {
 		if (!StringUtils.hasText(birtNumber) || courseParticipant == null) {
 			return false;
 		}
@@ -483,7 +493,7 @@ public final class WebUtils {
 		}
 		
 		try {
-			if (!WebUtils.validateBirthNoCheckSum(WebUtils.getBirthDateWithoutDelims(birtNumber)))  {
+			if (!WebUtils.validateBirthNoCheckSum(WebUtils.getBirthDateWithoutDelims(birtNumber), configurationService.isCheckSumBirthNumAllowed()))  {
 				return false;
 			}
 			Pair<Boolean, Date> sexMaleBirthDate = WebUtils.parseRcDatePart(birtNumber.substring(0, birtNumber.indexOf("/")));

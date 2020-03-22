@@ -373,7 +373,7 @@ public class CourseApplicationVM extends BaseVM {
 			});
 		} else {
 			// predvyplneni datumu narozeni podle rodneho cisla
-			boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getApplication().getCourseParticipant());
+			boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getApplication().getCourseParticipant(), configurationService);
 			if (success) {
 				BindUtils.postNotifyChange(null, null, this, "application");	
 			}

@@ -233,7 +233,7 @@ public class CourseParticipantVM extends BaseVM {
 	@Command
 	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") CourseParticipantVM fx) {
 		// predvyplneni datumu narozeni podle rodneho cisla
-		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getParticipant().getCourseParticipant());
+		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getParticipant().getCourseParticipant(), configurationService);
 		if (success) {
 			BindUtils.postNotifyChange(null, null, this, "participant");
 		}

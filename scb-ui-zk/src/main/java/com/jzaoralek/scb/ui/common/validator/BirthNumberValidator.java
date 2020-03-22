@@ -48,9 +48,8 @@ public class BirthNumberValidator extends ScbAbstractValidator {
 			}
 			
 			// CHECKSUM
-			if (configurationService.isCheckSumBirthNumAllowed() 
-					&& StringUtils.hasText(valueWithoutDelim) 
-					&& !WebUtils.validateBirthNoCheckSum(valueWithoutDelim)) {
+			if (StringUtils.hasText(valueWithoutDelim) 
+					&& !WebUtils.validateBirthNoCheckSum(valueWithoutDelim, configurationService.isCheckSumBirthNumAllowed())) {
 				super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaBirthNumber"));
 				return;
 			}
