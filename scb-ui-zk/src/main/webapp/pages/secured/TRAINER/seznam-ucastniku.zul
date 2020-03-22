@@ -157,9 +157,9 @@
 			         
 			        <template name="model">
 			            <listitem>
-			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid, courseUuid=each.courseParticipant.courseUuid)" >
 			                	<label value="${each.courseParticipant.contact.surname} ${each.courseParticipant.contact.firstname}"
-			                		onClick="@command('detailCmd', uuid=each.uuid, newTab=true)" 
+			                		onClick="@command('detailCmd', uuid=each.uuid, courseUuid=each.courseParticipant.courseUuid, newTab=true)" 
 			                		style="text-decoration: underline !important" />
 			                </listcell>
 			                <listcell label="${each.courseParticipant.courseName}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />

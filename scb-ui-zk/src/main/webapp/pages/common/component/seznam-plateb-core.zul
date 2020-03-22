@@ -1,0 +1,180 @@
+<!-- 
+	Spolecna komponenta pro seznam  plateb zobrazovany na samostatne strance a na tabu v  detailu ucatnika.
+ -->
+<zk>
+	<vlayout>
+		<vbox hflex="1" vflex="1" align="center" pack="center" sclass="scb-panel">
+				<!-- Souhrn plateb -->
+				<grid hflex="1">
+					<auxhead>
+						<auxheader class="header" colspan="3" >
+							<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+								<label value="${c:l('txt.ui.common.Summary')}" />
+							</vbox>
+						</auxheader>
+					</auxhead>
+					<columns>
+						<column />
+						<column align="right" />
+						<column align="right"/>
+					</columns>
+					<rows>
+						<row>
+							<label value="${c:l('txt.ui.common.Semester1')}" if="${!vm.course.courseStandard}" style="white-space: nowrap;" />
+							<label value="${c:l('txt.ui.common.payed')}" if="${vm.course.courseStandard}" style="white-space: nowrap;" />
+							<cell>
+								<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+									visible="@load(vm.coursePaymentVO.stateFirstSemester eq 'NO_PAYMENT')"
+									popup="semester1Popup" />
+							    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
+							    	visible="@load(vm.coursePaymentVO.stateFirstSemester eq 'PARTLY')"
+							    	popup="semester1Popup" />
+							    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
+							    	visible="@load(vm.coursePaymentVO.stateFirstSemester eq 'PAYED')"
+							    	popup="semester1Popup" />
+							    <popup id="semester1Popup">
+							    	<vbox style="margin: 5px;">
+								    	<label value="@load(vm.coursePaymentVO.stateFirstSemester) @converter(vm.enumLabelConverter)" />
+								    	<hbox visible="@load(vm.coursePaymentVO.stateFirstSemester eq 'PARTLY')">
+								    		<label value="${c:l('txt.ui.common.ToPay')}" style="white-space: nowrap;" />
+								    		<label value="@load(vm.coursePaymentVO.toPayFirstSemester)" /><label value=" ${c:l('txt.ui.common.CZK')}" />
+								    	</hbox>
+							    	</vbox>
+							    </popup>
+							</cell>
+							<cell>
+								<label value="@load(vm.coursePaymentVO.payedFirstSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" /> 
+								/ <label value="@load(vm.coursePaymentVO.priceFirstSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" />
+							</cell>
+						</row>
+						<row if="${!vm.course.courseStandard}">
+							<label value="${c:l('txt.ui.common.Semester2')}" style="white-space: nowrap;" />
+							<cell>
+								<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+									visible="@load(vm.coursePaymentVO.stateSecondSemester eq 'NO_PAYMENT')"
+									popup="semester2Popup" />
+							    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
+							    	visible="@load(vm.coursePaymentVO.stateSecondSemester eq 'PARTLY')"
+							    	popup="semester2Popup"/>
+							    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
+							    	visible="@load(vm.coursePaymentVO.stateSecondSemester eq 'PAYED')"
+							    	popup="semester2Popup" />
+							    <popup id="semester2Popup">
+							    	<vbox style="margin: 5px;">
+								    	<label value="@load(vm.coursePaymentVO.stateSecondSemester) @converter(vm.enumLabelConverter)" />
+								    	<hbox visible="@load(vm.coursePaymentVO.stateSecondSemester eq 'PARTLY')">
+								    		<label value="${c:l('txt.ui.common.ToPay')}" style="white-space: nowrap;" />
+								    		<label value="@load(vm.coursePaymentVO.toPaySecondSemester)" /><label value=" ${c:l('txt.ui.common.CZK')}" />
+								    	</hbox>
+							    	</vbox>
+							    </popup>
+							</cell>
+							<cell>
+								<label value="@load(vm.coursePaymentVO.payedSecondSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" /> 
+								/ <label value="@load(vm.coursePaymentVO.priceSecondSemester)" /> <label value=" ${c:l('txt.ui.common.CZK')}" />
+							</cell>
+						</row>
+						<row>
+							<label value="${c:l('txt.ui.common.Overpayed')}" />
+							<cell>
+								<a iconSclass="z-icon-exclamation" style="font-size: 20px; color: red;" visible="@load(vm.coursePaymentVO.overpayed)" />
+							</cell>
+							<cell>
+								<label value="@load(vm.coursePaymentVO.getOverpayed())" /> <label value=" ${c:l('txt.ui.common.CZK')}" />
+							</cell>
+						</row>
+						<row style="background: #e4e6e9;">
+							<label value="${c:l('txt.ui.common.Sum')}" style="font-weight: bold;" />
+							<cell >
+								<a iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
+									visible="@load(vm.coursePaymentVO.stateTotal eq 'NO_PAYMENT')"
+									popup="paymentSumPopup" />
+							    <a iconSclass="z-icon-circle" style="font-size: 20px; color: orange;" 
+							    	visible="@load(vm.coursePaymentVO.stateTotal eq 'PARTLY')"
+							    	popup="paymentSumPopup" />
+							    <a iconSclass="z-icon-check-circle" style="font-size: 20px; color: green;" 
+							    	visible="@load(vm.coursePaymentVO.stateTotal eq 'PAYED')"
+							    	popup="paymentSumPopup" />
+							    <popup id="paymentSumPopup">
+							    	<vbox style="margin: 5px;">
+								    	<label value="@load(vm.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)" />
+								    	<hbox visible="@load(vm.coursePaymentVO.stateTotal eq 'PARTLY')">
+								    		<label value="${c:l('txt.ui.common.ToPay')}" style="white-space: nowrap;" />
+								    		<label value="@load(vm.coursePaymentVO.toPaySum)" /><label value=" ${c:l('txt.ui.common.CZK')}" />
+								    	</hbox>
+							    	</vbox>
+							    </popup>
+							</cell>
+							<cell>
+								<label value="@load(vm.coursePaymentVO.paymentSum)" style="font-weight: bold;" />
+						    	<label value=" ${c:l('txt.ui.common.CZK')}" style="font-weight: bold;"/>
+						    	<label value=" / " style="font-weight: bold;" /> 
+						    	<label value="@load(vm.coursePaymentVO.totalPrice)" style="font-weight: bold;" /> <label value=" ${c:l('txt.ui.common.CZK')}" style="font-weight: bold;" />
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</vbox>
+	</vlayout>
+
+	<vlayout vflex="1" spacing="0" sclass="mobile-overflow-x-auto">
+		<listbox model="@load(vm.paymentList)"
+			id="paymentList"
+			hflex="1"
+			style="margin-top: 20px;"
+			mold="paging"
+			pageSize="10"
+			height="400px"
+			emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+			class="listbox" >
+	        <auxhead>
+	            <auxheader class="header" colspan="5" >
+	            	<hbox hflex="1" height="42px" align="center" >
+		            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+	            			<hbox vflex="1" align="center">
+	            				<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
+	            					sclass="btn-warning" 
+	            					iconSclass="z-icon-plus"
+	            					if="${vm.isLoggedUserInRole('ADMIN')}" />
+	            				<button onClick="@command('pairPaymentManualCmd')" 
+	            					sclass="btn-warning" 
+	            					label="${c:l('txt.ui.common.RucneZparovat')}"
+	            					if="${vm.isLoggedUserInRole('ADMIN')}" />
+	            			</hbox>
+	            		</vbox>
+	            		<vbox hflex="1" vflex="1" align="end" pack="center" sclass="header-div" >
+	            			<hbox vflex="1" pack="center" align="center">
+	            				<button iconSclass="z-icon-download" onClick="@command('exportToExcel',listbox=paymentList)" sclass="toolbar-btn" tooltiptext="${c:l('txt.ui.common.downloadToFile')}" />
+            					<button iconSclass="z-icon-refresh" onClick="@command('refreshDataCmd')" sclass="toolbar-btn" tooltiptext="${c:l('txt.ui.common.refreshData')}" />
+							</hbox>
+						</vbox>
+					</hbox>
+	            </auxheader>
+	        </auxhead>
+	        
+	        <listhead>
+	            <listheader label="${c:l('txt.ui.common.date')}" sort="auto(paymentDate)" align="left" />
+	            <listheader label="${c:l('txt.ui.common.Type')}" sort="auto(type)" align="left" />
+	            <listheader label="${c:l('txt.ui.common.Processed')}" sort="auto(processType)" align="left" />
+	            <listheader label="${c:l('txt.ui.common.Amount')}" sort="auto(amount)" align="center" />
+	            <listheader hflex="min" align="center" />
+	        </listhead>
+	         
+	        <template name="model">
+	            <listitem>
+	                <listcell label="${each.paymentDate}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+	                <listcell label="@load(each.type) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+	                <listcell label="@load(each.processType) @converter(vm.enumLabelConverter)" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+	                <listcell label="${each.amount} ${c:l('txt.ui.common.CZK')}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+	                <listcell>
+						<button iconSclass="z-icon-ellipsis-h" hflex="min" width="20px" popup="menuPayment_${each.uuid}, position=after_end" if="${vm.isLoggedUserInRole('ADMIN')}" />
+	                	<menupopup id="menuPayment_${each.uuid}" if="${vm.isLoggedUserInRole('ADMIN')}" >
+							<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
+							<menuitem label="Odstranit" onClick="@command('deleteCmd', item=each)" disabled="@load(each.processType eq 'AUTOMATIC')" />
+				       	</menupopup>
+	                </listcell>
+	            </listitem>
+	        </template>
+	    </listbox>
+	</vlayout>
+</zk>

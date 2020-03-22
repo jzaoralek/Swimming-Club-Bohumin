@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -31,6 +32,7 @@ import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.IscusRole;
 import com.jzaoralek.scb.dataservice.domain.LearningLessonStatsWrapper;
 import com.jzaoralek.scb.dataservice.domain.Result;
@@ -46,7 +48,6 @@ import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
-import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -54,6 +55,13 @@ import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
+import bsh.This;
+
+/**
+ * VM for course particinat detail.
+ * @author jakub.zaoralek
+ *
+ */
 public class CourseParticipantVM extends BaseVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseParticipantVM.class);
@@ -76,13 +84,13 @@ public class CourseParticipantVM extends BaseVM {
 	private Listitem swimStyleListitemSelected;
 	private List<Listitem> courseItemList;
 	private Listitem courseListitemSelected;
-	private String pageHeadline;
 	private CourseApplication participant;
 	private LearningLessonStatsWrapper lessonStats;
 	private boolean attendanceTabSelected;
 	private UUID courseUuidSelected;
 	private final List<Listitem> iscusRoleList = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(IscusRole.class));
 	private Listitem iscusRoleSelected;
+	private boolean paymentLoaded = false;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -97,7 +105,7 @@ public class CourseParticipantVM extends BaseVM {
 			this.pageHeadline = this.participant.getCourseParticipant().getContact().getCompleteName();
 		}
 		if (StringUtils.hasText(courseUuid)) {
-			this.attendanceTabSelected = true;
+			// this.attendanceTabSelected = true;
 			this.courseUuidSelected = UUID.fromString(courseUuid);
 		}
 		setReturnPage(fromPage);
@@ -132,7 +140,7 @@ public class CourseParticipantVM extends BaseVM {
 			courseApplicationService.store(this.participant);
 			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
 		} catch (ScbValidationException e) {
-			LOG.warn("ScbValidationException caught for application: " + this.participant);
+			LOG.warn("ScbValidationException caught for application: " + this.participant, e);
 			WebUtils.showNotificationError(e.getMessage());
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for application: " + this.participant, e);
@@ -230,6 +238,18 @@ public class CourseParticipantVM extends BaseVM {
 		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getParticipant().getCourseParticipant());
 		if (success) {
 			BindUtils.postNotifyChange(null, null, this, "participant");
+		}
+	}
+	
+	/**
+	 * Load payment tab.
+	 */
+	@Command
+	public void paymentLoadCmd() {
+		if (!this.paymentLoaded) {
+			EventQueueHelper.publish(ScbEvent.RELOAD_COURSEPARTIC_PAYMENT_DATA_EVENT, 
+					new Pair<CourseParticipant,String>(this.participant.getCourseParticipant(), this.courseUuidSelected.toString()));
+			this.paymentLoaded = true;
 		}
 	}
 
@@ -334,10 +354,6 @@ public class CourseParticipantVM extends BaseVM {
 
 	public void setCourseListitemSelected(Listitem courseListitemSelected) {
 		this.courseListitemSelected = courseListitemSelected;
-	}
-
-	public String getPageHeadline() {
-		return pageHeadline;
 	}
 
 	public LearningLessonStatsWrapper getLessonStats() {

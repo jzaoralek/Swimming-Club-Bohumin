@@ -161,16 +161,18 @@ public class CourseApplicationListVM extends BaseContextVM {
 	}
 
 	@Command
-    public void detailCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid, @BindingParam(WebConstants.NEW_TAB_PARAM) final Boolean newTab) {
+    public void detailCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid,
+    		@BindingParam(WebConstants.COURSE_UUID_PARAM) final UUID courseUuid,
+    		@BindingParam(WebConstants.NEW_TAB_PARAM) final Boolean newTab) {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
 		String targetPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_DETAIL.getUrl() : WebPages.PARTICIPANT_DETAIL.getUrl();
 		WebPages fromPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_LIST : WebPages.PARTICIPANT_LIST;
 		if (newTab != null && newTab) {
-			Executions.getCurrent().sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage, "_blank");
+			Executions.getCurrent().sendRedirect(targetPage + "?" + WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid, "_blank");
 		} else {
-			Executions.getCurrent().sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
+			Executions.getCurrent().sendRedirect(targetPage + "?"+ WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid);
 		}
 	}
 	

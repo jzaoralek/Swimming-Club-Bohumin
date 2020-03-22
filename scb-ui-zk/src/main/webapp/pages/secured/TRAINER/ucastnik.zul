@@ -42,6 +42,8 @@
 				        <tab id="courseParticipantRepresentative" label="${c:l('txt.ui.common.representative')}" />
 				        <tab id="courseParticipantResult" label="${c:l('txt.ui.common.results')}" />
 				        <tab id="lessonAttendanceStats" label="${c:l('txt.ui.common.attendance')}" selected="@load(vm.attendanceTabSelected)" />
+				        <tab id="paymentList" label="${c:l('txt.ui.common.Payments')}" onSelect="@command('paymentLoadCmd')" />
+<!-- 				        onSelect="@command('paymentLoadCmd')" -->
 				    </tabs>
 				    <tabpanels>
 				    	<tabpanel>
@@ -504,6 +506,13 @@
 				    			</hlayout>
 				    			
 				    			<lesson-stats lessonStats="${vm.lessonStats}" participantMode="true" />
+				    		</vlayout>
+				    	</tabpanel>
+				    	<tabpanel 
+				    		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseparticipant.vm.PaymentListVM')" >
+				    		<!-- Platby -->
+				    		<vlayout spacing="0" vflex="1" >
+			    				<include src="/pages/common/component/seznam-plateb-core.zul" hflex="1" vflex="1"/>
 				    		</vlayout>
 				    	</tabpanel>
 				    </tabpanels>
