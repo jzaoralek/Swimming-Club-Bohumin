@@ -186,7 +186,7 @@ CREATE TABLE user_trainer_course (
 CREATE TABLE payment(
 	uuid varchar(36),
 	amount INT,
-	type ENUM('CASH','BANK_TRANS','DONATE','OTHER') NOT NULL,
+	type ENUM('CASH','BANK_TRANS','DONATE','DISCOUNT','OTHER') NOT NULL,
 	process_type ENUM('AUTOMATIC','MANUAL','PAIRED') NOT NULL,
 	description VARCHAR(100) CHARACTER SET utf8,
 	payment_date TIMESTAMP default CURRENT_TIMESTAMP NOT NULL,

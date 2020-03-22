@@ -55,8 +55,6 @@ import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-import bsh.This;
-
 /**
  * VM for course particinat detail.
  * @author jakub.zaoralek
