@@ -73,4 +73,10 @@
 	    <macro-uri>/pages/common/component/ruian-address.zul</macro-uri>
 	</component>
 
+	<!-- Parametry kopirovani kurzu -->
+	<component>
+	    <component-name>course-copy-params</component-name>    
+	    <macro-uri>/pages/common/component/course-copy-params.zul</macro-uri>
+	</component>
+	
 </language-addon>

@@ -6,9 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -38,9 +40,7 @@ import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
-import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
-import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -122,6 +122,10 @@ public class CourseApplicationVM extends BaseVM {
 				this.courseLocationList = courseService.getCourseLocationAll();
 				// seznam vsech kurzu
 				this.courseListAll = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
+				// vyfiltrovat pouze aktivni
+				if (!CollectionUtils.isEmpty(this.courseListAll))  {
+					this.courseListAll = this.courseListAll.stream().filter(i -> i.isActive()).collect(Collectors.toList());
+				}
 			} else {
 				// seznam vybranych kurzu
 				this.courseList = courseService.getByCourseParticipantUuid(this.application.getCourseParticipant().getUuid(), this.application.getYearFrom(), this.application.getYearTo());
@@ -369,7 +373,7 @@ public class CourseApplicationVM extends BaseVM {
 			});
 		} else {
 			// predvyplneni datumu narozeni podle rodneho cisla
-			boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getApplication().getCourseParticipant());
+			boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getApplication().getCourseParticipant(), configurationService);
 			if (success) {
 				BindUtils.postNotifyChange(null, null, this, "application");	
 			}

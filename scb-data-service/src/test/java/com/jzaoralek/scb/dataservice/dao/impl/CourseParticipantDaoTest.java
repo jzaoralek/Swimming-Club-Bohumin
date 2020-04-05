@@ -60,7 +60,7 @@ public class CourseParticipantDaoTest extends BaseTestCase {
 	
 	@Test
 	public void testGetCourseCourseParticipantVO() {
-		courseParticipantDao.getCourseCourseParticipantVO(UUID.randomUUID(), UUID.randomUUID());
+		courseParticipantDao.getCourseCourseParticipantVO(UUID.randomUUID(), UUID.randomUUID(), false);
 	}
 	
 	@Test

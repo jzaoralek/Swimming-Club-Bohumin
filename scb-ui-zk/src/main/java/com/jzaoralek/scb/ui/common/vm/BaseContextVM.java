@@ -12,8 +12,8 @@ import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
 public abstract class BaseContextVM extends BaseVM {
 
-	private List<String> courseYearList;
-	private String courseYearSelected;
+	protected List<String> courseYearList;
+	protected String courseYearSelected;
 	
 	protected abstract void courseYearChangeCmdCore();
 

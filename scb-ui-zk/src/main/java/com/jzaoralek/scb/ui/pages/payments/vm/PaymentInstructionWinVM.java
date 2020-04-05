@@ -12,6 +12,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Window;
 
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
@@ -38,6 +39,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 	private String yearFromTo;
 	private Date paymentDeadline;
 	private String optionalText;
+	private CourseType courseType;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -48,7 +50,13 @@ public class PaymentInstructionWinVM extends BaseVM {
 		this.firstSemester = (boolean)WebUtils.getArg(WebConstants.SEMESTER_PARAM);
 		this.bankAccountNumber = (String)WebUtils.getArg(WebConstants.BANK_ACCOUNT_NO_PARAM);
 		this.yearFromTo = (String)WebUtils.getArg(WebConstants.YEAR_FROM_TO_PARAM);
-		this.pageHeadline = this.firstSemester ? Labels.getLabel("txt.ui.common.PaymentInstructionsFirstSemester") : Labels.getLabel("txt.ui.common.PaymentInstructionsSecondSemester");
+		this.courseType = (CourseType)WebUtils.getArg(WebConstants.COURSE_TYPE_PARAM);
+		
+		if (this.courseType == CourseType.STANDARD) {
+			this.pageHeadline = Labels.getLabel("txt.ui.common.PaymentInstruction");
+		} else {
+			this.pageHeadline = this.firstSemester ? Labels.getLabel("txt.ui.common.PaymentInstructionsFirstSemester") : Labels.getLabel("txt.ui.common.PaymentInstructionsSecondSemester");			
+		}
 
 		initData(courseApplicationList, yearFrom, this.firstSemester, bankAccountNumber);
 	}
@@ -65,7 +73,8 @@ public class PaymentInstructionWinVM extends BaseVM {
 				, getDateConverter().coerceToUi(this.paymentDeadline, null, null)
 				, this.optionalText
 				, buildMailSignature()
-				, this.firstSemester);
+				, this.firstSemester
+				, this.courseType);
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentInstructionSent"));
 		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT, null, null);

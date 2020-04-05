@@ -37,6 +37,8 @@ INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_b
 VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499626', 'ATTENDANCE_FOR_PARENTS_VISIBLE', 'Viditelnost docházky pro rodiče.',  'true', 'BOOLEAN', now(), 'SYSTEM');
 INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by) 
 VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499627', 'ALLOW_COURSE_APPL_NOT_VALID_ADDRESS', 'Povolení založení přihlášky s neověřenou adresou',  'false', 'BOOLEAN', now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, modif_at, modif_by)
+VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499628', 'ALLOW_CHECK_SUM_BIRTHNUM_VALIDATION', 'Povolení validace rodného čísla na kontrolní součet',  'true', 'BOOLEAN', now(), 'SYSTEM');
 
 INSERT INTO codelist_item (uuid, item_type, name, description, modif_at, modif_by) 
 VALUES ('82bb2300-8234-11e6-ae22-56b6b6499611', 'SWIMMING_STYLE', 'Prsa', '',  now(), 'SYSTEM');

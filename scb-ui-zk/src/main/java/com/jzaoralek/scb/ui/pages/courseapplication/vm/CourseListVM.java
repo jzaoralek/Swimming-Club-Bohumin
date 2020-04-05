@@ -2,7 +2,9 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,21 +13,26 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.zkoss.bind.BindUtils;
+import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
@@ -33,27 +40,25 @@ import org.zkoss.zul.Listheader;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
-import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
-import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
 import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseExternalFilter;
 import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseFilter;
 
-public class CourseListVM extends BaseContextVM {
+public class CourseListVM extends CourseAbstractVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseListVM.class);
 
@@ -66,9 +71,10 @@ public class CourseListVM extends BaseContextVM {
 	private Boolean myCourses;
 	/** Cache object for external filter */
 	private CourseExternalFilter externalFilter;
-
-	@WireVariable
-	private CourseService courseService;
+	private List<Course> selectedItems;
+	/** Course copy structure Pair<source UUID, new course> */
+	private List<Pair<UUID,Course>> courseCopyItems;
+	private boolean multipleMode;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -97,6 +103,12 @@ public class CourseListVM extends BaseContextVM {
 		});
 	}
 	
+	@AfterCompose
+	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
+		Selectors.wireComponents(view, this, false);
+	}
+	
+	
 	private void updateExternalFilterCache()  {
 		UUID courseLocSelUuid = null;
 		if (this.showCourseFilter && this.courseLocationSelected != null) {
@@ -118,7 +130,7 @@ public class CourseListVM extends BaseContextVM {
 		if (this.externalFilter != null) {
 			this.myCourses = this.externalFilter.getMyCourses();
 			
-			if (this.showCourseFilter) {
+			if (this.showCourseFilter && this.externalFilter.getCourseLocationUuid() != null) {
 				List<CourseLocation> courseLocFilterred = this.courseLocationList.
 							stream().
 							filter(i -> i.getUuid().toString().equals(this.externalFilter.getCourseLocationUuid().toString())).
@@ -172,50 +184,158 @@ public class CourseListVM extends BaseContextVM {
 		updateExternalFilterCache();
 	}
 	
-	@NotifyChange("*")
 	@Command
     public void deleteCmd(@BindingParam(WebConstants.ITEM_PARAM) final Course item) {
 		if (item ==  null) {
 			throw new IllegalArgumentException("Course");
 		}
+		
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Deleting course with uuid: " + item.getUuid());
 		}
-		final Object[] msgParams = new Object[] {item.getName()};
-		final UUID uuid = item.getUuid();
+		
+		deleteCore(item, false, this::loadData);
+	}
+	
+	/**
+	 * Course list delete.
+	 */
+	@Command
+	public void deleteListCmd() {
+		if (CollectionUtils.isEmpty(this.selectedItems)) {
+			return;
+		}
+		
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+
+		final List<Course> itemsToDelete = this.selectedItems;
+		
 		MessageBoxUtils.showDefaultConfirmDialog(
-			"msg.ui.quest.deleteCourse",
+			"msg.ui.quest.deleteCourseList",
 			"msg.ui.title.deleteRecord",
 			new SzpEventListener() {
 				@Override
 				public void onOkEvent() {
 					try {
-						courseService.delete(uuid);
-						EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_DATA_EVENT, null, null);
-						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseDeleted", msgParams));
+						for (Course item : itemsToDelete) {
+							if (LOG.isDebugEnabled()) {
+								LOG.debug("Deleting course with uuid: " + item.getUuid());
+							}
+							courseService.delete(item.getUuid());
+						}
+						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseListDeleted"));
+						loadData();
 					} catch (ScbValidationException e) {
-						LOG.warn("ScbValidationException caught for course with uuid: " + uuid);
+						LOG.warn("ScbValidationException caught during deleting courses: " + itemsToDelete, e);
 						WebUtils.showNotificationError(e.getMessage());
 					}
 				}
-			},
-			msgParams
+			}
 		);
+	}
+	
+	/**
+	 * Create selected course copy items and open dialog window.
+	 * @param uuid
+	 * @param courseName
+	 * @param component
+	 */
+	@NotifyChange({"courseCopy","copyCourseType","copyCourseName","copyCourseYear","copyMultipleItemsMode","buildCurrentCourseYear()"})
+	@Command
+	public void buildCourseCopyItemsCmd(@BindingParam(WebConstants.COMPONENT_PARAM) Component component) {
+		if (CollectionUtils.isEmpty(this.selectedItems)) {
+			return;
+		}
+		
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		this.courseCopyItems = new ArrayList<>();
+		this.copyCourseType = CourseType.STANDARD;
+		this.copyCourseName = "Kopie ${název kurzu}";
+		this.copyCourseYear = configurationService.getCourseApplicationYear();;
+		
+		for (Course item : this.selectedItems) {
+			this.courseCopyItems.add(new Pair<>(item.getUuid(), courseService.buildCopy(item.getUuid(), configurationService.getCourseApplicationYear(), true)));			
+		}
+		
+		this.copyMultipleItemsMode = true;
+		
+		courseListCopyPopup.open(component);
+	}
+	
+	/**
+	 * Persist course copy items.
+	 */
+	@Command
+	public void copyItemsCmd() {
+		if (CollectionUtils.isEmpty(this.selectedItems)) {
+			return;
+		}
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+				
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Copying courses: " + this.selectedItems);
+		}
+		
+		Course courseNew = null;
+		try {
+			for (Pair<UUID,Course> item : this.courseCopyItems) {
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Copying course with uuid: " + item.getValue0());
+				}
+				// fill shared attributes
+				item.getValue1().setCourseType(this.copyCourseType);
+				item.getValue1().fillYearFromTo(this.copyCourseYear);
+				// copy participants allow only in same year
+				if (!isCopyCourseYearSameAsCurrent()) {
+					this.copyParticipants = false;
+				}
+				// copying course
+				courseNew = courseService.copy(item.getValue0(), item.getValue1(), this.copyParticipants, this.copyLessons, this.copyTrainers);
+			}
+			
+			loadData();
+			
+			courseListCopyPopup.close();
+			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseListCopied", new Object[] {courseNew.getYear()}));
+			
+		} catch (ScbValidationException e) {
+			LOG.warn("ScbValidationException caught for course: " + courseNew, e);
+			WebUtils.showNotificationError(e.getMessage());
+		} catch (Exception e) {
+			LOG.error("Unexpected exception caught for course: " + courseNew, e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	protected void courseYearChangeCmdCore() {
 		loadData();
 	}
 
+	@NotifyChange("multipleMode")
+	@Command
+	public void onSelectCmd() {
+		this.multipleMode = this.selectedItems.size() > 1;
+	}
+	
 	@Command
 	@NotifyChange("courseList")
 	public void filterDomCmd() {
 		this.courseList = filter.getApplicationListFiltered(this.courseListBase);
-	}
-
-	@Command
-	public void newItemCmd() {
-		WebUtils.redirectToNewCourse();
 	}
 	
 	@NotifyChange("courseList")
@@ -240,6 +360,41 @@ public class CourseListVM extends BaseContextVM {
 		
 		goToSendEmailCore(contactList);
 	}
+	
+	@NotifyChange("courseList")
+	@Command
+	public void changeStateCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
+			@BindingParam(WebConstants.ACTIVE_PARAM) boolean active, 
+			@BindingParam(WebConstants.NAME_PARAM) String name) {
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+		courseService.updateState(Arrays.asList(uuid), active);
+		loadData();
+				
+		String msg = active ? "msg.ui.info.courseStarted" : "msg.ui.info.courseStopped";
+		WebUtils.showNotificationInfo(Labels.getLabel(msg, new Object[]{name}));		
+	}
+	
+	@NotifyChange("courseList")
+	@Command
+	public void changeStateListCmd(@BindingParam(WebConstants.ACTIVE_PARAM) boolean active) {
+		if (CollectionUtils.isEmpty(this.selectedItems)) {
+			return;
+		}
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+		courseService.updateState(this.selectedItems.stream().map(i -> i.getUuid()).collect(Collectors.toList()), active);
+		loadData();
+				
+		String msg = active ? "msg.ui.info.courseListStarted" : "msg.ui.info.courseListStopped";
+		WebUtils.showNotificationInfo(Labels.getLabel(msg));		
+	}
 
 	public void loadData() {
 		String[] years = getYearsFromContext();
@@ -249,6 +404,10 @@ public class CourseListVM extends BaseContextVM {
 		
 		// nacteni vsech nebo pouze prirazenych kurzu
 		this.courseList = this.myCourses ? courseService.getByTrainer(SecurityUtils.getLoggedUser().getUuid(), yearFrom, yearTo, false) : courseService.getAll(yearFrom, yearTo, false);
+		if (!isLoggedUserAdmin()) {
+			// filter active active courses for trainers
+			this.courseList = this.courseList.stream().filter(i -> i.isActive()).collect(Collectors.toList());
+		}
 		this.courseListBase = this.courseList;
 		
 		if (this.showCourseFilter) {
@@ -258,7 +417,12 @@ public class CourseListVM extends BaseContextVM {
 			this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
 		}
 
+		this.selectedItems = Collections.emptyList();
+		this.multipleMode = false;
+		
 		BindUtils.postNotifyChange(null, null, this, "courseList");
+		BindUtils.postNotifyChange(null, null, this, "selectedItems");
+		BindUtils.postNotifyChange(null, null, this, "multipleMode");
 	}
 	
 	private void initCourseLocations() {
@@ -410,5 +574,14 @@ public class CourseListVM extends BaseContextVM {
 	}
 	public void setMyCourses(Boolean myCourses) {
 		this.myCourses = myCourses;
+	}
+	public List<Course> getSelectedItems() {
+		return selectedItems;
+	}
+	public void setSelectedItems(List<Course> selectedItems) {
+		this.selectedItems = selectedItems;
+	}
+	public boolean isMultipleMode() {
+		return multipleMode;
 	}
 }

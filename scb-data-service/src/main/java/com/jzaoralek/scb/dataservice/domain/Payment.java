@@ -11,6 +11,7 @@ public class Payment implements IdentEntity {
 		CASH,
 		BANK_TRANS,
 		DONATE,
+		DISCOUNT,
 		OTHER;
 	}
 	

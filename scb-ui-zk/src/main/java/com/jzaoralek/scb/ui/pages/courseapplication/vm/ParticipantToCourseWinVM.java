@@ -1,9 +1,12 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +22,14 @@ import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.utils.DateUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -142,18 +147,25 @@ public class ParticipantToCourseWinVM extends BaseVM {
 	}
 
 	private void saveParticipantList(Window window, List<CourseParticipant> courseParticipantList, boolean fromApplication, UUID courseUuid, UUID courseSelectedUuid) {
+		if (CollectionUtils.isEmpty(courseParticipantList)) {
+			return;
+		}
 		try {
 			if (!fromApplication) {
-				for (CourseParticipant item : courseParticipantList) {
-					courseService.deleteParticipantFromCourse(item.getUuid(), courseSelectedUuid);
-				}
+				// Presunuti z jineho kurzu
+				courseService.moveParticListToCourse(courseParticipantList, 
+						this.course.getUuid(), 
+						courseSelectedUuid, 
+						new GregorianCalendar(this.course.getYearFrom(),6,1),
+						new GregorianCalendar(this.course.getYearTo(),5,30));
+			} else {
+				// Prirazeni z prihlasky
+				courseService.storeCourseParticipants(courseParticipantList, courseUuid);
 			}
-			// ulozit do databaze
-			courseService.storeCourseParticipants(courseParticipantList, courseUuid);
 			EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_PARTICIPANT_DATA_EVENT, null, courseUuid);
 			window.detach();
 		} catch (ScbValidationException e) {
-			LOG.warn("ScbValidationException caught during addin courseParticipantList to course uuid: " + courseUuid);
+			LOG.warn("ScbValidationException caught during adding courseParticipantList to course uuid: " + courseUuid);
 			WebUtils.showNotificationError(e.getMessage());
 		}
 	}

@@ -110,6 +110,12 @@ public class PaymentDaoImplTest extends BaseTestCase {
 	}
 	
 	@Test
+	public void testDeleteByCourseAndParticipant() {
+		paymentDao.deleteByCourseAndParticipant(COURSE_UUID, COURSE_PARTICIPANT_UUID);
+		Assert.assertNull(paymentDao.getByUuid(ITEM_UUID));
+	}
+	
+	@Test
 	public void getAllIdPohybuTest() {
 		Set<String> idPohybuList = paymentDao.getAllBankTransIdPohybu();
 		Assert.assertNotNull(idPohybuList);

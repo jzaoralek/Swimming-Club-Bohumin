@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -41,6 +40,7 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -374,6 +374,36 @@ public final class WebUtils {
 	}
 	
 	/**
+	 * Validation personal number CHECKSUM.
+	 * Number sum without last % 11 == last number.
+	 * Spočti zbytek po dělení prvních devíti číslic a čísla 11.
+	 * Je-li zbytek 10, musí být poslední číslice 0.
+	 * Jinak poslední číslice musí být rovna zbytku.
+	 * @param birthNo
+	 * @param configurationService
+	 * @return
+	 */
+	public static boolean validateBirthNoCheckSum(String birthNo, 
+			boolean checkSumBirthNumAllowed) {
+		if (!StringUtils.hasText(birthNo)) {
+			return true;
+		}
+		
+		if (!checkSumBirthNumAllowed) {
+			return true;
+		}
+		
+		int rcWithoutLastNo = Integer.parseInt(birthNo.substring(0, 9));
+		int modulo = rcWithoutLastNo%11;
+		int lastNo = Integer.parseInt(String.valueOf(birthNo.charAt(birthNo.length()-1)));
+		if (modulo == 10) {
+			return lastNo == 0;
+		} else {
+			return lastNo == modulo;			
+		}
+	}
+	
+	/**
 	 * Parse birth number (RČ) part to Date.
 	 * Na vstupu šestimístné číslo obsahující datum narození.
 	 * Pravidla:
@@ -384,7 +414,7 @@ public final class WebUtils {
 	 * @param rcDatePart
 	 * @return
 	 */
-	public static Date parseRcDatePart(String rcDatePart) {
+	public static Pair<Boolean, Date> parseRcDatePart(String rcDatePart) {
 		// validace delka
 		if (rcDatePart.length() != 6) {
 			throw new IllegalArgumentException("Nespravna delka: " + rcDatePart.length());
@@ -408,19 +438,25 @@ public final class WebUtils {
 		}
 
 		// MONTH
+		Boolean male = null;
 		Integer monthInt = Integer.parseInt(rcDatePart.substring(2, 4)) - 1;
 		Integer monthFinal = null;
 		if (monthInt >= 0 && monthInt <= 11) {
+			// muz - normalni
 			monthFinal = monthInt;
+			male = true;
 		} else if (monthInt >= 20 && monthInt <= 31) {
 			// muz - pripocteni 20
 			monthFinal = monthInt - 20;
+			male = true;
 		} else if (monthInt >= 50 && monthInt <= 61) {
 			// zena - normalni (pripocteni 50)
 			monthFinal = monthInt - 50;
+			male = false;
 		} else if (monthInt >= 70 && monthInt <= 81) {
 			// zena - pripocteni 50 + 20
 			monthFinal = monthInt - (50 + 20);
+			male = false;
 		}
 
 		if (monthFinal == null || monthFinal < 0 || monthFinal > 11) {
@@ -443,10 +479,12 @@ public final class WebUtils {
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 
-		return cal.getTime();
+		return new Pair<>(male, cal.getTime());
 	}
 	
-	public static boolean setBirthdateByBirthNumer(String birtNumber, CourseParticipant courseParticipant) {
+	public static boolean setBirthdateByBirthNumer(String birtNumber, 
+			CourseParticipant courseParticipant,
+			ConfigurationService configurationService) {
 		if (!StringUtils.hasText(birtNumber) || courseParticipant == null) {
 			return false;
 		}
@@ -455,12 +493,29 @@ public final class WebUtils {
 		}
 		
 		try {
-			Date birthDate = WebUtils.parseRcDatePart(birtNumber.substring(0, birtNumber.indexOf("/")));
-			courseParticipant.setBirthdate(birthDate);
+			if (!WebUtils.validateBirthNoCheckSum(WebUtils.getBirthDateWithoutDelims(birtNumber), configurationService.isCheckSumBirthNumAllowed()))  {
+				return false;
+			}
+			Pair<Boolean, Date> sexMaleBirthDate = WebUtils.parseRcDatePart(birtNumber.substring(0, birtNumber.indexOf("/")));
+			courseParticipant.setBirthdate(sexMaleBirthDate.getValue1());
+			courseParticipant.getContact().setSexMale(sexMaleBirthDate.getValue0());
 			return true;
 		} catch (Exception e) {
 			logger.error("Exception caught for personalNumber: " + birtNumber, e);
 			return false;
 		}
+	}
+	
+	/**
+	 * Return birth number without delimiters.
+	 * @param value
+	 * @return
+	 */
+	public static String getBirthDateWithoutDelims(String value) {
+		if (!StringUtils.hasText(value)) {
+			return null;
+		}
+		
+		return value.replace("/", "").replace("_", "");
 	}
 }

@@ -33,7 +33,6 @@ import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
-import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
@@ -111,7 +110,7 @@ public class BankPaymentVM extends BaseContextVM {
 		paymentService.store(payment);
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
-		EventQueueHelper.publish(ScbEventQueues.PAYMENT_QUEUE, ScbEvent.RELOAD_PAYMENT_DATA_EVENT, null, null);
+		EventQueueHelper.publish(ScbEvent.RELOAD_PAYMENT_DATA_EVENT, null);
 		
 		window.detach();
 	}
