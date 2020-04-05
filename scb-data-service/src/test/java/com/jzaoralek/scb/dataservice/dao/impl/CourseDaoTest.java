@@ -1,17 +1,23 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.BaseTestCase;
+import com.jzaoralek.scb.dataservice.dao.ContactDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseLocationDao;
+import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 
 public class CourseDaoTest extends BaseTestCase {
 
@@ -27,6 +33,12 @@ public class CourseDaoTest extends BaseTestCase {
 
 	@Autowired
 	private CourseDao courseDao;
+	
+	@Autowired
+	private ScbUserDao scbUserDao;
+	
+	@Autowired
+	private ContactDao contactDao;
 	
 	@Autowired
 	private CourseLocationDao courseLocationDao;
@@ -138,5 +150,74 @@ public class CourseDaoTest extends BaseTestCase {
 	public void testDelete() {
 		courseDao.delete(item);
 		Assert.assertNull(courseDao.getByUuid(ITEM_UUID));
+	}
+	
+	@Test
+	public void testGetTrainersByCourse() {
+		// test getTrainersByCourse()
+		List<ScbUser> trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
+		Assert.assertTrue(CollectionUtils.isEmpty(trainerList));
+		
+		// test addTrainersToCourse()
+		ScbUser userAdmin  = buildScbUser();
+		scbUserDao.insert(userAdmin);
+		contactDao.insert(userAdmin.getContact());
+		
+		courseDao.addTrainersToCourse(Arrays.asList(userAdmin), ITEM_UUID);
+		
+		trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
+		Assert.assertTrue(!CollectionUtils.isEmpty(trainerList) && trainerList.size() == 1);
+		ScbUser trainer = trainerList.get(0);
+		Assert.assertNotNull(trainer);
+		Assert.assertNotNull(trainer.getContact());
+		
+		// test removeTrainersFromCourse()
+		courseDao.removeTrainersFromCourse(Arrays.asList(userAdmin), ITEM_UUID);
+		trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
+		Assert.assertTrue(CollectionUtils.isEmpty(trainerList));
+	}
+	
+	@Test
+	public void testRemoveAllTrainersFromCourse() {
+		// test getTrainersByCourse()
+		List<ScbUser> trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
+		Assert.assertTrue(CollectionUtils.isEmpty(trainerList));
+		
+		// test addTrainersToCourse()
+		ScbUser userAdmin  = buildScbUser();
+		scbUserDao.insert(userAdmin);
+		contactDao.insert(userAdmin.getContact());
+		
+		courseDao.addTrainersToCourse(Arrays.asList(userAdmin), ITEM_UUID);
+		
+		trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
+		Assert.assertTrue(!CollectionUtils.isEmpty(trainerList) && trainerList.size() == 1);
+
+		// test removeTrainersFromCourse()
+		courseDao.removeAllTrainersFromCourse(ITEM_UUID);
+		trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
+		Assert.assertTrue(CollectionUtils.isEmpty(trainerList));
+	}
+	
+	@Test
+	public void testGetByTrainer() {
+		List<ScbUser> trainerList = courseDao.getTrainersByCourse(ITEM_UUID);
+		Assert.assertTrue(CollectionUtils.isEmpty(trainerList));
+		
+		ScbUser userAdmin  = buildScbUser();
+		scbUserDao.insert(userAdmin);
+		contactDao.insert(userAdmin.getContact());
+		
+		courseDao.addTrainersToCourse(Arrays.asList(userAdmin), ITEM_UUID);
+		
+		List<Course> courseList = courseDao.getByTrainer(userAdmin.getUuid(), YEAR_FROM, YEAR_TO);
+		Assert.assertTrue(!CollectionUtils.isEmpty(courseList) && courseList.size() == 1);
+		Course course = courseList.get(0);
+		Assert.assertNotNull(course);
+		Assert.assertTrue(ITEM_UUID.toString().equals(course.getUuid().toString()));
+		
+		courseDao.removeAllTrainersFromCourse(ITEM_UUID);
+		courseList = courseDao.getByTrainer(userAdmin.getUuid(), YEAR_FROM, YEAR_TO);
+		Assert.assertTrue(CollectionUtils.isEmpty(courseList));
 	}
 }

@@ -1,0 +1,256 @@
+<zk>
+	<tabbox height="530px" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM')" hflex="1" >
+	    <tabs vflex="1" hflex="1" >
+	        <tab label="${c:l('txt.ui.menu.courses')}" onSelect="@command('courseTabSelectedCmd')" />
+	        <tab label="${c:l('txt.ui.menu.users')}" onSelect="@command('usersTabSelectedCmd')" />
+	        <tab label="${c:l('txt.ui.menu.applications')}" onSelect="@command('courseApplicationTabSelectedCmd')"  />
+	    </tabs>
+	    
+	    <tabpanels vflex="1" hflex="1" >
+	    	<!-- Kurzy -->
+	        <tabpanel hflex="1" vflex="1">
+	        	<vlayout hflex="1" sclass="listbox-wrapper">
+		        	<listbox model="@load(vm.courseList)"
+						id="courseList"
+						hflex="1"
+						height="370px"
+						checkmark="true"
+						multiple="true"
+						selectedItems="@bind(vm.courseListSelected)"
+						emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+						class="listbox" >
+				        <auxhead>
+				            <auxheader class="header" >
+				            	<hlayout sclass="pull-left" >	
+				            		<hbox visible="@load(vm.showCourseFilter)" >
+					            		<label value="${c:l('txt.ui.common.courseLocation2')}:"/>
+										<listbox id="courseLocation" 
+											selectedItem="@bind(vm.courseLocationSelected)" 
+											model="@load(vm.courseLocationList)"
+											onSelect="@command('filterByCourseLocationCmd')"
+											mold="select"
+											style="margin-left: 5px;"
+											height="30px"
+											hflex="1" >
+											<template name="model">
+								           		<listitem label="${each.name}" value="${each}" />
+											</template>
+										</listbox>
+				            		</hbox>
+				            	</hlayout>
+				            					
+			            		
+				            	<hlayout sclass="pull-right">
+				            		<!-- Rocnik -->
+		            				<include src="/pages/common/component/context-year.zul"/>
+				            	</hlayout>
+				            </auxheader>
+				        </auxhead>
+				        
+				        <!-- Filter -->
+				        <listhead>
+				            <listheader align="left" hflex="1" >
+				            	<textbox hflex="1"
+				            		placeholder="${c:l('txt.ui.common.name')}"
+									value="@bind(vm.courseFilter.courseName)"
+									onChange="@command('filterCourseListCmd')" 
+									onOK="@command('filterDomCmd')" />
+								<!-- Vymazat filtr -->
+								<button iconSclass="z-icon-trash" 
+	           						onClick="@command('refreshCourseListDataCmd')" 
+	           						style="margin-left: 20px;"
+	           						tooltiptext="${c:l('txt.ui.common.CleanFilter')}" />
+				            </listheader>
+				        </listhead>
+				         
+				        <template name="model">
+				            <listitem>
+				                <listcell label="${each.name}" />
+				            </listitem>
+				        </template>
+				    </listbox>
+				    
+				    <hlayout style="padding-bottom: 1px;">
+					    <button label="${c:l('txt.ui.common.Add')}"
+							onClick="@command('submitCourseSelectionCmd')"
+							iconSclass="z-icon-plus" />
+		    			<button onClick="@command('closeCmd')" 
+							label="${c:l('txt.ui.ToClose')}"
+							style="margin-left: 10px;"
+							sclass="btn-light"/>
+					</hlayout>
+			    </vlayout>
+	        </tabpanel>
+	        
+	        <!-- Uzivatele -->
+	        <tabpanel hflex="1" >
+	    		<vlayout sclass="listbox-wrapper">
+		    		<listbox model="@load(vm.userList)"
+						id="userList"
+						hflex="1"
+						height="370px"
+						checkmark="true"
+						multiple="true"
+						selectedItems="@bind(vm.userListSelected)"
+						emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+						class="listbox" >
+						
+				        <!-- Filter -->
+				        <listhead>
+				            <listheader align="left" >
+				            	<textbox hflex="1"
+									value="@bind(vm.userFilter.completeName)"
+									placeholder="${c:l('txt.ui.common.firstname')}"
+									onChange="@command('filterDomCmd')"
+									onOK="@command('filterDomCmd')" />
+				            </listheader>
+				            <listheader align="left" >
+				            	<textbox hflex="1"
+				            		placeholder="${c:l('txt.ui.common.email')}"
+									value="@bind(vm.userFilter.email)"
+									onChange="@command('filterDomCmd')"
+									onOK="@command('filterDomCmd')" />
+				            </listheader>
+				            <listheader align="left" >
+				            	<label value="${c:l('txt.ui.common.Role')}" />
+				            	<listbox selectedItem="@bind(vm.userFilter.roleItem)" 
+									model="@load(vm.roleListWithEmptyItem)"
+									onSelect="@command('filterDomCmd')"
+									hflex="1"
+									height="25px"
+									mold="select" >
+									<template name="model">
+						               	<listitem label="@bind(each.label)" value="@bind(each)"/>
+					               	</template>
+								</listbox>
+								<!-- Vymazat filtr -->
+								<button iconSclass="z-icon-trash" 
+	           						onClick="@command('refreshUserListDataCmd')" 
+	           						style="margin-left: 20px;"
+	           						tooltiptext="${c:l('txt.ui.common.CleanFilter')}" />
+				            </listheader>
+				        </listhead>
+				         
+				        <template name="model">
+				            <listitem>
+				                <listcell label="${each.contact.getCompleteName()}" />	
+				                <listcell label="${each.contact.email1}" />
+				                <listcell label="@load(each.role) @converter(vm.enumLabelConverter)" />
+				            </listitem>
+				        </template>
+				    </listbox>
+	    			
+	    			<hlayout style="padding-bottom: 1px;">
+		    			<button label="${c:l('txt.ui.common.Add')}"
+							onClick="@command('submitCmd')"
+							iconSclass="z-icon-plus" />
+		    			<button onClick="@command('closeCmd')" 
+							label="${c:l('txt.ui.ToClose')}"
+							style="margin-left: 10px;" 
+							sclass="btn-light"/>
+	    			</hlayout>
+	    		</vlayout>
+	    	</tabpanel>
+	        
+	    	<!-- Prihlasky -->
+	    	<tabpanel>
+	    		<vlayout sclass="listbox-wrapper listbox-mobile-width-1000 listbox-mobile-2-width-1000">
+		    		<listbox model="@load(vm.courseApplicationList)"
+						id="courseApplicationList"
+						height="370px"
+						checkmark="true"
+						multiple="true"
+						selectedItems="@bind(vm.courseApplicationListSelected)"
+						emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+						class="listbox" >
+						
+				        <auxhead>
+				            <auxheader class="header" colspan="5" >			            	
+				            	<hlayout sclass="pull-right">
+				            		<!-- Rocnik -->
+		            				<include src="/pages/common/component/context-year.zul"/>
+				            	</hlayout>
+				            </auxheader>
+				        </auxhead>
+				        
+				        <!-- Filter -->
+				        <listhead >
+				            <listheader align="left" >
+				            	<textbox hflex="1"
+				            		placeholder="${c:l('txt.ui.common.participant')}"
+									value="@bind(vm.courseApplicationFilter.courseParticName)"
+									onChange="@command('filterCourseApplicationListCmd')"
+									onOK="@command('filterCourseApplicationListCmd')" />
+				            </listheader>
+				            <listheader align="left" >
+				            	<textbox hflex="1"
+				            		placeholder="${c:l('txt.ui.common.representative')}"
+									value="@bind(vm.courseApplicationFilter.courseParticRepresentative)"
+									onChange="@command('filterCourseApplicationListCmd')"
+									onOK="@command('filterCourseApplicationListCmd')" />
+				            </listheader>
+				            <listheader align="left" >
+				            	<textbox hflex="1"
+				            		placeholder="${c:l('txt.ui.common.email')}"
+									value="@bind(vm.courseApplicationFilter.email)"
+									onChange="@command('filterCourseApplicationListCmd')"
+									onOK="@command('filterCourseApplicationListCmd')" />
+					        </listheader>
+				            <listheader label="${c:l('txt.ui.common.inCourse')}" align="center" width="140px" >
+				            	<listbox selectedItem="@bind(vm.courseApplicationFilter.inCourse)"
+									onSelect="@command('filterCourseApplicationListCmd')"
+									mold="select"
+									width="50px"
+									model="@load(vm.booleanListItem)"
+									height="25px" >
+									<template name="model">
+										<listitem label="${each ? 'Ano' : (each eq null ? '' : 'Ne')}" value="${each}" />
+									</template>
+								</listbox>
+				            </listheader>
+				            <listheader label="${c:l('txt.ui.common.new2')}" align="center" width="180px" >
+				            	<listbox selectedItem="@bind(vm.courseApplicationFilter.newParticipant)"
+									onSelect="@command('filterCourseApplicationListCmd')"
+									mold="select"
+									width="50px"
+									model="@load(vm.booleanListItem)"
+									height="25px" >
+									<template name="model">
+										<listitem label="${each ? 'Ano' : (each eq null ? '' : 'Ne')}" value="${each}" />
+									</template>
+								</listbox>
+								<!-- Vymazat filtr -->
+								<button iconSclass="z-icon-trash" 
+	           						onClick="@command('refreshCourseApplicationListDataCmd')" 
+	           						style="margin-left: 10px;"
+	           						tooltiptext="${c:l('txt.ui.common.CleanFilter')}" />
+				            </listheader>
+				        </listhead>
+				         
+				        <template name="model">
+				            <listitem>
+				                <listcell label="${each.courseParticipant.contact.completeName}" />
+				                <listcell label="${each.courseParticRepresentative.contact.completeName}" />
+				                <listcell label="${each.courseParticRepresentative.contact.email1}" />
+			            		<listcell sclass="big-icon" iconSclass="z-icon-check-circle" style="color: #87B87F;" visible="${each.courseParticipant.inCourse()}" tooltiptext="${each.courseParticipant.getInCourseInfo()}" />
+		               			<listcell visible="${!each.courseParticipant.inCourse()}" />
+		               			<listcell sclass="big-icon" iconSclass="z-icon-check-circle" style="color: #87B87F;" visible="${!each.currentParticipant}"  />
+		               			<listcell visible="${each.currentParticipant}" />
+				            </listitem>
+				        </template>
+				    </listbox>
+				    
+				    <hlayout style="padding-bottom: 1px;">
+				    	<button label="${c:l('txt.ui.common.Add')}"
+							onClick="@command('submitCourseApplicationSelectionCmd')"
+							iconSclass="z-icon-plus" />
+				    	<button onClick="@command('closeCmd')" 
+							label="${c:l('txt.ui.ToClose')}"
+							style="margin-left: 10px;"
+							sclass="btn-light"/>
+				    </hlayout>
+	    		</vlayout>
+	    	</tabpanel>
+	    </tabpanels>
+	</tabbox>
+</zk>

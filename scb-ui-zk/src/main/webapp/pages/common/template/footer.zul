@@ -1,5 +1,6 @@
 <div sclass="scb-footer">
-	
-	<label value="S" sclass="app-logo"/>
-	<label value="Sportologic" sclass="app-name"/>	
+	<a href="https://sportologic.cz" style="text-decoration: none;" target="_blank">
+		<label value="S" sclass="app-logo"/>
+		<label value="Sportologic" sclass="app-name"/>	
+	</a>
 </div>

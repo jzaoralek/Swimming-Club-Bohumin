@@ -1,0 +1,11 @@
+<!-- Tlacitko pro odeslani emailu. -->
+<zk>
+	<custom-attributes buttonSclass="${arg.buttonSclass}" />
+	
+	<button tooltiptext="${c:l('txt.ui.common.Messaging')}"
+		iconSclass="z-icon-at"
+		style="margin-left: 10px;"
+		sclass="${buttonSclass}"
+		onClick="@command('goToSendEmailCmd')"
+		if="${vm.isLoggedUserInRole('ADMIN')}" />
+</zk>

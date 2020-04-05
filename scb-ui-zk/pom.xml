@@ -32,6 +32,11 @@
 			<groupId>com.jzaoralek.scb</groupId>
 			<artifactId>scb-data-service</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.jzaoralek.scb</groupId>
+			<artifactId>ruian-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Spring -->
 		<dependency>
@@ -101,10 +106,11 @@
 			<version>${zk.version}</version>
 		</dependency>
 		
+		<!-- CKEditor -->
 		<dependency>
-			<groupId>org.zkforge.bwcaptcha</groupId>
-			<artifactId>Captcha</artifactId>
-			<version>0.0.1</version>
+		    <groupId>org.zkoss.zkforge</groupId>
+		    <artifactId>ckez</artifactId>
+		    <version>4.11.1.0</version>
 		</dependency>
 		
 		<dependency>

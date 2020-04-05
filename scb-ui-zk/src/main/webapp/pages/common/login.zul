@@ -2,6 +2,8 @@
 <?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
+
 <?xel-method prefix="common" name="getOrgNameStatic"
 	class="com.jzaoralek.scb.ui.common.vm.BaseVM"
 	signature="com.jzaoralek.scb.ui.common.vm.BaseVM getOrgNameStatic()"?>
@@ -79,20 +81,12 @@
 				</html>
 			</div>
 			
-			<div sclass="login-frame-right">
-				<a label="Sportologic" sclass="brand" href="/"/>
-				<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
-				<button label="Přihláška" href="/pages/public/prihlaska-do-klubu.zul" sclass="lpp"/>
-			</div>
+			<login-frame-right />
 		</div>
 		
-		<div sclass="login-mobile-info">
-			<div sclass="clear"></div>
-			<div sclass="frame">
-				<a label="Sportologic" sclass="brand" href="/"/>
-				<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
-				<button label="Přihláška" href="/pages/public/prihlaska-do-klubu.zul" sclass="lpp"/>
-			</div>
+		<login-mobile-info/>
+		<div sclass="footer">
+			<login-footer/>
 		</div>
 	</div>
 </zk>

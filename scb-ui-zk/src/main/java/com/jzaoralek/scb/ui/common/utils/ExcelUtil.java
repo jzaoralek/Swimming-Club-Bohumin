@@ -7,10 +7,13 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zkoss.zk.ui.Executions;
@@ -61,6 +64,56 @@ public final class ExcelUtil {
 			}
 		}
 	}
+	
+	public static void exportToCSV(String filename, Map<String, Object[]> data) {
+		HSSFWorkbook workbook = buildWorkbook(data);
+		if (filename == null) {
+			throw new IllegalArgumentException("filename is null");
+		}
+		ByteArrayOutputStream stream = null;
+		try {
+			stream = new ByteArrayOutputStream();
+
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			StringBuilder strBuff = new StringBuilder();
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+			    HSSFRow row = sheet.getRow(i);
+			    for (int j = 0; j <= row.getLastCellNum(); j++) {
+			        HSSFCell cell = row.getCell(j);
+			        if (cell != null) {
+			        	strBuff.append(cell.getStringCellValue() + ";");			        	
+			        }
+			    }
+			    strBuff.append("\n");
+			}
+			stream.write(strBuff.toString().getBytes("UTF-8"));
+			
+			Attachment attachment = new Attachment();
+			attachment.setByteArray(stream.toByteArray());
+			attachment.setContentType("application/file");
+			attachment.setName(filename);
+			WebUtils.downloadAttachment(attachment);
+			
+		} catch (FileNotFoundException e) {
+			LOG.error("exportToExcel():: FileNotFoundException caught.", e);
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			LOG.error("exportToExcel():: IOException caught.", e);
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				if (stream != null) {
+					stream.close();
+				}
+			} catch (IOException e) {
+				LOG.error("exportToExcel():: IOException caught.", e);
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
+	
+	
 
 	private static HSSFWorkbook buildWorkbook(Map<String, Object[]> data) {
 		if (data == null) {

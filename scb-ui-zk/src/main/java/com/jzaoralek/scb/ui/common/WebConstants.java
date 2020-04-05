@@ -18,6 +18,7 @@ public final class WebConstants {
     public static final String DATE_COL_WIDTH = "120px";
 
 	public static final String WEB_DATE_PATTERN = "dd.MM.yyyy";
+	public static final String WEB_DATE_ISCUS_PATTERN = "dd.MM.yy";
 	public static final String WEB_DATETIME_PATTERN = "dd.MM.yyyy H:mm:ss";
 	public static final String WEB_TIME_PATTERN = "H:mm";
 	public static final String WEB_TIME_SECONDS_PATTERN = "mm:ss.ms";
@@ -40,7 +41,9 @@ public final class WebConstants {
 	public static final String COURSE_PARTICIPANT_UUID_PARAM = "courseParticipant";
 	public static final String COURSE_PARTICIPANT_REPRESENTATIVE_UUID_PARAM = "courseParticRepresentative";
 	public static final String CALLBACK_PARAM = "callback";
-	public static final String COURSE_PARTIC_CONTACT_LIST_PARAM = "courseParticipantList";
+	public static final String EMAIL_RECIPIENT_LIST_PARAM = "emailRecipientList";
+	public static final String COURSE_LEARN_LESSONS_MONTH_SELECTED_PARAM = "courseLearnLessonsMonthSelected";
+	public static final String USER_LIST_CACHE_PARAM = "userListCache";
 	
 	public static final String YEAR_FROM_PARAM = "yearFrom";
 	public static final String YEAR_TO_PARAM = "yearTo";
@@ -48,6 +51,7 @@ public final class WebConstants {
 	public static final String YEAR_SELECTED_PARAM = "yearSelected";
 	public static final String SEMESTER_PARAM = "semester";
 	public static final String BANK_ACCOUNT_NO_PARAM = "bankAccountNo";
+	public static final String COURSE_LIST_EXT_FILTER_PARAM = "courseListExtFilter";
 	
 	public static final String APP_MANIFEST = "/META-INF/MANIFEST.MF";
 
@@ -58,4 +62,9 @@ public final class WebConstants {
 	public static final String SECURED_PAGE_URL = "/pages/secured/ADMIN";
 	public static final String NOTIFICATION_MESSAGE = "notificationMessage";
 	public static final String FROM_PAGE_URL = "fromPageUrl";
+	
+	public static final String EMAIL_PATTERN = "[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	public static final String EMAIL_LIST_SEPARATOR = ";";
+	
+	public static final String COLON = ": ";
 }

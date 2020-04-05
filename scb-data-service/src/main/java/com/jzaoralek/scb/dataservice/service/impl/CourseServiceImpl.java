@@ -3,6 +3,7 @@ package com.jzaoralek.scb.dataservice.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
@@ -58,12 +60,27 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	@Override
 	public List<Course> getAll(int yearFrom, int yearTo, boolean withLessons) {
 		List<Course> ret = courseDao.getAll(yearFrom, yearTo);
-		if (withLessons && ret != null && !ret.isEmpty()) {
-			for (Course item : ret) {
+		if (withLessons) {
+			addLessons(ret);
+		}
+		return ret;
+	}
+	
+	@Override
+	public List<Course> getByTrainer(UUID userUuid, int yearFrom, int yearTo, boolean withLessons) {
+		List<Course> ret = courseDao.getByTrainer(userUuid, yearFrom, yearTo);
+		if (withLessons) {
+			addLessons(ret);
+		}
+		return ret;
+	}
+	
+	private void addLessons(List<Course> courseList) {
+		if (courseList != null && !courseList.isEmpty()) {
+			for (Course item : courseList) {
 				item.setLessonList(lessonService.getByCourse(item.getUuid()));								
 			}
 		}
-		return ret;
 	}
 
 	@Override
@@ -240,5 +257,30 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	@Override
 	public boolean existsByCourseLocation(UUID courseLocationUuid) {
 		return courseDao.existsByCourseLocation(courseLocationUuid);
+	}
+
+	@Override
+	public List<ScbUser> getTrainersByCourse(UUID courseUuid) {
+		Objects.requireNonNull(courseUuid);
+		return courseDao.getTrainersByCourse(courseUuid);
+	}
+
+	@Override
+	public void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid) {
+		Objects.requireNonNull(courseUuid);
+		if (CollectionUtils.isEmpty(trainers)) {
+			return;
+		}
+		courseDao.addTrainersToCourse(trainers, courseUuid);
+		
+	}
+
+	@Override
+	public void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid) {
+		Objects.requireNonNull(courseUuid);
+		if (CollectionUtils.isEmpty(trainers)) {
+			return;
+		}
+		courseDao.removeTrainersFromCourse(trainers, courseUuid);
 	}
 }

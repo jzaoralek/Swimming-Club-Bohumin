@@ -45,7 +45,7 @@
 									hflex="1"
 									style="margin-bottom: 20px;"
 									emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-									class="listbox-400" >
+									class="listbox-500" >
 							        <auxhead>
 							            <auxheader class="header" colspan="3" >
 							            	<hbox hflex="1" height="42px" align="center" >
@@ -72,7 +72,8 @@
 							        
 							        <listhead>
 							        	<listheader label="${c:l('txt.ui.common.date')}" align="left" sort="auto(lessonDate)" hflex="min" />
-										<listheader label="${c:l('txt.ui.common.time')}" align="left" />
+										<listheader label="${c:l('txt.ui.common.time')}" align="left" width="125px;" />
+										<listheader label="${c:l('txt.ui.common.Output')}" align="center" hflex="1" />										
 							            <listheader label="Proběhla" align="center" hflex="min" />
 							        </listhead>
 							         
@@ -89,7 +90,8 @@
 							                <listcell>
 							                	<label value="@load(each.timeFrom) @converter(vm.timeConverter)" /> - 
 							                	<label value="@load(each.timeTo) @converter(vm.timeConverter)" />
-							                </listcell>              	
+							                </listcell>
+							                <listcell label="${each.additionalColumnInt}" />             	
 							                <listcell sclass="big-icon" iconSclass="z-icon-check-circle" style="color: #87B87F; font-size: large;" tooltiptext="${c:l('txt.ui.common.yes')}" visible="${each.uuid ne null}" />
 			                				<listcell visible="${each.uuid eq null}" />
 							            </listitem>

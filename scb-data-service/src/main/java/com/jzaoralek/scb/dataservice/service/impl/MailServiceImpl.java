@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
@@ -49,7 +50,7 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendMail(String to, String subject, String text, List<Attachment> attachmentList) {
+    public void sendMail(String to, String cc, String subject, String text, List<Attachment> attachmentList, boolean html) {
         if (LOG.isDebugEnabled()) {
         	LOG.debug("Send email '" + subject + "' to '" + to + "'.");
         }
@@ -57,9 +58,9 @@ public class MailServiceImpl implements MailService {
         Properties properties = System.getProperties();
         properties.put("mail.smtp.host", mailSmtpHost);
         properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.starttls.enable", "false");
         properties.put("mail.smtp.port", mailSmtpPort);
-
+        
        // Get the default Session object.
        Authenticator auth = new SMTPAuthenticator();
        Session session = Session.getDefaultInstance(properties, auth);
@@ -74,19 +75,29 @@ public class MailServiceImpl implements MailService {
           message.setFrom(new InternetAddress(mailSmtpUser));
           // Set To: header field of the header.
           message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+          // Set Cc: header field of the header.
+          if (StringUtils.hasText(cc)) {
+        	  message.addRecipient(Message.RecipientType.CC, new InternetAddress(cc));        	  
+          }
           // Set Subject: header field
           message.setSubject(subject, "UTF-8");
           // Now set the actual message
           MimeBodyPart messageBodyPart = new MimeBodyPart();
+          
           // Now set the actual message
-          messageBodyPart.setText(text, "UTF-8");
-
+          if (html) {
+        	  // html email
+        	  messageBodyPart.setContent(text,"text/html; charset=UTF-8"); 
+          } else {
+        	  // text email
+        	  messageBodyPart.setText(text, "UTF-8");        	  
+          }
+          
           Multipart multipart = new MimeMultipart();
           // Set text message part
           multipart.addBodyPart(messageBodyPart);
 
           // Part two is attachment
-
           if (attachmentList != null && !attachmentList.isEmpty()) {
         	  for (Attachment attachment : attachmentList) {
         		  if (attachment != null) {
@@ -135,7 +146,7 @@ public class MailServiceImpl implements MailService {
         	LOG.debug("Send email: " + mail);
         }
 		
-		sendMail(mail.getTo(), mail.getSubject(), mail.getText(), mail.getAttachmentList());
+		sendMail(mail.getTo(), mail.getCc(), mail.getSubject(), mail.getText(), mail.getAttachmentList(), mail.isHtml());
 	}
     
     @Async

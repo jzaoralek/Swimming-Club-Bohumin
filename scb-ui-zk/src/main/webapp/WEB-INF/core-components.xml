@@ -30,5 +30,47 @@
 	    <macro-uri>/pages/common/component/dochazka-grid.zul</macro-uri>
 		<component-class>com.jzaoralek.scb.ui.common.template.DochazkaGridMacro</component-class>
 	</component>
+	
+	<!-- Prihlasovaci stranka - sportologic info -->
+	<component>
+	    <component-name>login-frame-right</component-name>    
+	    <macro-uri>/pages/common/component/login-frame-right.zul</macro-uri>
+	</component>
+	
+	<!-- Prihlasovaci stranka - sportologic info mobile -->
+	<component>
+	    <component-name>login-mobile-info</component-name>    
+	    <macro-uri>/pages/common/component/login-mobile-info.zul</macro-uri>
+	</component>
+	
+	<!-- Prihlasovaci stranka - contact -->
+	<component>
+	    <component-name>login-footer</component-name>    
+	    <macro-uri>/pages/common/component/login-footer.zul</macro-uri>
+	</component>
+	
+	<!-- Vyber prijemcu emailu -->
+	<component>
+	    <component-name>mail-recipient-selection</component-name>    
+	    <macro-uri>/pages/common/component/mail-recipient-selection.zul</macro-uri>
+	</component>
+	
+	<!-- Seznam prijemcu emailu s moznosti odebrani -->
+	<component>
+	    <component-name>mail-recipient-list-template</component-name>    
+	    <macro-uri>/pages/common/component/mail-recipient-list-template.zul</macro-uri>
+	</component>
+	
+	<!-- Tlacitko pro prechod na stranku pro  odeslani emailu -->
+	<component>
+	    <component-name>send-mail-button</component-name>    
+	    <macro-uri>/pages/common/component/send-mail-button.zul</macro-uri>
+	</component>
+	
+	<!-- Adresa -->
+	<component>
+	    <component-name>ruian-address</component-name>    
+	    <macro-uri>/pages/common/component/ruian-address.zul</macro-uri>
+	</component>
 
 </language-addon>

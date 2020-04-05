@@ -39,9 +39,11 @@ public class SendMailVM extends BaseVM {
 		}
 		
 		mailService.sendMail("jakub.zaoralek@gmail.com"
+				, null
 				, Labels.getLabel("txt.ui.menu.application")
 				, "text mailu"
-				, attachmentList);        
+				, attachmentList
+				, false);        
 	}
 	
 	@Command

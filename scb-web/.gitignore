@@ -1,1 +1,8 @@
+/target/
+/.settings/
+/build/
 /bin/
+/.project
+/.classpath
+
+/src/main/resources/smtp.properties

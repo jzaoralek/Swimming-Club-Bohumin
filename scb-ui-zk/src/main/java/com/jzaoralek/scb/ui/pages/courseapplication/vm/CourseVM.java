@@ -1,33 +1,50 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
+import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.select.Selectors;
+import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.Combobox;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
-import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -35,9 +52,9 @@ import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
-import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -51,15 +68,18 @@ public class CourseVM extends BaseVM {
 	private Boolean updateMode;
 	private List<CourseParticipant> participantSelectedList;
 	private List<CourseLocation> courseLocationList;
+	private List<ScbUser> trainersAll;
+	private List<ScbUser> trainersToSelect;
+	private ScbUser trainerSelected;
 
 	@WireVariable
 	private CourseService courseService;
 
 	@WireVariable
 	private LessonService lessonService;
-
-	@WireVariable
-	private ConfigurationService configurationService;
+	
+	@Wire
+	private Combobox trainerToSelectCombo;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -73,7 +93,6 @@ public class CourseVM extends BaseVM {
 		this.courseLocationList = courseService.getCourseLocationAll();
 		if (course != null) {
 			this.course = course;
-//			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseDetail");
 			this.updateMode = true;
 			this.courseYearSelected = course.getYear();
 			// misto kurzu
@@ -83,10 +102,11 @@ public class CourseVM extends BaseVM {
 						this.course.setCourseLocation(item);
 					}
 				}
-			}			
+			}
+			// treneri
+			buildTrainersAll();
 		} else {
 			this.course = new Course();
-//			this.pageHeadline = Labels.getLabel("txt.ui.menu.courseNew");
 			this.updateMode = false;
 			this.courseYearSelected = configurationService.getCourseApplicationYear();
 			// misto kurzu
@@ -108,6 +128,51 @@ public class CourseVM extends BaseVM {
 		});
 	}
 	
+	@AfterCompose
+	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
+		Selectors.wireComponents(view, this, false);
+	}
+	
+	private void loadData(UUID uuid) {
+		this.course = courseService.getByUuid(uuid);
+		buildTrainersAll();
+		BindUtils.postNotifyChange(null, null, this, "course");
+	}
+	
+	private void loadTrainers() {
+		this.course.setTrainerList(courseService.getTrainersByCourse(this.course.getUuid()));
+		Collections.sort(this.course.getTrainerList(), ScbUser.PRIJMENI_COMP);
+		
+		BindUtils.postNotifyChange(null, null, this, "course");
+	}
+	
+	private void loadTrainerstToSelect() {
+		if (CollectionUtils.isEmpty(this.trainersAll)) {
+			return;
+		}
+		if (this.trainersToSelect == null) {
+			this.trainersToSelect = new ArrayList<>(); 
+		} else {
+			this.trainersToSelect.clear();			
+		}
+		// zkopirovani vsech treneru a odebrani prirazenych treneru
+		this.trainersToSelect.addAll(this.trainersAll);
+		if (!CollectionUtils.isEmpty(this.course.getTrainerList())) {
+			this.course.getTrainerList().forEach(i -> this.trainersToSelect.removeIf(j -> j.getUuid().toString().equals(i.getUuid().toString())));
+		}
+		
+		Collections.sort(this.trainersToSelect, ScbUser.PRIJMENI_COMP);
+		BindUtils.postNotifyChange(null, null, this, "trainersToSelect");
+	}
+	
+	private void buildTrainersAll()  {
+		if (CollectionUtils.isEmpty(this.trainersAll)) {
+//			List<ScbUser> userAll = scbUserService.getAll();
+//			this.trainersAll = userAll.stream().filter(i -> i.getRole() != ScbUserRole.USER).collect(Collectors.toList());
+			this.trainersAll = scbUserService.getTrainers();
+		}
+	}
+	
 	@Override
 	@DependsOn("course")
 	public String getPageHeadline() {
@@ -118,9 +183,14 @@ public class CourseVM extends BaseVM {
 		}
 	}
 
-	public void loadData(UUID uuid) {
-		this.course = courseService.getByUuid(uuid);
-		BindUtils.postNotifyChange(null, null, this, "course");
+	@NotifyChange({"course"})
+	@Command
+	public void trainersTabSelectedCmd() {
+		if (this.course.getTrainerList() == null) {
+			loadTrainers();
+		}
+		
+		loadTrainerstToSelect();
 	}
 
 	@NotifyChange("*")
@@ -130,12 +200,13 @@ public class CourseVM extends BaseVM {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Storing course: " + this.course);
 			}
-			course.fillYearFromTo(this.courseYearSelected);
-			this.course = courseService.store(course);
-			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
+			this.course.fillYearFromTo(this.courseYearSelected);
+			courseService.store(this.course);
 			this.updateMode = true;
+			loadData(this.course.getUuid());
+			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
 		} catch (ScbValidationException e) {
-			LOG.warn("ScbValidationException caught for course: " + this.course);
+			LOG.warn("ScbValidationException caught for course: " + this.course, e);
 			WebUtils.showNotificationError(e.getMessage());
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for course: " + this.course, e);
@@ -150,7 +221,7 @@ public class CourseVM extends BaseVM {
 			lessonService.delete(uuid);
 			loadData(this.course.getUuid());
 		} catch (ScbValidationException e) {
-			LOG.warn("ScbValidationException caught during deleting lesson uuid: "+ uuid+" for course: " + this.course);
+			LOG.warn("ScbValidationException caught during deleting lesson uuid: "+ uuid+" for course: " + this.course, e);
 			WebUtils.showNotificationError(e.getMessage());
 		}
 	}
@@ -160,7 +231,6 @@ public class CourseVM extends BaseVM {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
-
 //		String targetPage = WebPages.PARTICIPANT_DETAIL.getUrl();
 //		WebPages fromPage = WebPages.COURSE_DETAIL;
 //		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
@@ -199,16 +269,34 @@ public class CourseVM extends BaseVM {
 
 	@Command
 	public void addCourseParticipantsFromApplicationCmd() {
-		 EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_APPLICATION_DATA_EVENT, null, this.course);
-		 WebUtils.openModal("/pages/secured/ADMIN/participant-to-course-window.zul");
+		 addCoursePartic(true);
 	}
 
 	@Command
 	public void addCourseParticipantsFromCourseCmd() {
-		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.COURSE_UUID_FROM_COURSE_DATA_EVENT, null, this.course);
-		WebUtils.openModal("/pages/secured/ADMIN/participant-to-course-window.zul");
+		addCoursePartic(false);
 	}
-
+	
+	@Command
+	public void openTrainerSelectCmd() {
+		trainerToSelectCombo.open();
+	}
+	
+	@Command
+	public void addTrainerCmd() {
+		courseService.addTrainersToCourse(Arrays.asList(this.trainerSelected), this.course.getUuid());
+		loadTrainers();
+		loadTrainerstToSelect();
+		trainerToSelectCombo.setSelectedItem(null);
+	}
+	
+	@Command
+	public void removeTrainerCmd(@BindingParam(WebConstants.ITEM_PARAM) final ScbUser item) {
+		courseService.removeTrainersFromCourse(Arrays.asList(item), this.course.getUuid());
+		loadTrainers();
+		loadTrainerstToSelect();
+	}
+	
 	@Command
 	public void newLessonCmd() {
 		Lesson lesson = new Lesson();
@@ -257,6 +345,24 @@ public class CourseVM extends BaseVM {
 			msgParams
 		);
 	}
+	
+	/**
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 */
+	@Command
+	public void goToSendEmailCmd() {
+		final Set<Contact> contactList = new HashSet<>();
+		contactList.addAll(WebUtils.getParticEmailAddressList(this.course, courseService, scbUserService));
+		
+		goToSendEmailCore(contactList);
+	}
+	
+	private void addCoursePartic(boolean fromApplication) {
+		Map<String, Object> args = new HashMap<>();
+		args.put(WebConstants.COURSE_PARAM, this.course);
+		args.put(WebConstants.COURSE_APPLICATION_PARAM, fromApplication);
+		WebUtils.openModal("/pages/secured/ADMIN/participant-to-course-window.zul", null, args);
+	}
 
 	public Course getCourse() {
 		return course;
@@ -290,4 +396,15 @@ public class CourseVM extends BaseVM {
 		return courseLocationList;
 	}
 	
+	public List<ScbUser> getTrainersToSelect() {
+		return trainersToSelect;
+	}
+	
+	public ScbUser getTrainerSelected() {
+		return trainerSelected;
+	}
+
+	public void setTrainerSelected(ScbUser trainerSelected) {
+		this.trainerSelected = trainerSelected;
+	}
 }

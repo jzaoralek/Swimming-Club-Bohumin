@@ -13,6 +13,7 @@ public final class EventQueueHelper {
 	public enum ScbEventQueues {
 		MENU_QUEUE,
         SIDE_MENU_QUEUE,
+        MAIL_QUEUE,
 		COURSE_APPLICATION_QUEUE,
 		CODE_LIST_QUEUE,
 		RESULT_QUEUE,
@@ -26,7 +27,6 @@ public final class EventQueueHelper {
         RELOAD_COURSE_APPLICATION_DATA_EVENT(null),
         RELOAD_COURSE_DATA_EVENT(null),
         RELOAD_COURSE_PARTICIPANT_DATA_EVENT(null),
-        COURSE_UUID_FROM_APPLICATION_DATA_EVENT(null),
         COURSE_UUID_FROM_COURSE_DATA_EVENT(null),
         LESSON_NEW_DATA_EVENT(null),
         LESSON_DETAIL_DATA_EVENT(null),
@@ -39,6 +39,9 @@ public final class EventQueueHelper {
         RELOAD_USER_DATA_EVENT(null),
         RELOAD_PAYMENT_DATA_EVENT(null),
         RELOAD_COURSE_LOCATION_DATA_EVENT(null),
+        ADD_TO_RECIPIENT_LIST_EVENT(ScbEventQueues.MAIL_QUEUE),
+        CLOSE_RECIPIENT_SELECTION_POPUP_EVENT(ScbEventQueues.MAIL_QUEUE),
+        INIT_RECIPIENT_SELECTION_EVENT(ScbEventQueues.MAIL_QUEUE),
         SIDE_MENU_FOLD_EVENT(ScbEventQueues.SIDE_MENU_QUEUE),
         MOBILE_MODE_EVENT(ScbEventQueues.SIDE_MENU_QUEUE),
         SET_MENU_SELECTED(ScbEventQueues.SIDE_MENU_QUEUE);

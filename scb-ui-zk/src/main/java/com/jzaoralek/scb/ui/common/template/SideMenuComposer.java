@@ -36,6 +36,7 @@ public class SideMenuComposer extends SelectorComposer<Component> {
         UZIVATEL,
         SENAM_UZIVATELU,
         PLATBY,
+        ZPRAVY,
         NASTAVENI;
     }
 

@@ -19,45 +19,64 @@
 					id="courseList"
 					hflex="1"
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-					class="listbox-300 mobile-inherit-width" >
+					class="listbox-400 mobile-inherit-width" >
 		        <auxhead>
 		            <auxheader class="header" colspan="4" >
 		            	<hlayout sclass="pull-left">	
+			            	<!-- Novy -->
 			            	<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
             					sclass="add-item-btn" 
             					iconSclass="z-icon-plus"
-            					style="margin-right: 35px;"
+            					style="margin-right: 10px;"
             					visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
-			            					
-		            		<hbox if="${vm.showCourseFilter}" >
-			            		<label value="${c:l('txt.ui.common.courseLocation2')}:"/>
+			            	
+							<!-- Misto -->		
+		            		<hbox if="${vm.showCourseFilter}" style="margin-right: 10px;" >
+			            		<label value="${c:l('txt.ui.common.location')}:" class="hide-on-mobile-platform"/>
 								<listbox id="courseLocation" 
 									selectedItem="@bind(vm.courseLocationSelected)" 
+									tooltiptext="@load(vm.courseLocationSelected.name)"
 									model="@load(vm.courseLocationList)"
 									onSelect="@command('filterByCourseLocationCmd')"
 									mold="select"
 									style="margin-left: 5px;"
-									height="30px"
-									hflex="1" >
+									width="150px"
+									height="30px" >
 									<template name="model">
 						           		<listitem label="${each.name}" value="${each}" />
 									</template>
 								</listbox>
 		            		</hbox>
 		            		
+		            		<!-- Moje kurzy -->
+			            	<hlayout hflex="min" style="margin-right: 2px;">
+								<label value="${c:l('txt.ui.common.myCourses')}" />
+            					<checkbox checked="@bind(vm.myCourses)" onCheck="@command('filterByMyCoursesCmd')" />
+							</hlayout>
 		            	</hlayout>
-		            					
-	            		
-		            	<hlayout sclass="pull-right">		            		
-		            		
-		            		
+		            	
+		            	<hlayout sclass="pull-right">	
 		            		<!-- Rocnik -->
             				<include src="/pages/common/component/context-year.zul"/>
             				
+            				<!-- Zpravy -->
+		           			<send-mail-button buttonSclass="toolbar-btn" />
+            				
             				<button iconSclass="z-icon-download" 
-            					onClick="@command('exportToExcel',listbox=courseList)" 
-            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
-            					sclass="toolbar-btn"/>
+	            					popup="downloadPopup, position=after_end"
+	            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
+	            					if="${vm.isLoggedUserInRole('ADMIN')}"
+	            					sclass="toolbar-btn"/>
+            				<menupopup id="downloadPopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
+	            				<!-- Standardni export -->
+								<menuitem label="${c:l('txt.ui.export.Standard')} ${c:l('txt.ui.export.XLS')}" 
+									onClick="@command('exportToExcel',listbox=courseList)" />
+								<menuseparator/>
+								<!-- Kompletní informace vcetne seznamu ucastniku, lekci a treneru -->
+								<menuitem label="${c:l('txt.ui.export.CompletCourse')}" 
+									onClick="@command('exportCompleteCoursesToExcelCmd')" />
+					       	</menupopup>
+            				
            					<button iconSclass="z-icon-refresh" 
            						onClick="@command('refreshDataCmd')" 
            						tooltiptext="${c:l('txt.ui.common.refreshData')}" 

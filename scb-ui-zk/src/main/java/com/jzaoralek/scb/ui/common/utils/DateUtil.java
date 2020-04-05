@@ -478,4 +478,28 @@ public class DateUtil {
 		Calendar calendar = new GregorianCalendar(year,7,31);
 		return calendar.getTime();
 	}
+	
+	/**
+	 * Return first day of month.
+	 * @param cal
+	 * @return
+	 */
+	public static Date getFirstDateOfCurrentMonth(Calendar cal) {
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+		cal.set(Calendar.HOUR_OF_DAY, cal.getActualMinimum(Calendar.HOUR_OF_DAY));
+		cal.set(Calendar.MINUTE, cal.getActualMinimum(Calendar.MINUTE));
+		cal.set(Calendar.SECOND, cal.getActualMinimum(Calendar.SECOND));
+		cal.set(Calendar.MILLISECOND, cal.getActualMinimum(Calendar.MILLISECOND));
+		return cal.getTime();
+	}
+	
+	/**
+	 * Return last day of month.
+	 * @param cal
+	 * @return
+	 */
+	public static Date getLastDateOfCurrentMonth(Calendar cal) {
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		return cal.getTime();
+	}
 }

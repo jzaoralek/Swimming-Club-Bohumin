@@ -5,7 +5,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
 import org.zkoss.bind.Validator;
@@ -17,12 +21,15 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig.CourseApplicationFileType;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
+import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -34,17 +41,23 @@ import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.converter.Converters;
+import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.ManifestSolver;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.validator.ExistingUsernameValidator;
 import com.jzaoralek.scb.ui.common.validator.Validators;
+import com.sportologic.ruianclient.model.RuianValidationResponse;
+import com.sportologic.ruianclient.service.RuianService;
 
 public class BaseVM {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(BaseVM.class);
 
 	private final String appVersion = ManifestSolver.getMainAttributeValue("Application-version");
 	protected String pageHeadline;
@@ -58,19 +71,21 @@ public class BaseVM {
 	protected String orgEmail;
 	protected String orgPhone;
 	protected String welcomeInfo;
-	
 
 	@WireVariable
 	protected ConfigurationService configurationService;
 	
 	@WireVariable
-	private ScbUserService scbUserService;
+	protected ScbUserService scbUserService;
 	
 	@WireVariable
 	protected MailService mailService;
 	
 	@WireVariable
 	protected CourseApplicationFileConfigService courseApplicationFileConfigService;
+	
+	@WireVariable
+	protected RuianService ruianServiceRest;
 
 	protected String returnToPage;
 	protected String returnToUrl;
@@ -82,7 +97,9 @@ public class BaseVM {
 		this.existingUsernameValidator = new ExistingUsernameValidator(scbUserService);
 		
 		// naplneni cashovanych hodnot z konfigurace
-		orgName = ConfigUtil.getOrgName(configurationService);		
+		if (configurationService != null) {
+			orgName = ConfigUtil.getOrgName(configurationService);			
+		}
 	}
 
 	public static String getOrgNameStatic() {
@@ -174,10 +191,6 @@ public class BaseVM {
 		return Validators.getBirthnumbervalidator();
 	}
 
-	public Validator getCaptchaValidator() {
-		return Validators.getCaptchavalidator();
-	}
-
 	public Validator getTimeIntervalValidator() {
 		return Validators.getTimeintervalvalidator();
 	}
@@ -232,6 +245,10 @@ public class BaseVM {
 	}
 
 	protected void sendMailToNewUser(ScbUser user) {
+		mailService.sendMail(buildMailToNewUser(user));
+	}
+	
+	protected Mail buildMailToNewUser(ScbUser user) {
 		StringBuilder mailToUser = new StringBuilder();
 		mailToUser.append(Labels.getLabel("msg.ui.mail.text.newUserAdmin.text0"));
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
@@ -270,7 +287,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 		
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
+		return new Mail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
 	}
 	
 	public List<Boolean> getBooleanListItem() {
@@ -325,6 +342,19 @@ public class BaseVM {
 		return attachment;
 	}
 	
+	/**
+	 * Otevre stranku pro odeslani emailu na kontakty na vstupu.
+	 * @param recipientList
+	 */
+	protected void goToSendEmailCore(Set<Contact> recipientList) {
+		if (CollectionUtils.isEmpty(recipientList)) {
+			return;
+		}
+		
+		WebUtils.setSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM, recipientList);
+		Executions.getCurrent().sendRedirect(WebPages.MESSAGE.getUrl(), "_blank");
+	}
+	
 	protected CourseApplicationFileConfig getByType(List<CourseApplicationFileConfig> cafcList, CourseApplicationFileType type) {
 		if (cafcList == null || cafcList.isEmpty()) {
 			return null;
@@ -360,6 +390,13 @@ public class BaseVM {
 	}
 
 	public void sendMail(CourseApplication courseApplication, String headline) {
+		// mail to course participant representative
+		mailService.sendMail(buildMailCourseParticRepresentative(courseApplication, headline));
+		// mail to club
+		mailService.sendMail(buildMailToClub(courseApplication));
+	}
+	
+	public Mail buildMailCourseParticRepresentative(CourseApplication courseApplication, String headline) {
 		byte[] byteArray = JasperUtil.getReport(courseApplication, headline, configurationService);
 		this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
 		
@@ -375,24 +412,6 @@ public class BaseVM {
         		attachmentList.add(gdprFileConfig.getAttachment());
         	}
         }
-        // attachment gdpr
-//      byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
-//		if (gdprByteArray != null) {
-//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
-//		}
-//		byte[] gdprPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.pdf");
-//		if (gdprPdfByteArray != null) {
-//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprPdfByteArray,"souhlas-clena-klubu.pdf"));
-//		}
-		// attachment lekarska prohlidka
-//		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
-//		if (lekarskaProhlidkaByteArray != null) {
-//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
-//		}
-//		byte[] lekarskaProhlidkaPdfByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.pdf");
-//		if (lekarskaProhlidkaPdfByteArray != null) {
-//			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaPdfByteArray,"lekarska-prohlidka.pdf"));
-//		}
 		
 		StringBuilder mailToRepresentativeSb = new StringBuilder();
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text0"));
@@ -419,11 +438,13 @@ public class BaseVM {
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 			if (course.getCourseLocation() != null) {
 				// nazev a popis mista kurzu
+				mailToRepresentativeSb.append(System.getProperty("line.separator"));
 				mailToRepresentativeSb.append(course.getCourseLocation().getName() + (StringUtils.hasText(course.getCourseLocation().getDescription()) ? (", " + course.getCourseLocation().getDescription()) : ""));
 				mailToRepresentativeSb.append(System.getProperty("line.separator"));				
 			}
 			if (course.getLessonList() != null && !course.getLessonList().isEmpty()) {
 				// lekce
+				mailToRepresentativeSb.append(System.getProperty("line.separator"));
 				for (Lesson item : course.getLessonList()) {
 					mailToRepresentativeSb.append(getLessonToUi(item));
 					mailToRepresentativeSb.append(System.getProperty("line.separator"));
@@ -441,27 +462,19 @@ public class BaseVM {
 			mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		}
 		
-//		if (attachmentList != null && !attachmentList.isEmpty()) {
-//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-//			if (attachmentList.size() == 1) {
-//				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text5"));
-//			} else {
-//				mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text6"));
-//			}
-//			mailToRepresentativeSb.append(System.getProperty("line.separator"));
-//		}
-		
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(System.getProperty("line.separator"));
 		mailToRepresentativeSb.append(buildMailSignature());
 
 		// mail to course participant representative
-		mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
+		return new Mail(courseApplication.getCourseParticRepresentative().getContact().getEmail1()
+				, null
 				, Labels.getLabel("txt.ui.menu.application")
 				, mailToRepresentativeSb.toString()
 				, attachmentList);
-
+	}
+	
+	protected Mail buildMailToClub(CourseApplication courseApplication) {
 		StringBuilder mailToClupSb = new StringBuilder();
 		String courseApplicationYear = configurationService.getCourseApplicationYear();
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text0", new Object[] {courseApplicationYear}));
@@ -472,8 +485,7 @@ public class BaseVM {
 		String representativeInfo = courseApplication.getCourseParticRepresentative().getContact().getFirstname() + " " + courseApplication.getCourseParticRepresentative().getContact().getSurname() + ", " + courseApplication.getCourseParticRepresentative().getContact().getEmail1() + ", " + courseApplication.getCourseParticRepresentative().getContact().getPhone1();
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
 
-		// mail to club
-		mailService.sendMail(ConfigUtil.getOrgEmail(configurationService), Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null);
+		return new Mail(ConfigUtil.getOrgEmail(configurationService), null, Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null);
 	}
 	
 	protected void sendMailWithResetpassword(ScbUser user) {
@@ -491,7 +503,93 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 
-		mailService.sendMail(user.getContact().getEmail1(), Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null);
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false);
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected List<ScbUser> getUserListFromCache() {
+		List<ScbUser> userListSessionCache = (List<ScbUser>) WebUtils.getSessAtribute(WebConstants.USER_LIST_CACHE_PARAM);
+		if (CollectionUtils.isEmpty(userListSessionCache)) {
+			userListSessionCache = scbUserService.getAll();
+			WebUtils.setSessAtribute(WebConstants.USER_LIST_CACHE_PARAM, userListSessionCache);
+		}
+		
+		return userListSessionCache;
+	}
+	
+	/**
+	 * Validace adresy pred submitem formulare.
+	 * @param application
+	 * @param courseApplNotVerifiedAddressAllowed
+	 * @param submitCore
+	 */
+	protected void addressValidationBeforeSubmit(Contact contact
+			, boolean courseApplNotVerifiedAddressAllowed
+			, Runnable submitCore) {
+		// overeni validni adresy
+		if (contact.isAddressValid()) {
+			// adresa je validni, mozno ulozit
+			submitCore.run();
+		} else {
+			// automaticke overeni nevalidní adresy
+			placeValidation(contact);
+			// kontrola platnosti adresy po automatickem overeni
+			if (contact.isAddressValid()) {
+				// adresa je validni, mozno ulozit
+				submitCore.run();
+			} else {
+				if (!courseApplNotVerifiedAddressAllowed) {
+					// neni povoleno odeslat prihlasku s nevalidni adresou
+					// adresa neni validni, zastaveni odeslani
+					MessageBoxUtils.showOkWarningDialog("msg.ui.warn.ProcessNotValidAddress", 
+							"msg.ui.quest.title.NotValidAddress", 
+							new SzpEventListener() {
+						@Override
+						public void onOkEvent() {
+							// nothing
+						}
+					});
+					
+				} else {
+					// je povoleno odeslat adresu s nevalidní adresou
+					// adresa neni validni, dotaz jestli pokracovat
+					MessageBoxUtils.showDefaultConfirmDialog(
+						"msg.ui.quest.ProcessNotValidAddress",
+						"msg.ui.quest.title.NotValidAddress",
+						new SzpEventListener() {
+							@Override
+							public void onOkEvent() {
+								submitCore.run();
+							}
+						}
+					);							
+				}	
+			}					
+		}
+	}
+	
+	protected void placeValidation(Contact contact) {
+		if (contact == null) {
+			return;
+		}
+		try {
+			RuianValidationResponse validationResponse = ruianServiceRest.validate(contact.getCity()
+					, contact.getZipCode()
+					, contact.getEvidenceNumber()
+					, contact.getHouseNumber()
+					, contact.getLandRegistryNumber() != null ? String.valueOf(contact.getLandRegistryNumber()) : ""
+					, contact.getStreet());
+			if (validationResponse != null && validationResponse.isValid()) {
+				contact.setAddressValidationStatus(AddressValidationStatus.VALID);
+			} else if (validationResponse != null && !validationResponse.isValid()) {
+				contact.setAddressValidationStatus(AddressValidationStatus.INVALID);
+			} else {
+				contact.setAddressValidationStatus(AddressValidationStatus.NOT_VERIFIED);
+			}
+		} catch (RuntimeException e) {
+			LOG.error("RuntimeException caught, ", e);
+			WebUtils.showNotificationError(Labels.getLabel("msg.ui.address.AddressVerificationServiceNotAvailable"));
+		}
 	}
 	
 	@Command
@@ -527,6 +625,10 @@ public class BaseVM {
     	return isUserLogged() && userInRole(role);
     }
     
+    public Boolean isLoggedUserAdmin() {
+    	return isUserLogged() && userInRole("ADMIN");
+    }
+    
 	/**
 	 * Kontrola povoleni podavani prihlasek.
 	 * @return
@@ -538,4 +640,16 @@ public class BaseVM {
     public String getDateColWidth() {
     	return WebConstants.DATE_COL_WIDTH;
     }
+    
+    public String getOrgEmail() {
+		return ConfigUtil.getOrgEmail(configurationService);
+	}
+	
+	public String getOrgPhone() {
+		return ConfigUtil.getOrgPhone(configurationService);
+	}
+	
+	public String getOrgName2() {
+		return ConfigUtil.getOrgName(configurationService);
+	}
 }

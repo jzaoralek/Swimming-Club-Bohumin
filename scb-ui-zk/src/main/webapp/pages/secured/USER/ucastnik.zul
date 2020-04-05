@@ -44,7 +44,7 @@
 											emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 											class="listbox" >
 									        <auxhead>
-									            <auxheader class="header" colspan="${vm.isAttendanceForParentsVisible() ? 5 : 4}" >
+									            <auxheader class="header" colspan="${vm.isAttendanceForParentsVisible() ? 6 : 5}" >
 									            	<hbox hflex="1" height="42px" align="center" >
 										            	<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
 									            			<hbox vflex="1" align="center">
@@ -65,6 +65,7 @@
 									            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="2" />
 									            <listheader label="${c:l('txt.ui.common.courseLocation2')}" sort="auto(description)" align="left" hflex="3" />
 									            <listheader label="${c:l('txt.ui.common.lessons')}" align="left" hflex="2" />
+									            <listheader label="${c:l('txt.ui.common.trainers')}" align="left" hflex="2" />
 <!-- 									            <listheader width="35px" /> -->
 									            <listheader width="60px" />
 									            <listheader hflex="min" if="${vm.isAttendanceForParentsVisible()}" />
@@ -75,8 +76,13 @@
 									                <listcell label="${item.name}" />
 									                <listcell label="${item.courseLocation.name}, ${item.courseLocation.description}" />
 									                <listcell>
-									                	<vbox vflex="1" align="center" forEach="${item.lessonList}" >
-									                		<label value="${vm.getLessonToUi(each)}"/>
+									                	<vbox vflex="1" align="left" forEach="${item.lessonList}" >
+									                		<label value="${vm.getLessonToUi(each)}" />
+														</vbox>
+									                </listcell>
+									                <listcell>
+									                	<vbox vflex="1" align="left" forEach="${item.trainerList}" >
+															<label value="${each.contact.completeName}" />
 														</vbox>
 									                </listcell>
 													<!-- Platba -->
@@ -220,6 +226,21 @@
 										<rows style="background: white;" >
 											<row>
 												<cell>
+													<hbox style="margin-top: 10px;" hflex="1">
+														<hlayout width="150px">
+															<checkbox checked="@bind(fx.courseParticipant.contact.czechCitizenship)" />
+															<label value="${c:l('txt.ui.common.CzechCitizen')}"/>
+														</hlayout>
+														<hlayout width="150px">
+															<radiogroup id="sexRadioGroup" selectedItem="@bind(fx.courseParticipant.contact.sexMale)" />
+															<radio id="sexMale" label="${c:l('txt.ui.common.Sex.male')}" radiogroup="sexRadioGroup" value="${true}" />
+			                								<radio id="sexFemale" label="${c:l('txt.ui.common.Sex.female')}" radiogroup="sexRadioGroup" value="${false}"/>
+														</hlayout>
+													</hbox>
+												</cell>
+											</row>
+											<row>
+												<cell>
 													<vbox hflex="1">
 														<label value="${c:l('txt.ui.common.firstname')}"/>
 														<textbox id="particFirstname" 
@@ -260,43 +281,58 @@
 											</row>
 											<row>
 												<cell>
-													<vbox hflex="1">
-														<label value="${c:l('txt.ui.common.birthDate')}"/>
-														<datebox id="particBirthdate"
-															value="@bind(fx.courseParticipant.birthdate) @validator(vm.notNullObjectValidator)"
-						                            		format="@load(vm.dateFormat)" 
-						                            		maxlength="@load(vm.getDateMaxlength())"
-						                            		placeholder="*"
-						                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-						                            		tabindex="3" />
-														<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-															<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
-																	<label value="@bind(vmsgs[particBirthdate])" />
+													<hbox hflex="1">
+														<vbox width="150px">
+															<label value="${c:l('txt.ui.common.birthNumber')}"/>
+															<textbox id="particBirthNumber"
+																value="@bind(fx.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true, validateFormat=fx.courseParticipant.contact.czechCitizenship)"
+							                            		maxlength="@load(vm.getBirthNumberMaxlength())"
+							                            		placeholder="*"
+							                            		sclass="form-input-text"
+							                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+							                            		tabindex="4"
+							                            		hflex="1"
+							                            		onChange="@command('birtNumberOnChangeCmd', personal_number=self.value, fx=fx)" />
+															<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+																<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
+																	<label value="@bind(vmsgs[particBirthNumber])" />
 																</span>
-														</hbox>
-													</vbox>
+															</hbox>
+														</vbox>
+														<vbox hflex="1">
+															<label value="${c:l('txt.ui.common.birthDate')}"/>
+															<datebox id="particBirthdate"
+																value="@bind(fx.courseParticipant.birthdate) @validator('com.jzaoralek.scb.ui.common.validator.BirthdateValidator', notNull=true, validateBirthNumber=fx.courseParticipant.contact.czechCitizenship, birthNumber=fx.courseParticipant.personalNo)"
+							                            		format="@load(vm.dateFormat)" 
+							                            		maxlength="@load(vm.getDateMaxlength())"
+							                            		placeholder="*"
+							                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+							                            		tabindex="3" />
+															<hbox hflex="1" align="center" pack="start" sclass="form-grid-validation-hbox">
+																<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthdate])" >
+																		<label value="@bind(vmsgs[particBirthdate])" />
+																	</span>
+															</hbox>
+														</vbox>
+													</hbox>
 												</cell>
 											</row>
-											<row visible="@load(vm.isLoggedUserInRole('ADMIN'))" >
-												<cell>
-													<vbox hflex="1">
-														<label value="${c:l('txt.ui.common.birthNumber')}"/>
-														<textbox id="particBirthNumber"
-															value="@bind(fx.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true)"
-						                            		maxlength="@load(vm.getBirthNumberMaxlength())"
-						                            		placeholder="*"
-						                            		sclass="form-input-text"
-						                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-						                            		tabindex="4"
-						                            		hflex="1" />
-														<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-															<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particBirthNumber])" >
-																<label value="@bind(vmsgs[particBirthNumber])" />
-															</span>
-														</hbox>
-													</vbox>
+											
+											<!-- Adresa -->
+											<row>
+												<cell align="left">
+													<button id="realSubmitBtn"
+														onClick="@command('submit')"
+														visible="false"
+														label="Submit" />
+													<custom-attributes submitBtn="${realSubmitBtn}"></custom-attributes>
+													<ruian-address contact="${vm.courseParticipant.contact}" 
+														contactDisabled="false" 
+														submitBtn="@load(realSubmitBtn)" />
 												</cell>
 											</row>
+											
+											
 											<row>
 												<cell >
 													<vbox hflex="1">
@@ -332,10 +368,10 @@
 									</grid>
 									
 									<hbox style="margin: 5px 10px 15px 20px;">
-										<button label="Uložit"
-												onClick="@command('submit')" 
-												iconSclass="z-icon-check" 
-												sclass="btn-success"/>
+										<button label="${c:l('txt.ui.common.Save')}"
+											forward="onClick=realSubmitBtn.onClick"
+											sclass="btn-success"
+											iconSclass="z-icon-check" />
 									</hbox>
 						    	</tabpanel>
 						    	

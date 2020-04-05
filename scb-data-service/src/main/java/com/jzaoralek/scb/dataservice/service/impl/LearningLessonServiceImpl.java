@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +42,11 @@ public class LearningLessonServiceImpl extends BaseAbstractService implements Le
 		return learningLessonDao.getByCourse(courseUuid);
 	}
 
+	@Override
+	public List<LearningLesson> getByCourseInterval(UUID courseUuid, Date from, Date to) {
+		return learningLessonDao.getByCourseInterval(courseUuid, from, to);
+	}
+	
 	@Override
 	public LearningLesson getByUUID(UUID uuid) {
 		return learningLessonDao.getByUUID(uuid);

@@ -1,16 +1,19 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -28,11 +31,15 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
@@ -43,6 +50,8 @@ import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
+import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseExternalFilter;
+import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseFilter;
 
 public class CourseListVM extends BaseContextVM {
 
@@ -53,7 +62,10 @@ public class CourseListVM extends BaseContextVM {
 	private List<CourseLocation> courseLocationList;
 	private boolean showCourseFilter;
 	private CourseLocation courseLocationSelected;
-	private final CourseApplicationFilter filter = new CourseApplicationFilter();
+	private final CourseFilter filter = new CourseFilter();
+	private Boolean myCourses;
+	/** Cache object for external filter */
+	private CourseExternalFilter externalFilter;
 
 	@WireVariable
 	private CourseService courseService;
@@ -62,6 +74,15 @@ public class CourseListVM extends BaseContextVM {
 	@Init
 	public void init() {
 		initYearContext();
+		// nacteni seznamu mist konani kurzu
+		initCourseLocations();
+		
+		// default zobrazeni moje kurzy jen pokud se nejadna o admina
+		this.myCourses = isLoggedUserAdmin() ? Boolean.FALSE : Boolean.TRUE;
+		
+		// nacteni externiho filtru ze session
+		initExternalFilterCache();
+		
 		loadData();
 
 		final EventQueue eq = EventQueues.lookup(ScbEventQueues.COURSE_APPLICATION_QUEUE.name() , EventQueues.DESKTOP, true);
@@ -75,10 +96,45 @@ public class CourseListVM extends BaseContextVM {
 			}
 		});
 	}
+	
+	private void updateExternalFilterCache()  {
+		UUID courseLocSelUuid = null;
+		if (this.showCourseFilter && this.courseLocationSelected != null) {
+			courseLocSelUuid = this.courseLocationSelected.getUuid();
+		}
+		
+		if (this.externalFilter == null) {
+			this.externalFilter = new CourseExternalFilter(this.myCourses, courseLocSelUuid);
+		} else {
+			this.externalFilter.setMyCourses(this.myCourses);
+			this.externalFilter.setCourseLocationUuid(courseLocSelUuid);
+		}
+		
+		WebUtils.setSessAtribute(WebConstants.COURSE_LIST_EXT_FILTER_PARAM, this.externalFilter);
+	}
+	
+	private void initExternalFilterCache() {
+		this.externalFilter = (CourseExternalFilter)WebUtils.getSessAtribute(WebConstants.COURSE_LIST_EXT_FILTER_PARAM);
+		if (this.externalFilter != null) {
+			this.myCourses = this.externalFilter.getMyCourses();
+			
+			if (this.showCourseFilter && this.externalFilter.getCourseLocationUuid() != null) {
+				List<CourseLocation> courseLocFilterred = this.courseLocationList.
+							stream().
+							filter(i -> i.getUuid().toString().equals(this.externalFilter.getCourseLocationUuid().toString())).
+							collect(Collectors.toList());
+				this.courseLocationSelected = courseLocFilterred.stream().findFirst().orElse(null);
+			}
+		}
+	}
 
 	@Command
 	public void exportToExcel(@BindingParam("listbox") Listbox listbox) {
 		ExcelUtil.exportToExcel("seznam_kurzu.xls", buildExcelRowData(listbox));
+	}
+	@Command
+	public void exportCompleteCoursesToExcelCmd() {
+		ExcelUtil.exportToExcel("seznam_kurzu_"+getCourseLocationName()+".xls", buildExcelCompleteCourseRowData());
 	}
 
 	@Command
@@ -104,10 +160,18 @@ public class CourseListVM extends BaseContextVM {
 	@NotifyChange("*")
 	@Command
 	public void refreshDataCmd() {
+		updateExternalFilterCache();
 		loadData();
 		filter.setEmptyValues();
 	}
 
+	@NotifyChange("*")
+	@Command
+	public void filterByMyCoursesCmd() {
+		loadData();
+		updateExternalFilterCache();
+	}
+	
 	@NotifyChange("*")
 	@Command
     public void deleteCmd(@BindingParam(WebConstants.ITEM_PARAM) final Course item) {
@@ -157,7 +221,24 @@ public class CourseListVM extends BaseContextVM {
 	@NotifyChange("courseList")
 	@Command
 	public void filterByCourseLocationCmd() {
-		this.courseList = filterByLocation(this.courseLocationSelected);
+//		this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
+		loadData();
+		updateExternalFilterCache();
+	}
+	
+	/**
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 */
+	@Command
+	public void goToSendEmailCmd() {
+		if (CollectionUtils.isEmpty(this.courseList)) {
+			return;
+		}
+		
+		final Set<Contact> contactList = new HashSet<>();
+		this.courseList.forEach(i -> contactList.addAll(WebUtils.getParticEmailAddressList(i, courseService, scbUserService)));
+		
+		goToSendEmailCore(contactList);
 	}
 
 	public void loadData() {
@@ -165,29 +246,29 @@ public class CourseListVM extends BaseContextVM {
 		
 		int yearFrom = Integer.parseInt(years[0]);
 		int yearTo = Integer.parseInt(years[1]);
-
-		this.courseList = courseService.getAll(yearFrom, yearTo, false);
+		
+		// nacteni vsech nebo pouze prirazenych kurzu
+		this.courseList = this.myCourses ? courseService.getByTrainer(SecurityUtils.getLoggedUser().getUuid(), yearFrom, yearTo, false) : courseService.getAll(yearFrom, yearTo, false);
 		this.courseListBase = this.courseList;
 		
-		this.courseLocationList = courseService.getCourseLocationAll();
-		if (this.courseLocationList != null && this.courseLocationList.size() > 1) {
-			// pokud vice nez jedno misto konani, zobrazit vyber mist konani
-			this.showCourseFilter = true;
-			this.courseLocationSelected = this.courseLocationList.get(0);
-			this.courseList = filterByLocation(this.courseLocationSelected);
+		if (this.showCourseFilter) {
+			if (this.courseLocationSelected == null) {
+				this.courseLocationSelected = this.courseLocationList.get(0);				
+			}
+			this.courseList = WebUtils.filterByLocation(this.courseLocationSelected, this.courseListBase);
 		}
-		
+
 		BindUtils.postNotifyChange(null, null, this, "courseList");
 	}
 	
-	private List<Course> filterByLocation(CourseLocation location) {
-		return this.courseListBase.stream()
-                .filter(line -> location.getUuid().toString().equals(line.getCourseLocation().getUuid().toString()))
-                .collect(Collectors.toList());
+	private void initCourseLocations() {
+		this.courseLocationList = courseService.getCourseLocationAll();
+		// pokud vice nez jedno misto konani, zobrazit vyber mist konani
+		this.showCourseFilter = (this.courseLocationList != null && this.courseLocationList.size() > 1);
 	}
 
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
-		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
+		Map<String, Object[]> data = new LinkedHashMap<>();
 
 		// header
 		Listhead lh = listbox.getListhead();
@@ -211,70 +292,123 @@ public class CourseListVM extends BaseContextVM {
 
 		return data;
 	}
+	
+	/**
+	 * Sestaveni dat pro detailni report o kurzech, vcetne ucastniku, lekci, treneru.
+	 * @param listbox
+	 * @return
+	 */
+	private Map<String, Object[]> buildExcelCompleteCourseRowData() {
+		Map<String, Object[]> data = new LinkedHashMap<>();
+
+		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_ISCUS_PATTERN);
+
+		int MAX_COLS = 20;
+		
+		// header, kurzy, lokace,  pocet
+		Object[] headerArray = getRow(Arrays.asList(Labels.getLabel("txt.ui.menu.courses"),
+				getCourseLocationName(),
+				this.getCourseYearSelected(),
+				Labels.getLabel("txt.ui.common.count") + WebConstants.COLON + (!CollectionUtils.isEmpty(this.courseList) ? this.courseList.size() : 0)));
+		data.put("0", headerArray);
+		
+		// empty  row
+		data.put("1", getEmptyRow(MAX_COLS));
+		
+		// courses
+		if (CollectionUtils.isEmpty(this.courseListBase)) {
+			// no data found
+			data.put("2", getRow(Arrays.asList(Labels.getLabel("txt.ui.common.noDataFound"))));
+		} else {
+			
+			int row  = 3;
+			Course courseDetail =  null;
+			for (Course course : this.courseList) {
+				courseDetail = courseService.getByUuid(course.getUuid());
+				// course summary
+				// Nazev kurzu | Lekce: {lekce}|Počet účastníků: {pocet}/{kapacita}
+				data.put(String.valueOf(row++), 
+						getRow(Arrays.asList(courseDetail.getName(), 
+								getLekceStr(courseDetail.getLessonList()), 
+								Labels.getLabel("txt.ui.common.Participants2") + WebConstants.COLON + courseDetail.getParticipantListCount() +"/"+course.getMaxParticipantCount())));
+				// course participants
+				if (!CollectionUtils.isEmpty(courseDetail.getParticipantList())) {
+					for (CourseParticipant coursePartic : courseDetail.getParticipantList()) {
+						data.put(String.valueOf(row++), 
+								getRow(Arrays.asList(coursePartic.getContact().getCompleteName(),
+										coursePartic.getBirthdate() != null ? dateFormat.format(coursePartic.getBirthdate()) : "",
+												getNotNullStringEmptyChar(coursePartic.getContact().getStreet()),
+												getNotNullLongEmptyChar(coursePartic.getContact().getLandRegistryNumber()),
+												getNotNullStringEmptyChar(coursePartic.getContact().getHouseNumber()),
+												getNotNullStringEmptyChar(coursePartic.getContact().getCity()),
+												getNotNullStringEmptyChar(coursePartic.getContact().getZipCode()))));
+					}
+					data.put(String.valueOf(row++), getEmptyRow(MAX_COLS));
+				}
+			}			
+		}
+
+		return data;
+	}
+	
+	private String getLekceStr(List<Lesson> lessonList) {
+		if (CollectionUtils.isEmpty(lessonList)) {
+			return null;
+		}
+		
+		return lessonList.stream().map(i-> getLessonToUi(i)).collect(Collectors.joining(", "));	
+	}
+	
+	private Object[] getEmptyRow(int cols) {
+		Object[] ret = new Object[cols];
+		
+		for (int i = 0;i < cols; i++) {
+			ret[i] = "";
+		}
+		
+		return ret;
+	}
+	
+	private Object[] getRow(List<Object> dataList) {
+		Object[] ret = new Object[dataList.size()];
+		
+		for (int i = 0;i < dataList.size(); i++) {
+			ret[i] = dataList.get(i);
+		}
+		
+		return ret;
+	}
+	
+	private String getCourseLocationName() {
+		if (this.courseLocationSelected == null) {
+			return "";
+		}
+		
+		return this.courseLocationSelected.getName();
+	}
 
 	public List<Course> getCourseList() {
 		return courseList;
 	}
-	
 	public List<CourseLocation> getCourseLocationList() {
 		return courseLocationList;
 	}
-
-	public CourseApplicationFilter getFilter() {
+	public CourseFilter getFilter() {
 		return filter;
 	}
-	
 	public boolean isShowCourseFilter() {
 		return showCourseFilter;
 	}
-	
 	public CourseLocation getCourseLocationSelected() {
 		return courseLocationSelected;
 	}
-
 	public void setCourseLocationSelected(CourseLocation courseLocationSelected) {
 		this.courseLocationSelected = courseLocationSelected;
 	}
-
-	public static class CourseApplicationFilter {
-
-		private String courseName;
-		private String courseNameLc;
-
-		public boolean matches(String courseNameIn, boolean emptyMatch) {
-			if (courseName == null) {
-				return emptyMatch;
-			}
-			if (courseName != null && !courseNameIn.toLowerCase().contains(courseNameLc)) {
-				return false;
-			}
-			return true;
-		}
-
-		public List<Course> getApplicationListFiltered(List<Course> courseList) {
-			if (courseList == null || courseList.isEmpty()) {
-				return Collections.<Course>emptyList();
-			}
-			List<Course> ret = new ArrayList<Course>();
-			for (Course item : courseList) {
-				if (matches(item.getName(), true)) {
-					ret.add(item);
-				}
-			}
-			return ret;
-		}
-
-		public String getCourseName() {
-			return courseName == null ? "" : courseName;
-		}
-		public void setCourseName(String name) {
-			this.courseName = StringUtils.hasText(name) ? name.trim() : null;
-			this.courseNameLc = this.courseName == null ? null : this.courseName.toLowerCase();
-		}
-
-		public void setEmptyValues() {
-			courseName = null;
-			courseNameLc = null;
-		}
+	public Boolean getMyCourses() {
+		return myCourses;
+	}
+	public void setMyCourses(Boolean myCourses) {
+		this.myCourses = myCourses;
 	}
 }

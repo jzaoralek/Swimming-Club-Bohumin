@@ -6,9 +6,19 @@
 	<packaging>pom</packaging>
 	<version>1.0-SNAPSHOT</version>
 
+
+	<repositories>
+	    <repository>
+	     <id>ZK CE</id>
+	     <name>ZK CE Repository</name>
+	     <url>https://mavensync.zkoss.org/maven2</url>
+	   </repository>
+	  </repositories>
+
 	<modules>
 		<module>../scb-data-service</module>
 		<module>../scb-ui-zk</module>
+		<module>../ruian-client</module>
 	</modules>
 	
 	<properties>
@@ -37,7 +47,12 @@
 				<artifactId>fio-client</artifactId>
 				<version>1.0</version>
 			</dependency>
-
+			<dependency>
+				<groupId>com.jzaoralek.scb</groupId>
+				<artifactId>ruian-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
 			<!-- Spring -->
 			<dependency>
 				<groupId>org.springframework</groupId>

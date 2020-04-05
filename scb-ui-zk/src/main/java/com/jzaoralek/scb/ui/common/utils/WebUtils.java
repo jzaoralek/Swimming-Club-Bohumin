@@ -6,14 +6,25 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.javatuples.Pair;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Execution;
@@ -25,6 +36,13 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseLocation;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 
@@ -89,6 +107,30 @@ public final class WebUtils {
 			return;
 		}
 		exec.getSession().removeAttribute(atr);
+	}
+	
+	public static void setDesktopAtribute(String atr, Object obj) {
+		Execution exec = Executions.getCurrent();
+		if (exec == null || exec.getSession() == null) {
+			return;
+		}
+		exec.getDesktop().setAttribute(atr, obj);
+	}
+	
+	public static Object getDesktopAtribute(String atr) {
+		Execution exec = Executions.getCurrent();
+		if (exec == null || exec.getSession() == null) {
+			return null;
+		}
+		return exec.getDesktop().getAttribute(atr);
+	}
+
+	public static void removeDesktopAtribute(String atr) {
+		Execution exec = Executions.getCurrent();
+		if (exec == null || exec.getSession() == null) {
+			return;
+		}
+		exec.getDesktop().removeAttribute(atr);
 	}
 
 	public static void downloadAttachment(Attachment attachment) {
@@ -208,6 +250,74 @@ public final class WebUtils {
 		return ret;
 	}
 	
+	/**
+	 * Validace retezce emailovych adres na vstupu.
+	 * @param value Retezec emailovych adres, oddelovac ";"
+	 * @return Pair obsahujici list validnich a nevalidnich adres.
+	 */
+	public static Pair<List<String>, List<String>> validateEmailList(String value) {
+		if (!StringUtils.hasText(value)) {
+			return null;
+		}
+		
+		Set<String> emailList = emailAddressStrToList(value);
+	    
+	    List<String> validEmailList = new ArrayList<>();
+	    List<String> invalidEmailList = new ArrayList<>();
+	    
+	    Pattern emailPattern = Pattern.compile(WebConstants.EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
+	    String emailItem;
+	    for (String item : emailList) {
+	    	emailItem = item.trim();
+	    	if (emailPattern.matcher(emailItem).matches()) {
+	    		validEmailList.add(emailItem.trim());
+	    	} else {
+	    		invalidEmailList.add(emailItem.trim());
+	    	}
+	    }
+	    
+		return new Pair<>(validEmailList, invalidEmailList);
+	}
+	
+	/**
+	 * Prevede retezec emailovych adres na Set, tzn. unikatnost.
+	 * @param value
+	 * @return
+	 */
+	public static Set<String> emailAddressStrToList(String value) {
+		if (!StringUtils.hasText(value)) {
+			return Collections.emptySet();
+		}
+		
+		Set<String> ret = new HashSet<>();
+		String[] emailArr = value.split(WebConstants.EMAIL_LIST_SEPARATOR);
+		for (int i = 0; i < emailArr.length; i++) {
+			String item = emailArr[i];
+			if (StringUtils.hasText(item)) {
+				ret.add(item.trim());
+			}
+			
+		}
+		return ret;
+	}
+	
+	/**
+	 * Prevede retezec emailovych adres na list.
+	 * @param value
+	 * @return
+	 */
+	public static String contactListToEmailStr(Collection<Contact> contactList) {
+		if (CollectionUtils.isEmpty(contactList)) {
+			return null;
+		}
+		
+		Collection<String> emailList = new ArrayList<>(); 
+		contactList.forEach(i -> emailList.add(i.getEmail1()));
+		
+		return emailList.stream().collect(Collectors.joining(WebConstants.EMAIL_LIST_SEPARATOR + " "));
+	}
+	
+	
 	// ***********************************
 	// *** SCB util methods
 	// ***********************************
@@ -217,5 +327,140 @@ public final class WebUtils {
 	 */
 	public static void redirectToNewCourse() {
 		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+	}
+	
+	/**
+	 * Filter course by loaction.
+	 * @param location
+	 * @param courseListBase
+	 * @return
+	 */
+	public static List<Course> filterByLocation(CourseLocation location, List<Course> courseListBase) {
+		if (CollectionUtils.isEmpty(courseListBase)) {
+			return Collections.emptyList();
+		}
+		
+		if (location == null) {
+			return courseListBase;
+		}
+		
+		return courseListBase.stream()
+                .filter(line -> location.getUuid().toString().equals(line.getCourseLocation().getUuid().toString()))
+                .collect(Collectors.toList());
+	}
+	
+	/**
+	 * For course returns email contacts of course participant representatives.
+	 */
+	public static List<Contact> getParticEmailAddressList(Course course
+			, CourseService courseService
+			, ScbUserService scbUserService) {
+		if (CollectionUtils.isEmpty(course.getParticipantList())) {
+			course.setParticipantList(courseService.getByCourseParticListByCourseUuid(course.getUuid(), false));
+		}
+		final List<Contact> ret = new ArrayList<>();
+		ScbUser representative = null;
+		for (CourseParticipant courseParticipant : course.getParticipantList()) {
+			if (courseParticipant.getRepresentativeUuid() != null) {
+				representative = scbUserService.getByUuid(courseParticipant.getRepresentativeUuid());
+				if (representative != null) {
+					ret.add(representative.getContact());
+				}
+				
+			}
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Parse birth number (RČ) part to Date.
+	 * Na vstupu šestimístné číslo obsahující datum narození.
+	 * Pravidla:
+	 * měsíc - muž  - standard, např. 01 pro leden
+	 *              - standard + 20, např. 21 pro leden
+	 *       - žena - standard + 50, např. 51 pro leden
+	 *              - standard + 50 + 20, např. 71 pro leden
+	 * @param rcDatePart
+	 * @return
+	 */
+	public static Date parseRcDatePart(String rcDatePart) {
+		// validace delka
+		if (rcDatePart.length() != 6) {
+			throw new IllegalArgumentException("Nespravna delka: " + rcDatePart.length());
+		}
+
+		// validace cislo
+		try {
+			Integer.parseInt(rcDatePart);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Nespravny format cisla: " + rcDatePart);
+		}
+
+		// YEAR
+		Integer year = Integer.parseInt(rcDatePart.substring(0, 2));
+		if (year > 40) {
+			// 20 century
+			year = 1900 + year;
+		} else {
+			// 21 century
+			year = 2000 + year;
+		}
+
+		// MONTH
+		Integer monthInt = Integer.parseInt(rcDatePart.substring(2, 4)) - 1;
+		Integer monthFinal = null;
+		if (monthInt >= 0 && monthInt <= 11) {
+			monthFinal = monthInt;
+		} else if (monthInt >= 20 && monthInt <= 31) {
+			// muz - pripocteni 20
+			monthFinal = monthInt - 20;
+		} else if (monthInt >= 50 && monthInt <= 61) {
+			// zena - normalni (pripocteni 50)
+			monthFinal = monthInt - 50;
+		} else if (monthInt >= 70 && monthInt <= 81) {
+			// zena - pripocteni 50 + 20
+			monthFinal = monthInt - (50 + 20);
+		}
+
+		if (monthFinal == null || monthFinal < 0 || monthFinal > 11) {
+			throw new IllegalArgumentException("Nespravny mesic: " + monthInt);
+		}
+
+		// DAY
+		Integer day = Integer.parseInt(rcDatePart.substring(4));
+		if (day < 1 || day > 31) {
+			throw new IllegalArgumentException("Nespravny den: " + day);
+		}
+
+		// compose calendar and return date
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, year);
+		cal.set(Calendar.MONTH, monthFinal);
+		cal.set(Calendar.DAY_OF_MONTH, day);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		return cal.getTime();
+	}
+	
+	public static boolean setBirthdateByBirthNumer(String birtNumber, CourseParticipant courseParticipant) {
+		if (!StringUtils.hasText(birtNumber) || courseParticipant == null) {
+			return false;
+		}
+		if (!courseParticipant.getContact().isCzechCitizenship()) {
+			return false;
+		}
+		
+		try {
+			Date birthDate = WebUtils.parseRcDatePart(birtNumber.substring(0, birtNumber.indexOf("/")));
+			courseParticipant.setBirthdate(birthDate);
+			return true;
+		} catch (Exception e) {
+			logger.error("Exception caught for personalNumber: " + birtNumber, e);
+			return false;
+		}
 	}
 }

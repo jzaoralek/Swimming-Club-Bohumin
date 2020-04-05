@@ -28,6 +28,7 @@ import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
+import com.jzaoralek.scb.ui.common.utils.DateUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -74,10 +75,16 @@ public class CourseLearningLessonsVM extends BaseVM {
 
 		// lekce
 		this.tabSelected = CourseLearnLessonTab.LESSONS;
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		cal.set(Calendar.DAY_OF_MONTH, 1);
+		
+		// ziskani vybraneho mesice z cache
+		Calendar cal = (Calendar)WebUtils.getSessAtribute(WebConstants.COURSE_LEARN_LESSONS_MONTH_SELECTED_PARAM);
+		if (cal == null) {
+			cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.set(Calendar.DAY_OF_MONTH, 1);			
+		}
 		this.monthSelected = cal;
+		
 		buildLessonList(this.monthSelected);
 	}
 
@@ -128,9 +135,22 @@ public class CourseLearningLessonsVM extends BaseVM {
 	}
 	
 	/**
+	 * Ulozeni mesice do session, potreba vytvorit novou instanci, protoze puvodni je menena.
+	 * @param cal
+	 */
+	private void storeSelectedMonthToSession(Calendar cal) {
+		Calendar calCorrectMonth = Calendar.getInstance();
+		calCorrectMonth.setTime(cal.getTime());
+		WebUtils.setSessAtribute(WebConstants.COURSE_LEARN_LESSONS_MONTH_SELECTED_PARAM, calCorrectMonth);
+	}
+	
+	/**
 	 * Vygeneruje seznam lekci pro dany mesic
 	 */
 	private void buildLessonList(Calendar cal) {
+		// ulozeni vybraneho mesice do session
+		storeSelectedMonthToSession(cal);
+				
 		int monthSelected=cal.get(Calendar.MONTH);
 
 		this.monthSelectedLabel = Labels.getLabel("txt.ui.month." + String.valueOf(monthSelected)) + " " + cal.get(Calendar.YEAR);
@@ -138,8 +158,9 @@ public class CourseLearningLessonsVM extends BaseVM {
 
 		// prochazet dny v mesici, pokud den v tydnu odpovidajici dnu lekce zaradit do seznamu lekci
 		List<Lesson> lessonInWeekList = this.course.getLessonList();
+		
 		// vsechny lekce pro dany kurz v mesici
-		List<LearningLesson> lessonInMonthList = new ArrayList<LearningLesson>();
+		List<LearningLesson> lessonInMonthList = new ArrayList<>();
 		while (monthSelected==cal.get(Calendar.MONTH)) {
 			for (Lesson lessonInWeekItem : lessonInWeekList) {
 			  if (cal.get(Calendar.DAY_OF_WEEK)-1 == (lessonInWeekItem.getDayOfWeek().getIndex()+1)) {
@@ -148,13 +169,17 @@ public class CourseLearningLessonsVM extends BaseVM {
 			}
 		  cal.add(Calendar.DAY_OF_MONTH, 1);
 		}
-
+		
 		//spojit vsechny lekce pro dany kurz v mesici a oducene lessons v mesici
-		List<LearningLesson> learnLessonListFinal = new ArrayList<LearningLesson>();
+		List<LearningLesson> learnLessonListFinal = new ArrayList<>();
 
 		// oducene lekce pro dany kurz
-		List<LearningLesson> learnedLearningLessonList = learningLessonService.getByCourse(this.course.getUuid());
-
+//		List<LearningLesson> learnedLearningLessonList = learningLessonService.getByCourse(this.course.getUuid());
+		Calendar calCorrectMonth = Calendar.getInstance();
+		calCorrectMonth.setTime(cal.getTime());
+		calCorrectMonth.add(Calendar.MONTH, -1);		
+		List<LearningLesson> learnedLearningLessonList = learningLessonService.getByCourseInterval(this.course.getUuid(), DateUtil.getFirstDateOfCurrentMonth(calCorrectMonth), DateUtil.getLastDateOfCurrentMonth(calCorrectMonth));
+		
 		for (LearningLesson lessonItem : lessonInMonthList) {
 			LearningLesson lesson = searchInLearnedLessonList(lessonItem, learnedLearningLessonList);
 			if (lesson != null) {
@@ -165,12 +190,12 @@ public class CourseLearningLessonsVM extends BaseVM {
 				learnLessonListFinal.add(lessonItem);
 			}
 		}
-
+		
 		this.learningLessonList = learnLessonListFinal;
 
-		// nelze se posunout na cervenec a srpen
-		this.prevMonthBtnDisabled = this.monthSelected.get(Calendar.MONTH) == Calendar.SEPTEMBER + 1;
-		this.nextMonthBtnDisabled = this.monthSelected.get(Calendar.MONTH) == (Calendar.JUNE + 1);
+		// nelze se posunout na cervenec a srpen, zakomentovano
+		this.prevMonthBtnDisabled = false; //this.monthSelected.get(Calendar.MONTH) == Calendar.SEPTEMBER + 1;
+		this.nextMonthBtnDisabled = false; //this.monthSelected.get(Calendar.MONTH) == (Calendar.JUNE + 1);
 	}
 
 	private LearningLesson searchInLearnedLessonList(LearningLesson lesson, List<LearningLesson> learnedLessonList) {

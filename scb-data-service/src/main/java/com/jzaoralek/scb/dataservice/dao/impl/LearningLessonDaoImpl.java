@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -44,6 +45,7 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 
 	private static final String SELECT_BY_LESSON = "SELECT uuid, lesson_date, time_from, time_to, description, additional_column_int, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid = :" + LESSON_UUID_PARAM;
 	private static final String SELECT_BY_COURSE = "SELECT uuid, lesson_date, time_from, time_to, description, additional_column_int, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+")";
+	private static final String SELECT_BY_COURSE_INTERVAL = "SELECT uuid, lesson_date, time_from, time_to, description, additional_column_int, modif_at, modif_by, lesson_uuid FROM learning_lesson WHERE lesson_date BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM+" AND lesson_uuid IN (select uuid from lesson where course_uuid = :"+COURSE_UUID_PARAM+")";
 
 	private static final String SELECT_BY_COURSE_WITH_PARTICIPANTS =
 			" SELECT ls.uuid, ls.lesson_date, ls.time_from, ls.time_to, ls.description, ls.additional_column_int, ls.modif_at, ls.modif_by, ls.lesson_uuid "
@@ -86,8 +88,20 @@ public class LearningLessonDaoImpl extends BaseJdbcDao implements LearningLesson
 
 	@Override
 	public List<LearningLesson> getByCourse(UUID courseUuid) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		MapSqlParameterSource paramMap = new MapSqlParameterSource()
+				.addValue(COURSE_UUID_PARAM, courseUuid.toString());
+		
 		return namedJdbcTemplate.query(SELECT_BY_COURSE, paramMap, new LearningLessonRowMapper(courseParticipantDao, lessonDao, false));
+	}
+	
+	@Override
+	public List<LearningLesson> getByCourseInterval(UUID courseUuid, Date from, Date to) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource()
+				.addValue(COURSE_UUID_PARAM, courseUuid.toString())
+				.addValue(DATE_FROM_PARAM, from)
+				.addValue(DATE_TO_PARAM, to);
+		
+		return namedJdbcTemplate.query(SELECT_BY_COURSE_INTERVAL, paramMap, new LearningLessonRowMapper(courseParticipantDao, lessonDao, false));
 	}
 
 	@Override

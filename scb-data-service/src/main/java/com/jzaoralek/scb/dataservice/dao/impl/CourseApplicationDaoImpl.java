@@ -23,11 +23,13 @@ import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
+import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant.IscusRole;
 
 @Repository
 public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseApplicationDao {
@@ -61,6 +63,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_part.land_registry_number " +
 					", con_part.house_number " +
 					", con_part.zip_code " +
+					", con_part.address_validation_status " +
 					", ca.year_from " +
 					", ca.year_to " +
 					", (select count(*) " +
@@ -104,6 +107,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.land_registry_number " +
 			", con_part.house_number " +
 			", con_part.zip_code " +
+			", con_part.address_validation_status " +
 			", ca.year_from " +
 			", ca.year_to " +
 			", (select count(*) " +
@@ -156,6 +160,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.land_registry_number " +
 			", con_part.house_number " +
 			", con_part.zip_code " +
+			", con_part.address_validation_status " +
 			", ca.year_from " +
 			", ca.year_to " +
 			", (select count(*) " +
@@ -198,6 +203,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", con_part.land_registry_number " +
 					", con_part.house_number " +
 					", con_part.zip_code " +
+					", con_part.address_validation_status " +
 					", ca.year_from " +
 					", ca.year_to " +
 					", (select count(*) " +
@@ -242,6 +248,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.land_registry_number " +
 			", con_part.house_number " +
 			", con_part.zip_code " +
+			", con_part.address_validation_status " +
 			", ca.year_from " +
 			", ca.year_to " +
 			", (select count(*) " +
@@ -264,105 +271,6 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			"AND cp.uuid IN (SELECT ccp.course_participant_uuid FROM course_course_participant ccp WHERE ccp.course_uuid = :"+COURSE_UUID_PARAM+") " +
 			"order by ca.modif_at desc ";
 
-//	private static final String SELECT_ASSIGNED_TO_COURSE = "select distinct" +
-//			" con_part.firstname " +
-//			", con_part.surname " +
-//			", cp.uuid \"participant_uuid\" " +
-//			", cp.birthdate " +
-//			", cp.personal_number " +
-//			", con_repr.firstname \"representative_firstname\" " +
-//			", con_repr.surname \"representative_surname\" " +
-//			", con_repr.phone1 " +
-//			", con_repr.email1 " +
-//			", con_repr.phone2 " +
-//			", con_repr.email2 " +
-//			", usr.uuid  \"representative_uuid\" " +
-//			", ca.uuid " +
-//			", ca.modif_at " +
-//			", ca.modif_by " +
-//			", ca.payed " +
-//			", con_part.city " +
-//			", con_part.street " +
-//			", con_part.land_registry_number " +
-//			", con_part.house_number " +
-//			", con_part.zip_code " +
-//			", ca.year_from " +
-//			", ca.year_to " +
-//			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
-//			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
-//			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\" " +
-//			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +			
-//			", (select sum(amount) from payment where payment.course_participant_uuid = cp.uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\"" +
-//			", (select count(*) " +
-//			"		from course_application cain " +
-//			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
-//			"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
-//			"from  " +
-//			"course_application ca " +
-//			", course_participant cp " +
-//			", contact con_part " +
-//			", contact con_repr " +
-//			", user usr " +
-//			", course_course_participant ccp " +
-//			", course c " +
-//			"where " +
-//			"ca.course_participant_uuid = cp.uuid " +
-//			"and cp.contact_uuid = con_part.uuid " +
-//			"and ca.user_uuid = usr.uuid " +
-//			"and usr.contact_uuid = con_repr.uuid " +
-//			"AND ca.year_from = :"+YEAR_FROM_PARAM+" " +
-//			"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
-//			"AND cp.uuid = ccp.course_participant_uuid " +
-//			"AND c.uuid = ccp.course_uuid " +
-//			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
-//			"AND c.year_to = :"+YEAR_TO_PARAM+ " " +
-//			"order by con_part.surname ";
-	
-//	private static final String SELECT_ASSIGNED_TO_COURSE_MIN = "select distinct" +
-//			" con_part.firstname " +
-//			", con_part.surname " +
-//			", cp.uuid \"participant_uuid\" " +
-//			", con_repr.email1 " +
-//			", usr.uuid  \"representative_uuid\" " +
-//			", ca.uuid " +
-//			", ca.payed " +
-//			", ca.year_from " +
-//			", ca.year_to " +
-//			", ca.modif_at " +
-//			", ca.modif_by " +
-//			", ccp.varsymbol_core " + 
-//			", ccp.notified_semester_1_payment_at " + 
-//			", ccp.notified_semester_2_payment_at " + 
-//			", c.uuid \"COURSE_COURSE_PARTICIPANT_UUID\" " +
-//			", c.name \"COURSE_NAME_COURSE_PARTICIPANT_UUID\" " +
-//			", c.price_semester_1 \"COURSE_PRICE_SEMESTER_1\" " +
-//			", c.price_semester_2 \"COURSE_PRICE_SEMESTER_2\" " +			
-//			", (select sum(amount) from payment where payment.course_participant_uuid = cp.uuid and payment.course_uuid = c.uuid) \"PAYMENT_SUM\"" +
-//			", (select count(*) " +
-//			"		from course_application cain " +
-//			"		where cain.course_participant_uuid = ca.course_participant_uuid " +
-//			"			and cain.year_from = ca.year_from - 1) \"current_participant\" " +
-//			"from  " +
-//			"course_application ca " +
-//			", course_participant cp " +
-//			", contact con_part " +
-//			", contact con_repr " +
-//			", user usr " +
-//			", course_course_participant ccp " +
-//			", course c " +
-//			"where " +
-//			"ca.course_participant_uuid = cp.uuid " +
-//			"and cp.contact_uuid = con_part.uuid " +
-//			"and ca.user_uuid = usr.uuid " +
-//			"and usr.contact_uuid = con_repr.uuid " +
-//			"AND ca.year_from = :"+YEAR_FROM_PARAM+" " +
-//			"AND ca.year_to = :"+YEAR_TO_PARAM+ " " +
-//			"AND cp.uuid = ccp.course_participant_uuid " +
-//			"AND c.uuid = ccp.course_uuid " +
-//			"AND c.year_from = :"+YEAR_FROM_PARAM+" " +
-//			"AND c.year_to = :"+YEAR_TO_PARAM+ " " +
-//			"order by con_part.surname ";
-
 	private static final String SELECT_COURSE_APPLICATION_BY_YEAR_FROM_TO_MIN = 
 			"select " +
 			"con_part.firstname " +
@@ -372,7 +280,15 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", con_part.land_registry_number " +
 			", con_part.house_number " +
 			", con_part.zip_code " +
+			", con_part.address_validation_status " +
 			", cp.uuid \"participant_uuid\" " +
+			", cp.birthdate " +
+			", cp.personal_number " +
+			", cp.iscus_role " +
+			", cp.iscus_partic_id " +
+			", cp.iscus_system_id " +
+			", con_part.sex_male " +
+			", con_part.citizenship " +
 			", con_repr.phone1 " +
 			", con_repr.email1 " + 
 			", usr.uuid  \"representative_uuid\" " +
@@ -562,6 +478,11 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseApplication = findByCourseParticipantUuid(courseParticInCourse.getUuid(), courseApplicationAllByYear);
 			if (courseApplication != null) {
 				courseParticInCourse.setContact(courseApplication.getCourseParticipant().getContact());
+				courseParticInCourse.setBirthdate(courseApplication.getCourseParticipant().getBirthdate());
+				courseParticInCourse.setPersonalNo(courseApplication.getCourseParticipant().getPersonalNo());
+				courseParticInCourse.setIscusParticId(courseApplication.getCourseParticipant().getIscusParticId());
+				courseParticInCourse.setIscusSystemId(courseApplication.getCourseParticipant().getIscusSystemId());
+				courseParticInCourse.setIscusRole(courseApplication.getCourseParticipant().getIscusRole());
 				courseApplication.setCourseParticipant(courseParticInCourse);
 				ret.add(courseApplication);
 			}
@@ -672,15 +593,27 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			
 			CourseParticipant courseParticipant = new CourseParticipant();
 			courseParticipant.setUuid(UUID.fromString(rs.getString("participant_uuid")));
-
+			courseParticipant.setBirthdate(transDate(rs.getDate("birthdate")));
+			courseParticipant.setPersonalNo(rs.getString("personal_number"));
+			
+			String iscusRoleStr = rs.getString("iscus_role");
+			if (StringUtils.hasText(iscusRoleStr)) {
+				courseParticipant.setIscusRole(IscusRole.valueOf(iscusRoleStr));				
+			}
+			courseParticipant.setIscusParticId(rs.getString("iscus_partic_id"));
+			courseParticipant.setIscusSystemId(rs.getString("iscus_system_id"));
+			
 			Contact courseParticipantContact = new Contact();
 			courseParticipantContact.setFirstname(rs.getString("firstname"));
 			courseParticipantContact.setSurname(rs.getString("surname"));
 			courseParticipantContact.setCity(rs.getString("city"));
 			courseParticipantContact.setStreet(rs.getString("street"));
 			courseParticipantContact.setLandRegistryNumber(rs.getLong("land_registry_number"));
-			courseParticipantContact.setHouseNumber(rs.getShort("house_number"));
+			courseParticipantContact.setHouseNumber(rs.getString("house_number"));
 			courseParticipantContact.setZipCode(rs.getString("zip_code"));
+			courseParticipantContact.setAddressValidationStatus(AddressValidationStatus.valueOf(rs.getString("address_validation_status")));
+			courseParticipantContact.setCitizenship(rs.getString("citizenship"));
+			courseParticipantContact.setSexMale(rs.getInt("sex_male") == 1);
 			courseParticipant.setContact(courseParticipantContact);
 
 			ret.setCourseParticipant(courseParticipant);
@@ -773,8 +706,9 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipantContact.setCity(rs.getString("city"));
 			courseParticipantContact.setStreet(rs.getString("street"));
 			courseParticipantContact.setLandRegistryNumber(rs.getLong("land_registry_number"));
-			courseParticipantContact.setHouseNumber(rs.getShort("house_number"));
+			courseParticipantContact.setHouseNumber(rs.getString("house_number"));
 			courseParticipantContact.setZipCode(rs.getString("zip_code"));
+			courseParticipantContact.setAddressValidationStatus(AddressValidationStatus.valueOf(rs.getString("address_validation_status")));
 			courseParticipant.setContact(courseParticipantContact);
 
 			ret.setCourseParticipant(courseParticipant);

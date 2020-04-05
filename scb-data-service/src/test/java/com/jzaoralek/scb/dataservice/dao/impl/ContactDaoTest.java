@@ -1,5 +1,7 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jzaoralek.scb.dataservice.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
+import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 
 public class ContactDaoTest extends BaseTestCase {
@@ -31,7 +34,7 @@ public class ContactDaoTest extends BaseTestCase {
 		Assert.assertTrue(CONTACT_SURNAME.equals(item.getSurname()));
 		Assert.assertTrue(CONTACT_STREET.equals(item.getStreet()));
 		Assert.assertTrue(CONTACT_LAND_REGISTRY_NO.longValue() == item.getLandRegistryNumber().longValue());
-		Assert.assertTrue(CONTACT_HOUSE_NO == item.getHouseNumber());
+		Assert.assertTrue(CONTACT_HOUSE_NO.equals(item.getHouseNumber()));
 		Assert.assertTrue(CONTACT_CITY.equals(item.getCity()));
 		Assert.assertTrue(CONTACT_ZIP_CODE.equals(item.getZipCode()));
 		Assert.assertTrue(CONTACT_EMAIL1.equals(item.getEmail1()));
@@ -43,7 +46,7 @@ public class ContactDaoTest extends BaseTestCase {
 	@Test
 	public void update() {
 		String UPDATED_POSTFIX = "updated";
-		Short HOUSE_NO_UPDATED = 6;
+		String HOUSE_NO_UPDATED = "6";
 		Long LAND_REGISTRY_NO_UPDATED = 1000L;
 
 		item.setFirstname(CONTACT_FIRSTNAME+UPDATED_POSTFIX);
@@ -66,7 +69,7 @@ public class ContactDaoTest extends BaseTestCase {
 		Assert.assertTrue((CONTACT_SURNAME+UPDATED_POSTFIX).equals(itemUpdated.getSurname()));
 		Assert.assertTrue((CONTACT_STREET+UPDATED_POSTFIX).equals(itemUpdated.getStreet()));
 		Assert.assertTrue(LAND_REGISTRY_NO_UPDATED.longValue() == itemUpdated.getLandRegistryNumber().longValue());
-		Assert.assertTrue(HOUSE_NO_UPDATED == itemUpdated.getHouseNumber());
+		Assert.assertTrue(HOUSE_NO_UPDATED.equals(itemUpdated.getHouseNumber()));
 		Assert.assertTrue((CONTACT_CITY+UPDATED_POSTFIX).equals(itemUpdated.getCity()));
 		Assert.assertTrue((CONTACT_ZIP_CODE+UPDATED_POSTFIX).equals(itemUpdated.getZipCode()));
 		Assert.assertTrue((CONTACT_EMAIL1+UPDATED_POSTFIX).equals(itemUpdated.getEmail1()));
@@ -75,6 +78,16 @@ public class ContactDaoTest extends BaseTestCase {
 		Assert.assertTrue((CONTACT_PHONE2+UPDATED_POSTFIX).equals(itemUpdated.getPhone2()));
 	}
 
+	@Test
+	public void updateAddressValidStatus() {
+		item.setAddressValidationStatus(AddressValidationStatus.VALID);
+		contactDao.updateAddressValidStatus(item);
+		
+		Contact itemUpdated = contactDao.getByUuid(ITEM_UUID);
+		Assert.assertNotNull(itemUpdated);
+		Assert.assertTrue(AddressValidationStatus.VALID == itemUpdated.getAddressValidationStatus());
+	}
+	
 	@Test
 	public void delete() {
 		contactDao.delete(item);
@@ -85,5 +98,19 @@ public class ContactDaoTest extends BaseTestCase {
 	@Test
 	public void testExistsByUEmail() {
 		Assert.assertEquals(true, contactDao.existsByEmail(CONTACT_EMAIL1));
+	}
+	
+	@Test
+	public void testGetByEmail() {
+		List<Contact> itemList = contactDao.getByEmail(CONTACT_EMAIL1);
+		Assert.assertNotNull(itemList);
+		Assert.assertEquals(true, CONTACT_EMAIL1.equals(itemList.get(0).getEmail1()));
+	}
+	
+	@Test
+	public void testGetEmailAll() {
+		List<String> emailList = contactDao.getEmailAll();
+		Assert.assertNotNull(emailList);
+		Assert.assertTrue(!emailList.isEmpty());
 	}
 }

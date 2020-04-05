@@ -5,10 +5,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
@@ -32,6 +35,7 @@ import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
@@ -70,6 +74,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	private String paymentVarSymbolSecondSemester;
 	private int yearFrom;
 	private boolean attendanceForParentsVisible;
+	private boolean courseApplNotVerifiedAddressAllowed;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
@@ -87,6 +92,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.paymentVarSymbolFirstSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 1, this.courseParticipant.getVarsymbolCore());
 		this.paymentVarSymbolSecondSemester = PaymentUtils.buildCoursePaymentVarsymbol(this.yearFrom, 2, this.courseParticipant.getVarsymbolCore());
 		this.attendanceForParentsVisible = configurationService.isAttendanceForParentsVisible();
+		this.courseApplNotVerifiedAddressAllowed = configurationService.isCourseApplNotVerifiedAddressAllowed();
 	}
 	
 	protected void courseYearChangeCmdCore() {
@@ -104,6 +110,8 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		this.courseList = new ArrayList<>();
 		for (Course item : courseListAll) {
 			if (item.getYearFrom() == yearFrom && item.getYearTo() == yearTo) {
+				// dotazeni treneru
+				item.setTrainerList(courseService.getTrainersByCourse(item.getUuid()));
 				this.courseList.add(item);
 			}
 		}
@@ -116,6 +124,17 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 			}
 		}
 	}
+	
+	public String getTrainersToUi(Course course) {
+		if (course == null || CollectionUtils.isEmpty(course.getTrainerList())) {
+			return "";
+		}
+		List<String> names = course.getTrainerList().stream().map(i -> i.getContact().getCompleteName()).collect(Collectors.toList());
+		if (CollectionUtils.isEmpty(names)) {
+			return "";
+		}
+		return names.stream().collect(Collectors.joining(","));
+	}
 
 	public void loadCourseApplicationListData() {
 		this.courseApplicationList = courseApplicationService.getByCourseParticipantUuid(this.courseParticipant.getUuid());
@@ -124,6 +143,14 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	@NotifyChange("*")
 	@Command
     public void submit() {
+		if (!AddressUtils.isAddressValid()) {
+			return;
+		}
+		// overeni validni adresy pred  submitem
+		addressValidationBeforeSubmit(this.courseParticipant.getContact(), this.courseApplNotVerifiedAddressAllowed, this::submitCore);
+    }
+	
+	public void submitCore() {
 		try {
 			// update
 			if (LOG.isDebugEnabled()) {
@@ -134,6 +161,8 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for application: " + this.courseParticipant, e);
 			throw new RuntimeException(e);
+		} finally {
+			AddressUtils.setAddressInvalid();
 		}
     }
 	
@@ -182,6 +211,20 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		courseApplicationService.updateCourseParticInterruption(Arrays.asList(course.getCourseCourseParticipantVO().getUuid()), null);
 		loadCourseListData();
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseParticipationRenewed"));
+	}
+	
+	/**
+	 * Nastavi datum narozeni podle rodneho cisla.
+	 * @param personalNumber
+	 * @param fx
+	 */
+	@Command
+	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") CourseParticipantDetailVM fx) {
+		// predvyplneni datumu narozeni podle rodneho cisla
+		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getCourseParticipant());
+		if (success) {
+			BindUtils.postNotifyChange(null, null, this, "courseParticipant");			
+		}
 	}
 	
 	public boolean isAttendanceForParentsVisible() {

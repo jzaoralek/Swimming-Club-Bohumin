@@ -1,7 +1,10 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +31,7 @@ import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant.IscusRole;
 import com.jzaoralek.scb.dataservice.domain.LearningLessonStatsWrapper;
 import com.jzaoralek.scb.dataservice.domain.Result;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
@@ -38,9 +42,11 @@ import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.dataservice.service.ResultService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
+import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -73,9 +79,10 @@ public class CourseParticipantVM extends BaseVM {
 	private String pageHeadline;
 	private CourseApplication participant;
 	private LearningLessonStatsWrapper lessonStats;
-	private boolean courseListStatsVisible;
 	private boolean attendanceTabSelected;
 	private UUID courseUuidSelected;
+	private final List<Listitem> iscusRoleList = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(IscusRole.class));
+	private Listitem iscusRoleSelected;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
@@ -86,6 +93,7 @@ public class CourseParticipantVM extends BaseVM {
         setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_U);
 		if (StringUtils.hasText(uuid)) {
 			this.participant = courseApplicationService.getByUuid(UUID.fromString(uuid));
+			this.iscusRoleSelected = getIscusRoleListItem(this.participant.getCourseParticipant().getIscusRole());
 			this.pageHeadline = this.participant.getCourseParticipant().getContact().getCompleteName();
 		}
 		if (StringUtils.hasText(courseUuid)) {
@@ -110,10 +118,16 @@ public class CourseParticipantVM extends BaseVM {
 	@NotifyChange("*")
 	@Command
     public void submit() {
+		if (!AddressUtils.isAddressValid()) {
+			return;
+		}
 		try {
 			// update
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Updating application: " + this.participant);
+			}
+			if (this.iscusRoleSelected != null) {
+				this.participant.getCourseParticipant().setIscusRole((IscusRole)this.iscusRoleSelected.getValue());				
 			}
 			courseApplicationService.store(this.participant);
 			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
@@ -123,6 +137,8 @@ public class CourseParticipantVM extends BaseVM {
 		} catch (Exception e) {
 			LOG.error("Unexpected exception caught for application: " + this.participant, e);
 			throw new RuntimeException(e);
+		} finally {
+			AddressUtils.setAddressInvalid();
 		}
     }
 
@@ -194,6 +210,28 @@ public class CourseParticipantVM extends BaseVM {
 		this.participant = courseApplicationService.getByUuid(this.participant.getUuid());
 		BindUtils.postNotifyChange(null, null, this, "participant");
 	}
+	
+	/**
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 */
+	@Command
+	public void goToSendEmailCmd() {
+		goToSendEmailCore(new HashSet<>(Arrays.asList(this.participant.getCourseParticRepresentative().getContact())));
+	}
+	
+	/**
+	 * Nastavi datum narozeni podle rodneho cisla.
+	 * @param personalNumber
+	 * @param fx
+	 */
+	@Command
+	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") CourseParticipantVM fx) {
+		// predvyplneni datumu narozeni podle rodneho cisla
+		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getParticipant().getCourseParticipant());
+		if (success) {
+			BindUtils.postNotifyChange(null, null, this, "participant");
+		}
+	}
 
 	private void fillSwimStyleItemList() {
 		List<CodeListItem> swimStyleList = codeListService.getItemListByType(CodeListType.SWIMMING_STYLE);
@@ -205,19 +243,35 @@ public class CourseParticipantVM extends BaseVM {
 		this.swimStyleListitemSelected = this.swimStyleListitemList.get(0);
 	}
 	
+	protected Listitem getIscusRoleListItem(IscusRole role) {
+		if (role == null) {
+			return null;
+		}
+
+		for (Listitem item : this.iscusRoleList) {
+			if (item.getValue() == role) {
+				return item;
+			}
+		}
+
+		return null;
+	}
+	
 	private void buildCourseStatistics() {
 		Course course = null;
+		this.courseItemList = new ArrayList<>();
 		if (participant.getCourseParticipant().getCourseList().size() == 1) {
 			// ucastnik prirazen na jeden kurz, statistika primo zobrazena
 			course = participant.getCourseParticipant().getCourseList().get(0);
+			Listitem itemCourse = new Listitem(course.getName(), course.getUuid().toString());
+			courseItemList.add(itemCourse);
+			this.courseListitemSelected = itemCourse;
 			buildCourseStatsByCourse(course.getUuid());
 		} else {
 			// ucastnik prirazen na vice kurzu, zobrazena nabidka
-			this.courseItemList = new ArrayList<>();
 			for (Course item : participant.getCourseParticipant().getCourseList()) {
 				courseItemList.add(new Listitem(item.getName(), item.getUuid().toString()));
 			}
-			this.courseListStatsVisible = true;
 			
 			if (!CollectionUtils.isEmpty(participant.getCourseParticipant().getCourseList())) {
 				if (this.courseUuidSelected != null) {
@@ -290,15 +344,23 @@ public class CourseParticipantVM extends BaseVM {
 		return lessonStats;
 	}
 	
-	public boolean isCourseListStatsVisible() {
-		return courseListStatsVisible;
-	}
-	
 	public boolean isAttendanceTabSelected() {
 		return attendanceTabSelected;
 	}
 
 	public void setAttendanceTabSelected(boolean attendanceTabSelected) {
 		this.attendanceTabSelected = attendanceTabSelected;
+	}
+	
+	public List<Listitem> getIscusRoleList() {
+		return iscusRoleList;
+	}
+	
+	public Listitem getIscusRoleSelected() {
+		return iscusRoleSelected;
+	}
+
+	public void setIscusRoleSelected(Listitem iscusRoleSelected) {
+		this.iscusRoleSelected = iscusRoleSelected;
 	}
 }

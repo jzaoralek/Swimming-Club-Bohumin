@@ -166,9 +166,9 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			// podpis
 			mailToUser.append(mailSignature);
 			
-			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));
+			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), null, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));
 			// odeslani na platby@sportologic.cz
-			mailService.sendMail(new Mail(DataServiceConstants.PLATBY_EMAIL, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));			
+			mailService.sendMail(new Mail(DataServiceConstants.PLATBY_EMAIL, null, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null));			
 			// aktualizace odeslani notifikace v course_course_participant
 			courseApplicationService.updateNotifiedPayment(Arrays.asList(paymentInstruction.getCourseParticipantUuid()), firstSemester);
 			

@@ -46,7 +46,7 @@
 	<!-- labels -->
 	<system-config>
 		<label-location>/WEB-INF/labels/scb-labels.properties</label-location>
-		<max-upload-size>102400</max-upload-size>
+		<max-upload-size>10240</max-upload-size>
 	</system-config>
 	
 	<error-page>
@@ -70,5 +70,6 @@
 	<language-config>
 		<addon-uri>/WEB-INF/lang-addon.xml</addon-uri>
 		<addon-uri>/WEB-INF/core-components.xml</addon-uri>
+		<addon-uri>/WEB-INF/ckez-bind-addon.xml</addon-uri>		
 	</language-config>
 </zk>

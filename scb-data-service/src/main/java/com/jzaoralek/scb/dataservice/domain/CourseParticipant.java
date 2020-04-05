@@ -1,7 +1,6 @@
 package com.jzaoralek.scb.dataservice.domain;
 
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +19,22 @@ public class CourseParticipant implements IdentEntity {
 		SENT_FIRST_SEMESTER,
 		SENT_SECOND_SEMESTER,
 		BOTH;
+	}
+	
+	public enum IscusRole {
+		ACTIVE_SPORTSMAN_PROFESSIONAL("1"),
+		ACTIVE_SPORTSMAN("2"),
+		OTHER("3");
+		
+		private String abbr;
+
+		private IscusRole(String abbr) {
+			this.abbr = abbr;
+		}
+
+		public String getAbbr() {
+			return abbr;
+		}
 	}
 	
 	private UUID uuid;
@@ -41,6 +56,9 @@ public class CourseParticipant implements IdentEntity {
 	private Date notifiedSemester1PaymentAt;
 	private Date notifiedSemester2PaymentAt;
 	private Date courseParticipationInterruptedAt; 
+	private IscusRole iscusRole;
+	private String iscusParticId;
+	private String iscusSystemId;
 
 	/*
 	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
@@ -64,6 +82,9 @@ public class CourseParticipant implements IdentEntity {
 		this.courseUuid = courseParticipant.courseUuid;
 		this.courseName = courseParticipant.courseName;
 		this.coursePaymentVO = courseParticipant.coursePaymentVO;
+		this.iscusRole = courseParticipant.getIscusRole();
+		this.iscusParticId = courseParticipant.getIscusParticId();
+		this.iscusSystemId = courseParticipant.getIscusSystemId();
 	}
 
 	public CourseParticipant() {
@@ -216,6 +237,30 @@ public class CourseParticipant implements IdentEntity {
 		this.courseParticipationInterruptedAt = courseParticipationInterruptedAt;
 	}
 	
+	public IscusRole getIscusRole() {
+		return iscusRole;
+	}
+
+	public void setIscusRole(IscusRole iscusRole) {
+		this.iscusRole = iscusRole;
+	}
+	
+	public String getIscusParticId() {
+		return iscusParticId;
+	}
+
+	public void setIscusParticId(String iscusParticId) {
+		this.iscusParticId = iscusParticId;
+	}
+	
+	public String getIscusSystemId() {
+		return iscusSystemId;
+	}
+
+	public void setIscusSystemId(String iscusSystemId) {
+		this.iscusSystemId = iscusSystemId;
+	}
+	
 	public String getInCourseInfo() {
 		String ret = null;
 		String DELIMITER = ", ";
@@ -267,6 +312,7 @@ public class CourseParticipant implements IdentEntity {
 				+ ", courseName=" + courseName + ", coursePaymentVO=" + coursePaymentVO + ", varsymbolCore="
 				+ varsymbolCore + ", notifiedSemester1PaymentAt=" + notifiedSemester1PaymentAt
 				+ ", notifiedSemester2PaymentAt=" + notifiedSemester2PaymentAt + ", courseParticipationInterruptedAt="
-				+ courseParticipationInterruptedAt + ", lessonAttendance=" + lessonAttendance + "]";
+				+ courseParticipationInterruptedAt + ", iscusRole=" + iscusRole + ", iscusParticId=" + iscusParticId
+				+ ", iscusSystemId=" + iscusSystemId + ", lessonAttendance=" + lessonAttendance + "]";
 	}
 }

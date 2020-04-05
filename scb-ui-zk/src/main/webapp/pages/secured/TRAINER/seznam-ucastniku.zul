@@ -25,31 +25,51 @@
 			        <auxhead>
 			            <auxheader class="header" colspan="5" >
 			            	<hlayout sclass="pull-left">
-			            		<!-- Zpravy -->
-		            			<button label="${c:l('txt.ui.common.Messaging')}" 
-		            				iconSclass="z-icon-envelope"
-		            				popup="messagePopup, position=after_start"
-				            				if="${vm.isLoggedUserInRole('ADMIN')}"
-		            				visible="${vm.isLoggedUserInRole('ADMIN')}"/>
-			                	
-					                	<menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
-		            				<!-- Nova zprava zobrazenym ucastnikum. -->
-									<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('openModalToSendEmailCmd')" />
-									<!-- Odeslani instrukci k platbe za prvni pololeti. -->
-									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsFirstSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" />
-									<!-- Odeslani instrukci k platbe za druhe pololeti. -->
-									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" />
-						       	</menupopup>
+			            		
 			            	</hlayout>
 			            	
 			            	<hlayout sclass="pull-right">
 			            		<!-- Rocnik -->
 	            				<include src="/pages/common/component/context-year.zul"/>
+	            				
+	            				<!-- Zpravy -->
+		            			<button tooltiptext="${c:l('txt.ui.common.Messaging')}" 
+		            				iconSclass="z-icon-at"
+		            				popup="messagePopup, position=after_end"
+		            				sclass="toolbar-btn"
+				            		if="${vm.isLoggedUserInRole('ADMIN')}" />
+				                <menupopup id="messagePopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
+		            				<!-- Nova zprava zobrazenym ucastnikum. -->
+									<menuitem label="${c:l('txt.ui.common.NovaZprava')}" onClick="@command('goToSendEmailCmd')" if="${vm.isLoggedUserInRole('ADMIN')}" />
+									<!-- Odeslani instrukci k platbe za prvni pololeti. -->
+									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsFirstSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=true)" />
+									<!-- Odeslani instrukci k platbe za druhe pololeti. -->
+									<menuitem label="${c:l('txt.ui.common.PaymentInstructionsSecondSemester')}" onClick="@command('sendPaymentInstructionCmd', firstSemester=false)" />
+						       	</menupopup>
+						       	
+						       	<!-- Export do soubru -->
 	            				<button iconSclass="z-icon-download" 
-	            					onClick="@command('exportToExcel',listbox=courseApplicationList)" 
+	            					popup="downloadPopup, position=after_end"
 	            					tooltiptext="${c:l('txt.ui.common.downloadToFile')}" 
 	            					if="${vm.isLoggedUserInRole('ADMIN')}" 
 	            					sclass="toolbar-btn"/>
+	            				<menupopup id="downloadPopup" hflex="min" if="${vm.isLoggedUserInRole('ADMIN')}" >
+		            				<!-- Standardni export -->
+									<menuitem label="${c:l('txt.ui.export.Standard')} ${c:l('txt.ui.export.XLS')}" 
+										onClick="@command('exportToExcel',listbox=courseApplicationList)" />
+									<menuseparator/>
+									<!-- Seznam ucastniku s neoverenou adresou -->
+									<menuitem label="${c:l('txt.ui.export.NotValidAddress')}" 
+										onClick="@command('exportToExcelNotValidAddrCmd',listbox=courseApplicationList)" />
+									<menuseparator/>
+									<!-- Ceska unie sportu - XLS -->
+									<menuitem label="${c:l('txt.ui.export.Cus')} ${c:l('txt.ui.export.XLS')}"
+										onClick="@command('exportToExcelISCUSCmd',listbox=courseApplicationList)" />
+									<!-- Ceska unie sportu - CSV -->
+									<menuitem label="${c:l('txt.ui.export.Cus')} ${c:l('txt.ui.export.CSV')}" 
+										onClick="@command('exportToCSVISCUSCmd',listbox=courseApplicationList)" />
+						       	</menupopup>
+	            				
             					<button iconSclass="z-icon-refresh" 
             						onClick="@command('refreshDataCmd')" 
             						tooltiptext="${c:l('txt.ui.common.refreshData')}" 
@@ -107,7 +127,7 @@
 			            <listheader label="${c:l('txt.ui.common.course')}" sort="auto(courseParticipant.courseName)" align="left" />
 			            <listheader label="${c:l('txt.ui.common.paymentInstructionSent')}" align="center" hflex="min" />
 			            <listheader label="${c:l('txt.ui.common.paymentState')}" align="center" hflex="min" />
-			            <listheader width="90px" align="center" />
+			            <listheader hflex="min" align="center" />
 			        </listhead>
 			         
 			        <template name="model">
@@ -237,11 +257,14 @@
 								    </popup>
 		            		</listcell>		                	
 			                <listcell>
+			                	<button label="${c:l('txt.ui.common.Payments')}" onClick="@command('paymentsCmd', item=each)" if="${vm.isLoggedUserInRole('ADMIN')}" />
+			                	<!-- 
 			                	<button iconSclass="z-icon-ellipsis-h"  popup="menuCourseApplication_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" />
 			                	<menupopup id="menuCourseApplication_${each.uuid}_${each.courseParticipant.courseUuid}" >
 									<menuitem label="Detail" onClick="@command('detailCmd', uuid=each.uuid)" />
 									<menuitem label="${c:l('txt.ui.common.Payments')}" onClick="@command('paymentsCmd', item=each)" if="${vm.isLoggedUserInRole('ADMIN')}" />
 						       	</menupopup>
+						       	 -->
 			                </listcell>
 			            </listitem>
 			        </template>

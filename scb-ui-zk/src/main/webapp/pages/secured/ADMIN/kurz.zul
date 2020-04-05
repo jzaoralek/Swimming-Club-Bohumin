@@ -27,13 +27,18 @@
         				iconSclass="z-icon-plus"
         				style="margin-left: 10px;"
         				visible="@load(vm.isLoggedUserInRole('ADMIN'))" />
-        		
-        		<button onClick="@command('deleteCmd')"
-						label="Odstranit" 
+            	
+            	<hlayout visible="@load(vm.updateMode)">
+        			<!-- Zpravy -->
+	            	<send-mail-button />
+	        		<button onClick="@command('deleteCmd')"
+						tooltiptext="${c:l('txt.ui.common.Delete')}"
 						sclass="btn-danger" 
         				iconSclass="z-icon-times"
         				style="margin-left: 10px;"
-        				visible="@load(vm.isLoggedUserInRole('ADMIN') and vm.updateMode)" />		
+        				visible="@load(vm.isLoggedUserInRole('ADMIN') and vm.updateMode)" />
+            	</hlayout>
+        		
         				
 			</hlayout>
 			
@@ -47,6 +52,10 @@
 				        <tab id="courseInfo" label="${c:l('txt.ui.common.General')}" />
 				        <tab id="courseParticipants" disabled="@load(!vm.updateMode)" label="${c:l('txt.ui.common.participants')}" iconSclass="z-icon-child" />
 				        <tab id="lessons" label="${c:l('txt.ui.common.lessons')}" disabled="@load(!vm.updateMode)" iconSclass="z-icon-calendar" />
+				        <tab id="trainers" label="${c:l('txt.ui.common.trainers')}" 
+				        	disabled="@load(!vm.updateMode)" 
+				        	onSelect="@command('trainersTabSelectedCmd')" 
+				        	iconSclass="z-icon-user" />
 				    </tabs>
 				    <tabpanels>
 				        <tabpanel >
@@ -257,7 +266,6 @@
 						        </template>
 						    </listbox>
 				        </tabpanel>
-				        
 				        <tabpanel>
 				        	<!-- Lekce -->
 							<listbox model="@load(vm.course.lessonList)"
@@ -299,6 +307,59 @@
 						        </template>
 						    </listbox>
 				        </tabpanel>
+				        <tabpanel>
+				        	<!-- Treneri -->
+							<listbox model="@load(vm.course.trainerList)"
+								id="trainerList"
+								hflex="1"
+								mold="paging"
+								pageSize="10"
+								visible="@load(vm.updateMode)"
+								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+								class="listbox-300" >
+						        <auxhead>
+						            <auxheader colspan="2" >
+						            	<hlayout>
+						            		<button onClick="@command('openTrainerSelectCmd')" 
+				            					tooltiptext="${c:l('txt.ui.common.addTrainer')}" 
+				            					sclass="add-item-btn"
+				            					iconSclass="z-icon-plus" />
+							            	<combobox id="trainerToSelectCombo" 
+												model="@load(vm.trainersToSelect)"
+												onSelect="@command('addTrainerCmd')"
+												selectedItem="@bind(vm.trainerSelected)"
+												placeholder="${c:l('txt.ui.common.addTrainer')}"
+												style="position: relative; left: -28px; height: 0px; width: Opx !important; opacity: 0.0 !important;"
+												buttonVisible="true"
+												width="0px"
+												readonly="true" >
+												<template name="model">
+									            	<comboitem label="${each.contact.completeName}"/>
+												</template>
+											</combobox>
+						            	</hlayout>
+						            </auxheader>
+						        </auxhead>
+								
+						        <listhead>
+						            <listheader label="${c:l('txt.ui.common.trainer')}" sort="auto(contact.surname)" hflex="1" align="left" />
+						            <listheader width="70px" align="center" />
+						        </listhead>
+						         
+						        <template name="model">
+						            <listitem>
+						                <listcell label="${each.contact.completeName}" />	                	
+						                <listcell>
+						                	<button sclass="btn-danger round-btn" 
+						                		iconSclass="z-icon-times" 
+						                		tooltiptext="${c:l('txt.ui.common.remove')}" 
+						                		onClick="@command('removeTrainerCmd', item=each)" />
+						                </listcell>
+						            </listitem>
+						        </template>
+						    </listbox>
+				        </tabpanel>
+				        
 				    </tabpanels>
 				</tabbox>
 			</vlayout>

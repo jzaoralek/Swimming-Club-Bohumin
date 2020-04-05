@@ -15,16 +15,23 @@ DROP TABLE IF EXISTS  payment;
 DROP TABLE IF EXISTS  course_location;
 DROP TABLE IF EXISTS  file;
 DROP TABLE IF EXISTS  course_application_file_config;
+DROP TABLE IF EXISTS  user_trainer_course;
 
 CREATE TABLE contact(
 	uuid varchar(36),
 	firstname VARCHAR(100) NOT NULL,
 	surname VARCHAR(100) NOT NULL,
+    citizenship VARCHAR(3) NOT NULL DEFAULT 'CZE',
+	sex_male ENUM('0','1') NOT NULL DEFAULT '1',
 	street VARCHAR(240),
 	land_registry_number INT,
-  house_number SMALLINT,
+    house_number VARCHAR(32),
+	evidence_number VARCHAR(32),
 	city VARCHAR(240),
+    region VARCHAR(240),
 	zip_code VARCHAR(32),
+    foreign_address VARCHAR(1000) CHARACTER SET utf8,
+    address_validation_status ENUM('VALID','INVALID','NOT_VERIFIED') NOT NULL DEFAULT 'NOT_VERIFIED',
 	email1 VARCHAR(100),
 	email2 VARCHAR(100),
 	phone1 VARCHAR(14),
@@ -42,6 +49,9 @@ CREATE TABLE course_participant(
 	health_info varchar(524),
 	user_uuid varchar(36) REFERENCES user(uuid),
 	contact_uuid varchar(36) REFERENCES contact(uuid),
+    iscus_role ENUM('ACTIVE_SPORTSMAN','ACTIVE_SPORTSMAN_PROFESSIONAL','OTHER') NULL DEFAULT 'ACTIVE_SPORTSMAN',
+    iscus_partic_id VARCHAR(32) NULL,
+    iscus_system_id VARCHAR(32) NULL,
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
@@ -162,6 +172,12 @@ CREATE TABLE participant_learning_lesson(
 	course_participant_uuid varchar(36) REFERENCES course_participant(uuid),
 	learning_lesson_uuid varchar(36) REFERENCES learning_lesson(uuid),
 	PRIMARY KEY (course_participant_uuid, learning_lesson_uuid)
+);
+
+CREATE TABLE user_trainer_course (
+	course_uuid varchar(36) REFERENCES course(uuid),
+	user_trainer_uuid varchar(36) REFERENCES user(uuid),
+	PRIMARY KEY (course_uuid, user_trainer_uuid)
 );
 
 CREATE TABLE payment(

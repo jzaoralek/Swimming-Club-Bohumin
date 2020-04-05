@@ -12,6 +12,7 @@
 			classpath:scb-data-service-context.xml
 			classpath:scb-ui-zk-context.xml
 			classpath:scb-ui-security-context.xml
+			classpath:ruian-client-context.xml
 		</param-value>
 	</context-param>
 

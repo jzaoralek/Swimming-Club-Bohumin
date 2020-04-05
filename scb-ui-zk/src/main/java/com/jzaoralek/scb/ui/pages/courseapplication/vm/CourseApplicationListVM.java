@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,15 +36,20 @@ import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO.CoursePaymentState;
+import com.jzaoralek.scb.dataservice.domain.Mail;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.utils.CSVUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -51,6 +57,7 @@ import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseContextVM;
+import com.jzaoralek.scb.ui.pages.courseapplication.filter.CourseApplicationFilter;
 
 public class CourseApplicationListVM extends BaseContextVM {
 
@@ -171,6 +178,24 @@ public class CourseApplicationListVM extends BaseContextVM {
 		String filename = this.pageMode == PageMode.COURSE_APPLICATION_LIST ? "seznam_prihlasek.xls" : "seznam_ucastniku.xls";
 		ExcelUtil.exportToExcel(filename, buildExcelRowData(listbox));
 	}
+	
+	@Command
+	public void exportToExcelNotValidAddrCmd(@BindingParam("listbox") Listbox listbox) {
+		String filename = this.pageMode == PageMode.COURSE_APPLICATION_LIST ? "seznam_prihlasek_neoverena_adresa.xls" : "seznam_ucastniku_neoverena_adresa.xls";
+		ExcelUtil.exportToExcel(filename, buildExcelNotValidAddrRowData(listbox));
+	}
+	
+	@Command
+	public void exportToExcelISCUSCmd(@BindingParam("listbox") Listbox listbox) {
+		String filename = "seznam_ucastniku_iscus.xls";
+		ExcelUtil.exportToExcel(filename, buildExcelISCUSRowData(listbox));
+	}
+	
+	@Command
+	public void exportToCSVISCUSCmd(@BindingParam("listbox") Listbox listbox) {
+		String filename = "seznam_ucastniku_iscus.csv";
+		CSVUtil.exportToCSV(filename, buildExcelISCUSRowData(listbox));
+	}
 
 	@NotifyChange("*")
 	@Command
@@ -225,6 +250,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 				@Override
 				public void onOkEvent() {
 					StringBuilder mailToUser = null;
+					List<Mail> mailList = new ArrayList<>();
 					for (CourseApplication courseApplication : courseApplicationList) {
 						mailToUser = new StringBuilder();
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text0"));
@@ -239,11 +265,12 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text3"));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
-						mailToUser.append(buildMailSignature());
-						
-						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null);
-						WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
+						mailToUser.append(buildMailSignature());						
+						mailList.add(new Mail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null));	
 					}
+					
+					mailService.sendMailBatch(mailList);
+					WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
 				}
 			},
 			msgParams
@@ -251,17 +278,54 @@ public class CourseApplicationListVM extends BaseContextVM {
 	}
 	
 	/**
-	 * Otevre modal pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
 	 */
 	@Command
-	public void openModalToSendEmailCmd() {
+	public void goToSendEmailCmd() {
+		goToSendEmailCore(buildCourseParticipantContactSet(this.courseApplicationList));
+	}
+	
+	/**
+	 * Odesle email s prihlaskou na vybrane ucastniky.
+	 */
+	@Command
+	public void sendCourseApplicationEmailCmd() {
 		if (CollectionUtils.isEmpty(this.courseApplicationList)) {
 			return;
 		}
 		
-		Map<String, Object> args = new HashMap<>();
-		args.put(WebConstants.COURSE_PARTIC_CONTACT_LIST_PARAM, buildCourseParticipantContactSet(this.courseApplicationList));
-		WebUtils.openModal(WebPages.EMAIL_DETAIL_WINDOW.getUrl(), null, args);
+		final List<CourseApplication> courseApplicationListToSend = this.courseApplicationList;
+		
+		// dotaz
+		MessageBoxUtils.showDefaultConfirmDialog(
+			"msg.ui.quest.sendMailCourseApplication",
+			"msg.ui.title.sendMail",
+			new SzpEventListener() {
+				@Override
+				public void onOkEvent() {
+					List<Mail> mailToSendList = new ArrayList<>();
+					
+					for (CourseApplication item : courseApplicationListToSend) {
+						// potvrzujici mailu o prihlasce course participant representative
+						mailToSendList.add(buildMailCourseParticRepresentative(item, getNewCourseApplicationTitle()));
+						// potvrzujici mail o prihlasce klubu
+						mailToSendList.add(buildMailToClub(item));
+						if (!item.isCurrentParticipant()) {
+							ScbUser user = scbUserService.getByUsername(item.getCourseParticRepresentative().getContact().getEmail1());
+							if (user != null) {
+								// potvrzujiciho maila o zalozeni uzivatele
+								mailToSendList.add(buildMailToNewUser(user));
+							}
+						}
+					}
+					
+					// odeslani emailu
+					mailService.sendMailBatch(mailToSendList);
+					
+					WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseApplicationMailSent"));
+				}
+			}
+		);
 	}
 	
 	/**
@@ -269,17 +333,17 @@ public class CourseApplicationListVM extends BaseContextVM {
 	 * @param courseApplicationList
 	 * @return
 	 */
-	private Set<String> buildCourseParticipantContactSet(List<CourseApplication> courseApplicationList) {
+	private Set<Contact> buildCourseParticipantContactSet(List<CourseApplication> courseApplicationList) {
 		if (CollectionUtils.isEmpty(courseApplicationList)) {
 			return Collections.emptySet();
 		}
 		
-		Set<String> ret = new HashSet<>();
+		Set<Contact> ret = new HashSet<>();
 		for (CourseApplication item : courseApplicationList) {
 			if (item.getCourseParticRepresentative() != null 
 					&& item.getCourseParticRepresentative().getContact() != null
 					&& StringUtils.hasText(item.getCourseParticRepresentative().getContact().getEmail1())) {
-				ret.add(item.getCourseParticRepresentative().getContact().getEmail1());				
+				ret.add(item.getCourseParticRepresentative().getContact());				
 			}
 		}
 		return ret;
@@ -375,7 +439,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 
 		// header
 		Listhead lh = listbox.getListhead();
-		Object[] headerArray = new Object[lh.getChildren().size() + 10];
+		Object[] headerArray = new Object[lh.getChildren().size() + 12];
 		for (int i = 0; i < lh.getChildren().size(); i++) {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
@@ -390,7 +454,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[lh.getChildren().size()+3] = Labels.getLabel("txt.ui.common.landRegNo");
 			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.houseNo");
 			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.city");
-			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.zipCode");			
+			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.zipCode");
+			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.course");	
+			headerArray[lh.getChildren().size()+8] = Labels.getLabel("txt.ui.common.courseLocation2");
 		} else {
 			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
 			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
@@ -408,14 +474,16 @@ public class CourseApplicationListVM extends BaseContextVM {
 		// rows
 		ListModel<Object> model = listbox.getListModel();
 		CourseApplication item = null;
+		Course course = null;
 		for (int i = 0; i < model.getSize(); i++) {
 			if (model.getElementAt(i) instanceof CourseApplication) {
 				item = (CourseApplication)model.getElementAt(i);
+				course = getCourseByCourseParticipant(item.getCourseParticipant());
 				if (this.pageMode == PageMode.COURSE_APPLICATION_LIST) {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
 								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
-								item.getCourseParticRepresentative().getContact().getCompleteName(),
+								item.getCourseParticRepresentative().getContact().getCompleteName(),								
 								dateFormat.format(item.getModifAt()),
 								item.getCourseParticipant().getInCourseInfo(),
 								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
@@ -424,9 +492,11 @@ public class CourseApplicationListVM extends BaseContextVM {
 								item.getCourseParticRepresentative().getContact().getEmail1(),								
 								getNotNullString(item.getCourseParticipant().getContact().getStreet()),
 								getNotNullLong(item.getCourseParticipant().getContact().getLandRegistryNumber()),
-								getNotNullShort(item.getCourseParticipant().getContact().getHouseNumber()),
+								getNotNullString(item.getCourseParticipant().getContact().getHouseNumber()),
 								getNotNullString(item.getCourseParticipant().getContact().getCity()),
-								getNotNullString(item.getCourseParticipant().getContact().getZipCode())
+								getNotNullString(item.getCourseParticipant().getContact().getZipCode()),
+								course != null ? course.getName() : "",
+								course != null && course.getCourseLocation() != null ? course.getCourseLocation().getName() : "",
 					});
 				} else {
 					data.put(String.valueOf(i+1),
@@ -440,11 +510,178 @@ public class CourseApplicationListVM extends BaseContextVM {
 								item.getCourseParticRepresentative().getContact().getEmail1(),	
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getStreet()),
 								getNotNullLongEmptyChar(item.getCourseParticipant().getContact().getLandRegistryNumber()),
-								getNotNullShortEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity()),
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode())
 								});
 				}
+			}
+		}
+
+		return data;
+	}
+	
+	private Course getCourseByCourseParticipant(CourseParticipant cp) {
+		if (!CollectionUtils.isEmpty(cp.getCourseList())) {
+			Course firstCourse = cp.getCourseList().get(0);
+			if (firstCourse != null) {
+				return firstCourse;
+			}
+		}
+		
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, Object[]> buildExcelNotValidAddrRowData(@BindingParam("listbox") Listbox listbox) {
+		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
+		
+		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATETIME_PATTERN);
+
+		// header
+		Listhead lh = listbox.getListhead();
+		Object[] headerArray = new Object[lh.getChildren().size() + 12];
+		for (int i = 0; i < lh.getChildren().size(); i++) {
+			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
+		}
+		
+		String currency = " " + Labels.getLabel("txt.ui.common.CZK");
+		
+		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.birthNumber");
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.phone");
+			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.email");
+			headerArray[lh.getChildren().size()+2] = Labels.getLabel("txt.ui.common.street");
+			headerArray[lh.getChildren().size()+3] = Labels.getLabel("txt.ui.common.landRegNo");
+			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.houseNo");
+			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.city");
+			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.zipCode");
+			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.course");	
+			headerArray[lh.getChildren().size()+8] = Labels.getLabel("txt.ui.common.courseLocation2");
+		} else {
+			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
+			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
+			headerArray[lh.getChildren().size()+1] = Labels.getLabel("txt.ui.common.phone");
+			headerArray[lh.getChildren().size()+2] = Labels.getLabel("txt.ui.common.email");
+			headerArray[lh.getChildren().size()+3] = Labels.getLabel("txt.ui.common.street");
+			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.landRegNo");
+			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.houseNo");
+			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.city");
+			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.zipCode");	
+		}
+		data.put("0", headerArray);
+
+		
+		// rows
+		ListModel<Object> model = listbox.getListModel();
+		CourseApplication item = null;
+		Course course = null;
+		for (int i = 0; i < model.getSize(); i++) {
+			if (model.getElementAt(i) instanceof CourseApplication) {
+				item = (CourseApplication)model.getElementAt(i);
+				course = getCourseByCourseParticipant(item.getCourseParticipant());
+				if (this.pageMode == PageMode.COURSE_APPLICATION_LIST) {
+					if (!item.getCourseParticipant().getContact().isAddressValid()) {
+						data.put(String.valueOf(i+1),
+								new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
+										getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
+										item.getCourseParticRepresentative().getContact().getCompleteName(),								
+										dateFormat.format(item.getModifAt()),
+										item.getCourseParticipant().getInCourseInfo(),
+										!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
+												item.getCourseParticipant().getPersonalNo().replace("/", ""),
+												item.getCourseParticRepresentative().getContact().getPhone1(),
+												item.getCourseParticRepresentative().getContact().getEmail1(),								
+												getNotNullString(item.getCourseParticipant().getContact().getStreet()),
+												getNotNullLong(item.getCourseParticipant().getContact().getLandRegistryNumber()),
+												getNotNullString(item.getCourseParticipant().getContact().getHouseNumber()),
+												getNotNullString(item.getCourseParticipant().getContact().getCity()),
+												getNotNullString(item.getCourseParticipant().getContact().getZipCode()),
+												course != null ? course.getName() : "",
+														course != null && course.getCourseLocation() != null ? course.getCourseLocation().getName() : "",
+						});						
+					}
+				} else {
+					if (!item.getCourseParticipant().getContact().isAddressValid()) {
+						data.put(String.valueOf(i+1),
+								new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
+										item.getCourseParticipant().getCourseName(),
+										buildPaymentNotifiedInfo(item.getCourseParticipant()),
+										item.getCourseParticipant().getCoursePaymentVO() != null ? (item.getCourseParticipant().getCoursePaymentVO().isOverpayed() ? Labels.getLabel("enum.CoursePaymentState.OVERPAYED") : getEnumLabelConverter().coerceToUi(item.getCourseParticipant().getCoursePaymentVO().getStateTotal(), null, null)) : null,
+												item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getPaymentSum() : 0,
+														item.getCourseParticipant().getCoursePaymentVO() != null ? item.getCourseParticipant().getCoursePaymentVO().getTotalPrice() : 0,
+																item.getCourseParticRepresentative().getContact().getPhone1(),
+																item.getCourseParticRepresentative().getContact().getEmail1(),	
+																getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getStreet()),
+																getNotNullLongEmptyChar(item.getCourseParticipant().getContact().getLandRegistryNumber()),
+																getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
+																getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity()),
+																getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode())
+						});						
+					}
+				}
+			}
+		}
+
+		return data;
+	}
+	
+	private Map<String, Object[]> buildExcelISCUSRowData(@BindingParam("listbox") Listbox listbox) {
+		Map<String, Object[]> data = new LinkedHashMap<>();
+
+		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_ISCUS_PATTERN);
+
+		// header
+		Object[] headerArray = new Object[19];
+		headerArray[0] = Labels.getLabel("txt.ui.common.surname");
+		headerArray[1] = Labels.getLabel("txt.ui.common.firstname");
+		headerArray[2] = Labels.getLabel("txt.ui.common.CzechCitizen");
+		headerArray[3] = Labels.getLabel("txt.ui.common.birthNumber");
+		headerArray[4] = Labels.getLabel("txt.ui.common.birthDate");
+		headerArray[5] = Labels.getLabel("txt.ui.common.Sex");
+		headerArray[6] = Labels.getLabel("txt.ui.iscus.particRole");
+		headerArray[7] = Labels.getLabel("txt.ui.iscus.IsTrainer");
+		headerArray[8] = Labels.getLabel("txt.ui.iscus.IsReferee");
+		headerArray[9] = Labels.getLabel("txt.ui.common.street");
+		headerArray[10] = Labels.getLabel("txt.ui.common.landRegNo.abbr");
+		headerArray[11] = Labels.getLabel("txt.ui.common.houseNo.abbr");
+		headerArray[12] = Labels.getLabel("txt.ui.common.city");
+		headerArray[13] = Labels.getLabel("txt.ui.common.zipCode");
+		headerArray[14] = Labels.getLabel("txt.ui.common.phone");
+		headerArray[15] = Labels.getLabel("txt.ui.common.email");
+		headerArray[16] = Labels.getLabel("txt.ui.iscus.particId");
+		headerArray[17] = Labels.getLabel("txt.ui.iscus.ClubLabels");
+		headerArray[17] = Labels.getLabel("txt.ui.iscus.systemIdNotEdit");
+		
+		data.put("0", headerArray);
+
+		// rows
+		ListModel<Object> model = listbox.getListModel();
+		CourseApplication item = null;
+		for (int i = 0; i < model.getSize(); i++) {
+			if (model.getElementAt(i) instanceof CourseApplication) {
+				item = (CourseApplication)model.getElementAt(i);
+				data.put(item.getCourseParticipant().getPersonalNo(),
+						new Object[] {
+								item.getCourseParticipant().getContact().getSurname(),
+								item.getCourseParticipant().getContact().getFirstname(),
+								item.getCourseParticipant().getContact().isCzechCitizenship() ? "1" : "0",
+								item.getCourseParticipant().getPersonalNo(),
+								item.getCourseParticipant().getBirthdate() != null ? dateFormat.format(item.getCourseParticipant().getBirthdate()) : "",
+								item.getCourseParticipant().getContact().isSexMale() ? "M" : "Z",
+								item.getCourseParticipant().getIscusRole() != null ? item.getCourseParticipant().getIscusRole().getAbbr() : "",
+								"0",
+								"0",
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getStreet()),
+								getNotNullLongEmptyChar(item.getCourseParticipant().getContact().getLandRegistryNumber()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity()),
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode()),
+								item.getCourseParticRepresentative().getContact().getPhone1(),
+								item.getCourseParticRepresentative().getContact().getEmail1(),
+								item.getCourseParticipant().getIscusParticId(),
+								"",
+								item.getCourseParticipant().getIscusSystemId()});
 			}
 		}
 
@@ -534,244 +771,5 @@ public class CourseApplicationListVM extends BaseContextVM {
 	
 	public int getYearFrom() {
 		return yearFrom;
-	}
-
-	public static class CourseApplicationFilter {
-		private DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATE_PATTERN);
-		private DateFormat dateTimeFormat = new SimpleDateFormat(WebConstants.WEB_DATETIME_PATTERN);
-
-		private String code;
-
-		private String courseParticName;
-		private String courseParticNameLc;
-		private String birthDate;
-		private String birthNo;
-		private String courseParticRepresentative;
-		private String courseParticRepresentativeLc;
-		private String phone;
-		private String email;
-		private String emailLc;
-		private String modifAt;
-		private String course;
-		private String courseLc;
-		private Boolean inCourse;
-		private Listitem coursePaymentState;
-		private Listitem paymentNotifSendState;
-		private Boolean newParticipant;
-
-		public boolean matches(String courseParticNameIn
-				, String birthDateIn
-				, String birthNoIn
-				, String courseParticRepresentativeIn
-				, String phoneIn
-				, String emailIn
-				, String modifAtIn
-				, String courseIn
-				, boolean inCourseIn
-				, CoursePaymentState coursePaymentStateIn
-				, boolean newParticipantIn
-				, Set<PaymentNotifSendState> paymentNotifSendStateIn
-				, boolean emptyMatch) {
-			if (courseParticName == null
-					&& birthDate == null 
-					&& birthNo == null
-					&& courseParticRepresentative == null 
-					&& phone == null 
-					&& email == null 
-					&& modifAt == null 
-					&& course == null 
-					&& inCourse == null 
-					&& coursePaymentState == null
-					&& paymentNotifSendState == null
-					&& newParticipant == null) {
-				return emptyMatch;
-			}
-			if (courseParticName != null && !courseParticNameIn.toLowerCase().contains(courseParticNameLc)) {
-				return false;
-			}
-			if (birthDate != null && !birthDateIn.contains(birthDate)) {
-				return false;
-			}
-			if (birthNo != null && !birthNoIn.contains(birthNo)) {
-				return false;
-			}
-			if (courseParticRepresentative != null && !courseParticRepresentativeIn.toLowerCase().contains(courseParticRepresentativeLc)) {
-				return false;
-			}
-			if (phone != null && !phoneIn.contains(phone)) {
-				return false;
-			}
-			if (email != null && !emailIn.toLowerCase().contains(emailLc)) {
-				return false;
-			}
-			if (modifAt != null && !modifAtIn.contains(modifAt)) {
-				return false;
-			}
-			if (course != null && !courseIn.toLowerCase().contains(courseLc)) {
-				return false;
-			}
-			if (inCourse != null && (inCourse != inCourseIn)) {
-				return false;
-			}			
-			if (coursePaymentState != null && coursePaymentState.getValue() != null && ((CoursePaymentState)coursePaymentState.getValue()) != coursePaymentStateIn) {
-				return false;
-			}
-			if (paymentNotifSendState != null && paymentNotifSendState.getValue() != null && !paymentNotifSendStateIn.contains((PaymentNotifSendState)paymentNotifSendState.getValue())) {
-				return false;
-			}
-			
-			if (newParticipant != null && (newParticipant != newParticipantIn)) {
-				return false;
-			}
-			
-			return true;
-		}
-
-		public List<CourseApplication> getApplicationListFiltered(List<CourseApplication> codelistModelList) {
-			if (codelistModelList == null || codelistModelList.isEmpty()) {
-				return Collections.<CourseApplication>emptyList();
-			}
-			List<CourseApplication> ret = new ArrayList<CourseApplication>();
-			for (CourseApplication item : codelistModelList) {
-				if (matches(item.getCourseParticipant().getContact().getSurname() + " " + item.getCourseParticipant().getContact().getFirstname()
-						, item.getCourseParticipant().getBirthdate() != null ? dateFormat.format(item.getCourseParticipant().getBirthdate()) : null
-						, item.getCourseParticipant().getPersonalNo()
-						, item.getCourseParticRepresentative().getContact().getSurname() + " " + item.getCourseParticRepresentative().getContact().getFirstname()
-						, item.getCourseParticRepresentative().getContact().getPhone1()
-						, item.getCourseParticRepresentative().getContact().getEmail1()
-						, dateTimeFormat.format(item.getModifAt())
-						, item.getCourseParticipant().getCourseName()
-						, item.getCourseParticipant().inCourse()
-						, (item.getCourseParticipant().getCoursePaymentVO() != null) ? (item.getCourseParticipant().getCoursePaymentVO().isOverpayed() ? CoursePaymentState.OVERPAYED : item.getCourseParticipant().getCoursePaymentVO().getStateTotal()) : null
-						, !item.isCurrentParticipant()
-						, item.getCourseParticipant().getPaymentNotifSendState()
-						, true)) {
-					ret.add(item);
-				}
-			}
-			return ret;
-		}
-
-		public String getCode() {
-			return code == null ? "" : code;
-		}
-		public void setCode(String code) {
-			this.code = StringUtils.hasText(code) ? code.trim() : null;
-		}
-		public String getCourseParticName() {
-			return courseParticName == null ? "" : courseParticName;
-		}
-		public void setCourseParticName(String name) {
-			this.courseParticName = StringUtils.hasText(name) ? name.trim() : null;
-			this.courseParticNameLc = this.courseParticName == null ? null : this.courseParticName.toLowerCase();
-		}
-
-		public String getCourseParticRepresentative() {
-			return courseParticRepresentative == null ? "" : courseParticRepresentative;
-		}
-
-		public void setCourseParticRepresentative(String courseParticRepresentative) {
-			this.courseParticRepresentative = StringUtils.hasText(courseParticRepresentative) ? courseParticRepresentative.trim() : null;
-			this.courseParticRepresentativeLc = this.courseParticRepresentative == null ? null : this.courseParticRepresentative.toLowerCase();
-		}
-
-		public String getBirthDate() {
-			return birthDate == null ? "" : birthDate;
-		}
-
-		public void setBirthDate(String birthDate) {
-			this.birthDate = StringUtils.hasText(birthDate) ? birthDate.trim() : null;
-		}
-
-		public String getBirthNo() {
-			return birthNo == null ? "" : birthNo;
-		}
-
-		public void setBirthNo(String birthNo) {
-			this.birthNo = StringUtils.hasText(birthNo) ? birthNo.trim() : null;
-		}
-
-		public String getPhone() {
-			return phone == null ? "" : phone;
-		}
-
-		public void setPhone(String phone) {
-			this.phone = StringUtils.hasText(phone) ? phone.trim() : null;
-		}
-
-		public String getEmail() {
-			return email == null ? "" : email;
-		}
-
-		public void setEmail(String email) {
-			this.email = StringUtils.hasText(email) ? email.trim() : null;
-			this.emailLc = this.email == null ? null : this.email.toLowerCase();
-		}
-
-		public String getModifAt() {
-			return modifAt == null ? "" : modifAt;
-		}
-
-		public void setModifAt(String modifAt) {
-			this.modifAt = StringUtils.hasText(modifAt) ? modifAt.trim() : null;
-		}
-
-		public String getCourse() {
-			return course == null ? "" : course;
-		}
-		public void setCourse(String name) {
-			this.course = StringUtils.hasText(name) ? name.trim() : null;
-			this.courseLc = this.course == null ? null : this.course.toLowerCase();
-		}
-		public Boolean getInCourse() {
-			return inCourse;
-		}
-
-		public void setInCourse(Boolean inCourse) {
-			this.inCourse = inCourse;
-		}
-
-		public Listitem getCoursePaymentState() {
-			return coursePaymentState;
-		}
-
-		public void setCoursePaymentState(Listitem roleItem) {
-			this.coursePaymentState = roleItem;
-		}
-		
-		public Boolean getNewParticipant() {
-			return newParticipant;
-		}
-
-		public void setNewParticipant(Boolean newParticipant) {
-			this.newParticipant = newParticipant;
-		}
-
-		public Listitem getPaymentNotifSendState() {
-			return paymentNotifSendState;
-		}
-
-		public void setPaymentNotifSendState(Listitem paymentNotifSendState) {
-			this.paymentNotifSendState = paymentNotifSendState;
-		}
-		
-		public void setEmptyValues() {
-			code = null;
-			courseParticName = null;
-			courseParticNameLc = null;
-			birthDate = null;
-			birthNo = null;
-			courseParticRepresentative = null;
-			phone = null;
-			email = null;
-			emailLc = null;
-			modifAt = null;
-			course = null;
-			courseLc = null;
-			inCourse = null;
-			coursePaymentState = null;
-			paymentNotifSendState = null;
-			newParticipant = null;
-		}
 	}
 }

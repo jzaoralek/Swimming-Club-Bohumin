@@ -1,5 +1,7 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -43,7 +45,7 @@ public class UserVM extends BaseVM {
 			this.updateMode = true;
 		} else {
 			this.user = new ScbUser();
-			this.roleSelected = getRoleListItem(ScbUserRole.ADMIN);
+			this.roleSelected = getRoleListItem(ScbUserRole.TRAINER);
 			this.updateMode = false;
 		}
 		buildPageHeadline();
@@ -74,6 +76,14 @@ public class UserVM extends BaseVM {
 			LOG.warn("ScbValidationException caught during storing user: " + this.user, e);
 			WebUtils.showNotificationError(e.getMessage());
 		}
+	}
+	
+	/**
+	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
+	 */
+	@Command
+	public void goToSendEmailCmd() {
+		goToSendEmailCore(new HashSet<>(Arrays.asList(this.user.getContact())));
 	}
 
 	public ScbUser getUser() {
