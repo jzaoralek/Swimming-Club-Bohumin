@@ -11,6 +11,11 @@ import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 
 public class Course implements IdentEntity {
 
+	public enum CourseType {
+		STANDARD,
+		TWO_SEMESTER;
+	}
+	
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
@@ -27,6 +32,8 @@ public class Course implements IdentEntity {
 	private Integer maxParticipantCount;
 	private CourseCourseParticipantVO courseCourseParticipantVO;
 	private List<ScbUser> trainerList;
+	private CourseType courseType;
+	private boolean active;
 
 	public String getOccupancy() {
 		return getParticipantListCount() + " / " + (this.maxParticipantCount != null ? this.maxParticipantCount : 0);
@@ -140,6 +147,10 @@ public class Course implements IdentEntity {
 		this.yearTo = Integer.valueOf(years[1]);
 	}
 	
+	public boolean isCourseStandard() {
+		return this.courseType == CourseType.STANDARD;
+	}
+	
 	public CourseLocation getCourseLocation() {
 		return courseLocation;
 	}
@@ -164,6 +175,18 @@ public class Course implements IdentEntity {
 	public void setTrainerList(List<ScbUser> trainerList) {
 		this.trainerList = trainerList;
 	}
+	public CourseType getCourseType() {
+		return courseType;
+	}
+	public void setCourseType(CourseType courseType) {
+		this.courseType = courseType;
+	}
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
 	@Override
 	public String toString() {
@@ -172,6 +195,7 @@ public class Course implements IdentEntity {
 				+ priceSemester1 + ", priceSemester2=" + priceSemester2 + ", participantList=" + participantList
 				+ ", participantCount=" + participantCount + ", lessonList=" + lessonList + ", courseLocation="
 				+ courseLocation + ", maxParticipantCount=" + maxParticipantCount + ", courseCourseParticipantVO="
-				+ courseCourseParticipantVO + ", trainerList=" + trainerList + "]";
+				+ courseCourseParticipantVO + ", trainerList=" + trainerList + ", courseType=" + courseType
+				+ ", active=" + active + "]";
 	}
 }

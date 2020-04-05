@@ -27,7 +27,7 @@ public class BirthdateValidator extends ScbAbstractValidator {
 		if (validateBirthNumber != null && validateBirthNumber && StringUtils.hasText(birthNumber)) {
 			try {
 				String birtNumberPreDelim = birthNumber.substring(0, birthNumber.indexOf("/"));
-				Date birthdateFromBirtNumber = WebUtils.parseRcDatePart(birtNumberPreDelim);
+				Date birthdateFromBirtNumber = WebUtils.parseRcDatePart(birtNumberPreDelim).getValue1();
 				if (birthdateFromBirtNumber != null &&  (value.compareTo(birthdateFromBirtNumber) != 0)) {
 					super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.birthdateNotEqualsBirthNUmber"));
 					return;

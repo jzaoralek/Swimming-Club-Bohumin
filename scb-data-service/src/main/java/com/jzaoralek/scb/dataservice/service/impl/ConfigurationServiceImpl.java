@@ -152,6 +152,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
+	public boolean isCheckSumBirthNumAllowed() {
+		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.ALLOW_CHECK_SUM_BIRTHNUM_VALIDATION.name()).getValue());
+	}
+	
+	@Override
 	public String getRecaptchaSitekey() {
 		return this.recaptchaSitekey;
 	}

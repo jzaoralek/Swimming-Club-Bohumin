@@ -14,6 +14,7 @@ public interface PaymentDao {
 	void insert(Payment course);
 	void update(Payment course);
 	void delete(Payment course);
+	void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid);
 	Set<String> getAllBankTransIdPohybu();
 	List<Payment> getBankPaymentByDateInterval(Date from, Date to);
 }

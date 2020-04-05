@@ -28,6 +28,7 @@ public interface ConfigurationService {
 	boolean isPaymentsAvailable();
 	boolean isAttendanceForParentsVisible();
 	boolean isCourseApplNotVerifiedAddressAllowed();
+	boolean isCheckSumBirthNumAllowed();
 	List<Config> getAll();
 	void update(Config config);
 	

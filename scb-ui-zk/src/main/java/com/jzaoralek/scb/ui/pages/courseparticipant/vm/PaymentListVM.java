@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.javatuples.Pair;
+import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -13,10 +15,6 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listbox;
@@ -40,9 +38,11 @@ import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-// TODO:
-// - indikator na detailu
-// - indikator na prehledu ucastniku
+/**
+ * VM for course participant payment list.
+ * @author jakub.zaoralek
+ *
+ */
 public class PaymentListVM extends BaseVM {
 
 	private static final String PAYMENT_DETAIL_WINDOW = "/pages/secured/TRAINER/detail-platby.zul";
@@ -62,30 +62,64 @@ public class PaymentListVM extends BaseVM {
 	private long paymentSum;
 	private CoursePaymentVO coursePaymentVO;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	@Init
 	public void init(@QueryParam(WebConstants.COURSE_PARTIC_UUID_PARAM) String courseParticUuid
 			, @QueryParam(WebConstants.COURSE_UUID_PARAM) String courseUuid
 			, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
-        setMenuSelected(ScbMenuItem.PLATBY);
+        
+		// single page mode
+		if (StringUtils.hasText(courseParticUuid) 
+				&& StringUtils.hasText(courseUuid) 
+				&& StringUtils.hasText(fromPage)) {
+			initSinglePageMode(courseParticUuid, courseUuid, fromPage);			
+		}
+		
+		// listener for nested page mode
+		EventQueueHelper.queueLookup(ScbEventQueues.PAYMENT_QUEUE).subscribe(ScbEvent.RELOAD_COURSEPARTIC_PAYMENT_DATA_EVENT, data -> 
+			initNestedPageMode((Pair<CourseParticipant,String>) data)
+        );
+		
+		// listener for load data
+		EventQueueHelper.queueLookup(ScbEventQueues.PAYMENT_QUEUE).subscribe(ScbEvent.RELOAD_PAYMENT_DATA_EVENT, data -> 
+			loadData()
+	    );
+	}
+	
+	/**
+	 * Init data for single page mode.
+	 * @param courseParticUuid
+	 * @param courseUuid
+	 * @param fromPage
+	 */
+	private void initSinglePageMode(String courseParticUuid, 
+			String courseUuid, 
+			String fromPage) {
+		setMenuSelected(ScbMenuItem.PLATBY);
 		this.courseParticUuid = UUID.fromString(courseParticUuid);
 		this.courseUuid = UUID.fromString(courseUuid);
-		// build header
 		this.coursePartic = courseService.getCourseParticipantByUuid(this.courseParticUuid);
 		this.course = courseService.getPlainByUuid(this.courseUuid);
 		this.pageHeadline = buildPageHeadline(this.coursePartic, this.course);
 		loadData();
 		setReturnPage(fromPage);
-		
-		final EventQueue eq = EventQueues.lookup(ScbEventQueues.PAYMENT_QUEUE.name() , EventQueues.DESKTOP, true);
-		eq.subscribe(new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) {
-				if (event.getName().equals(ScbEvent.RELOAD_PAYMENT_DATA_EVENT.name())) {
-					loadData();
-				}
-			}
-		});
+	}
+	
+	/**
+	 * Init data for page as part or tab content of another page.
+	 * @param courseParticUuid
+	 * @param courseUuid
+	 */
+	private void initNestedPageMode(Pair<CourseParticipant,String> data) {
+		this.courseParticUuid = data.getValue0().getUuid();
+		this.coursePartic = data.getValue0();
+		this.courseUuid = UUID.fromString(data.getValue1());
+		this.course = courseService.getPlainByUuid(this.courseUuid);
+		loadData();
+		BindUtils.postNotifyChange(null, null, this, "courseParticUuid");
+		BindUtils.postNotifyChange(null, null, this, "coursePartic");
+		BindUtils.postNotifyChange(null, null, this, "courseUuid");
+		BindUtils.postNotifyChange(null, null, this, "course");
 	}
 	
 	@Command
@@ -124,7 +158,7 @@ public class PaymentListVM extends BaseVM {
 						if (payment != null) {
 							paymentService.delete(payment);
 							WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentDeleted", msgParams));
-							EventQueueHelper.publish(ScbEventQueues.PAYMENT_QUEUE, ScbEvent.RELOAD_PAYMENT_DATA_EVENT, null, null);
+							EventQueueHelper.publish(ScbEvent.RELOAD_PAYMENT_DATA_EVENT, null);
 						}
 						
 					}
@@ -174,9 +208,8 @@ public class PaymentListVM extends BaseVM {
 		BindUtils.postNotifyChange(null, null, this, "coursePaymentVO");
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
-		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
+		Map<String, Object[]> data = new LinkedHashMap<>();
 
 		// header
 		Listhead lh = listbox.getListhead();

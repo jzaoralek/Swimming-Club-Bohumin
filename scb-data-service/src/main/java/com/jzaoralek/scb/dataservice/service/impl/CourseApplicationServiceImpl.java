@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -143,6 +145,23 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 		courseApplicationDao.updateCourseParticInterruption(courseParticUuidList, interrupetdAt);
 	}
+	
+	@Override
+	public void updateCourseParticCourseUuid(List<UUID> courseParticUuidList, UUID courseUuid) {
+		if (CollectionUtils.isEmpty(courseParticUuidList)) {
+			return;
+		}
+		courseApplicationDao.updateCourseParticCourseUuid(courseParticUuidList, courseUuid);
+	}
+	
+	@Override
+	public void insertCourseParticInterruption(UUID courseCourseParticUuid, UUID courseUuid, Date interrupetdAt) {
+		Objects.requireNonNull(courseCourseParticUuid);
+		Objects.requireNonNull(courseUuid);
+		Objects.requireNonNull(interrupetdAt);
+		
+		courseApplicationDao.insertCourseParticInterruption(UUID.randomUUID(), courseCourseParticUuid, courseUuid, interrupetdAt);
+	}
 
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
@@ -178,8 +197,8 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	}
 	
 	@Override
-	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo) {
-		return courseApplicationDao.getAssignedToCourse(yearFrom, yearTo);
+	public List<CourseApplication> getAssignedToCourse(int yearFrom, int yearTo, CourseType courseType) {
+		return courseApplicationDao.getAssignedToCourse(yearFrom, yearTo, courseType);
 	}
 
 	private void storeCourseParticRepresentative(ScbUser courseParticRepresentative) {

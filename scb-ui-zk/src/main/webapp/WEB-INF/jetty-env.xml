@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<!--  tento web zda se vubec neexistuje a v package to asi neni
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+-->
+
+<Configure id="wac" class="org.eclipse.jetty.webapp.WebAppContext">
+    <New id="workshop" class="org.eclipse.jetty.plus.jndi.Resource">
+        <Arg>
+            <Ref id="wac" />
+        </Arg>
+        <Arg>jdbc.sportlogic</Arg>
+        <Arg>
+            <New class="com.mysql.jdbc.jdbc2.optional.MysqlDataSource">
+                <Set name = "URL"><SystemProperty name="db.url" default="jdbc:mysql://localhost:3306/scb"/></Set>
+                <Set name = "User"><SystemProperty name="db.user" default="scb"/></Set>
+                <Set name = "Password"><SystemProperty name="db.password" default="scb"/></Set>
+            </New>
+        </Arg>
+    </New>
+</Configure>
+

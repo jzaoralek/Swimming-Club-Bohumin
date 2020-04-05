@@ -7,21 +7,21 @@
    			readonly="true"
    			width="100%"
    			rows="16" 
+   			style="margin-top: 4px;"
    			value="${course.description}" />
-   		<hlayout width="100%">
+   		<hlayout width="100%" style="margin-top: 5px;">
    			<vlayout hflex="1">
-	    		<label value="${c:l('txt.ui.common.priceSemester1')}" style="margin-left: 5px;"/>
-	    		<hlayout>
-		    		<textbox readonly="true"  width="75px" style="margin-left: 5px;" value="${course.priceSemester1}" />
-		    		<label value="${c:l('txt.ui.common.CZK')}" style="margin-left: 2px" />
-	    		</hlayout>
+	    		<label value="${c:l('txt.ui.common.priceSemester1')}" if="${!course.courseStandard}" style="margin-left: 5px;"/>
+				<label value="${c:l('txt.ui.common.Price')}" if="${course.courseStandard}" style="margin-left: 5px;"/>
+	    		<hbox align="center" style="margin-top: 4px;">
+		    		<textbox readonly="true" width="75px" style="margin-left: 5px;" value="${course.priceSemester1} ${c:l('txt.ui.common.CZK')}" />
+	    		</hbox>
    			</vlayout>
-   			<vlayout hflex="1">
+   			<vlayout hflex="1" if="${!course.courseStandard}" style="margin-left: 10px;">
 	    		<label value="${c:l('txt.ui.common.priceSemester2')}" style="margin-left: 5px;"/>
-	    		<hlayout>
-		    		<textbox readonly="true" width="75px" style="margin-left: 5px;" value="${course.priceSemester2}" />
-		    		<label value="${c:l('txt.ui.common.CZK')}" style="margin-left: 2px" />
-	    		</hlayout>
+	    		<hbox align="center" style="margin-top: 4px;">
+		    		<textbox readonly="true" width="75px" style="margin-left: 5px;" value="${course.priceSemester2} ${c:l('txt.ui.common.CZK')}" />
+	    		</hbox>
    			</vlayout>
    		</hlayout>
    	</vlayout>

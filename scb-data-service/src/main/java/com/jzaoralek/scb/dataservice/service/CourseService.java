@@ -1,5 +1,6 @@
 package com.jzaoralek.scb.dataservice.service;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +28,32 @@ public interface CourseService {
 	Course getByUuid(UUID uuid);
 	Course getPlainByUuid(UUID uuid);
 	Course store(Course course) throws ScbValidationException;
+	
+	/**
+	 * Copy course from orig to new course.
+	 * @param courseOrigUuid
+	 * @param courseNew
+	 * @param copyParticipants - copy participants to new course
+	 * @param copyLessons - copy lessons to new course
+	 * @param copyTrainers - copy lessons to new course
+	 * @return
+	 * @throws ScbValidationException
+	 */
+	Course copy(UUID courseOrigUuid, 
+			Course courseNew, 
+			boolean copyParticipants, 
+			boolean copyLessons, 
+			boolean copyTrainers) throws ScbValidationException;
+
+	/**
+	 *  Build copy of course by uuid.
+	 * @param courseUuid
+	 * @param courseApplicationYear
+	 * @param nameFromOrig
+	 * @return
+	 */
+	Course buildCopy(UUID courseUuid, String courseApplicationYear, boolean nameFromOrig);
+	
 	/**
 	 * Return course participant with one course.
 	 * @param courseCourseParticUuid
@@ -43,9 +70,23 @@ public interface CourseService {
 	void deleteCourseLocation(CourseLocation courseLocatiom);
 	boolean existsByCourseLocation(UUID courseLocationUuid);
 	
-	CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid);
+	CourseCourseParticipantVO getCourseCourseParticipantVO(UUID courseParticUuid, UUID courseUuid, boolean interrupted);
 	
 	List<ScbUser> getTrainersByCourse(UUID courseUuid);
 	void addTrainersToCourse(List<ScbUser> trainers, UUID courseUuid);
 	void removeTrainersFromCourse(List<ScbUser> trainers, UUID courseUuid);
+	void updateState(List<UUID> courseUuidList, boolean active);
+	/**
+	 * Move course participant list to another course.
+	 * @param courseParticipantList
+	 * @param courseUuidDest
+	 * @param courseUuidOrig
+	 * @param from
+	 * @param to
+	 */
+	void moveParticListToCourse(List<CourseParticipant> courseParticipantList, 
+			UUID courseUuidDest,
+			UUID courseUuidOrig, 
+			Calendar from, 
+			Calendar to);
 }

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +20,7 @@ import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
@@ -35,9 +35,11 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Radio;
 
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
@@ -81,11 +83,13 @@ public class CourseApplicationListVM extends BaseContextVM {
 	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.of(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER, PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER, PaymentNotifSendState.SENT_FIRST_SEMESTER, PaymentNotifSendState.SENT_SECOND_SEMESTER));
 	private String bankAccountNumber;
 	private int yearFrom;
+	private CourseType courseType;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Init
 	public void init() {
 		initYearContext();
+		initCourseTypeCache();
 
 		setPageMode();
 		loadData();		
@@ -103,6 +107,18 @@ public class CourseApplicationListVM extends BaseContextVM {
 		});
 	}
 
+	private void initCourseTypeCache() {
+		this.courseType = (CourseType)WebUtils.getSessAtribute(WebConstants.COURSE_TYPE_PARAM);
+		if (this.courseType == null)  {
+			this.courseType = CourseType.TWO_SEMESTER;
+			updateCourseTypeCache(this.courseType);
+		}
+	}
+	
+	private void updateCourseTypeCache(CourseType courseType) {
+		WebUtils.setSessAtribute(WebConstants.COURSE_TYPE_PARAM, courseType);
+	}
+	
 	private void setPageMode() {
 		if (WebUtils.getCurrentUrl().contains(WebPages.APPLICATION_LIST.getUrl())) {
 			this.pageMode = PageMode.COURSE_APPLICATION_LIST;
@@ -145,16 +161,18 @@ public class CourseApplicationListVM extends BaseContextVM {
 	}
 
 	@Command
-    public void detailCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid, @BindingParam(WebConstants.NEW_TAB_PARAM) final Boolean newTab) {
+    public void detailCmd(@BindingParam(WebConstants.UUID_PARAM) final UUID uuid,
+    		@BindingParam(WebConstants.COURSE_UUID_PARAM) final UUID courseUuid,
+    		@BindingParam(WebConstants.NEW_TAB_PARAM) final Boolean newTab) {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
 		String targetPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_DETAIL.getUrl() : WebPages.PARTICIPANT_DETAIL.getUrl();
 		WebPages fromPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_LIST : WebPages.PARTICIPANT_LIST;
 		if (newTab != null && newTab) {
-			Executions.getCurrent().sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage, "_blank");
+			Executions.getCurrent().sendRedirect(targetPage + "?" + WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid, "_blank");
 		} else {
-			Executions.getCurrent().sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
+			Executions.getCurrent().sendRedirect(targetPage + "?"+ WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid);
 		}
 	}
 	
@@ -348,6 +366,14 @@ public class CourseApplicationListVM extends BaseContextVM {
 		}
 		return ret;
 	}
+	
+	@NotifyChange("courseType")
+	@Command
+	public void courseTypeChangeCmd(@BindingParam("radio") Radio radio) {
+		this.courseType = radio.getValue();
+		updateCourseTypeCache(this.courseType);
+		loadData();
+	}
 
 	/**
 	 * Na emailove adresy zastupcu ybranych ucastniku odesle instrukce k platbe za dany kurz.
@@ -374,61 +400,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 		args.put(WebConstants.SEMESTER_PARAM, firstSemester);
 		args.put(WebConstants.BANK_ACCOUNT_NO_PARAM, bankAccountNumber);
 		args.put(WebConstants.YEAR_FROM_TO_PARAM, yearFromTo);
+		args.put(WebConstants.COURSE_TYPE_PARAM, this.courseType);
 		
 		WebUtils.openModal(WebPages.PAYMENT_INSTRUCTION_WINDOW.getUrl(), null, args);
-		
-//		final int semester = firstSemester ? 1 : 2;		
-//		final List<CourseApplication> courseApplicationList = this.courseApplicationList;
-//		final int yearFrom = Integer.parseInt(years[0]);
-//		final Object[] msgParams = new Object[] {semester};
-//		MessageBoxUtils.showDefaultConfirmDialog(
-//			"msg.ui.quest.sendMailWithPaymentInstructions",
-//			"msg.ui.title.sendMail",
-//			new SzpEventListener() {
-//				@Override
-//				public void onOkEvent() {
-//					StringBuilder mailToUser = null;
-//					for (CourseApplication courseApplication : courseApplicationList) {
-//						mailToUser = new StringBuilder();
-//						mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text0"));
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						mailToUser.append(Labels.getLabel("msg.ui.mail.paymentInstruction.text1", new Object[] {courseApplication.getCourseParticipant().getCourseName(), semester, yearFromTo}));
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//
-//						// cislo uctu
-//						mailToUser.append(Labels.getLabel("txt.ui.common.AccountNo"));
-//						mailToUser.append(": ");
-//						mailToUser.append(bankAccountNumber);
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						
-//						// castka
-//						long priceForSemester = firstSemester ? courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceFirstSemester() : courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceSecondSemester();
-//						mailToUser.append(Labels.getLabel("txt.ui.common.Amount"));
-//						mailToUser.append(": ");
-//						mailToUser.append(priceForSemester);
-//						mailToUser.append(" ");
-//						mailToUser.append(Labels.getLabel("txt.ui.common.CZK"));
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						
-//						// variabilni symbol
-//						mailToUser.append(Labels.getLabel("txt.ui.common.VarSymbol"));
-//						mailToUser.append(": ");
-//						mailToUser.append(buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore()));
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						mailToUser.append(WebConstants.LINE_SEPARATOR);
-//						
-//						// podpis
-//						mailToUser.append(buildMailSignature());
-//						
-//						mailService.sendMail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), Labels.getLabel("msg.ui.mail.paymentInstruction.subject", new Object[] {courseApplication.getCourseParticipant().getCourseName(), semester, yearFromTo}), mailToUser.toString(), null);
-//						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
-//					}
-//				}
-//			},
-//			msgParams
-//		);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -726,11 +700,16 @@ public class CourseApplicationListVM extends BaseContextVM {
 		if (this.unregToCurrYear) {
 			this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getUnregisteredToCurrYear(yearFrom, yearTo) : Collections.EMPTY_LIST;
 		} else {
-			this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getAll(yearFrom, yearTo) : courseApplicationService.getAssignedToCourse(yearFrom, yearTo);
+			this.courseApplicationList = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? courseApplicationService.getAll(yearFrom, yearTo) : courseApplicationService.getAssignedToCourse(yearFrom, yearTo, this.courseType);
 		}
 		this.courseApplicationListBase = this.courseApplicationList;
-		
+
 		BindUtils.postNotifyChange(null, null, this, "courseApplicationList");
+	}
+	
+	@DependsOn("courseType")
+	public boolean isCourseStandard() {
+		return this.courseType == CourseType.STANDARD;
 	}
 
 	public List<CourseApplication> getCourseApplicationList() {
@@ -771,5 +750,13 @@ public class CourseApplicationListVM extends BaseContextVM {
 	
 	public int getYearFrom() {
 		return yearFrom;
+	}
+	
+	public CourseType getCourseType() {
+		return courseType;
+	}
+
+	public void setCourseType(CourseType courseType) {
+		this.courseType = courseType;
 	}
 }

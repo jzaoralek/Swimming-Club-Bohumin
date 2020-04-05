@@ -118,7 +118,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		
 		CourseCourseParticipantVO courseCourseParticipantVO = null;
 		for (Course item : this.courseList) {
-			courseCourseParticipantVO = courseService.getCourseCourseParticipantVO(this.courseParticipant.getUuid(), item.getUuid());
+			courseCourseParticipantVO = courseService.getCourseCourseParticipantVO(this.courseParticipant.getUuid(), item.getUuid(), false);
 			if (courseCourseParticipantVO != null) {
 				item.setCourseCourseParticipantVO(courseCourseParticipantVO);
 			}
@@ -221,7 +221,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 	@Command
 	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") CourseParticipantDetailVM fx) {
 		// predvyplneni datumu narozeni podle rodneho cisla
-		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getCourseParticipant());
+		boolean success = WebUtils.setBirthdateByBirthNumer(personalNumber, fx.getCourseParticipant(), configurationService);
 		if (success) {
 			BindUtils.postNotifyChange(null, null, this, "courseParticipant");			
 		}
