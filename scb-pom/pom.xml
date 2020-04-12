@@ -26,8 +26,8 @@
 		<spring-security.version>4.0.4.RELEASE</spring-security.version>
 <!-- 		<spring-batch.version>3.0.8.RELEASE</spring-batch.version> -->
 		<application.version>0.0.1-SNAPSHOT</application.version>
-		<slf4j-version>1.7.30</slf4j-version>
-		<logback.version>1.1.3</logback.version>
+		<log4j.version>2.13.1</log4j.version>
+		<slf4j.version>2.0.0-alpha1</slf4j.version>
 	</properties>
 
 	<dependencyManagement>
@@ -106,27 +106,36 @@
 			
 			<!-- SLF4J -->
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j-version}</version>
+			    <groupId>org.apache.logging.log4j</groupId>
+			    <artifactId>log4j-api</artifactId>
+			    <version>${log4j.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-jdk14</artifactId>
-				<version>${slf4j-version}</version>
-			</dependency>
-			<!--
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>${logback.version}</version>
+			    <groupId>org.apache.logging.log4j</groupId>
+			    <artifactId>log4j-core</artifactId>
+			    <version>${log4j.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-core</artifactId>
-				<version>${logback.version}</version>
+			    <groupId>org.apache.logging.log4j</groupId>
+			    <artifactId>log4j-slf4j-impl</artifactId>
+			    <version>${log4j.version}</version>
 			</dependency>
-			 -->
+			<dependency>
+			    <groupId>ch.qos.logback</groupId>
+			    <artifactId>logback-classic</artifactId>
+			    <version>1.3.0-alpha5</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.slf4j</groupId>
+			    <artifactId>jul-to-slf4j</artifactId>
+			    <version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.slf4j</groupId>
+			    <artifactId>slf4j-api</artifactId>
+			    <version>${slf4j.version}</version>
+			</dependency>
+			 
 			<!-- AspectJ -->
 			<dependency>
 			    <groupId>org.aspectj</groupId>
