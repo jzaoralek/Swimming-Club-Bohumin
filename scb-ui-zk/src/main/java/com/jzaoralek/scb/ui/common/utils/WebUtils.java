@@ -21,8 +21,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.javatuples.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.util.resource.Labels;
@@ -48,7 +49,7 @@ import com.jzaoralek.scb.ui.common.WebPages;
 
 public final class WebUtils {
 
-	private static final Logger logger = Logger.getLogger(WebUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(WebUtils.class);
 	
 	private WebUtils() {}
 
