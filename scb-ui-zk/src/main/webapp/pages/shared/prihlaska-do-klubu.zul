@@ -403,7 +403,7 @@
 									iconSclass="z-icon-check" 
 									visible="@load(vm.editMode and vm.securedMode)" />
 							</vlayout>
-						</hlayout>
+						</hlayout>						
 					</vlayout>
 					
 					<popup id="emailPopup" >
@@ -415,9 +415,14 @@
 				            jq("$particBirthNumber").mask("999999/9999");
 				        });
 				    </script>
-			
 				</vlayout>
-				
+			
+			<!-- Club contact, displayed only in public course application.  -->	
+			<div sclass="footer" 
+				if="${!common:isUserLogged()}"
+				style="color: rgb(115, 129, 143); margin-top: 60px;" >
+				<login-footer/>
+			</div>
 	</div>
 	
 </zk>
