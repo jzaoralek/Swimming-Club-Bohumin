@@ -5,17 +5,23 @@
 	class="com.jzaoralek.scb.ui.common.vm.BaseVM"
 	signature="com.jzaoralek.scb.ui.common.vm.BaseVM getOrgNameStatic()"?>
 
+<?xel-method prefix="common" name="isUserLogged"
+	class="com.jzaoralek.scb.dataservice.utils.SecurityUtils"
+	signature="com.jzaoralek.scb.dataservice.utils.SecurityUtils isUserLogged()"?>
+	
 <zk>
 	<borderlayout sclass="scb-bl-main" apply="com.jzaoralek.scb.ui.common.template.TemplateComposer">
 		<north border="none" >
 			<include src="/pages/common/template/navbar.zul"/>
 		</north>
 		
+		<!-- Left side menu displayed only for logged user -->
 		<west border="none" width="230px" 
 				sclass="scb-side-menu-wrapper"
 				splittable="false" 
 				collapsible="false" 
-				apply="com.jzaoralek.scb.ui.common.template.SideMenuFoldingComposer">
+				apply="com.jzaoralek.scb.ui.common.template.SideMenuFoldingComposer"
+				if="${common:isUserLogged()}">
 			<include src="/pages/common/template/side-menu.zul"/>
 		</west>
 		
@@ -26,8 +32,7 @@
 					<div self="@{insert(mainContent)}" hflex="1" sclass="scb-content"></div>
 					<div class="scb-view-push"></div>
 				</vlayout>
-			
-				<div sclass="scb-view-footer" >
+				<div sclass="scb-view-footer">
 					<include src="/pages/common/template/footer.zul"/>
 				</div>
 			</div>
