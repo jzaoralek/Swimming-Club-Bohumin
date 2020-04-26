@@ -29,7 +29,7 @@ public class EmailValidator extends ScbAbstractValidator {
 			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaEmail"));
             return;
 		}
+		
         removeValidationStyle(ctx);
 	}
-
 }

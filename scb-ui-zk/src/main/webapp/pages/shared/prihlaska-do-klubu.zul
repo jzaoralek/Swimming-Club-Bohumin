@@ -65,23 +65,46 @@
 							<rows>
 								<row>
 									<cell>
+										<!-- Email/Username jmeno -->
 										<vbox hflex="1">
-											<label value="${c:l('txt.ui.common.email')} / ${c:l('txt.ui.common.Username')}"/>
+											<hlayout hflex="1">
+												<label value="${c:l('txt.ui.common.email')} / ${c:l('txt.ui.common.Username')}"/>
+											</hlayout>
 											<hbox hflex="1">
 												<textbox id="representativeEmail1" readonly="@load(vm.itemReadOnly or !vm.editMode)"
-													value="@bind(vm.application.courseParticRepresentative.contact.email1) @save(vm.application.courseParticRepresentative.contact.email1, before={submitCmd}) @validator(vm.emailValidator, notNull=true)"
+													value="@bind(vm.application.courseParticRepresentative.contact.email1) @save(vm.application.courseParticRepresentative.contact.email1, before={submitCmd}) @validator(vm.usernameValidator)"
 													maxlength="@load(vm.getEmailMaxlength())"
-													placeholder="*"
+													placeholder="${c:l('txt.ui.common.email.info')}"
 													sclass="form-input-text"
 													focus="${!vm.courseSelectionRequired}"
 													tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-													onChange="@command('validateUniqueUsernameCmd', email=self.value, fx=vm)"
 													hflex="1" />
-												<a iconSclass="z-icon-info-circle big-icon" popup="emailPopup" style="margin-left: 5px; position:relative;top: 5px" />
 											</hbox>
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmail1])" >
 													<label value="@bind(vmsgs[representativeEmail1])" />
+												</span>	
+											</hbox>
+										</vbox>
+									</cell>
+								</row>
+								
+								<row if="${!common:isUserLogged()}">
+									<cell>
+										<!-- Email/Uzivatelske jmeno zopakovani -->
+										<vbox hflex="1">
+											<label value="${c:l('txt.ui.common.enterAgain')} ${c:l('txt.ui.common.email')} / ${c:l('txt.ui.common.Username')}"/>
+											<hbox hflex="1">
+												<textbox id="representativeEmailRepeat" 
+													value="@bind(vm.emailUsernameRepeat) @save(vm.emailUsernameRepeat, before={submitCmd}) @validator(vm.equalValueValidator, compareTo=representativeEmail1.value)"
+													placeholder="*"
+													sclass="form-input-text"
+													tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+													hflex="1" />
+											</hbox>
+											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[representativeEmailRepeat])" >
+													<label value="@bind(vmsgs[representativeEmailRepeat])" />
 												</span>	
 											</hbox>
 										</vbox>
@@ -186,7 +209,7 @@
 					</groupbox>
 						
 					
-						<!-- Ucastnik -->
+					<!-- Ucastnik -->
 					<groupbox hflex="1" sclass="no-inner-padding">
                         <caption label="${c:l('txt.ui.common.participant')} (${c:l('txt.ui.common.child')})" />
                         
@@ -262,7 +285,7 @@
 												tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 												hflex="1" />
 											<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
-												<span sclass="alert alert-danger" visible="@load(not empty vmsgs[particFirstname])" >
+												<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[particFirstname])" >
 													<label value="@bind(vmsgs[particFirstname])" />
 												</span>
 											</hbox>
@@ -405,10 +428,6 @@
 							</vlayout>
 						</hlayout>						
 					</vlayout>
-					
-					<popup id="emailPopup" >
-				        <label value="${c:l('txt.ui.common.email.info')}" />
-				    </popup>
 											    
 					<script type="text/javascript">
 				        zk.afterMount(function() {

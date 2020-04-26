@@ -17,6 +17,7 @@ public final class Validators {
 	private static final TimeIntervalValidator timeIntervalValidator = new TimeIntervalValidator();
 	private static final PasswordValidator passwordValidator = new PasswordValidator();
 	private static final SexMaleValidator sexMaleValidator = new SexMaleValidator();
+	private static final EqualValueValidator equalValueValidator = new EqualValueValidator();
 	
 	public static SexMaleValidator getSexmalevalidator() {
 		return sexMaleValidator;
@@ -35,5 +36,8 @@ public final class Validators {
 	}
 	public static PasswordValidator getPasswordvalidator() {
 		return passwordValidator;
+	}
+	public static EqualValueValidator getEqualValueValidator() {
+		return equalValueValidator;
 	}
 }

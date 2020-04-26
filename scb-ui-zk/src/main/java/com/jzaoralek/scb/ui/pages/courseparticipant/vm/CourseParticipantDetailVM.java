@@ -78,6 +78,7 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
+		super.init();
         setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_U);
         initYearContext();
 		if (StringUtils.hasText(uuid)) {

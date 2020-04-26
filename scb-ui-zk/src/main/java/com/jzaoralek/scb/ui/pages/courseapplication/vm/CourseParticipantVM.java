@@ -95,6 +95,7 @@ public class CourseParticipantVM extends BaseVM {
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid
 			, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage
 			, @QueryParam(WebConstants.COURSE_UUID_PARAM) String courseUuid) {
+		super.init();
         setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_AT);
         setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_U);
 		if (StringUtils.hasText(uuid)) {
