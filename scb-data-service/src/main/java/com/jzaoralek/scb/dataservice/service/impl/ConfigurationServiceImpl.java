@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.jzaoralek.scb.dataservice.dao.ConfigurationDao;
 import com.jzaoralek.scb.dataservice.domain.Config;
+import com.jzaoralek.scb.dataservice.domain.Config.ConfigCategory;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 
 @Service("configurationService")
@@ -37,6 +38,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public List<Config> getAll() {
 		return configurationDao.getAll();
+	}
+	
+	@Override
+	public List<Config> getByCategory(ConfigCategory category) {
+		return configurationDao.getByCategory(category);
 	}
 
 	@Override

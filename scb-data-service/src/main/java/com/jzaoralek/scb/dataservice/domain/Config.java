@@ -36,6 +36,11 @@ public class Config implements IdentEntity {
 		BOOLEAN,
 		ENUM;
 	}
+	
+	public enum ConfigCategory {
+		BASIC,
+		COURSE_APPLICATION;
+	}
 
 	private UUID uuid;
 	private String modifBy;
@@ -45,6 +50,8 @@ public class Config implements IdentEntity {
 	private String value;
 	private ConfigType type;
 	private boolean superAdminConfig;
+	private ConfigCategory category;
+	private boolean spec;
 
 	@Override
 	public UUID getUuid() {
@@ -100,11 +107,23 @@ public class Config implements IdentEntity {
 	public void setSuperAdminConfig(boolean superAdminConfig) {
 		this.superAdminConfig = superAdminConfig;
 	}
+	public ConfigCategory getCategory() {
+		return category;
+	}
+	public void setCategory(ConfigCategory category) {
+		this.category = category;
+	}
+	public boolean isSpec() {
+		return spec;
+	}
+	public void setSpec(boolean spec) {
+		this.spec = spec;
+	}
 	
 	@Override
 	public String toString() {
 		return "Config [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", name=" + name
 				+ ", description=" + description + ", value=" + value + ", type=" + type + ", superAdminConfig="
-				+ superAdminConfig + "]";
-	}
+				+ superAdminConfig + ", category=" + category + ", spec=" + spec + "]";
+	}	
 }

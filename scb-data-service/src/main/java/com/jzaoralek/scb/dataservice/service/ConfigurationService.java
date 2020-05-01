@@ -5,6 +5,7 @@ import java.util.List;
 import org.javatuples.Pair;
 
 import com.jzaoralek.scb.dataservice.domain.Config;
+import com.jzaoralek.scb.dataservice.domain.Config.ConfigCategory;
 
 public interface ConfigurationService {
 
@@ -30,6 +31,7 @@ public interface ConfigurationService {
 	boolean isCourseApplNotVerifiedAddressAllowed();
 	boolean isCheckSumBirthNumAllowed();
 	List<Config> getAll();
+	List<Config> getByCategory(ConfigCategory category);
 	void update(Config config);
 	
 	/**
