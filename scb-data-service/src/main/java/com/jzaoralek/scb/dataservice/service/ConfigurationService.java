@@ -33,6 +33,7 @@ public interface ConfigurationService {
 	List<Config> getAll();
 	List<Config> getByCategory(ConfigCategory category);
 	void update(Config config);
+	Config getByName(String name);
 	
 	/**
 	 * Return recaptcha.sitekey from property file;
@@ -47,4 +48,10 @@ public interface ConfigurationService {
 	 * @return
 	 */
 	String getRecaptchaSecredkey();
+	
+	/**
+	 * Return title of course application.
+	 * @return
+	 */
+	String getCourseApplicationTitle();
 }

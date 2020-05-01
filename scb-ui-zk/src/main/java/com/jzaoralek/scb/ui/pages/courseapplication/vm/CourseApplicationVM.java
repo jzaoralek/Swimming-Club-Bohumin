@@ -139,7 +139,7 @@ public class CourseApplicationVM extends BaseVM {
 		}
 
 		if (courseApplication == null) {
-			this.pageHeadline = getNewCourseApplicationTitle();
+			this.pageHeadline = getDefaultCourseApplicationTitle();
 		} else {
 			this.pageHeadline = Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {String.valueOf(courseApplication.getYearFrom())});
 		}

@@ -69,7 +69,7 @@ public class CourseParticipantListVM extends BaseVM {
 		this.newCourseApplicationButtonText = buildNewCourseApplicationButtonText();
 		this.newCourseParticipantButtonText = buildNewCourseParticipantButtonText();
 		this.newCourseParticipant = new CourseParticipant();
-		this.pageHeadline = getNewCourseApplicationTitle();
+		this.pageHeadline = getDefaultCourseApplicationTitle();
 		
 		this.courseSelectionRequired = configurationService.isCourseSelectionRequired();
 		

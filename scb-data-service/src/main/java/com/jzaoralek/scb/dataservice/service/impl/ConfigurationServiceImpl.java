@@ -171,4 +171,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public String getRecaptchaSecredkey() {
 		return this.recaptchaSecredkey;
 	}
+
+	@Override
+	public String getCourseApplicationTitle() {
+		return configurationDao.getByName(Config.ConfigName.COURSE_APPLICATION_TITLE.name()).getValue();
+	}
+
+	@Override
+	public Config getByName(String name) {
+		return configurationDao.getByName(name);
+	}
 }

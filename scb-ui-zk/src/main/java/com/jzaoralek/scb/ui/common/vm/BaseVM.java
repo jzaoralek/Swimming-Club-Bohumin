@@ -337,7 +337,7 @@ public class BaseVM {
 	}
 	
 
-	public String getNewCourseApplicationTitle() {
+	public String getDefaultCourseApplicationTitle() {
 		String year = configurationService.getCourseApplicationYear();
 		return Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
 	}

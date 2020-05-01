@@ -325,7 +325,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 					
 					for (CourseApplication item : courseApplicationListToSend) {
 						// potvrzujici mailu o prihlasce course participant representative
-						mailToSendList.add(buildMailCourseParticRepresentative(item, getNewCourseApplicationTitle()));
+						mailToSendList.add(buildMailCourseParticRepresentative(item, getDefaultCourseApplicationTitle()));
 						// potvrzujici mail o prihlasce klubu
 						mailToSendList.add(buildMailToClub(item));
 						if (!item.isCurrentParticipant()) {
