@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -335,11 +336,50 @@ public class BaseVM {
 
 		return null;
 	}
-	
 
-	public String getDefaultCourseApplicationTitle() {
+	/**
+	 * Return default course application title from resource bundle including year.
+	 * @return
+	 */
+	protected String getDefaultCourseApplicationTitle() {
 		String year = configurationService.getCourseApplicationYear();
 		return Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {year});
+	}
+	
+	/**
+	 * Return default title for course application from resource bundle including year.
+	 * @return
+	 */
+	
+	/**
+	 * Return default title for course application from.
+	 * In case of current year from configuration,
+	 * in other cases default from resource bundle including year
+	 * @param courseApplication
+	 * @return
+	 */
+	protected String getTitleForCourseApplication(CourseApplication courseApplication) {
+		Pair<Integer,Integer> currentYearFromTo = configurationService.getYearFromTo();
+		Integer courseApplicationYearFrom = courseApplication.getYearFrom();
+		Integer courseApplicationYearTo = courseApplication.getYearTo();
+		
+		boolean currentYearCourseApplication = (courseApplicationYearFrom.equals(currentYearFromTo.getValue0())
+				&& courseApplicationYearTo.equals(currentYearFromTo.getValue1()));
+		if (currentYearCourseApplication) {
+			// prihlaska na aktualni rocnik, title z konfigurace
+			return configurationService.getCourseApplicationTitle();
+		} else {
+			// prihlaska z predchoziho rocnihu, default title
+			return Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplicationYearFrom + "/" + courseApplicationYearTo});	
+		}
+	}
+	
+	/**
+	 * Return course application title from configuration.
+	 * @return
+	 */
+	public String getConfigCourseApplicationTitle() {
+		return configurationService.getCourseApplicationTitle();
 	}
 	
 	protected Attachment buildCourseApplicationAttachment(CourseApplication courseApplication, byte[] byteArray) {

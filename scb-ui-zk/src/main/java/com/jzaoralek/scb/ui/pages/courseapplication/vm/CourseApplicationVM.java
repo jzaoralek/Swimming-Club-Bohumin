@@ -139,9 +139,9 @@ public class CourseApplicationVM extends BaseVM {
 		}
 
 		if (courseApplication == null) {
-			this.pageHeadline = getDefaultCourseApplicationTitle();
+			this.pageHeadline = getConfigCourseApplicationTitle();
 		} else {
-			this.pageHeadline = Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {String.valueOf(courseApplication.getYearFrom())});
+			this.pageHeadline = getTitleForCourseApplication(courseApplication);
 		}
 		
 		this.recaptchaSitekey = configurationService.getRecaptchaSitekey();

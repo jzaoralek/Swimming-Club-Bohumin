@@ -28,7 +28,7 @@ public class ConfigVM extends BaseVM {
 		initConfigBasic();
 		initConfigCourseApplication();
 		this.courseYearList = configurationService.getCourseYearList();
-		this.courseApplicationTitle = configurationService.getCourseApplicationTitle();
+		this.courseApplicationTitle = getConfigCourseApplicationTitle();
 	}
 	
 	private void initConfigBasic() {
