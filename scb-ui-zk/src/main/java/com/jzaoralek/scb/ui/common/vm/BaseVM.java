@@ -175,13 +175,7 @@ public class BaseVM {
 	 * @return
 	 */
 	public String getLessonToUi(Lesson lesson) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(Converters.getEnumlabelconverter().coerceToUi(lesson.getDayOfWeek(), null, null));
-		sb.append(" ");
-		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeFrom(), null, null));
-		sb.append(" - ");
-		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeTo(), null, null));
-		return sb.toString();
+		return WebUtils.getLessonToUi(lesson);
 	}
 
 	public Validator getEmailValidator() {
@@ -487,31 +481,7 @@ public class BaseVM {
 		mailToRepresentativeSb.append(courseApplication.getCourseParticipant().getContact().getCompleteName());
 		
 		// Kurz
-		if (courseApplication.getCourseParticipant().getCourseList() != null && !courseApplication.getCourseParticipant().getCourseList().isEmpty()) {
-			Course course = courseApplication.getCourseParticipant().getCourseList().get(0);
-			mailToRepresentativeSb.append(getLineSeparator());
-			mailToRepresentativeSb.append(getLineSeparator());
-			mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text4"));
-			mailToRepresentativeSb.append(getLineSeparator());
-			// nazev a popis
-			mailToRepresentativeSb.append(course.getName() + (StringUtils.hasText(course.getDescription()) ? (", " + course.getDescription()) : ""));
-			mailToRepresentativeSb.append(getLineSeparator());
-			if (course.getCourseLocation() != null) {
-				// nazev a popis mista kurzu
-				mailToRepresentativeSb.append(getLineSeparator());
-				mailToRepresentativeSb.append(course.getCourseLocation().getName() + (StringUtils.hasText(course.getCourseLocation().getDescription()) ? (", " + course.getCourseLocation().getDescription()) : ""));
-				mailToRepresentativeSb.append(getLineSeparator());				
-			}
-			if (course.getLessonList() != null && !course.getLessonList().isEmpty()) {
-				// lekce
-				mailToRepresentativeSb.append(getLineSeparator());
-				for (Lesson item : course.getLessonList()) {
-					mailToRepresentativeSb.append(getLessonToUi(item));
-					mailToRepresentativeSb.append(getLineSeparator());
-				}
-			}
-			
-		}
+		mailToRepresentativeSb.append(WebUtils.buildCourseApplMailCourseInfo(courseApplication, getLineSeparator()));
 		
 		// specificky text z konfigurace
 		String specText = configurationService.getCourseApplicationEmailSpecText();

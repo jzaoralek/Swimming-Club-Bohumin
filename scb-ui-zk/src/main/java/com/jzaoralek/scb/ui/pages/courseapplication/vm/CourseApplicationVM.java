@@ -362,7 +362,8 @@ public class CourseApplicationVM extends BaseVM {
 		this.courseList.clear();
 		
 		for (Course courseItem : this.courseListAll) {
-			if (courseItem.getCourseLocation().getUuid().toString().equals(this.courseLocationSelected.getUuid().toString())) {
+			if (courseItem.getCourseLocation() != null 
+					&& courseItem.getCourseLocation().getUuid().toString().equals(this.courseLocationSelected.getUuid().toString())) {
 				this.courseList.add(courseItem);
 			}
 		}
