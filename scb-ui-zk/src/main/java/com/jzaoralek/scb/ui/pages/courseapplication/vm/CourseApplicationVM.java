@@ -69,6 +69,7 @@ public class CourseApplicationVM extends BaseVM {
 	private CourseApplicationFileConfig gdprAgreementConfig;
 	private boolean loggedByParticRepr;
 	private String recaptchaSitekey;
+	private String emailUsernameRepeat;
 	
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
@@ -211,11 +212,10 @@ public class CourseApplicationVM extends BaseVM {
 					}
 				}
 				
-				if (!this.loggedByParticRepr) {
-					// kontrola unikatnosti pole Email/prihlasovaci jmeno
-					if (!validateUniqueUsernameCore(this.application.getCourseParticRepresentative().getContact().getEmail1(), this)) {
-						return;
-					}					
+				// kontrola unikatnosti pole Email/prihlasovaci jmeno
+				if (!this.loggedByParticRepr
+						&& !WebUtils.validateUniqueUsernameCore(this.application.getCourseParticRepresentative().getContact().getEmail1(), this, scbUserService)) {
+					return;
 				}
 				
 				// overeni validni adresy pred  submitem
@@ -320,38 +320,6 @@ public class CourseApplicationVM extends BaseVM {
 		}
 	}
 
-	/**
-	 * Kontroluje pouziti emailu jako defaultniho prihlasovaciho jmena, pokud je jiz evidovano, nabidne predvyplneni hodnot zakonneho zastupce.
-	 * @param email
-	 * @param fx
-	 */
-	
-	@NotifyChange("*")
-	@Command
-	public void validateUniqueUsernameCmd(@BindingParam("email") String email, @BindingParam("fx") final CourseApplicationVM fx) {
-		// pokud existuje uzivatel se stejnym username jako je zadany email, zobrazit upozorneni a nepovolit vyplnit
-		validateUniqueUsernameCore(email, fx);
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private boolean validateUniqueUsernameCore(String email, final CourseApplicationVM fx) {
-		String emailTrimmed = email.trim();
-		final ScbUser scbUser = scbUserService.getByUsername(emailTrimmed);
-		if (scbUser != null) {
-			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists",new Object[] {emailTrimmed, scbUser.getContact().getCompleteName()});			
-			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.OK, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
-			    public void onEvent(Event evt) throws InterruptedException {
-			        // vymazat email
-			        fx.getApplication().getCourseParticRepresentative().getContact().setEmail1("");
-			        BindUtils.postNotifyChange(null, null, fx, "*");
-			    }
-			});
-			return false;
-		}
-		
-		return true;
-	}
-	
 	/**
 	 * Kontroluje pouziti emailu jako defaultniho prihlasovaciho jmena, pokud je jiz evidovano, nabidne predvyplneni hodnot zakonneho zastupce.
 	 * Nastavi datum narozeni podle rodneho cisla.
@@ -621,5 +589,11 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public String getRecaptchaSitekey() {
 		return recaptchaSitekey;
+	}
+	public void setEmailUsernameRepeat(String emailUsernameRepeat) {
+		this.emailUsernameRepeat = emailUsernameRepeat;
+	}
+	public String getEmailUsernameRepeat() {
+		return emailUsernameRepeat;
 	}
 }

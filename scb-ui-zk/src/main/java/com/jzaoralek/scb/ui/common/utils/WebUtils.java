@@ -26,13 +26,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.zkoss.bind.BindUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
@@ -46,6 +49,7 @@ import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM;
 
 public final class WebUtils {
 
@@ -518,5 +522,47 @@ public final class WebUtils {
 		}
 		
 		return value.replace("/", "").replace("_", "");
+	}
+	
+	/**
+	 * Validation of unique username.
+	 * @param email
+	 * @param fx
+	 * @param scbUserService
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static boolean validateUniqueUsernameCore(String email, final CourseApplicationVM fx, ScbUserService scbUserService) {
+		if (!StringUtils.hasText(email)) {
+			return true;
+		}
+		String emailTrimmed = email.trim();
+		final ScbUser scbUser = scbUserService.getByUsername(emailTrimmed);
+		if (scbUser != null) {
+			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists",new Object[] {emailTrimmed, scbUser.getContact().getCompleteName()});			
+			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), Messagebox.OK, Messagebox.EXCLAMATION, new org.zkoss.zk.ui.event.EventListener() {
+			    public void onEvent(Event evt) throws InterruptedException {
+			        // vymazat email
+			        fx.getApplication().getCourseParticRepresentative().getContact().setEmail1("");
+			        BindUtils.postNotifyChange(null, null, fx, "*");
+			    }
+			});
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Email validation.
+	 * @param value
+	 * @return
+	 */
+	public static boolean emailValid(String value) {
+		if (!StringUtils.hasText(value)) {
+			return false;
+		}
+		Pattern emailPattern = Pattern.compile(WebConstants.EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
+		return emailPattern.matcher(value).matches();
 	}
 }

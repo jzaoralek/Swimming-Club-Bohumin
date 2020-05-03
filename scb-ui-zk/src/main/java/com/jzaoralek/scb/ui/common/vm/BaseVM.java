@@ -54,6 +54,7 @@ import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.validator.BirthNumberValidator;
 import com.jzaoralek.scb.ui.common.validator.ExistingUsernameValidator;
+import com.jzaoralek.scb.ui.common.validator.UsernameValidator;
 import com.jzaoralek.scb.ui.common.validator.Validators;
 import com.sportologic.ruianclient.model.RuianValidationResponse;
 import com.sportologic.ruianclient.service.RuianService;
@@ -95,11 +96,13 @@ public class BaseVM {
 	
 	private ExistingUsernameValidator existingUsernameValidator;
 	private BirthNumberValidator birthNumberValidator;
-	
+	private UsernameValidator usernameValidator;
+
 	@Init
 	public void init() {
 		this.existingUsernameValidator = new ExistingUsernameValidator(scbUserService);
 		this.birthNumberValidator = new BirthNumberValidator(configurationService);
+		this.usernameValidator = new UsernameValidator(scbUserService);
 		
 		// naplneni cashovanych hodnot z konfigurace
 		if (configurationService != null) {
@@ -196,6 +199,10 @@ public class BaseVM {
 		return this.birthNumberValidator;
 	}
 
+	public UsernameValidator getUsernameValidator() {
+		return usernameValidator;
+	}
+	
 	public Validator getTimeIntervalValidator() {
 		return Validators.getTimeintervalvalidator();
 	}
@@ -210,6 +217,10 @@ public class BaseVM {
 	
 	public Validator getSexMaleValidator() {
 		return Validators.getSexmalevalidator();
+	}
+	
+	public Validator getEqualValueValidator() {
+		return Validators.getEqualValueValidator();
 	}
 	
 	public Converter<String, Date, Component> getDateConverter() {
