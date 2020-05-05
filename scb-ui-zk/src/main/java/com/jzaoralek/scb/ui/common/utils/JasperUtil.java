@@ -65,6 +65,7 @@ public class JasperUtil {
             paramsMap.put("healthInfo", getNotNullValue(courseApplication.getCourseParticipant().getHealthInfo()));
             paramsMap.put("healthAgreement", configurationService.getHealthAgreement());
             paramsMap.put("persDataProcessAgreement", configurationService.getPersDataProcessAgreement());
+            paramsMap.put("courseInfo", WebUtils.buildCourseApplMailCourseInfo(courseApplication, ""));
 
             String language = "cs";
             paramsMap.put(JRParameter.REPORT_LOCALE, new Locale(language));

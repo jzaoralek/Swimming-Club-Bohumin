@@ -477,7 +477,7 @@ public class BaseVM {
 		
 		// Ucastnik
 		mailToRepresentativeSb.append(Labels.getLabel("msg.ui.mail.courseApplication.text3"));
-		mailToRepresentativeSb.append(getLineSeparator());
+		mailToRepresentativeSb.append(" ");
 		mailToRepresentativeSb.append(courseApplication.getCourseParticipant().getContact().getCompleteName());
 		
 		// Kurz

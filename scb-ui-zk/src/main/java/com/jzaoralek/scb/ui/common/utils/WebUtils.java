@@ -586,23 +586,22 @@ public final class WebUtils {
 		sb.append(lineSeparator);
 		sb.append(lineSeparator);
 		sb.append(Labels.getLabel("msg.ui.mail.courseApplication.text4"));
-		sb.append(lineSeparator);
+		sb.append(" ");
 		// nazev a popis
 		sb.append(course.getName() + (StringUtils.hasText(course.getDescription()) ? (", " + course.getDescription()) : ""));
-		sb.append(lineSeparator);
+		sb.append(" | ");
 		if (course.getCourseLocation() != null) {
 			// nazev a popis mista kurzu
-			sb.append(lineSeparator);
+			sb.append(Labels.getLabel("txt.ui.common.courseLocation2") + ": ");
 			sb.append(course.getCourseLocation().getName() + (StringUtils.hasText(course.getCourseLocation().getDescription()) ? (", " + course.getCourseLocation().getDescription()) : ""));
-			sb.append(lineSeparator);				
 		}
 		if (course.getLessonList() != null && !course.getLessonList().isEmpty()) {
 			// lekce
-			sb.append(lineSeparator);
-			for (Lesson item : course.getLessonList()) {
-				sb.append(getLessonToUi(item));
-				sb.append(lineSeparator);
-			}
+			sb.append(" | ");
+			sb.append(Labels.getLabel("txt.ui.common.lessons") + ": ");
+			sb.append(course.getLessonList().
+				stream().map(WebUtils::getLessonToUi).
+				collect(Collectors.joining(", ")));
 		}
 		
 		return sb.toString();
