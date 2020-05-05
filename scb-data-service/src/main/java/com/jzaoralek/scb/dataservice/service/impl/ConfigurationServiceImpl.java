@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.jzaoralek.scb.dataservice.dao.ConfigurationDao;
 import com.jzaoralek.scb.dataservice.domain.Config;
+import com.jzaoralek.scb.dataservice.domain.Config.ConfigCategory;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 
 @Service("configurationService")
@@ -37,6 +38,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public List<Config> getAll() {
 		return configurationDao.getAll();
+	}
+	
+	@Override
+	public List<Config> getByCategory(ConfigCategory category) {
+		return configurationDao.getByCategory(category);
 	}
 
 	@Override
@@ -164,5 +170,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public String getRecaptchaSecredkey() {
 		return this.recaptchaSecredkey;
+	}
+
+	@Override
+	public String getCourseApplicationTitle() {
+		return configurationDao.getByName(Config.ConfigName.COURSE_APPLICATION_TITLE.name()).getValue();
+	}
+
+	@Override
+	public Config getByName(String name) {
+		return configurationDao.getByName(name);
 	}
 }

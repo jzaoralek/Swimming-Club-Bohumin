@@ -19,7 +19,6 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
@@ -34,7 +33,6 @@ import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
-import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM;
 
 public class CourseParticipantListVM extends BaseVM {
 
@@ -69,7 +67,7 @@ public class CourseParticipantListVM extends BaseVM {
 		this.newCourseApplicationButtonText = buildNewCourseApplicationButtonText();
 		this.newCourseParticipantButtonText = buildNewCourseParticipantButtonText();
 		this.newCourseParticipant = new CourseParticipant();
-		this.pageHeadline = getNewCourseApplicationTitle();
+		this.pageHeadline = getConfigCourseApplicationTitle();
 		
 		this.courseSelectionRequired = configurationService.isCourseSelectionRequired();
 		

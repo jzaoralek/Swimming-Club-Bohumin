@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.jzaoralek.scb.dataservice.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.ConfigurationDao;
 import com.jzaoralek.scb.dataservice.domain.Config;
+import com.jzaoralek.scb.dataservice.domain.Config.ConfigCategory;
 
 public class ConfigurationDaoTest extends BaseTestCase {
 
@@ -25,6 +26,12 @@ public class ConfigurationDaoTest extends BaseTestCase {
 	@Test
 	public void testGetAll() {
 		List<Config> itemList = configurationDao.getAll();
+		Assert.assertNotNull(itemList);
+	}
+	
+	@Test
+	public void testGetByCategory() {
+		List<Config> itemList = configurationDao.getByCategory(ConfigCategory.BASIC);
 		Assert.assertNotNull(itemList);
 	}
 

@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -41,14 +42,17 @@ import org.zkoss.zul.Window;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
+import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.common.converter.Converters;
 import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM;
 
 public final class WebUtils {
@@ -564,5 +568,57 @@ public final class WebUtils {
 		}
 		Pattern emailPattern = Pattern.compile(WebConstants.EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
 		return emailPattern.matcher(value).matches();
+	}
+	
+	/**
+	 * Build course and lesson info used in confirmation mail and pdf.
+	 * @param courseApplication
+	 * @return
+	 */
+	public static String buildCourseApplMailCourseInfo(CourseApplication courseApplication
+			, String lineSeparator) {
+		if (CollectionUtils.isEmpty(courseApplication.getCourseParticipant().getCourseList())) {
+			return "";
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		Course course = courseApplication.getCourseParticipant().getCourseList().get(0);
+		sb.append(lineSeparator);
+		sb.append(lineSeparator);
+		sb.append(Labels.getLabel("msg.ui.mail.courseApplication.text4"));
+		sb.append(" ");
+		// nazev a popis
+		sb.append(course.getName() + (StringUtils.hasText(course.getDescription()) ? (", " + course.getDescription()) : ""));
+		sb.append(" | ");
+		if (course.getCourseLocation() != null) {
+			// nazev a popis mista kurzu
+			sb.append(Labels.getLabel("txt.ui.common.courseLocation2") + ": ");
+			sb.append(course.getCourseLocation().getName() + (StringUtils.hasText(course.getCourseLocation().getDescription()) ? (", " + course.getCourseLocation().getDescription()) : ""));
+		}
+		if (course.getLessonList() != null && !course.getLessonList().isEmpty()) {
+			// lekce
+			sb.append(" | ");
+			sb.append(Labels.getLabel("txt.ui.common.lessons") + ": ");
+			sb.append(course.getLessonList().
+				stream().map(WebUtils::getLessonToUi).
+				collect(Collectors.joining(", ")));
+		}
+		
+		return sb.toString();
+	}
+	
+	/**
+	 * Prevede lekci na format zobrazitelny v tabulce se spravnym formatem dnu a casu.
+	 * @param lesson
+	 * @return
+	 */
+	public static String getLessonToUi(Lesson lesson) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Converters.getEnumlabelconverter().coerceToUi(lesson.getDayOfWeek(), null, null));
+		sb.append(" ");
+		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeFrom(), null, null));
+		sb.append(" - ");
+		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeTo(), null, null));
+		return sb.toString();
 	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -168,8 +169,9 @@ public class CourseParticipantDetailVM extends BaseContextVM {
     }
 	
 	@Command
-	public void downloadCourseApplicationCmd(@BindingParam(WebConstants.COURSE_APPLICATION_PARAM) CourseApplication courseApplication) {
-		byte[] byteArray = JasperUtil.getReport(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplication.getYearFrom()}), configurationService);
+	public void downloadCourseApplicationCmd(@BindingParam(WebConstants.COURSE_APPLICATION_PARAM) CourseApplication courseApplication) {	
+		String title = getTitleForCourseApplication(courseApplication);
+		byte[] byteArray = JasperUtil.getReport(courseApplication, title, configurationService);
 		Attachment attachment = buildCourseApplicationAttachment(courseApplication, byteArray);
 		WebUtils.downloadAttachment(attachment);
 	}

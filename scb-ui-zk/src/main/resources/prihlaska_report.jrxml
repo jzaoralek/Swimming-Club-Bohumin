@@ -25,6 +25,7 @@
 	<parameter name="healthInfo" class="java.lang.String"/>
 	<parameter name="healthAgreement" class="java.lang.String"/>
 	<parameter name="persDataProcessAgreement" class="java.lang.String"/>
+	<parameter name="courseInfo" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -206,14 +207,14 @@
 				<textFieldExpression><![CDATA[$P{representativeEmail2}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="413" width="280" height="20" uuid="9588d3c3-fe63-4be3-9251-f1114d68704d"/>
+				<reportElement x="0" y="442" width="280" height="20" uuid="9588d3c3-fe63-4be3-9251-f1114d68704d"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
 				</textElement>
 				<text><![CDATA[Údaje o zdravotní způsobilosti, popř. zdravotních obtížích]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="433" width="555" height="47" uuid="7d56db2b-83a7-4a63-b801-9e9f03695646"/>
+				<reportElement x="0" y="464" width="555" height="47" uuid="7d56db2b-83a7-4a63-b801-9e9f03695646"/>
 				<textElement>
 					<font size="8" pdfEncoding="Cp1250"/>
 				</textElement>
@@ -238,7 +239,7 @@
 				<text><![CDATA[Účastník (dítě)]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="486" width="555" height="44" uuid="806614ff-a402-4982-bda4-cf3601ad29ab"/>
+				<reportElement x="0" y="511" width="555" height="44" uuid="806614ff-a402-4982-bda4-cf3601ad29ab"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8" pdfEncoding="Cp1250"/>
 					<paragraph lineSpacingSize="0.0"/>
@@ -246,7 +247,7 @@
 				<textFieldExpression><![CDATA[$P{healthAgreement}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="537" width="555" height="48" uuid="aea7a6f4-5601-4c37-864c-fa0f1cdac709"/>
+				<reportElement x="0" y="556" width="555" height="48" uuid="aea7a6f4-5601-4c37-864c-fa0f1cdac709"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8" pdfEncoding="Cp1250"/>
 					<paragraph lineSpacingSize="0.0"/>
@@ -259,6 +260,14 @@
 					<font size="16" isBold="true" pdfEncoding="Cp1250"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="393" width="555" height="44" uuid="301bcc5d-d66c-4ed9-9036-555bb9f927c0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" pdfEncoding="Cp1250"/>
+					<paragraph lineSpacingSize="0.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseInfo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

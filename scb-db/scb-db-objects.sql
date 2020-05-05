@@ -129,6 +129,8 @@ CREATE TABLE configuration(
 	description VARCHAR(200) CHARACTER SET utf8,
 	val VARCHAR(1000) CHARACTER SET utf8,
     type  ENUM('STRING','INTEGER','BOOLEAN','ENUM') NOT NULL,
+	category ENUM('BASIC','COURSE_APPLICATION') NULL DEFAULT 'BASIC',
+	spec ENUM('0','1') NOT NULL DEFAULT '0',
 	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
     superadmin_config ENUM('0','1') NOT NULL DEFAULT '0',

@@ -1,6 +1,7 @@
 <?page title="${common:getOrgNameStatic()} - ${c:l('txt.ui.menu.configuration')}"?>
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="/pages/common/template/template.zul"?>
 <?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+<?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
 
 <?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
 <?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
@@ -15,20 +16,19 @@
 		
 				<tabbox id="tb" hflex="1" style="margin-top: 20px;">
 				    <tabs id="tabs">
-				        <tab id="courseParticipants" label="${c:l('txt.ui.common.configBasic')}" />
+				        <tab id="basicConfiguration" label="${c:l('txt.ui.common.basic')}" />
+				        <tab id="courseApplication" label="${c:l('txt.ui.common.courseApplication')}" />
 				        <tab id="courseLocations" label="${c:l('txt.ui.common.courseLocations')}" />
-				        <tab id="lessons" label="${c:l('txt.ui.common.swimStyleAdmin')}"  />
+				        <tab id="lessons" label="${c:l('txt.ui.common.disciplineAdmin')}"  />
 				    </tabs>
 				    
-				    <tabpanels>
-				    
+				    <tabpanels viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.configuration.vm.ConfigVM')"
+				    	validationMessages="@id('vmsgs')" >
 				    	<!-- Zakladni nastaveni -->
-				        <tabpanel viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.configuration.vm.ConfigVM')" >
-				        	<listbox model="@load(vm.configList)"
+				        <tabpanel>
+				        	<listbox model="@load(vm.configListBasic)"
 								id="configList"
 								hflex="1"
-								mold="paging"
-								pageSize="10"
 								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 								class="listbox" >
 						        
@@ -37,7 +37,104 @@
 						            <listheader label="${c:l('txt.ui.common.value')}" align="left" hflex="1"/>
 						            <listheader width="90px" align="center" >
 						            	<button iconSclass="z-icon-refresh" 
-						            		onClick="@command('refreshDataCmd')" 
+						            		onClick="@command('refreshDataBasicCmd')" 
+						            		tooltiptext="${c:l('txt.ui.common.refreshData')}" 
+						            		sclass="toolbar-btn"/>
+						            </listheader>
+						        </listhead>
+						         
+						        <template name="model">
+						            <listitem>
+						                <listcell label="${each.description}" />
+						                <listcell>
+					                		<listbox selectedItem="@bind(each.value)" 
+												model="@load(vm.courseYearList)"
+												mold="select"
+												if="${each.type eq 'ENUM'}"
+												disabled="${each.superAdminConfig}"
+												height="25px" >
+												<template name="model">
+													<listitem label="${each}" value="${each}" />
+												</template>
+											</listbox>
+											<textbox if="${each.type eq 'STRING'}" value="@bind(each.value)" hflex="1" disabled="${each.superAdminConfig}" />
+							                <listbox selectedItem="@bind(each.value)"
+												if="${each.type eq 'BOOLEAN'}"
+												disabled="${each.superAdminConfig}"
+												mold="select"
+												height="25px" >
+												<listitem label="Ano" value="true" />
+												<listitem label="Ne" value="false" />
+											</listbox>
+							                <label value="@load(each.value)" visible="${each.type eq 'INTEGER'}" />
+						                </listcell>
+						                <listcell>
+						                	<button iconSclass="z-icon-check" 
+						                		sclass="square-btn" 
+						                		onClick="@command('updateCmd', config=each)" />
+						                </listcell>
+						            </listitem>
+						        </template>
+						    </listbox>
+				        </tabpanel>
+				        
+				        <!-- Prihlaska -->
+				        <tabpanel>			        		
+							<groupbox sclass="no-inner-padding" width="100%" >
+					            <vlayout>
+						            <grid hflex="1" >
+						            	<auxhead>
+											<auxheader class="header" >
+												<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
+													<label value="${c:l('txt.ui.common.courseApplicationTitle')}" />
+												</vbox>
+											</auxheader>
+										</auxhead>
+										<columns>
+											<column valign="middle" />
+											<column width="90px" valign="top"/>
+										</columns>
+										<rows>
+											<row>
+												<cell>
+													<hbox hflex="1" align="start">
+														<vbox hflex="1">
+															<textbox id="courseApplicationTitle"
+																sclass="form-input-text"
+																value="@bind(vm.courseApplicationTitle) @save(vm.courseApplicationTitle, before='courseApplicationTitleUpdateCmd') @validator(vm.notNullValidator)"
+																hflex="1" />
+															<hbox hflex="1" align="end" pack="end" height="30px;" >
+																<validMsg vmsg="${vmsgs}" elem="${courseApplicationTitle}" />
+															</hbox>
+														</vbox>
+														<button label="Použít standardní"
+															style="margin-left: 30px;"
+									                		onClick="@command('useStandardCourseApplicationTitleCmd')" />
+													</hbox>
+												</cell>
+												<cell>
+													<button iconSclass="z-icon-check" 
+								                		sclass="square-btn" 
+								                		onClick="@command('courseApplicationTitleUpdateCmd')" />
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</vlayout>
+							</groupbox>
+							
+				        	<listbox model="@load(vm.configListCourseApplication)"
+								id="courseApplicationConfigList"
+								width="100%"
+								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+								class="listbox" >
+						        
+						        <listhead>
+						            <listheader label="${c:l('txt.ui.common.name')}" align="left" hflex="1" />
+						            <listheader label="${c:l('txt.ui.common.value')}" align="left" hflex="1"/>
+						            <listheader width="90px" align="center" >
+						            	<button iconSclass="z-icon-refresh" 
+						            		onClick="@command('refreshDataCourseApplicationCmd')" 
 						            		tooltiptext="${c:l('txt.ui.common.refreshData')}" 
 						            		sclass="toolbar-btn"/>
 						            </listheader>
