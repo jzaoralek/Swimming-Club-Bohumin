@@ -23,7 +23,7 @@
 			<a	id="PRIHLASKA"
 				iconSclass="z-icon-file-text" 
 				visible="@load(!vm.isUserLogged())"
-				href="/pages/public/prihlaska-do-klubu.zul" >
+				href="/pages/public/prihlaska.zul" >
 				<label value="${c:l('txt.ui.menu.application')}"/>
 			</a>
 			
