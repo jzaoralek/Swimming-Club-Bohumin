@@ -1,0 +1,18 @@
+package com.jzaoralek.scb.dataservice.service;
+
+import java.util.List;
+import java.util.UUID;
+
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
+
+public interface CourseApplDynAttrConfigService {
+
+	List<CourseApplDynAttrConfig> getAll();
+	CourseApplDynAttrConfig getByUuid(UUID uuid);
+	void insert(CourseApplDynAttrConfig config);
+	void update(CourseApplDynAttrConfig config);
+	/** Used for activation and termination, 
+	 * depends of terminate attribute. */
+	void terminate(CourseApplDynAttrConfig config);
+	void delete(UUID uuid);
+}
