@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.stereotype.Repository;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrConfigDao;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig.CourseApplDynAttrConfigType;
 
+@Repository
 public class CourseApplDynAttrConfigDaoImpl extends BaseJdbcDao implements CourseApplDynAttrConfigDao {
 
 	protected static final String NAME_PARAM = "NAME";
@@ -40,7 +42,7 @@ public class CourseApplDynAttrConfigDaoImpl extends BaseJdbcDao implements Cours
 										 	"modif_at = :"+MODIF_AT_PARAM+", " +
 										 	"modif_by = :"+MODIF_BY_PARAM+" " +
 										 	"WHERE uuid = :"+UUID_PARAM;
-	private static final String DELETE = "DELETE FROM course_application_dyn_attribute_config` WHERE uuid = :"+UUID_PARAM;
+	private static final String DELETE = "DELETE FROM course_application_dyn_attribute_config WHERE uuid = :"+UUID_PARAM;
 	
 	private static final String TERMINATE = "UPDATE course_application_dyn_attribute_config " + 
 										 "SET " +
