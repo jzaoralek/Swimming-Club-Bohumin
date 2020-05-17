@@ -216,7 +216,7 @@
 						            <listheader label="${c:l('txt.ui.common.dataType')}" align="left" sort="auto" hflex="1"/>
 						            <listheader label="${c:l('txt.ui.common.required')}" align="center" sort="auto" hflex="min"/>
 						            <listheader label="${c:l('txt.ui.common.active2')}" align="center" sort="auto" hflex="min"/>						            
-						            <listheader width="90px" align="center" >
+						            <listheader width="105px" align="center" >
 						            	<button iconSclass="z-icon-refresh" 
 						            		onClick="@command('refreshcourseApplDynAttrConfigListCmd')" 
 						            		tooltiptext="${c:l('txt.ui.common.refreshData')}" 
@@ -228,15 +228,35 @@
 						            <listitem>
 						                <listcell label="${each.name}" />
 						                <listcell label="@load(each.type) @converter(vm.enumLabelConverter)" />
-						                <listcell>
-						                	<boolean-icon booleanValue="${each.required}" 
-						                		iconVisible="true"
-						                		customSclass="big-icon" />
-						                </listcell>
+						                
+						                <listcell sclass="big-icon" 
+						                	iconSclass="z-icon-asterisk" 
+						                	style="color: red;" 
+						                	tooltiptext="${c:l('txt.ui.common.yes')}"
+						                	visible="${each.required}" />
+               							<listcell visible="${!each.required}" />
 						                <listcell>
 						                	<boolean-icon booleanValue="${each.active}" 
 						                		iconVisible="true"
 						                		customSclass="big-icon" />
+						                </listcell>
+						                <listcell>
+						                	<hlayout>
+							                	<button iconSclass="z-icon-ellipsis-h"
+							                		popup="menuDynAttrConfig_${each.uuid}, position=after_end" 
+							                		style="margin-left: 2px;margin-right: 5px;" />
+							                	<menupopup id="menuDynAttrConfig_${each.uuid}" >
+								                	<!-- Aktivace/Deaktivace -->
+													<menuitem label="${each.active ? c:l('txt.ui.common.Deaktivovat') : c:l('txt.ui.common.Aktivovat')}" 
+														onClick="@command('changeDynAttrConfigCmd', item=each, active=!each.active)"
+														iconSclass="${each.active ? 'z-icon-stop' : 'z-icon-play'}" >
+													</menuitem>
+													<!-- Odstraneni kurzu -->
+													<menuitem label="${c:l('txt.ui.common.Delete')}" 
+														onClick="@command('deleteDynAttrConfigCmd', item=each)"
+														iconSclass="z-icon-times"/>
+										       	</menupopup>
+						                	</hlayout>
 						                </listcell>
 						            </listitem>
 						        </template>

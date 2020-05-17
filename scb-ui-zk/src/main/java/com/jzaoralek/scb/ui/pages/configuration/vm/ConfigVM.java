@@ -3,27 +3,41 @@ package com.jzaoralek.scb.ui.pages.configuration.vm;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.Config;
+import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigCategory;
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigName;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig.CourseApplDynAttrConfigType;
+import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplDynAttrConfigService;
+import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
+import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
+import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseListVM;
 
 public class ConfigVM extends BaseVM {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ConfigVM.class);
+	
 	@WireVariable
 	private CourseApplDynAttrConfigService courseApplDynAttrConfigService;
 	
@@ -52,13 +66,16 @@ public class ConfigVM extends BaseVM {
 	}
 	
 	private void initCourseApplDynAttrConfig() {
+		// TODO: remove fake items
 		CourseApplDynAttrConfig fakeItem1 = new  CourseApplDynAttrConfig();
+		fakeItem1.setUuid(UUID.randomUUID());
 		fakeItem1.setName("Název dynamického atributu typu TEXT");
 		fakeItem1.setType(CourseApplDynAttrConfigType.TEXT);
 		fakeItem1.setRequired(true);
 		fakeItem1.setTerminatedAt(null);
 		
 		CourseApplDynAttrConfig fakeItem2 = new  CourseApplDynAttrConfig();
+		fakeItem2.setUuid(UUID.randomUUID());
 		fakeItem2.setName("Název dynamického atributu typu DOUBLE");
 		fakeItem2.setType(CourseApplDynAttrConfigType.DOUBLE);
 		fakeItem2.setRequired(false);
@@ -67,6 +84,7 @@ public class ConfigVM extends BaseVM {
 		this.courseApplDynAttrConfigList = 
 				Arrays.asList(new CourseApplDynAttrConfig[] {fakeItem1, fakeItem2});
 //		this.courseApplDynAttrConfigList = courseApplDynAttrConfigService.getAll();
+		BindUtils.postNotifyChange(null, null, this, "courseApplDynAttrConfigList");
 	}
 	
 	@NotifyChange("configListBasic")
@@ -115,6 +133,65 @@ public class ConfigVM extends BaseVM {
 	public void useStandardCourseApplicationTitleCmd() {
 		this.courseApplicationTitle = getDefaultCourseApplicationTitle();
 		updateCourseApplicationTitle();
+	}
+	
+	/**
+	 * Delete course application dynamic attribute.
+	 * @param item
+	 */
+	@Command
+    public void deleteDynAttrConfigCmd(@BindingParam(WebConstants.ITEM_PARAM) final CourseApplDynAttrConfig item) {
+		if (item ==  null) {
+			throw new IllegalArgumentException("CourseApplDynAttrConfig is null.");
+		}
+		
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Deleting CourseApplDynAttrConfig with uuid: " + item.getUuid());
+		}
+		
+		final Object[] msgParams = new Object[] {item.getName()};
+		MessageBoxUtils.showDefaultConfirmDialog(
+			"msg.ui.quest.deleteDynAttrConfig",
+			"msg.ui.title.deleteRecord",
+			new SzpEventListener() {
+				@Override
+				public void onOkEvent() {
+//					try {
+						courseApplDynAttrConfigService.delete(item.getUuid());
+						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.dynAttrConfigDeleted", msgParams));
+						initCourseApplDynAttrConfig();
+//					} catch (ScbValidationException e) {
+//						LOG.warn("ScbValidationException caught during deleting CourseApplDynAttrConfig uuid: " + item.getUuid(), e);
+//						WebUtils.showNotificationError(e.getMessage());
+//					}
+				}
+			},
+			msgParams
+		);
+	}
+	
+	/**
+	 * Change state (activate/deactivate) of course application dynamic attribute.
+	 */
+	@Command
+	public void changeDynAttrConfigCmd(@BindingParam(WebConstants.ITEM_PARAM) final CourseApplDynAttrConfig item,
+										@BindingParam(WebConstants.ACTIVE_PARAM) final Boolean active) {
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		
+		item.setTerminatedAt(active ? null : Calendar.getInstance().getTime());
+		courseApplDynAttrConfigService.terminate(item);
+		initCourseApplDynAttrConfig();
+				
+		String msg = active ? "msg.ui.info.dynAttrActivated" : "msg.ui.info.dynAttrDeactivated";
+		WebUtils.showNotificationInfo(Labels.getLabel(msg, new Object[]{item.getName()}));	
 	}
 	
 	/**
