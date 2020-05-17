@@ -9,6 +9,7 @@ public interface CourseApplDynAttrConfigDao {
 
 	List<CourseApplDynAttrConfig> getAll();
 	CourseApplDynAttrConfig getByUuid(UUID uuid);
+	List<CourseApplDynAttrConfig> getByName(String name);
 	void insert(CourseApplDynAttrConfig config);
 	void update(CourseApplDynAttrConfig config);
 	/** Used for activation and termination, 

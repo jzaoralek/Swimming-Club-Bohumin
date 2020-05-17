@@ -28,6 +28,7 @@ public class CourseApplDynAttrConfigDaoImpl extends BaseJdbcDao implements Cours
 	
 	private static final String SELECT_ALL = "SELECT * FROM course_application_dyn_attribute_config ORDER BY name";
 	private static final String SELECT_BY_UUID = "SELECT * FROM course_application_dyn_attribute_config WHERE uuid = :" + UUID_PARAM;
+	private static final String SELECT_BY_NAME = "SELECT * FROM course_application_dyn_attribute_config WHERE name = :" + NAME_PARAM;
 	private static final String INSERT = "INSERT INTO course_application_dyn_attribute_config  " +
 											"(uuid,name,description,required,type,created_at,terminated_at,modif_at,modif_by) " +
 										"VALUES (:"+UUID_PARAM+", :"+NAME_PARAM+", :"+DESCRIPTION_PARAM+", :"+REQUIRED_PARAM+", :"+TYPE_PARAM+", :"+CREATED_AT_PARAM+", :"+TERMINATED_AT_PARAM+", :"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
@@ -60,6 +61,15 @@ public class CourseApplDynAttrConfigDaoImpl extends BaseJdbcDao implements Cours
 	@Override
 	public List<CourseApplDynAttrConfig> getAll() {
 		return namedJdbcTemplate.query(SELECT_ALL, new CourseApplDynAttrConfigRowMapper());
+	}
+	
+	@Override
+	public List<CourseApplDynAttrConfig> getByName(String name) {
+		MapSqlParameterSource paramMap = 
+				new MapSqlParameterSource().addValue(NAME_PARAM, name);
+		return namedJdbcTemplate.query(SELECT_BY_NAME, 
+				paramMap, 
+				new CourseApplDynAttrConfigRowMapper());
 	}
 
 	@Override

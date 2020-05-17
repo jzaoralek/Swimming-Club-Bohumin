@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jzaoralek.scb.dataservice.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrConfigDao;
-import com.jzaoralek.scb.dataservice.domain.Config;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
-import com.jzaoralek.scb.dataservice.domain.Result;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig.CourseApplDynAttrConfigType;
 
 public class CourseApplDynAttrConfigDaoTest extends BaseTestCase {
@@ -54,6 +52,14 @@ public class CourseApplDynAttrConfigDaoTest extends BaseTestCase {
 		Assert.assertTrue(NAME.equals(item.getName()));
 		Assert.assertTrue(type == item.getType());
 		Assert.assertNull(item.getTerminatedAt());
+	}
+	
+	@Test
+	public void testGetByName() {
+		List<CourseApplDynAttrConfig> itemList = courseApplDynAttrConfigDao.getByName(NAME);
+		Assert.assertNotNull(itemList);
+		Assert.assertTrue(itemList.size() == 1);
+		Assert.assertTrue(NAME.equals(itemList.get(0).getName()));
 	}
 	
 	@Test
