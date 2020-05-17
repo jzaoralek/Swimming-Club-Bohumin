@@ -1,5 +1,7 @@
 package com.jzaoralek.scb.ui.pages.configuration.vm;
 
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import org.zkoss.bind.BindUtils;
@@ -8,25 +10,35 @@ import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.Config;
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigCategory;
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigName;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig.CourseApplDynAttrConfigType;
+import com.jzaoralek.scb.dataservice.service.CourseApplDynAttrConfigService;
 import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class ConfigVM extends BaseVM {
 
+	@WireVariable
+	private CourseApplDynAttrConfigService courseApplDynAttrConfigService;
+	
 	private List<Config> configListBasic;
 	private List<Config> configListCourseApplication;
+	private List<CourseApplDynAttrConfig> courseApplDynAttrConfigList;
 	private List<String> courseYearList;
 	private String courseApplicationTitle;
 
+	@Override
 	@Init
 	public void init() {
 		initConfigBasic();
 		initConfigCourseApplication();
+		initCourseApplDynAttrConfig();
 		this.courseYearList = configurationService.getCourseYearList();
 		this.courseApplicationTitle = getConfigCourseApplicationTitle();
 	}
@@ -37,6 +49,24 @@ public class ConfigVM extends BaseVM {
 
 	private void initConfigCourseApplication() {
 		this.configListCourseApplication = configurationService.getByCategory(ConfigCategory.COURSE_APPLICATION);
+	}
+	
+	private void initCourseApplDynAttrConfig() {
+		CourseApplDynAttrConfig fakeItem1 = new  CourseApplDynAttrConfig();
+		fakeItem1.setName("Název dynamického atributu typu TEXT");
+		fakeItem1.setType(CourseApplDynAttrConfigType.TEXT);
+		fakeItem1.setRequired(true);
+		fakeItem1.setTerminatedAt(null);
+		
+		CourseApplDynAttrConfig fakeItem2 = new  CourseApplDynAttrConfig();
+		fakeItem2.setName("Název dynamického atributu typu DOUBLE");
+		fakeItem2.setType(CourseApplDynAttrConfigType.DOUBLE);
+		fakeItem2.setRequired(false);
+		fakeItem2.setTerminatedAt(Calendar.getInstance().getTime());
+		
+		this.courseApplDynAttrConfigList = 
+				Arrays.asList(new CourseApplDynAttrConfig[] {fakeItem1, fakeItem2});
+//		this.courseApplDynAttrConfigList = courseApplDynAttrConfigService.getAll();
 	}
 	
 	@NotifyChange("configListBasic")
@@ -60,6 +90,12 @@ public class ConfigVM extends BaseVM {
 	@Command
 	public void refreshDataCourseApplicationCmd() {
 		initConfigCourseApplication();
+	}
+	
+	@NotifyChange("courseApplDynAttrConfigList")
+	@Command
+	public void refreshcourseApplDynAttrConfigListCmd() {
+		initCourseApplDynAttrConfig();
 	}
 	
 	/**
@@ -120,5 +156,8 @@ public class ConfigVM extends BaseVM {
 	}
 	public void setCourseApplicationTitle(String courseApplicationTitle) {
 		this.courseApplicationTitle = courseApplicationTitle;
+	}
+	public List<CourseApplDynAttrConfig> getCourseApplDynAttrConfigList() {
+		return courseApplDynAttrConfigList;
 	}
 }

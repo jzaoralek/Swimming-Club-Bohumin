@@ -79,14 +79,16 @@
 				        </tabpanel>
 				        
 				        <!-- Prihlaska -->
-				        <tabpanel>			        		
-							<groupbox sclass="no-inner-padding" width="100%" >
+				        <tabpanel>
+				        	<!-- Nadpis na prihlasce  -->	        		
+							<groupbox sclass="no-inner-padding" width="100%" closable="true" >
 					            <vlayout>
 						            <grid hflex="1" >
 						            	<auxhead>
 											<auxheader class="header" >
 												<vbox hflex="1" vflex="1" sclass="header-div" pack="center" >
-													<label value="${c:l('txt.ui.common.courseApplicationTitle')}" />
+													<label value="${c:l('txt.ui.common.courseApplicationTitle')}" 
+														style="font-weight:bold;" />
 												</vbox>
 											</auxheader>
 										</auxhead>
@@ -123,11 +125,24 @@
 								</vlayout>
 							</groupbox>
 							
+							<!-- Zakladni nastaveni prihlasky -->
 				        	<listbox model="@load(vm.configListCourseApplication)"
 								id="courseApplicationConfigList"
 								width="100%"
 								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 								class="listbox" >
+								
+								<auxhead>
+						            <auxheader class="header" colspan="7" >
+						            	<hlayout sclass="pull-left">
+						            		<label value="${c:l('txt.ui.common.basicSettings')}" 
+				            					style="vertical-align:middle; display:inline-block;font-weight:bold;" />
+						            	</hlayout>
+						            	
+						            	<hlayout sclass="pull-right">
+						            	</hlayout>
+						            </auxheader>
+						        </auxhead>
 						        
 						        <listhead>
 						            <listheader label="${c:l('txt.ui.common.name')}" align="left" hflex="1" />
@@ -169,6 +184,59 @@
 						                	<button iconSclass="z-icon-check" 
 						                		sclass="square-btn" 
 						                		onClick="@command('updateCmd', config=each)" />
+						                </listcell>
+						            </listitem>
+						        </template>
+						    </listbox>
+						    
+						    <!-- Dynamicke atributy na prihlasce -->
+						    <listbox model="@load(vm.courseApplDynAttrConfigList)"
+								id="courseApplDynAttrConfigList"
+								width="100%"
+								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+								class="listbox" >
+								
+								<auxhead>
+						            <auxheader class="header" colspan="7" >
+						            	<hlayout sclass="pull-left">
+						            		<label value="${c:l('txt.ui.common.dynamicAttributes')}" 
+				            					style="vertical-align:middle; display:inline-block; margin-right: 5px;font-weight: bold;" />
+<!-- 					            			<checkbox id="unregToCurrYearCheck" checked="@bind(vm.unregToCurrYear)"  -->
+<!-- 					            				onCheck="@command('loadUnregisteredCurrYearCmd')" -->
+<!-- 					            				style="vertical-align:middle; margin-right: 5px;" /> -->
+						            	</hlayout>
+						            	
+						            	<hlayout sclass="pull-right">
+						            	</hlayout>
+						            </auxheader>
+						        </auxhead>
+						        
+						        <listhead>
+						            <listheader label="${c:l('txt.ui.common.name')}" align="left" sort="auto" hflex="1" />
+						            <listheader label="${c:l('txt.ui.common.dataType')}" align="left" sort="auto" hflex="1"/>
+						            <listheader label="${c:l('txt.ui.common.required')}" align="center" sort="auto" hflex="min"/>
+						            <listheader label="${c:l('txt.ui.common.active2')}" align="center" sort="auto" hflex="min"/>						            
+						            <listheader width="90px" align="center" >
+						            	<button iconSclass="z-icon-refresh" 
+						            		onClick="@command('refreshcourseApplDynAttrConfigListCmd')" 
+						            		tooltiptext="${c:l('txt.ui.common.refreshData')}" 
+						            		sclass="toolbar-btn"/>
+						            </listheader>
+						        </listhead>
+						         
+						        <template name="model">
+						            <listitem>
+						                <listcell label="${each.name}" />
+						                <listcell label="@load(each.type) @converter(vm.enumLabelConverter)" />
+						                <listcell>
+						                	<boolean-icon booleanValue="${each.required}" 
+						                		iconVisible="true"
+						                		customSclass="big-icon" />
+						                </listcell>
+						                <listcell>
+						                	<boolean-icon booleanValue="${each.active}" 
+						                		iconVisible="true"
+						                		customSclass="big-icon" />
 						                </listcell>
 						            </listitem>
 						        </template>

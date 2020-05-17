@@ -157,10 +157,8 @@
 		        <template name="model">
 		            <listitem>
 		                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
-					        <a iconSclass="z-icon-check-circle"
-					        	style="${each.active ? 'color: #78C128; margin-right: 5px;' : 'color: grey; margin-right: 5px;'}"
-					        	tooltiptext="${each.active ? c:l('txt.ui.common.active') : c:l('txt.ui.common.inactive')}"
-					        	if="${vm.isLoggedUserInRole('ADMIN')}" />
+		                	<boolean-icon booleanValue="${each.active}" 
+		                		iconVisible="${vm.isLoggedUserInRole('ADMIN')}" />
 					        <label value="${each.name}" onClick="@command('detailCmd', uuid=each.uuid)" style="text-decoration: underline !important" />
 		                </listcell>
 		                <listcell label="${each.participantListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />

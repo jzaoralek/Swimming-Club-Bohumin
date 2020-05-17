@@ -86,6 +86,10 @@ public class CourseApplDynAttrConfig implements IdentEntity {
 		this.terminatedAt = terminatedAt;
 	}
 	
+	public boolean isActive() {
+		return this.terminatedAt == null;
+	}
+	
 	@Override
 	public String toString() {
 		return "CourseApplDynAttrConfig [uuid=" + uuid + ", name=" + name + ", description=" + description
