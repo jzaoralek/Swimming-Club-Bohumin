@@ -8,5 +8,5 @@
 	signature="com.jzaoralek.scb.ui.common.vm.BaseVM getOrgNameStatic()"?>
 
 <zk>
-	<include src="/pages/shared/prihlaska-do-klubu.zul" />
+	<include src="/pages/shared/prihlaska.zul" />
 </zk>

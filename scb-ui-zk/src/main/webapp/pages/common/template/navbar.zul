@@ -57,7 +57,7 @@
 			
 			<!--
 			<a sclass="navbar-btn"
-				href="/pages/public/prihlaska-do-klubu.zul" 
+				href="/pages/public/prihlaska.zul" 
 				visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())" xmlns:x="xhtml">
 				<x:i class="pe-7s-note2"></x:i>
 				<label value="${c:l('txt.ui.menu.application')}"/>

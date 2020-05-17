@@ -2,7 +2,7 @@ package com.jzaoralek.scb.ui.common;
 
 public enum WebPages {
 	APPLICATION_LIST("/pages/secured/ADMIN/seznam-prihlasek.zul"),
-	APPLICATION_DETAIL("/pages/secured/ADMIN/prihlaska-do-klubu.zul"),
+	APPLICATION_DETAIL("/pages/secured/ADMIN/prihlaska.zul"),
 	COURSE_LIST("/pages/secured/TRAINER/seznam-kurzu.zul"),
 	COURSE_DETAIL("/pages/secured/ADMIN/kurz.zul"),
 	COURSE_LESSONS("/pages/secured/TRAINER/kurz-vyuka.zul"),
@@ -10,7 +10,7 @@ public enum WebPages {
 	PARTICIPANT_LIST("/pages/secured/TRAINER/seznam-ucastniku.zul"),
 	PARTICIPANT_DETAIL("/pages/secured/TRAINER/ucastnik.zul"),
 	USER_PARTICIPANT_LIST("/pages/secured/USER/seznam-ucastniku.zul"),
-	USER_APPLICATION_DETAIL("/pages/secured/USER/prihlaska-do-klubu.zul"),
+	USER_APPLICATION_DETAIL("/pages/secured/USER/prihlaska.zul"),
 	USER_PARTICIPANT_DETAIL("/pages/secured/USER/ucastnik.zul"),
 	USER_LIST("/pages/secured/ADMIN/seznam-uzivatelu.zul"),
 	USER_LOG_TO_COURSE("/pages/secured/USER/prihlaseni-na-kurz.zul"),

@@ -7,7 +7,7 @@
 		
 		<!-- Prihlaska -->
 		<menuitem label="${c:l('txt.ui.menu.application')}" 
-			href="/pages/public/prihlaska-do-klubu.zul" 
+			href="/pages/public/prihlaska.zul" 
 			visible="@load(!vm.isUserLogged())" />
 		
 		<!-- Seznam prihlasek -->

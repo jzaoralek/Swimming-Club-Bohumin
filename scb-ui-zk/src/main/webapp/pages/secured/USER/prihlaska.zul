@@ -2,5 +2,5 @@
 <?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
 
 <zk>
-	<include src="/pages/shared/prihlaska-do-klubu.zul" />
+	<include src="/pages/shared/prihlaska.zul" />
 </zk>

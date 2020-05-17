@@ -15,7 +15,7 @@
 			<label value="${vm.welcomeInfo}" sclass="scb-headline-big"/>
 			
 			<button label="@load(vm.newCourseApplicationTitle)" 
-				href="/pages/public/prihlaska-do-klubu.zul"
+				href="/pages/public/prihlaska.zul"
 				iconSclass="z-icon-file-text"
 				visible="@load(vm.isCourseApplicationAllowed())"
 				style="margin-right: 10px; margin-top: 20px; font-weight: bold; min-height: 50px" />

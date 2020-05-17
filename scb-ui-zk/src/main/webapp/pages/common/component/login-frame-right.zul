@@ -1,5 +1,5 @@
 <div sclass="login-frame-right">
 	<a label="Sportologic" sclass="brand" href="/"/>
 	<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
-	<button label="Přihláška" href="/pages/public/prihlaska-do-klubu.zul" sclass="lpp"/>
+	<button label="Přihláška" href="/pages/public/prihlaska.zul" sclass="lpp"/>
 </div>
