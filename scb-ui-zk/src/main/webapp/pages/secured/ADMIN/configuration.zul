@@ -204,6 +204,13 @@
 <!-- 					            			<checkbox id="unregToCurrYearCheck" checked="@bind(vm.unregToCurrYear)"  -->
 <!-- 					            				onCheck="@command('loadUnregisteredCurrYearCmd')" -->
 <!-- 					            				style="vertical-align:middle; margin-right: 5px;" /> -->
+											
+											<!-- Novy -->
+							            	<button onClick="@command('newDynAttrConfigCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
+				            					sclass="add-item-btn" 
+				            					iconSclass="z-icon-plus"
+				            					style="margin-left: 10px;" />
+
 						            	</hlayout>
 						            	
 						            	<hlayout sclass="pull-right">
@@ -212,10 +219,10 @@
 						        </auxhead>
 						        
 						        <listhead>
-						            <listheader label="${c:l('txt.ui.common.name')}" align="left" sort="auto" hflex="1" />
-						            <listheader label="${c:l('txt.ui.common.dataType')}" align="left" sort="auto" hflex="1"/>
-						            <listheader label="${c:l('txt.ui.common.required')}" align="center" sort="auto" hflex="min"/>
-						            <listheader label="${c:l('txt.ui.common.active2')}" align="center" sort="auto" hflex="min"/>						            
+						            <listheader label="${c:l('txt.ui.common.name')}" align="left" sort="auto(name)" hflex="1" />
+						            <listheader label="${c:l('txt.ui.common.dataType')}" align="left" sort="auto(type)" hflex="1"/>
+						            <listheader label="${c:l('txt.ui.common.required')}" align="center" sort="auto(required)" hflex="min"/>
+						            <listheader label="${c:l('txt.ui.common.active2')}" align="center" sort="auto(active)" hflex="min"/>						            
 						            <listheader width="105px" align="center" >
 						            	<button iconSclass="z-icon-refresh" 
 						            		onClick="@command('refreshcourseApplDynAttrConfigListCmd')" 
@@ -226,16 +233,20 @@
 						         
 						        <template name="model">
 						            <listitem>
-						                <listcell label="${each.name}" />
-						                <listcell label="@load(each.type) @converter(vm.enumLabelConverter)" />
+						                <listcell label="${each.name}"
+						                	onDoubleClick="@command('detailDynAttrConfigCmd', item=each)" />
+						                <listcell label="@load(each.type) @converter(vm.enumLabelConverter)"
+						                	 onDoubleClick="@command('detailDynAttrConfigCmd', item=each)" />
 						                
 						                <listcell sclass="big-icon" 
 						                	iconSclass="z-icon-asterisk" 
 						                	style="color: red;" 
 						                	tooltiptext="${c:l('txt.ui.common.yes')}"
-						                	visible="${each.required}" />
-               							<listcell visible="${!each.required}" />
-						                <listcell>
+						                	visible="${each.required}"
+						                	onDoubleClick="@command('detailDynAttrConfigCmd', item=each)" />
+               							<listcell visible="${!each.required}"
+               								onDoubleClick="@command('detailDynAttrConfigCmd', item=each)" />
+						                <listcell onDoubleClick="@command('detailDynAttrConfigCmd', item=each)">
 						                	<boolean-icon booleanValue="${each.active}" 
 						                		iconVisible="true"
 						                		customSclass="big-icon" />
@@ -246,6 +257,9 @@
 							                		popup="menuDynAttrConfig_${each.uuid}, position=after_end" 
 							                		style="margin-left: 2px;margin-right: 5px;" />
 							                	<menupopup id="menuDynAttrConfig_${each.uuid}" >
+							                		<!-- Detail -->
+								                	<menuitem label="Detail" 
+								                		onClick="@command('detailDynAttrConfigCmd', item=each)" />
 								                	<!-- Aktivace/Deaktivace -->
 													<menuitem label="${each.active ? c:l('txt.ui.common.Deaktivovat') : c:l('txt.ui.common.Aktivovat')}" 
 														onClick="@command('changeDynAttrConfigCmd', item=each, active=!each.active)"

@@ -1,9 +1,11 @@
 package com.jzaoralek.scb.ui.pages.configuration.vm;
 
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,16 +15,13 @@ import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.Config;
-import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigCategory;
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigName;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
-import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig.CourseApplDynAttrConfigType;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplDynAttrConfigService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -32,7 +31,6 @@ import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
-import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseListVM;
 
 public class ConfigVM extends BaseVM {
 
@@ -67,23 +65,23 @@ public class ConfigVM extends BaseVM {
 	
 	private void initCourseApplDynAttrConfig() {
 		// TODO: remove fake items
-		CourseApplDynAttrConfig fakeItem1 = new  CourseApplDynAttrConfig();
-		fakeItem1.setUuid(UUID.randomUUID());
-		fakeItem1.setName("Název dynamického atributu typu TEXT");
-		fakeItem1.setType(CourseApplDynAttrConfigType.TEXT);
-		fakeItem1.setRequired(true);
-		fakeItem1.setTerminatedAt(null);
-		
-		CourseApplDynAttrConfig fakeItem2 = new  CourseApplDynAttrConfig();
-		fakeItem2.setUuid(UUID.randomUUID());
-		fakeItem2.setName("Název dynamického atributu typu DOUBLE");
-		fakeItem2.setType(CourseApplDynAttrConfigType.DOUBLE);
-		fakeItem2.setRequired(false);
-		fakeItem2.setTerminatedAt(Calendar.getInstance().getTime());
-		
-		this.courseApplDynAttrConfigList = 
-				Arrays.asList(new CourseApplDynAttrConfig[] {fakeItem1, fakeItem2});
-//		this.courseApplDynAttrConfigList = courseApplDynAttrConfigService.getAll();
+//		CourseApplDynAttrConfig fakeItem1 = new  CourseApplDynAttrConfig();
+//		fakeItem1.setUuid(UUID.randomUUID());
+//		fakeItem1.setName("Název dynamického atributu typu TEXT");
+//		fakeItem1.setType(CourseApplDynAttrConfigType.TEXT);
+//		fakeItem1.setRequired(true);
+//		fakeItem1.setTerminatedAt(null);
+//		
+//		CourseApplDynAttrConfig fakeItem2 = new  CourseApplDynAttrConfig();
+//		fakeItem2.setUuid(UUID.randomUUID());
+//		fakeItem2.setName("Název dynamického atributu typu DOUBLE");
+//		fakeItem2.setType(CourseApplDynAttrConfigType.DOUBLE);
+//		fakeItem2.setRequired(false);
+//		fakeItem2.setTerminatedAt(Calendar.getInstance().getTime());
+//		
+//		this.courseApplDynAttrConfigList = 
+//				Arrays.asList(new CourseApplDynAttrConfig[] {fakeItem1, fakeItem2});
+		this.courseApplDynAttrConfigList = courseApplDynAttrConfigService.getAll();
 		BindUtils.postNotifyChange(null, null, this, "courseApplDynAttrConfigList");
 	}
 	
@@ -134,6 +132,48 @@ public class ConfigVM extends BaseVM {
 		this.courseApplicationTitle = getDefaultCourseApplicationTitle();
 		updateCourseApplicationTitle();
 	}
+	
+	@Command
+	public void newDynAttrConfigCmd() {
+		Map<String, Object> args = new HashMap<>();
+		Consumer<CourseApplDynAttrConfig> callback = this::storeDynAttrConfig;
+		args.put(WebConstants.CALLBACK_PARAM, callback);
+		WebUtils.openModal(WebPages.COURSE_APPL_DYN_ATTR_CONFIG_WINDOW.getUrl(), 
+				Labels.getLabel("txt.ui.common.DynamicAttribute"), 
+				args);
+	}
+	
+	@Command
+	public void detailDynAttrConfigCmd(@BindingParam(WebConstants.ITEM_PARAM) CourseApplDynAttrConfig item) {
+		Map<String, Object> args = new HashMap<>();
+		Consumer<CourseApplDynAttrConfig> callback = this::storeDynAttrConfig;
+		args.put(WebConstants.CALLBACK_PARAM, callback);
+		args.put(WebConstants.ITEM_PARAM, item);
+		WebUtils.openModal(WebPages.COURSE_APPL_DYN_ATTR_CONFIG_WINDOW.getUrl(), 
+				Labels.getLabel("txt.ui.common.DynamicAttribute"), 
+				args);
+	}
+	
+	private void storeDynAttrConfig(final CourseApplDynAttrConfig item) {
+		Objects.requireNonNull(item, "item is null");
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Storing CourseApplDynAttrConfig: " + item);
+		}
+		
+		try {
+			courseApplDynAttrConfigService.store(item);
+			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.dynAttrStored", new Object[] {item.getName()}));
+			initCourseApplDynAttrConfig();
+		} catch (ScbValidationException e) {
+			LOG.warn("ScbValidationException caught during storing CourseApplDynAttrConfig: " + item, e);
+			WebUtils.showNotificationError(e.getMessage());
+		}
+	}
+	
 	
 	/**
 	 * Delete course application dynamic attribute.
