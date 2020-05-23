@@ -12,7 +12,6 @@ import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrConfigDao;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
-import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.CourseApplDynAttrConfigService;
@@ -34,6 +33,19 @@ public class CourseApplDynAttrConfigServiceImpl extends BaseAbstractService impl
 	public CourseApplDynAttrConfig getByUuid(UUID uuid) {
 		return courseApplDynAttrConfigDao.getByUuid(uuid);
 	}
+	
+	@Override
+	public void validateUniquieCourseAppDynAttrConfigname(CourseApplDynAttrConfig config, boolean insertMode) throws ScbValidationException {
+		List<CourseApplDynAttrConfig> configByNameList = 
+				courseApplDynAttrConfigDao.getByName(config.getName());
+		if ((insertMode && !CollectionUtils.isEmpty(configByNameList))
+				|| (!insertMode && configByNameList.size() > 1)) {
+			LOG.warn("CourseApplDynAttrConfig with same name exists, name: " + config.getName());
+			throw new ScbValidationException(
+					messageSource.getMessage("msg.validation.warn.courseApplDynAttrWithSameNameExists", 
+							new Object[] {config.getName()}, Locale.getDefault()));
+		}
+	}
 
 	@Override
 	public void store(CourseApplDynAttrConfig config) throws ScbValidationException {
@@ -49,15 +61,7 @@ public class CourseApplDynAttrConfigServiceImpl extends BaseAbstractService impl
 		fillIdentEntity(config);
 		
 		// check if exist config with the same name
-		List<CourseApplDynAttrConfig> configByNameList = 
-				courseApplDynAttrConfigDao.getByName(config.getName());
-		if ((insertMode && !CollectionUtils.isEmpty(configByNameList))
-				|| (!insertMode && configByNameList.size() > 1)) {
-			LOG.warn("CourseApplDynAttrConfig with same name exists, name: " + config.getName());
-			throw new ScbValidationException(
-					messageSource.getMessage("msg.validation.warn.courseApplDynAttrWithSameNameExists", 
-							new Object[] {config.getName()}, Locale.getDefault()));
-		}
+		validateUniquieCourseAppDynAttrConfigname(config, insertMode);
 		
 		// store to DB
 		if (insertMode) {

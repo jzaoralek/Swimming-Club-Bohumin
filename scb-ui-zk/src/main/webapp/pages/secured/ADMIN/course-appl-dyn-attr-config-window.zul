@@ -47,6 +47,7 @@
 							<label value="${c:l('txt.ui.common.dataType')}"/>
 							<listbox id="dynAttrType" model="@load(vm.dynAttrTypeList)"
 								mold="select"
+								disabled="@load(vm.editMode)"
 								selectedItem="@bind(vm.dynAttrTypeSelected)"
 								style="background: white;"
 								hflex="1" >
@@ -67,6 +68,20 @@
 								<listitem label="Ano" value="${true}" />
 								<listitem label="Ne" value="${false}" />
 							</listbox>
+						</vbox>
+					</cell>
+				</row>
+				<row>
+					<cell>
+						<vbox hflex="1" vflex="1">
+							<label value="${c:l('txt.ui.common.description2')}"/>
+							<textbox value="@bind(fx.item.description)"
+								maxlength="1000"
+								multiline="true"
+								sclass="form-input-text"
+								tabindex="2"
+								hflex="1"
+								height="95px" />
 						</vbox>
 					</cell>
 				</row>

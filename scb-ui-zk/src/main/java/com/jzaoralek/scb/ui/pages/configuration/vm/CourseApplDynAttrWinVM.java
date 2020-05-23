@@ -6,21 +6,30 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig.CourseApplDynAttrConfigType;
-import com.jzaoralek.scb.dataservice.domain.CourseParticipant.IscusRole;
+import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
+import com.jzaoralek.scb.dataservice.service.CourseApplDynAttrConfigService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 public class CourseApplDynAttrWinVM extends BaseVM  {
 
+	private static final Logger LOG = LoggerFactory.getLogger(CourseApplDynAttrWinVM.class);
+	
+	@WireVariable
+	private CourseApplDynAttrConfigService courseApplDynAttrConfigService;
+	
 	private Consumer<CourseApplDynAttrConfig> callback;
 	private CourseApplDynAttrConfig item;
 	private boolean editMode = false;
@@ -46,6 +55,13 @@ public class CourseApplDynAttrWinVM extends BaseVM  {
 	
 	@Command
 	public void submitCmd(@BindingParam("window") Window window) {
+		try {
+			courseApplDynAttrConfigService.validateUniquieCourseAppDynAttrConfigname(this.item, !this.editMode);
+		} catch (ScbValidationException e) {
+			LOG.warn("ScbValidationException caught during storing CourseApplDynAttrConfig: " + item, e);
+			WebUtils.showNotificationError(e.getMessage());
+			return;
+		}
 		this.item.setType(this.dynAttrTypeSelected.getValue());		
 		this.callback.accept(this.item);
 		window.detach();
@@ -62,7 +78,6 @@ public class CourseApplDynAttrWinVM extends BaseVM  {
 			collect(Collectors.toList());
 		
 		return filtered.get(0);
-
 	}
 	
 	public boolean isEditMode() {
