@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
+import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
@@ -26,6 +27,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -57,6 +59,9 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 
 	@Autowired
 	private CourseDao courseDao;
+	
+	@Autowired
+	private CourseApplDynAttrDao courseApplDynAttrDao;
 	
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
@@ -177,6 +182,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 
 		courseApplicationDao.delete(courseApplication);
+		courseApplDynAttrDao.deleteByCourseAppl(courseApplication.getUuid());
 	}
 
 	@Override
@@ -268,6 +274,33 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		} else {
 			// update
 			contactDao.update(contact);
+		}
+	}
+
+	@Override
+	public List<CourseApplDynAttr> getDynAttrByCourseAppl(CourseApplication courseAppl) {
+		Objects.requireNonNull(courseAppl, "courseAppl is null");
+		return courseApplDynAttrDao.getByCourseAppl(courseAppl);
+	}
+
+	@Override
+	public void store(CourseApplDynAttr dynAttr) {
+		if (dynAttr == null) {
+			throw new IllegalArgumentException("dynAttr is null");
+		}
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Storing CourseApplDynAttr: " + dynAttr);
+		}
+		
+		boolean insertMode = dynAttr.getUuid() == null;
+		fillIdentEntity(dynAttr);
+		
+		// store to DB
+		if (insertMode) {
+			courseApplDynAttrDao.insert(dynAttr);			
+		} else {
+			courseApplDynAttrDao.update(dynAttr);
 		}
 	}
 }

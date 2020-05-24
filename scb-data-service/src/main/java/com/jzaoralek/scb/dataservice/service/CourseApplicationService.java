@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
@@ -26,4 +27,6 @@ public interface CourseApplicationService {
 	void updateCourseParticCourseUuid(List<UUID> courseParticUuidList, UUID courseUuid);
 	void insertCourseParticInterruption(UUID courseCourseParticUuid, UUID courseUuid, Date interrupetdAt);
 	void delete(UUID uuid) throws ScbValidationException;
+	List<CourseApplDynAttr> getDynAttrByCourseAppl(CourseApplication courseAppl);
+	void store(CourseApplDynAttr dynAttr);
 }
