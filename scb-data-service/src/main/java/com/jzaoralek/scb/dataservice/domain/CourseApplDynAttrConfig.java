@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Used for onfiguration of dynamic attributest on course application.
+ * Used for configuration of dynamic attributess on course application.
  *
  */
 public class CourseApplDynAttrConfig implements IdentEntity {

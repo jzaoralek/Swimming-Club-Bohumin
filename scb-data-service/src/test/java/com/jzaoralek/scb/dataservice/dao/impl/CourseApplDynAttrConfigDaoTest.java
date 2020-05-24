@@ -12,16 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.jzaoralek.scb.dataservice.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrConfigDao;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
-import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig.CourseApplDynAttrConfigType;
 
 public class CourseApplDynAttrConfigDaoTest extends BaseTestCase {
 
-	private static final Date CREATED_AT = Calendar.getInstance().getTime();
-	private static final String DESCRIPTION = "description";
-	private static final String NAME = "name";
-	private static final boolean REQUIRED = true;
-	private static final CourseApplDynAttrConfigType type = CourseApplDynAttrConfigType.DOUBLE;
-	
 	@Autowired
 	private CourseApplDynAttrConfigDao courseApplDynAttrConfigDao;
 	
@@ -29,15 +22,7 @@ public class CourseApplDynAttrConfigDaoTest extends BaseTestCase {
 	
 	@Before
 	public void setUp() {
-		item = new CourseApplDynAttrConfig();
-		fillIdentEntity(item);
-		item.setCreatedAt(CREATED_AT);
-		item.setDescription(DESCRIPTION);
-		item.setName(NAME);
-		item.setRequired(true);
-		item.setTerminatedAt(null);
-		item.setType(CourseApplDynAttrConfigType.DOUBLE);
-		
+		item = buildCourseApplDynAttrConfig();
 		courseApplDynAttrConfigDao.insert(item);
 	}
 	
@@ -46,20 +31,20 @@ public class CourseApplDynAttrConfigDaoTest extends BaseTestCase {
 		CourseApplDynAttrConfig item = courseApplDynAttrConfigDao.getByUuid(ITEM_UUID);
 		Assert.assertNotNull(item);
 		Assert.assertTrue(ITEM_UUID.toString().equals(item.getUuid().toString()));
-		Assert.assertTrue(CREATED_AT.compareTo(item.getCreatedAt()) == 1);
-		Assert.assertTrue(REQUIRED == item.isRequired());
-		Assert.assertTrue(DESCRIPTION.equals(item.getDescription()));
-		Assert.assertTrue(NAME.equals(item.getName()));
-		Assert.assertTrue(type == item.getType());
+		Assert.assertTrue(DYN_CONFIG_CREATED_AT.compareTo(item.getCreatedAt()) == 1);
+		Assert.assertTrue(DYN_CONFIG_REQUIRED == item.isRequired());
+		Assert.assertTrue(DYN_CONFIG_DESCRIPTION.equals(item.getDescription()));
+		Assert.assertTrue(DYN_CONFIG_NAME.equals(item.getName()));
+		Assert.assertTrue(DYN_CONFIG_TYPE == item.getType());
 		Assert.assertNull(item.getTerminatedAt());
 	}
 	
 	@Test
 	public void testGetByName() {
-		List<CourseApplDynAttrConfig> itemList = courseApplDynAttrConfigDao.getByName(NAME);
+		List<CourseApplDynAttrConfig> itemList = courseApplDynAttrConfigDao.getByName(DYN_CONFIG_NAME);
 		Assert.assertNotNull(itemList);
 		Assert.assertTrue(itemList.size() == 1);
-		Assert.assertTrue(NAME.equals(itemList.get(0).getName()));
+		Assert.assertTrue(DYN_CONFIG_NAME.equals(itemList.get(0).getName()));
 	}
 	
 	@Test

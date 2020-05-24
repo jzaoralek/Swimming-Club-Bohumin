@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS  file;
 DROP TABLE IF EXISTS  course_application_file_config;
 DROP TABLE IF EXISTS  user_trainer_course;
 DROP TABLE IF EXISTS  course_application_dyn_attribute_config;
+DROP TABLE IF EXISTS course_application_dyn_attribute;
 
 CREATE TABLE contact(
 	uuid varchar(36),
@@ -263,3 +264,16 @@ CREATE TABLE course_application_dyn_attribute_config(
 	PRIMARY KEY (uuid)
 );
 
+CREATE TABLE course_application_dyn_attribute (
+	uuid varchar(36),
+	course_application_uuid varchar(36) REFERENCES course_application(uuid),
+	course_appl_dyn_attr_config_uuid varchar(36) REFERENCES course_application_dyn_attribute_config(uuid),
+	text_value VARCHAR(240),
+	date_value TIMESTAMP,
+	int_value BIGINT,
+	double_value DOUBLE,
+	boolean_value ENUM('0','1'),
+	modif_at TIMESTAMP NULL,
+	modif_by varchar(36) NOT NULL,
+	PRIMARY KEY (uuid)
+);
