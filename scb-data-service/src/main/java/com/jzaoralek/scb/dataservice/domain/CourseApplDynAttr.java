@@ -19,6 +19,13 @@ public class CourseApplDynAttr implements IdentEntity {
 	private int intValue;
 	private double doubleValue;
 	private boolean booleanValue;
+		
+	public static CourseApplDynAttr ofConfig(CourseApplDynAttrConfig courseApplDynConfig) {
+		CourseApplDynAttr ret = new CourseApplDynAttr();
+		ret.setCourseApplDynConfig(courseApplDynConfig);
+		
+		return ret;
+	}
 	
 	@Override
 	public UUID getUuid() {

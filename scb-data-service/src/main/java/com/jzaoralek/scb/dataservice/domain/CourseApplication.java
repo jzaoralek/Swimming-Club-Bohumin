@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.domain;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.util.StringUtils;
@@ -19,6 +20,7 @@ public class CourseApplication implements IdentEntity {
 	private ScbUser courseParticRepresentative;
 	// current participant from previous year
 	private boolean currentParticipant;
+	private List<CourseApplDynAttr> dynAttrList;
 
 	public CourseApplication() {
 		this.courseParticipant = new CourseParticipant();
@@ -96,12 +98,18 @@ public class CourseApplication implements IdentEntity {
 		this.yearFrom = Integer.valueOf(years[0]);
 		this.yearTo = Integer.valueOf(years[1]);
 	}
+	public List<CourseApplDynAttr> getDynAttrList() {
+		return dynAttrList;
+	}
+	public void setDynAttrList(List<CourseApplDynAttr> dynAttrList) {
+		this.dynAttrList = dynAttrList;
+	}
 
 	@Override
 	public String toString() {
 		return "CourseApplication [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", yearFrom="
 				+ yearFrom + ", yearTo=" + yearTo + ", payed=" + payed + ", courseParticipant=" + courseParticipant
 				+ ", courseParticRepresentative=" + courseParticRepresentative + ", currentParticipant="
-				+ currentParticipant + "]";
-	}	
+				+ currentParticipant + ", dynAttrList=" + dynAttrList + "]";
+	}
 }

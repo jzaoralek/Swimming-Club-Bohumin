@@ -350,6 +350,46 @@
 										</vbox>
 									</cell>
 								</row>
+								
+								
+								<!-- Dynamic attributes -->
+								<row sclass="row-2" >
+									<cell style="padding-left: 0px; padding-right: 0px;">
+										<grid hflex="1" vflex="min"
+											model="@load(vm.application.dynAttrList)">
+											<columns>
+												<column align="left" valign="bottom" />
+											</columns>
+											<template name="model">
+												<!-- Zobrazovány jsou pouze Dynamické atributy DynamickyAtributCiselniku.jeAktivni = 'true'. -->
+												<row sclass="row-2" visible="@load(each.courseApplDynConfig.active)"> 
+													<cell>
+														<vbox hflex="1" pack="center">
+															<label value="${each.courseApplDynConfig.name}"
+																sclass="sdat-z-label" />
+<!-- 															<textbox -->
+<!-- 																value="@bind(each.eaHodnota.hodnotaText) @save(each.eaHodnota.hodnotaText, before='savePolozkaCiselnikuCmd') @validator('com.ness.sdat.web.core.validators.DynamicAttributeValidator', dynAtr=each.eaDynAtrCis, ifCmpVisible=self, immediateClear=false)" -->
+<!-- 																hflex="1" -->
+<!-- 																visible="@load(each.zakladniDt eq 'TEXT')"  -->
+<!-- 																readonly="@load(!vm.perms['editablePolCis'])"/> -->
+<!-- 															<decimalbox  -->
+<!-- 																value="@bind(each.eaHodnota.hodnotaCislo) @save(each.eaHodnota.hodnotaCislo, before='savePolozkaCiselnikuCmd') @validator('com.ness.sdat.web.core.validators.DynamicAttributeValidator', dynAtr=each.eaDynAtrCis, ifCmpVisible=self, immediateClear=false)" -->
+<!-- 																maxlength="22" -->
+<!-- 																hflex="1" -->
+<!-- 																visible="@load(each.zakladniDt eq 'CISLO')"  -->
+<!-- 																readonly="@load(!vm.perms['editablePolCis'])"/> -->
+<!-- 															<datebox value="@bind(each.eaHodnota.hodnotaDatum) @converter(vm.dateDateconverter) @save(each.eaHodnota.hodnotaDatum, before='savePolozkaCiselnikuCmd') @validator('com.ness.sdat.web.core.validators.DynamicAttributeValidator', dynAtr=each.eaDynAtrCis, ifCmpVisible=self, immediateClear=false)"  -->
+<!-- 																hflex="1"  -->
+<!-- 																visible="@load(each.zakladniDt eq 'DATUM')"  -->
+<!-- 																buttonVisible="true"  -->
+<!-- 																readonly="@load(!vm.perms['editablePolCis'])"/> -->
+														</vbox>
+													</cell>
+												</row>
+											</template>
+										</grid>
+									</cell>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>

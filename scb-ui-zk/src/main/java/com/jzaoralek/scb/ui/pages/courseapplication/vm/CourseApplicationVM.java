@@ -425,6 +425,10 @@ public class CourseApplicationVM extends BaseVM {
 		this.healthInfoAgreement = false;
 		this.personalInfoProcessAgreement = false;
 		this.clubRulesAgreement = false;
+		if (this.application.getUuid() == null) {
+			// init dynamic attributes
+			this.application.setDynAttrList(courseApplicationService.getDynAttrByCourseAppl(this.application));
+		}
 	}
 	
 	public String getClubRulesText() {
