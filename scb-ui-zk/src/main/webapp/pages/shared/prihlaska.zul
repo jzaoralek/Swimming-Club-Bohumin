@@ -347,6 +347,7 @@
 												value="@bind(vm.application.courseParticipant.healthInfo)"
 												sclass="form-input-textarea"
 												maxlength="@load(vm.getHealthInfoMaxlength())" />
+												
 										</vbox>
 									</cell>
 								</row>
@@ -362,11 +363,24 @@
 											</columns>
 											<template name="model">
 												<!-- Zobrazovány jsou pouze Dynamické atributy DynamickyAtributCiselniku.jeAktivni = 'true'. -->
-												<row sclass="row-2" visible="@load(each.courseApplDynConfig.active)"> 
+												<row sclass="row-2" visible="@load(empty(each.courseApplUuid)  or each.courseApplDynConfig.active)"> 
 													<cell>
-														<vbox hflex="1" pack="center">
-															<label value="${each.courseApplDynConfig.name}"
-																sclass="sdat-z-label" />
+														<vbox hflex="1" >
+															<label value="${each.courseApplDynConfig.name}" />
+															<textbox id="${each.courseApplDynConfig.uuid.toString()}" 
+																readonly="@load(!vm.editMode)"
+																value="@bind(each.textValue) @save(each.textValue, before={submitCmd}) @validator(vm.notNullValidator, required=each.courseApplDynConfig.required)"
+																maxlength="240"
+																placeholder="*"
+																sclass="form-input-text"
+																if="${each.courseApplDynConfig.type == 'TEXT'}"
+																tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+																hflex="1" />
+															<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+																<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[each.courseApplDynConfig.uuid.toString()])" >
+																	<label value="@bind(vmsgs[each.courseApplDynConfig.uuid.toString()])" />
+																</span>
+															</hbox>	
 <!-- 															<textbox -->
 <!-- 																value="@bind(each.eaHodnota.hodnotaText) @save(each.eaHodnota.hodnotaText, before='savePolozkaCiselnikuCmd') @validator('com.ness.sdat.web.core.validators.DynamicAttributeValidator', dynAtr=each.eaDynAtrCis, ifCmpVisible=self, immediateClear=false)" -->
 <!-- 																hflex="1" -->
