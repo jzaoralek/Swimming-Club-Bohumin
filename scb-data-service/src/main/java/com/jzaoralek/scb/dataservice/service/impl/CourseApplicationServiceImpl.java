@@ -127,7 +127,12 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 			// update
 			courseApplicationDao.update(courseApplication);
 		}
-
+		
+		// dynamic attributes
+		if (!CollectionUtils.isEmpty(courseApplication.getDynAttrList()))  {
+			courseApplication.getDynAttrList().forEach(i -> store(i, courseApplication.getUuid()));
+		}
+		
 		return courseApplication;
 	}
 
@@ -340,7 +345,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	}
 
 	@Override
-	public void store(CourseApplDynAttr dynAttr) {
+	public void store(CourseApplDynAttr dynAttr, UUID courseApplUuid) {
 		if (dynAttr == null) {
 			throw new IllegalArgumentException("dynAttr is null");
 		}
@@ -354,6 +359,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		
 		// store to DB
 		if (insertMode) {
+			dynAttr.setCourseApplUuid(courseApplUuid);
 			courseApplDynAttrDao.insert(dynAttr);			
 		} else {
 			courseApplDynAttrDao.update(dynAttr);
