@@ -273,7 +273,7 @@ CREATE TABLE course_application_dyn_attribute (
 	int_value BIGINT,
 	double_value DOUBLE,
 	boolean_value ENUM('0','1'),
-	modif_at TIMESTAMP NULL,
+	modif_at TIMESTAMP  NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
