@@ -17,13 +17,13 @@ import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrDao;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
-import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 
 @Repository
 public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplDynAttrDao {
 
-	private static final String COURSE_APPL_UUID_PARAM = "COURSE_APPL_UUID_PARAM";
-	private static final String COURSE_APPL_CREATED_AT_PARAM = "COURSE_APPL_CREATED_AT_PARAM";
+	private static final String COURSE_PARTIC_UUID_PARAM = "COURSE_PARTIC_UUID_PARAM";
+	private static final String COURSE_PARTIC_CREATED_AT_PARAM = "COURSE_PARTIC_CREATED_AT_PARAM";
 	private static final String COURSE_APPL_DYN_CONFIG_UUID_PARAM = "COURSE_APPL_DYN_CONFIG_UUID_PARAM";
 	private static final String TEXT_VALUE_PARAM = "TEXT_VALUE_PARAM";
 	private static final String DATE_VALUE_PARAM = "DATE_VALUE_PARAM";
@@ -34,16 +34,16 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 	private static final String SELECT_BY_COURSE_APPLICATION = "SELECT dynAttr.* " +
 			"FROM course_application_dyn_attribute dynAttr, " +
 				"course_application_dyn_attribute_config config " +
-			"WHERE dynAttr.course_application_uuid = :"+COURSE_APPL_UUID_PARAM + " " +
+			"WHERE dynAttr.course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM + " " +
 				"AND dynAttr.course_appl_dyn_attr_config_uuid = config.uuid " + " " +
-				"AND :"+COURSE_APPL_CREATED_AT_PARAM + " BETWEEN config.created_at AND IFNULL(config.terminated_at, NOW())";
+				"AND :"+COURSE_PARTIC_CREATED_AT_PARAM + " BETWEEN config.created_at AND IFNULL(config.terminated_at, NOW())";
 	
 	private static final String SELECT_BY_UUID = "SELECT * FROM course_application_dyn_attribute "
 			+ "WHERE uuid = :" + UUID_PARAM;
 	
 	private static final String INSERT = "INSERT INTO course_application_dyn_attribute " +
 			"(uuid" +
-			", course_application_uuid  " +
+			", course_participant_uuid  " +
 			", course_appl_dyn_attr_config_uuid " +
 			", text_value " +
 			", date_value " +
@@ -54,7 +54,7 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 			", modif_by) " +
 			"VALUES " +
 			"(:"+UUID_PARAM +
-			", :"+COURSE_APPL_UUID_PARAM +
+			", :"+COURSE_PARTIC_UUID_PARAM +
 			", :"+COURSE_APPL_DYN_CONFIG_UUID_PARAM +
 			", :"+TEXT_VALUE_PARAM +
 			", :"+DATE_VALUE_PARAM +
@@ -67,7 +67,7 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 	private static final String UPDATE = "UPDATE course_application_dyn_attribute " +
 			"SET " +
 			" uuid = :"+UUID_PARAM +
-			", course_application_uuid = :"+COURSE_APPL_UUID_PARAM +
+			", course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM +
 			", course_appl_dyn_attr_config_uuid = :"+COURSE_APPL_DYN_CONFIG_UUID_PARAM +
 			", text_value = :"+TEXT_VALUE_PARAM +
 			", date_value = :"+DATE_VALUE_PARAM +
@@ -78,8 +78,8 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 			", modif_by = :"+MODIF_BY_PARAM +
 			" WHERE uuid = :"+UUID_PARAM;
 	
-	private static final String DELETE_BY_COURSE_APPL_UUID = "DELETE FROM course_application_dyn_attribute "
-			+ "WHERE course_application_uuid = :"+COURSE_APPL_UUID_PARAM;
+	private static final String DELETE_BY_COURSE_PARTIC_UUID = "DELETE FROM course_application_dyn_attribute "
+			+ "WHERE course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM;
 	
 	@Autowired
 	protected CourseApplDynAttrDaoImpl(DataSource ds) {
@@ -87,12 +87,12 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 	}
 	
 	@Override
-	public List<CourseApplDynAttr> getByCourseAppl(CourseApplication courseAppl) {
+	public List<CourseApplDynAttr> getByCoursePartic(CourseParticipant coursePartic) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue(COURSE_APPL_UUID_PARAM, courseAppl.getUuid().toString());
+		paramMap.addValue(COURSE_PARTIC_UUID_PARAM, coursePartic.getUuid().toString());
 		/* Tohle je riziko, protoze po zmene prihlasky se mohou zobrazit/skryt dyn. atributy
 		 * Resenim je pridat do course_application atribut createdAt.*/
-		paramMap.addValue(COURSE_APPL_CREATED_AT_PARAM, courseAppl.getModifAt());
+		paramMap.addValue(COURSE_PARTIC_CREATED_AT_PARAM, coursePartic.getModifAt());
 		
 		return namedJdbcTemplate.query(SELECT_BY_COURSE_APPLICATION, 
 				paramMap, 
@@ -123,15 +123,15 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 	}
 
 	@Override
-	public void deleteByCourseAppl(UUID courseApplUuid) {
-		namedJdbcTemplate.update(DELETE_BY_COURSE_APPL_UUID, 
-				new MapSqlParameterSource().addValue(COURSE_APPL_UUID_PARAM, courseApplUuid.toString()));
+	public void deleteByCoursePartic(UUID courseParticUuid) {
+		namedJdbcTemplate.update(DELETE_BY_COURSE_PARTIC_UUID, 
+				new MapSqlParameterSource().addValue(COURSE_PARTIC_UUID_PARAM, courseParticUuid.toString()));
 	}
 	
 	private MapSqlParameterSource buildUpdateParamMap(CourseApplDynAttr dynAttr) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		fillIdentEntity(dynAttr, paramMap);
-		paramMap.addValue(COURSE_APPL_UUID_PARAM, dynAttr.getCourseApplUuid().toString());
+		paramMap.addValue(COURSE_PARTIC_UUID_PARAM, dynAttr.getCourseParticUuid().toString());
 		paramMap.addValue(COURSE_APPL_DYN_CONFIG_UUID_PARAM, dynAttr.getCourseApplDynConfig().getUuid().toString());
 		paramMap.addValue(TEXT_VALUE_PARAM, dynAttr.getTextValue());
 		paramMap.addValue(DATE_VALUE_PARAM, dynAttr.getDateValue());
@@ -149,7 +149,7 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 			CourseApplDynAttr ret = new CourseApplDynAttr();
 			fetchIdentEntity(rs, ret);
 			
-			ret.setCourseApplUuid(UUID.fromString(rs.getString("course_application_uuid")));
+			ret.setCourseParticUuid(UUID.fromString(rs.getString("course_participant_uuid")));
 			
 			// naplnime jen UUID, uvidime jestli budou potreba i ostatni atributes
 			CourseApplDynAttrConfig config = new CourseApplDynAttrConfig();

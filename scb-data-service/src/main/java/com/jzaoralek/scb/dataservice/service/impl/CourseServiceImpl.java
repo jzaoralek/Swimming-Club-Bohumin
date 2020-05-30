@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -14,10 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrConfigDao;
+import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
 import com.jzaoralek.scb.dataservice.dao.CourseLocationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
+import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
@@ -57,6 +63,12 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	
 	@Autowired
 	private PaymentService paymentService;
+	
+	@Autowired
+	private CourseApplDynAttrDao courseApplDynAttrDao;
+	
+	@Autowired
+	private CourseApplDynAttrConfigDao courseApplDynAttrConfigDao;
 
 	@Override
 	public void delete(UUID uuid) throws ScbValidationException {
@@ -282,7 +294,11 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	
 	@Override
 	public CourseParticipant getCourseParticipantByUuid(UUID uuid) {
-		return courseParticipantDao.getByUuid(uuid, true);
+		CourseParticipant courseParticipant = courseParticipantDao.getByUuid(uuid, true);
+		// dynamic attributes
+		courseParticipant.setDynAttrList(getDynAttrByCoursePartic(courseParticipant));
+		
+		return courseParticipant;
 	}
 	
 	@Override
@@ -429,5 +445,62 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 //				courseCourseParticipantVOList.stream().map(i -> i.getUuid()).collect(Collectors.toList()), 
 //				Calendar.getInstance().getTime());
 		
+	}
+
+	@Override
+	public List<CourseApplDynAttr> getDynAttrByCoursePartic(CourseParticipant coursePartic) {
+		Objects.requireNonNull(coursePartic, "coursePartic is null");
+		
+		List<CourseApplDynAttrConfig> configList = courseApplDynAttrConfigDao.getAll();
+		if (CollectionUtils.isEmpty(configList)) {
+			return Collections.emptyList();
+		}
+		
+		List<CourseApplDynAttr> ret = new ArrayList<>();
+		if (coursePartic.getUuid() == null) {
+			// new course application, fill config dyn attributes
+			for (CourseApplDynAttrConfig config : configList)  {
+				if (config.isActive()) {
+					ret.add(CourseApplDynAttr.ofConfig(config));
+				}
+			}
+		} else {
+			// existing course participant, fill dynamic attributes config and values
+			List<CourseApplDynAttr> dynAttrList = courseApplDynAttrDao.getByCoursePartic(coursePartic);
+			CourseApplDynAttr item = null;
+			for (CourseApplDynAttrConfig config : configList) {
+				item = getByConfig(dynAttrList, config);
+				if (item != null) {
+					// dynamic attribute for config exists
+					item.setCourseApplDynConfig(config);
+					ret.add(item);
+				} else if (config.isActive()) {
+					// dynamic attribute for config doesn't exists
+					ret.add(CourseApplDynAttr.ofConfig(config));
+				}
+			}
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Get CourseApplDynAttr by CourseApplDynAttrConfig.UUID.
+	 * @param dynAttrList
+	 * @param config
+	 * @return
+	 */
+	private CourseApplDynAttr getByConfig(List<CourseApplDynAttr> dynAttrList, 
+											CourseApplDynAttrConfig config) {
+		if (CollectionUtils.isEmpty(dynAttrList)) {
+			return null;
+		}
+		for (CourseApplDynAttr item : dynAttrList) {
+			if (item.getCourseApplDynConfig().getUuid().equals(config.getUuid())) {
+				return item;
+			}
+		}
+		
+		return null;		
 	}
 }

@@ -12,7 +12,7 @@ public class CourseApplDynAttr implements IdentEntity {
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
-	private UUID courseApplUuid;
+	private UUID courseParticUuid;
 	private CourseApplDynAttrConfig courseApplDynConfig;
 	private String textValue;
 	private Date dateValue;
@@ -51,11 +51,11 @@ public class CourseApplDynAttr implements IdentEntity {
 	public void setModifAt(Date modifAt) {
 		this.modifAt = modifAt;
 	}
-	public UUID getCourseApplUuid() {
-		return courseApplUuid;
+	public UUID getCourseParticUuid() {
+		return courseParticUuid;
 	}
-	public void setCourseApplUuid(UUID courseApplUuid) {
-		this.courseApplUuid = courseApplUuid;
+	public void setCourseParticUuid(UUID courseParticUuid) {
+		this.courseParticUuid = courseParticUuid;
 	}
 	public CourseApplDynAttrConfig getCourseApplDynConfig() {
 		return courseApplDynConfig;
@@ -96,8 +96,8 @@ public class CourseApplDynAttr implements IdentEntity {
 	
 	@Override
 	public String toString() {
-		return "CourseApplDynAttr [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", courseApplUuid="
-				+ courseApplUuid + ", courseApplDynConfig=" + courseApplDynConfig + ", textValue=" + textValue
+		return "CourseApplDynAttr [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", courseParticUuid="
+				+ courseParticUuid + ", courseApplDynConfig=" + courseApplDynConfig + ", textValue=" + textValue
 				+ ", dateValue=" + dateValue + ", intValue=" + intValue + ", doubleValue=" + doubleValue
 				+ ", booleanValue=" + booleanValue + "]";
 	}

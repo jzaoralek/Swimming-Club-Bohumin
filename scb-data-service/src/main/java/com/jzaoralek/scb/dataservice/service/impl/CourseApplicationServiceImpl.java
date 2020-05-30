@@ -1,8 +1,6 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -17,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.ContactDao;
-import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrConfigDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
 import com.jzaoralek.scb.dataservice.dao.CourseDao;
@@ -25,17 +22,17 @@ import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
 import com.jzaoralek.scb.dataservice.dao.ResultDao;
 import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
-import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
-import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
-import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
+import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 @Service("courseApplicationService")
@@ -45,6 +42,9 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 
 	@Autowired
 	private ConfigurationService configurationService;
+	
+	@Autowired
+	private CourseService courseService;
 
 	@Autowired
 	private CourseApplicationDao courseApplicationDao;
@@ -67,9 +67,6 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	@Autowired
 	private CourseApplDynAttrDao courseApplDynAttrDao;
 	
-	@Autowired
-	private CourseApplDynAttrConfigDao courseApplDynAttrConfigDao;
-	
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public List<CourseApplication> getAll(int yearFrom, int yearTo) {
@@ -88,9 +85,10 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		if (courseApplication.getCourseParticipant() != null) {
 			courseApplication.getCourseParticipant().setResultList(resultDao.getByCourseParticipant(courseApplication.getCourseParticipant().getUuid()));
 			courseApplication.getCourseParticipant().setCourseList(courseDao.getByCourseParticipantUuid(courseApplication.getCourseParticipant().getUuid(), courseApplication.getYearFrom(), courseApplication.getYearTo()));
+			// dynamic attributes
+			courseApplication.getCourseParticipant().setDynAttrList(courseService.getDynAttrByCoursePartic(courseApplication.getCourseParticipant()));
 		}
-		// dynamic attributes
-		courseApplication.setDynAttrList(getDynAttrByCourseAppl(courseApplication));
+		
 		return courseApplication;
 	}
 	
@@ -126,11 +124,6 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		} else {
 			// update
 			courseApplicationDao.update(courseApplication);
-		}
-		
-		// dynamic attributes
-		if (!CollectionUtils.isEmpty(courseApplication.getDynAttrList()))  {
-			courseApplication.getDynAttrList().forEach(i -> store(i, courseApplication.getUuid()));
 		}
 		
 		return courseApplication;
@@ -196,7 +189,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 
 		courseApplicationDao.delete(courseApplication);
-		courseApplDynAttrDao.deleteByCourseAppl(courseApplication.getUuid());
+		courseApplDynAttrDao.deleteByCoursePartic(courseApplication.getCourseParticipant().getUuid());
 	}
 
 	@Override
@@ -273,6 +266,11 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 			// update
 			courseParticipantDao.update(courseParticipant);
 		}
+		
+		// dynamic attributes
+		if (!CollectionUtils.isEmpty(courseParticipant.getDynAttrList()))  {
+			courseParticipant.getDynAttrList().forEach(i -> store(i, courseParticipant.getUuid()));
+		}
 	}
 
 	private void storeContact(Contact contact) {
@@ -292,64 +290,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	}
 
 	@Override
-	public List<CourseApplDynAttr> getDynAttrByCourseAppl(CourseApplication courseAppl) {
-		Objects.requireNonNull(courseAppl, "courseAppl is null");
-		
-		List<CourseApplDynAttrConfig> configList = courseApplDynAttrConfigDao.getAll();
-		if (CollectionUtils.isEmpty(configList)) {
-			return Collections.emptyList();
-		}
-		
-		List<CourseApplDynAttr> ret = new ArrayList<>();
-		if (courseAppl.getUuid() == null) {
-			// new course application, fill config dyn attributes
-			for (CourseApplDynAttrConfig config : configList)  {
-				if (config.isActive()) {
-					ret.add(CourseApplDynAttr.ofConfig(config));
-				}
-			}
-		} else {
-			// existing course application, fill dynamic attributes config and values
-			List<CourseApplDynAttr> dynAttrList = courseApplDynAttrDao.getByCourseAppl(courseAppl);
-			CourseApplDynAttr item = null;
-			for (CourseApplDynAttrConfig config : configList) {
-				item = getByConfig(dynAttrList, config);
-				if (item != null) {
-					// dynamic attribute for config exists
-					item.setCourseApplDynConfig(config);
-					ret.add(item);
-				} else if (config.isActive()) {
-					// dynamic attribute for config doesn't exists
-					ret.add(CourseApplDynAttr.ofConfig(config));
-				}
-			}
-		}
-		
-		return ret;
-	}
-	
-	/**
-	 * Get CourseApplDynAttr by CourseApplDynAttrConfig.UUID.
-	 * @param dynAttrList
-	 * @param config
-	 * @return
-	 */
-	private CourseApplDynAttr getByConfig(List<CourseApplDynAttr> dynAttrList, 
-											CourseApplDynAttrConfig config) {
-		if (CollectionUtils.isEmpty(dynAttrList)) {
-			return null;
-		}
-		for (CourseApplDynAttr item : dynAttrList) {
-			if (item.getCourseApplDynConfig().getUuid().equals(config.getUuid())) {
-				return item;
-			}
-		}
-		
-		return null;		
-	}
-
-	@Override
-	public void store(CourseApplDynAttr dynAttr, UUID courseApplUuid) {
+	public void store(CourseApplDynAttr dynAttr, UUID courseParticUuid) {
 		if (dynAttr == null) {
 			throw new IllegalArgumentException("dynAttr is null");
 		}
@@ -363,7 +304,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		
 		// store to DB
 		if (insertMode) {
-			dynAttr.setCourseApplUuid(courseApplUuid);
+			dynAttr.setCourseParticUuid(courseParticUuid);
 			courseApplDynAttrDao.insert(dynAttr);			
 		} else {
 			courseApplDynAttrDao.update(dynAttr);

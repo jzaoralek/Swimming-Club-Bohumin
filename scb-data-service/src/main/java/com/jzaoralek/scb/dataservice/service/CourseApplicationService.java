@@ -27,6 +27,5 @@ public interface CourseApplicationService {
 	void updateCourseParticCourseUuid(List<UUID> courseParticUuidList, UUID courseUuid);
 	void insertCourseParticInterruption(UUID courseCourseParticUuid, UUID courseUuid, Date interrupetdAt);
 	void delete(UUID uuid) throws ScbValidationException;
-	List<CourseApplDynAttr> getDynAttrByCourseAppl(CourseApplication courseAppl);
 	void store(CourseApplDynAttr dynAttr, UUID courseApplUuid);
 }

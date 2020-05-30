@@ -16,6 +16,7 @@ import com.jzaoralek.scb.dataservice.dao.CourseApplDynAttrDao;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 
 public class CourseApplDynAttrDaoTest extends BaseTestCase {
 
@@ -26,7 +27,7 @@ public class CourseApplDynAttrDaoTest extends BaseTestCase {
 	private static final boolean BOOLEAN_VALUE = true;
 	
 	private UUID dynAttrConfigUuid;
-	private UUID courseApplicationUuid;
+	private UUID courseParticipantUuid;
 	
 	@Autowired
 	private CourseApplDynAttrDao courseApplDynAttrDao;
@@ -35,7 +36,7 @@ public class CourseApplDynAttrDaoTest extends BaseTestCase {
 	private CourseApplDynAttrConfigDao courseApplDynAttrConfigDao;
 	
 	private CourseApplDynAttr item;
-	private CourseApplication courseApplication;
+	private CourseParticipant courseParticipant;
 	
 	@Before
 	public void setUp() {
@@ -55,17 +56,18 @@ public class CourseApplDynAttrDaoTest extends BaseTestCase {
 		item.setDoubleValue(DOUBLE_VALUE);
 		item.setBooleanValue(BOOLEAN_VALUE);
 		
-		this.courseApplication = buildCourseApplication();
-		this.courseApplicationUuid = courseApplication.getUuid();
+		CourseApplication courseApplication = buildCourseApplication();
+		this.courseParticipant = courseApplication.getCourseParticipant();
+		this.courseParticipantUuid = this.courseParticipant.getUuid();
 		courseApplicationDao.insert(courseApplication);
 		
-		item.setCourseApplUuid(courseApplicationUuid);
+		item.setCourseParticUuid(courseParticipantUuid);
 		courseApplDynAttrDao.insert(item);
 	}
 	
 	@Test
 	public void testGetByCourseAppl() {
-		List<CourseApplDynAttr> dynAttrList = courseApplDynAttrDao.getByCourseAppl(this.courseApplication);
+		List<CourseApplDynAttr> dynAttrList = courseApplDynAttrDao.getByCoursePartic(this.courseParticipant);
 		Assert.assertNotNull(dynAttrList);
 		Assert.assertTrue(dynAttrList.size() == 1);
 		CourseApplDynAttr item = dynAttrList.get(0);
@@ -81,7 +83,7 @@ public class CourseApplDynAttrDaoTest extends BaseTestCase {
 	private void assertItemValues(CourseApplDynAttr item) {
 		Assert.assertNotNull(item);
 		Assert.assertTrue(ITEM_UUID.toString().equals(item.getUuid().toString()));
-		Assert.assertTrue(courseApplicationUuid.toString().equals(item.getCourseApplUuid().toString()));
+		Assert.assertTrue(courseParticipantUuid.toString().equals(item.getCourseParticUuid().toString()));
 		Assert.assertTrue(dynAttrConfigUuid.toString().equals(item.getCourseApplDynConfig().getUuid().toString()));
 		Assert.assertTrue(TEXT_VALUE.equals(item.getTextValue()));
 		Assert.assertTrue(DATE_VALUE.compareTo(item.getDateValue()) == 1);
@@ -116,8 +118,8 @@ public class CourseApplDynAttrDaoTest extends BaseTestCase {
 	}
 	
 	@Test
-	public void testDeleteByCourseAppl() {
-		courseApplDynAttrDao.deleteByCourseAppl(courseApplicationUuid);
+	public void testDeleteByCoursePartic() {
+		courseApplDynAttrDao.deleteByCoursePartic(courseParticipantUuid);
 		CourseApplDynAttr item = courseApplDynAttrDao.getByUuid(ITEM_UUID);
 		Assert.assertNull(item);
 	}

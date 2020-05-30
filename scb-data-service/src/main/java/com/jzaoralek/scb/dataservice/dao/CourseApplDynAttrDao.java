@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
-import com.jzaoralek.scb.dataservice.domain.CourseApplication;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 
 public interface CourseApplDynAttrDao {
 
-	List<CourseApplDynAttr> getByCourseAppl(CourseApplication courseAppl);
+	List<CourseApplDynAttr> getByCoursePartic(CourseParticipant coursePartic);
 	CourseApplDynAttr getByUuid(UUID uuid);
 	void insert(CourseApplDynAttr dynAttr);
 	void update(CourseApplDynAttr dynAttr);
-	void deleteByCourseAppl(UUID courseApplUuid);
+	void deleteByCoursePartic(UUID courseParticUuid);
 }

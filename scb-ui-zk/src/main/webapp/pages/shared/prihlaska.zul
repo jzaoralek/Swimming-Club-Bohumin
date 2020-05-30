@@ -358,13 +358,13 @@
 								<row>
 									<cell style="padding-left: 0px; padding-right: 0px;">
 										<grid hflex="1" vflex="min"
-											model="@load(vm.application.dynAttrList)">
+											model="@load(vm.application.courseParticipant.dynAttrList)">
 											<columns>
 												<column align="left" valign="bottom" />
 											</columns>
 											<template name="model">
 												<!-- Zobrazovány jsou pouze Dynamické atributy DynamickyAtributCiselniku.jeAktivni = 'true'. -->
-												<row visible="@load(empty(each.courseApplUuid) or each.courseApplDynConfig.active)"> 
+												<row visible="@load(empty(each.courseParticUuid) or each.courseApplDynConfig.active)"> 
 													<cell>
 														<vbox hflex="1" >
 															<!-- Typ TEXT -->
