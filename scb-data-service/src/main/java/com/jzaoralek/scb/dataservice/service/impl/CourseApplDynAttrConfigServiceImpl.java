@@ -77,7 +77,14 @@ public class CourseApplDynAttrConfigServiceImpl extends BaseAbstractService impl
 	}
 
 	@Override
-	public void delete(UUID uuid) {
+	public void delete(UUID uuid) throws ScbValidationException {
+		// validation if dynAttrConfig is used on dynAttr
+		if (courseApplDynAttrConfigDao.usedDynAttrConfig(uuid)) {
+			LOG.warn("CourseApplDynAttrConfig is used, cannot be deleted, uuid: {}", uuid);
+			throw new ScbValidationException(
+					messageSource.getMessage("msg.validation.warn.courseApplDynAttrIsUsed", 
+							null, Locale.getDefault()));
+		}
 		courseApplDynAttrConfigDao.delete(uuid);
 	}
 }

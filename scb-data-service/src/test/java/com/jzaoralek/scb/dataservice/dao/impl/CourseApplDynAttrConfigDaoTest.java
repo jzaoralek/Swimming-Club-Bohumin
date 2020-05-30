@@ -75,6 +75,12 @@ public class CourseApplDynAttrConfigDaoTest extends BaseTestCase {
 		Assert.assertNull(item);
 	}
 	
+	@Test
+	public void testUsedDynAttrConfig() {
+		boolean used = courseApplDynAttrConfigDao.usedDynAttrConfig(ITEM_UUID);
+		Assert.assertFalse(used);
+	}
+	
 	public void testTerminate() {
 		Date terminated = Calendar.getInstance().getTime();
 		item.setTerminatedAt(terminated);

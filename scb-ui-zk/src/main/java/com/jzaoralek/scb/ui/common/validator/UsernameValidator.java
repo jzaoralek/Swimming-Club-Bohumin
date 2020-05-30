@@ -24,6 +24,12 @@ private ScbUserService scbUserService;
 	
 	@Override
 	public void validate(ValidationContext ctx) {
+		Object validate = ctx.getValidatorArg("validate");
+		// dynamic validation
+		if (validate != null && validate instanceof Boolean && !(Boolean)validate) {
+			return;
+		}
+		
 		String value = (String) ctx.getProperty().getValue();
 		if (value != null) {
 			// remove whitespaces from input string

@@ -64,23 +64,6 @@ public class ConfigVM extends BaseVM {
 	}
 	
 	private void initCourseApplDynAttrConfig() {
-		// TODO: remove fake items
-//		CourseApplDynAttrConfig fakeItem1 = new  CourseApplDynAttrConfig();
-//		fakeItem1.setUuid(UUID.randomUUID());
-//		fakeItem1.setName("Název dynamického atributu typu TEXT");
-//		fakeItem1.setType(CourseApplDynAttrConfigType.TEXT);
-//		fakeItem1.setRequired(true);
-//		fakeItem1.setTerminatedAt(null);
-//		
-//		CourseApplDynAttrConfig fakeItem2 = new  CourseApplDynAttrConfig();
-//		fakeItem2.setUuid(UUID.randomUUID());
-//		fakeItem2.setName("Název dynamického atributu typu DOUBLE");
-//		fakeItem2.setType(CourseApplDynAttrConfigType.DOUBLE);
-//		fakeItem2.setRequired(false);
-//		fakeItem2.setTerminatedAt(Calendar.getInstance().getTime());
-//		
-//		this.courseApplDynAttrConfigList = 
-//				Arrays.asList(new CourseApplDynAttrConfig[] {fakeItem1, fakeItem2});
 		this.courseApplDynAttrConfigList = courseApplDynAttrConfigService.getAll();
 		BindUtils.postNotifyChange(null, null, this, "courseApplDynAttrConfigList");
 	}
@@ -201,14 +184,14 @@ public class ConfigVM extends BaseVM {
 			new SzpEventListener() {
 				@Override
 				public void onOkEvent() {
-//					try {
+					try {
 						courseApplDynAttrConfigService.delete(item.getUuid());
 						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.dynAttrConfigDeleted", msgParams));
 						initCourseApplDynAttrConfig();
-//					} catch (ScbValidationException e) {
-//						LOG.warn("ScbValidationException caught during deleting CourseApplDynAttrConfig uuid: " + item.getUuid(), e);
-//						WebUtils.showNotificationError(e.getMessage());
-//					}
+					} catch (ScbValidationException e) {
+						LOG.warn("ScbValidationException caught during deleting CourseApplDynAttrConfig uuid: " + item.getUuid(), e);
+						WebUtils.showNotificationError(e.getMessage());
+					}
 				}
 			},
 			msgParams

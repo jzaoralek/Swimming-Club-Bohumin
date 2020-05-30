@@ -43,6 +43,7 @@ public class CourseApplDynAttrConfigDaoImpl extends BaseJdbcDao implements Cours
 										 	"modif_at = :"+MODIF_AT_PARAM+", " +
 										 	"modif_by = :"+MODIF_BY_PARAM+" " +
 										 	"WHERE uuid = :"+UUID_PARAM;
+	private static final String SELECT_COUNT_DYN_ATTR = "SELECT count(*) FROM course_application_dyn_attribute WHERE course_appl_dyn_attr_config_uuid = :" + UUID_PARAM;
 	private static final String DELETE = "DELETE FROM course_application_dyn_attribute_config WHERE uuid = :"+UUID_PARAM;
 	
 	private static final String TERMINATE = "UPDATE course_application_dyn_attribute_config " + 
@@ -111,6 +112,15 @@ public class CourseApplDynAttrConfigDaoImpl extends BaseJdbcDao implements Cours
 		namedJdbcTemplate.update(TERMINATE, paramMap);
 	}
 	
+	@Override
+	public boolean usedDynAttrConfig(UUID uuid) {
+		Long dynAttrCount = 
+				namedJdbcTemplate.queryForObject(SELECT_COUNT_DYN_ATTR, 
+						new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString()), 
+						Long.class);
+		return dynAttrCount > 0;
+	}
+	
 	private MapSqlParameterSource buildUpdateParamMap(CourseApplDynAttrConfig config) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		fillIdentEntity(config, paramMap);
@@ -139,5 +149,5 @@ public class CourseApplDynAttrConfigDaoImpl extends BaseJdbcDao implements Cours
 
 			return ret;
 		}
-	}
+	}	
 }

@@ -16,4 +16,6 @@ public interface CourseApplDynAttrConfigDao {
 	 * depends of terminate attribute. */
 	void terminate(CourseApplDynAttrConfig config);
 	void delete(UUID uuid);
+	/** Check if config is used on any dynAttr value. */
+	boolean usedDynAttrConfig(UUID uuid);
 }

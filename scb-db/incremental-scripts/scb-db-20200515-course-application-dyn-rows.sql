@@ -16,7 +16,7 @@ CREATE TABLE course_application_dyn_attribute (
 	course_application_uuid varchar(36) REFERENCES course_application(uuid),
 	course_appl_dyn_attr_config_uuid varchar(36) REFERENCES course_application_dyn_attribute_config(uuid),
 	text_value VARCHAR(240),
-	date_value TIMESTAMP,
+	date_value TIMESTAMP NULL,
 	int_value BIGINT,
 	double_value DOUBLE,
 	boolean_value ENUM('0','1'),

@@ -71,8 +71,9 @@
 												<label value="${c:l('txt.ui.common.email')}"/>
 											</hlayout>
 											<hbox hflex="1">
-												<textbox id="representativeEmail1" readonly="@load(vm.itemReadOnly or !vm.editMode)"
-													value="@bind(vm.application.courseParticRepresentative.contact.email1) @save(vm.application.courseParticRepresentative.contact.email1, before={submitCmd}) @validator(vm.usernameValidator)"
+												<textbox id="representativeEmail1" 
+													readonly="@load(vm.itemReadOnly or !vm.editMode)"
+													value="@bind(vm.application.courseParticRepresentative.contact.email1) @save(vm.application.courseParticRepresentative.contact.email1, before={submitCmd}) @validator(vm.usernameValidator, validate=!self.readonly)"
 													maxlength="@load(vm.getEmailMaxlength())"
 													placeholder="${c:l('txt.ui.common.email.info')}"
 													sclass="form-input-text"
@@ -321,7 +322,7 @@
 									</cell>
 								</row>
 								<row>
-									<cell  >
+									<cell>
 										<vbox hflex="1">
 											<label value="${c:l('txt.ui.common.healthInsurance')}"/>
 											<textbox id="particHealthInsurance" readonly="@load(!vm.editMode)"
@@ -352,8 +353,8 @@
 									</cell>
 								</row>
 								
-								
 								<!-- Dynamic attributes -->
+								<!-- The same fragment in pages/secured/TRAINER/ucastnik.zul and pages/secured/USER/ucastnik.zul !!! -->
 								<row>
 									<cell style="padding-left: 0px; padding-right: 0px;">
 										<grid hflex="1" vflex="min"
@@ -380,7 +381,7 @@
 																	hflex="1" />	
 																<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
 																	<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[each.courseApplDynConfig.uuid.toString()])" >
-																		<label value="@bind(vmsgs[each.courseApplDynConfig.uuid.toString()])" />
+																		<label value="@load(vmsgs[each.courseApplDynConfig.uuid.toString()])" />
 																	</span>
 																</hbox>
 															</vbox>
@@ -436,9 +437,16 @@
 																if="${each.courseApplDynConfig.type == 'BOOLEAN'}" >
 																<label value="${each.courseApplDynConfig.name}" />
 																<hlayout width="150px">
-																	<radiogroup id="${each.courseApplDynConfig.uuid}_dynRadioGroup" selectedItem="@bind(each.booleanValue)"  />
-																	<radio label="${c:l('txt.ui.common.yes')}" radiogroup="${each.courseApplDynConfig.uuid}_dynRadioGroup" value="${true}" />
-					                								<radio label="${c:l('txt.ui.common.no')}" radiogroup="${each.courseApplDynConfig.uuid}_dynRadioGroup" value="${false}"/>
+																	<radiogroup id="${each.courseApplDynConfig.uuid}_dynRadioGroup" 
+																		selectedItem="@bind(each.booleanValue)"  />
+																	<radio label="${c:l('txt.ui.common.yes')}" 
+																		radiogroup="${each.courseApplDynConfig.uuid}_dynRadioGroup"
+																		disabled="@load(!vm.editMode)"
+																		value="${true}" />
+					                								<radio label="${c:l('txt.ui.common.no')}" 
+					                									radiogroup="${each.courseApplDynConfig.uuid}_dynRadioGroup"
+					                									disabled="@load(!vm.editMode)"
+					                									value="${false}"/>
 																</hlayout>
 															</vbox>
 														</vbox>

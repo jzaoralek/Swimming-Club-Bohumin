@@ -21,5 +21,5 @@ public interface CourseApplDynAttrConfigService {
 	/** Used for activation and termination, 
 	 * depends of terminate attribute. */
 	void terminate(CourseApplDynAttrConfig config);
-	void delete(UUID uuid);
+	void delete(UUID uuid) throws ScbValidationException;
 }
