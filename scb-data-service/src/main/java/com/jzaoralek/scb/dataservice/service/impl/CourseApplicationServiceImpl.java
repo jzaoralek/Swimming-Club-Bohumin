@@ -303,7 +303,11 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		List<CourseApplDynAttr> ret = new ArrayList<>();
 		if (courseAppl.getUuid() == null) {
 			// new course application, fill config dyn attributes
-			configList.forEach(i -> ret.add(CourseApplDynAttr.ofConfig(i)));	
+			for (CourseApplDynAttrConfig config : configList)  {
+				if (config.isActive()) {
+					ret.add(CourseApplDynAttr.ofConfig(config));
+				}
+			}
 		} else {
 			// existing course application, fill dynamic attributes config and values
 			List<CourseApplDynAttr> dynAttrList = courseApplDynAttrDao.getByCourseAppl(courseAppl);
@@ -314,7 +318,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 					// dynamic attribute for config exists
 					item.setCourseApplDynConfig(config);
 					ret.add(item);
-				} else {
+				} else if (config.isActive()) {
 					// dynamic attribute for config doesn't exists
 					ret.add(CourseApplDynAttr.ofConfig(config));
 				}

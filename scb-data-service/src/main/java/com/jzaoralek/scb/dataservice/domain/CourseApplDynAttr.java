@@ -16,8 +16,8 @@ public class CourseApplDynAttr implements IdentEntity {
 	private CourseApplDynAttrConfig courseApplDynConfig;
 	private String textValue;
 	private Date dateValue;
-	private int intValue;
-	private double doubleValue;
+	private Integer intValue;
+	private Double doubleValue;
 	private boolean booleanValue;
 		
 	public static CourseApplDynAttr ofConfig(CourseApplDynAttrConfig courseApplDynConfig) {
@@ -75,16 +75,16 @@ public class CourseApplDynAttr implements IdentEntity {
 	public void setDateValue(Date dateValue) {
 		this.dateValue = dateValue;
 	}
-	public int getIntValue() {
+	public Integer getIntValue() {
 		return intValue;
 	}
-	public void setIntValue(int intValue) {
+	public void setIntValue(Integer intValue) {
 		this.intValue = intValue;
 	}
-	public double getDoubleValue() {
+	public Double getDoubleValue() {
 		return doubleValue;
 	}
-	public void setDoubleValue(double doubleValue) {
+	public void setDoubleValue(Double doubleValue) {
 		this.doubleValue = doubleValue;
 	}
 	public boolean isBooleanValue() {
