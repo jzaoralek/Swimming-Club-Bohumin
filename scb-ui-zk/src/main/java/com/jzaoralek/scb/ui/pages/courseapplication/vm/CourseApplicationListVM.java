@@ -413,7 +413,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 
 		// header
 		Listhead lh = listbox.getListhead();
-		Object[] headerArray = new Object[lh.getChildren().size() + 12];
+		Object[] headerArray = new Object[lh.getChildren().size() + 13];
 		for (int i = 0; i < lh.getChildren().size(); i++) {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
@@ -429,8 +429,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.houseNo");
 			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.city");
 			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.zipCode");
-			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.course");	
-			headerArray[lh.getChildren().size()+8] = Labels.getLabel("txt.ui.common.courseLocation2");
+			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.healthInsurance");
+			headerArray[lh.getChildren().size()+8] = Labels.getLabel("txt.ui.common.course");	
+			headerArray[lh.getChildren().size()+9] = Labels.getLabel("txt.ui.common.courseLocation2");
 		} else {
 			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
 			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
@@ -440,7 +441,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[lh.getChildren().size()+4] = Labels.getLabel("txt.ui.common.landRegNo");
 			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.houseNo");
 			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.city");
-			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.zipCode");	
+			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.zipCode");
 		}
 		data.put("0", headerArray);
 
@@ -469,6 +470,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 								getNotNullString(item.getCourseParticipant().getContact().getHouseNumber()),
 								getNotNullString(item.getCourseParticipant().getContact().getCity()),
 								getNotNullString(item.getCourseParticipant().getContact().getZipCode()),
+								getNotNullString(item.getCourseParticipant().getHealthInsurance()),
 								course != null ? course.getName() : "",
 								course != null && course.getCourseLocation() != null ? course.getCourseLocation().getName() : "",
 					});
