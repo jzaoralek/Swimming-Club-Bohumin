@@ -49,6 +49,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", cp.uuid \"participant_uuid\" " +
 					", cp.birthdate " +
 					", cp.personal_number " +
+					", cp.health_insurance " +
 					", con_repr.firstname \"representative_firstname\" " +
 					", con_repr.surname \"representative_surname\" " +
 					", con_repr.phone1 " +
@@ -93,6 +94,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", cp.uuid \"participant_uuid\" " +
 			", cp.birthdate " +
 			", cp.personal_number " +
+			", cp.health_insurance " +
 			", con_repr.firstname \"representative_firstname\" " +
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +
@@ -146,6 +148,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", cp.uuid \"participant_uuid\" " +
 			", cp.birthdate " +
 			", cp.personal_number " +
+			", cp.health_insurance " +
 			", con_repr.firstname \"representative_firstname\" " +
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +
@@ -189,6 +192,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", cp.uuid \"participant_uuid\" " +
 					", cp.birthdate " +
 					", cp.personal_number " +
+					", cp.health_insurance " +
 					", con_repr.firstname \"representative_firstname\" " +
 					", con_repr.surname \"representative_surname\" " +
 					", con_repr.phone1 " +
@@ -234,6 +238,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", cp.uuid \"participant_uuid\" " +
 			", cp.birthdate " +
 			", cp.personal_number " +
+			", cp.health_insurance " +
 			", con_repr.firstname \"representative_firstname\" " +
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +
@@ -286,6 +291,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", cp.uuid \"participant_uuid\" " +
 			", cp.birthdate " +
 			", cp.personal_number " +
+			", cp.health_insurance " +
 			", cp.iscus_role " +
 			", cp.iscus_partic_id " +
 			", cp.iscus_system_id " +
@@ -719,6 +725,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			courseParticipant.setUuid(UUID.fromString(rs.getString("participant_uuid")));
 			courseParticipant.setBirthdate(rs.getDate("birthdate"));
 			courseParticipant.setPersonalNo(rs.getString("personal_number"));
+			courseParticipant.setHealthInsurance(rs.getString("health_insurance"));
 			courseParticipant.setCourseList(courseDao.getByCourseParticipantUuid(courseParticipant.getUuid(), ret.getYearFrom(), ret.getYearTo()));
 			if (this.extended) {
 				String courseCourseParticipantUuid = rs.getString("COURSE_COURSE_PARTICIPANT_UUID");
