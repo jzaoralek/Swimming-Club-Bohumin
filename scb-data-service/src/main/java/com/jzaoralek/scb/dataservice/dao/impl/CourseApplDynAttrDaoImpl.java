@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 @Repository
 public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplDynAttrDao {
 
+	private static final String DATE_PARAM = "DATE_PARAM";
 	private static final String COURSE_PARTIC_UUID_PARAM = "COURSE_PARTIC_UUID_PARAM";
 	private static final String COURSE_PARTIC_CREATED_AT_PARAM = "COURSE_PARTIC_CREATED_AT_PARAM";
 	private static final String COURSE_APPL_DYN_CONFIG_UUID_PARAM = "COURSE_APPL_DYN_CONFIG_UUID_PARAM";
@@ -30,6 +32,12 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 	private static final String INT_VALUE_PARAM = "INT_VALUE_PARAM";
 	private static final String DOUBLE_VALUE_PARAM = "DOUBLE_VALUE_PARAM";
 	private static final String BOOLEAN_VALUE_PARAM = "BOOLEAN_VALUE_PARAM";
+	
+	private static final String SELECT_BY_DATE = "SELECT dynAttr.* " +
+			"FROM course_application_dyn_attribute dynAttr, " +
+				"course_application_dyn_attribute_config config " +
+			"WHERE dynAttr.course_appl_dyn_attr_config_uuid = config.uuid " + " " +
+				"AND :"+DATE_PARAM + " BETWEEN config.created_at AND IFNULL(config.terminated_at, NOW())";
 	
 	private static final String SELECT_BY_COURSE_APPLICATION = "SELECT dynAttr.* " +
 			"FROM course_application_dyn_attribute dynAttr, " +
@@ -87,6 +95,15 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 	}
 	
 	@Override
+	public List<CourseApplDynAttr> getByDate(Date date) {
+		MapSqlParameterSource paramMap = 
+				new MapSqlParameterSource().addValue(DATE_PARAM, date);
+		return namedJdbcTemplate.query(SELECT_BY_DATE, 
+				paramMap, 
+				new CourseApplDynAttrRowMapper());
+	}
+	
+	@Override
 	public List<CourseApplDynAttr> getByCoursePartic(CourseParticipant coursePartic) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue(COURSE_PARTIC_UUID_PARAM, coursePartic.getUuid().toString());
@@ -98,7 +115,7 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 				paramMap, 
 				new CourseApplDynAttrRowMapper());
 	}
-
+	
 	@Override
 	public CourseApplDynAttr getByUuid(UUID uuid) {
 		MapSqlParameterSource paramMap = 

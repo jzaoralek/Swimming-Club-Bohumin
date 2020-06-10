@@ -66,6 +66,15 @@ public class CourseApplDynAttrDaoTest extends BaseTestCase {
 	}
 	
 	@Test
+	public void testGetByDate() {
+		List<CourseApplDynAttr> dynAttrList = courseApplDynAttrDao.getByDate(Calendar.getInstance().getTime());
+		Assert.assertNotNull(dynAttrList);
+		Assert.assertTrue(dynAttrList.size() == 1);
+		CourseApplDynAttr item = dynAttrList.get(0);
+		assertItemValues(item);
+	}
+	
+	@Test
 	public void testGetByCourseAppl() {
 		List<CourseApplDynAttr> dynAttrList = courseApplDynAttrDao.getByCoursePartic(this.courseParticipant);
 		Assert.assertNotNull(dynAttrList);

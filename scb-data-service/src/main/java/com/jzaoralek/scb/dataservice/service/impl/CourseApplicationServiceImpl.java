@@ -70,7 +70,8 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public List<CourseApplication> getAll(int yearFrom, int yearTo) {
-		return courseApplicationDao.getAll(yearFrom, yearTo);
+		List<CourseApplication> ret = courseApplicationDao.getAll(yearFrom, yearTo);		
+		return ret;
 	}
 
 	@Override
@@ -309,5 +310,10 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		} else {
 			courseApplDynAttrDao.update(dynAttr);
 		}
+	}
+
+	@Override
+	public List<CourseApplDynAttr> getCourseApplDynAttrByDate(Date date) {
+		return courseApplDynAttrDao.getByDate(date);
 	}
 }

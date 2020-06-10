@@ -28,4 +28,5 @@ public interface CourseApplicationService {
 	void insertCourseParticInterruption(UUID courseCourseParticUuid, UUID courseUuid, Date interrupetdAt);
 	void delete(UUID uuid) throws ScbValidationException;
 	void store(CourseApplDynAttr dynAttr, UUID courseApplUuid);
+	List<CourseApplDynAttr> getCourseApplDynAttrByDate(Date date);
 }

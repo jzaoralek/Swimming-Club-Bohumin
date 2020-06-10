@@ -3,10 +3,12 @@ package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,8 @@ import org.zkoss.zul.Radio;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant.PaymentNotifSendState;
@@ -47,6 +51,7 @@ import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO.CoursePaymentState;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
+import com.jzaoralek.scb.dataservice.service.CourseApplDynAttrConfigService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -72,6 +77,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
+	
+	@WireVariable
+	private CourseApplDynAttrConfigService courseApplDynAttrConfigService;
 
 	private List<CourseApplication> courseApplicationList;
 	private List<CourseApplication> courseApplicationListBase;
@@ -407,18 +415,27 @@ public class CourseApplicationListVM extends BaseContextVM {
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {
-		Map<String, Object[]> data = new LinkedHashMap<String, Object[]>();
+		Map<String, Object[]> data = new LinkedHashMap<>();
 
 		DateFormat dateFormat = new SimpleDateFormat(WebConstants.WEB_DATETIME_PATTERN);
 
+		// dynamic attributes
+		List<CourseApplDynAttrConfig> dynAttrConfigList = courseApplDynAttrConfigService.getAll();
+		boolean dynAttrPresent = !CollectionUtils.isEmpty(dynAttrConfigList);
+		List<CourseApplDynAttr> dynAttrList = null;
+		if (dynAttrPresent) {
+			dynAttrList = courseApplicationService.getCourseApplDynAttrByDate(Calendar.getInstance().getTime());
+		}
+		
 		// header
 		Listhead lh = listbox.getListhead();
-		Object[] headerArray = new Object[lh.getChildren().size() + 13];
+		Object[] headerArray = new Object[lh.getChildren().size() + 13 + dynAttrConfigList.size()];
 		for (int i = 0; i < lh.getChildren().size(); i++) {
 			headerArray[i] = ((Listheader) lh.getChildren().get(i)).getLabel();
 		}
 		
 		String currency = " " + Labels.getLabel("txt.ui.common.CZK");
+		
 		
 		if (this.pageMode == PageMode.COURSE_APPLICATION_LIST)  {
 			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.birthNumber");
@@ -432,6 +449,10 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.healthInsurance");
 			headerArray[lh.getChildren().size()+8] = Labels.getLabel("txt.ui.common.course");	
 			headerArray[lh.getChildren().size()+9] = Labels.getLabel("txt.ui.common.courseLocation2");
+			if (dynAttrPresent) {
+				// add dynamic attributes headers
+				addDynAttrCols(dynAttrConfigList, headerArray, lh.getChildren().size()+9);
+			}
 		} else {
 			headerArray[lh.getChildren().size()-1] = Labels.getLabel("txt.ui.common.payed") + currency;	
 			headerArray[lh.getChildren().size()] = Labels.getLabel("txt.ui.common.PriceTotal") + currency;
@@ -442,9 +463,17 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.houseNo");
 			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.city");
 			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.zipCode");
+			if (dynAttrPresent) {
+				// add dynamic attributes headers
+				addDynAttrCols(dynAttrConfigList, headerArray, lh.getChildren().size()+7);
+			}
 		}
 		data.put("0", headerArray);
 
+		if (dynAttrPresent) {
+			// dynamic attributes values to course application pairing
+			
+		}
 		
 		// rows
 		ListModel<Object> model = listbox.getListModel();
@@ -454,6 +483,10 @@ public class CourseApplicationListVM extends BaseContextVM {
 			if (model.getElementAt(i) instanceof CourseApplication) {
 				item = (CourseApplication)model.getElementAt(i);
 				course = getCourseByCourseParticipant(item.getCourseParticipant());
+				if (dynAttrPresent) {
+					// TODO: load dynamic attributes
+//					item.getCourseParticipant().setDynAttrList(courseApplicationService.get);
+				}
 				if (this.pageMode == PageMode.COURSE_APPLICATION_LIST) {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
@@ -473,6 +506,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 								getNotNullString(item.getCourseParticipant().getHealthInsurance()),
 								course != null ? course.getName() : "",
 								course != null && course.getCourseLocation() != null ? course.getCourseLocation().getName() : "",
+								addDynAttrValues(item.getCourseParticipant(), dateFormat), // dynamic attributes
 					});
 				} else {
 					data.put(String.valueOf(i+1),
@@ -488,13 +522,56 @@ public class CourseApplicationListVM extends BaseContextVM {
 								getNotNullLongEmptyChar(item.getCourseParticipant().getContact().getLandRegistryNumber()),
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity()),
-								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode())
+								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode()),
+								addDynAttrValues(item.getCourseParticipant(), dateFormat), // dynamic attributes
 								});
 				}
 			}
 		}
 
 		return data;
+	}
+	
+	/**
+	 * Add dyn colls to export header.
+	 * @param dynAttrConfigList
+	 * @param headerArray
+	 * @param startIndex
+	 */
+	private void addDynAttrCols(List<CourseApplDynAttrConfig> dynAttrConfigList, Object[] headerArray, int startIndex) {
+		CourseApplDynAttrConfig dynAttrConfig = null;
+		for (int i = 0; i < dynAttrConfigList.size(); i++) {
+			dynAttrConfig = dynAttrConfigList.get(i);
+			headerArray[startIndex + i] = dynAttrConfig.getName();
+		}
+	}
+	
+	public Object[] addDynAttrValues(CourseParticipant coursePartic, DateFormat dateFormat) {
+		Object[] ret = null;
+		if (coursePartic.getDynAttrList() == null) {
+			return ret;
+		}
+		ret = new Object[coursePartic.getDynAttrList().size()];
+		CourseApplDynAttr dynAttr = null;
+		for (int i = 0; i < coursePartic.getDynAttrList().size(); i++) {
+			dynAttr = (CourseApplDynAttr)ret[i];
+			switch (dynAttr.getCourseApplDynConfig().getType()) {
+			 case BOOLEAN: ret[i] = getNotNullBool(dynAttr.isBooleanValue());
+				 break;
+			 case DATE:  ret[i]  = dateFormat.format(dynAttr.getDateValue());
+				 break;
+			 case DOUBLE: ret[i] = getNotNullDouble(dynAttr.getDoubleValue());
+				 break;
+			 case INT: ret[i] = getNotNullInt(dynAttr.getIntValue());
+				 break;
+			 case TEXT: ret[i] = getNotNullString(dynAttr.getTextValue());
+				 break;
+			 default: throw new IllegalArgumentException("Not supported cCourseApplDynConfigType: " 
+				 + dynAttr.getCourseApplDynConfig().getType());
+			}
+		}
+		
+		return ret;
 	}
 	
 	private Course getCourseByCourseParticipant(CourseParticipant cp) {

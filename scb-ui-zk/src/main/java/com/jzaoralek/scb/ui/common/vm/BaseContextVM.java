@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.util.resource.Labels;
 
 import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -76,6 +77,32 @@ public abstract class BaseContextVM extends BaseVM {
 	protected String getNotNullLong(Long value) {
 		if (value != null && value != 0) {
 			return String.valueOf(value);
+		} else {
+			return "";
+		}
+	}
+	
+	protected String getNotNullInt(Integer value) {
+		if (value != null && value != 0) {
+			return String.valueOf(value);
+		} else {
+			return "";
+		}
+	}
+	
+	protected String getNotNullDouble(Double value) {
+		if (value != null && value != 0) {
+			return String.valueOf(value);
+		} else {
+			return "";
+		}
+	}
+	
+	protected String getNotNullBool(Boolean value) {
+		if (value != null) {
+			return value 
+					? Labels.getLabel("txt.ui.common.yes") 
+					: Labels.getLabel("txt.ui.common.no");
 		} else {
 			return "";
 		}
