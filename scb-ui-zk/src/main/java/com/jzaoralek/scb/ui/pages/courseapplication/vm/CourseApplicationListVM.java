@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +52,7 @@ import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplDynAttrConfigService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
+import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
@@ -80,6 +80,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 	
 	@WireVariable
 	private CourseApplDynAttrConfigService courseApplDynAttrConfigService;
+	
+	@WireVariable
+	private CourseService courseService;
 
 	private List<CourseApplication> courseApplicationList;
 	private List<CourseApplication> courseApplicationListBase;
@@ -484,8 +487,8 @@ public class CourseApplicationListVM extends BaseContextVM {
 				item = (CourseApplication)model.getElementAt(i);
 				course = getCourseByCourseParticipant(item.getCourseParticipant());
 				if (dynAttrPresent) {
-					// TODO: load dynamic attributes
-//					item.getCourseParticipant().setDynAttrList(courseApplicationService.get);
+					// load dynamic attributes
+					item.getCourseParticipant().setDynAttrList(courseService.getDynAttrByCoursePartic(item.getCourseParticipant()));
 				}
 				if (this.pageMode == PageMode.COURSE_APPLICATION_LIST) {
 					data.put(String.valueOf(i+1),
@@ -548,17 +551,17 @@ public class CourseApplicationListVM extends BaseContextVM {
 	
 	public Object[] addDynAttrValues(CourseParticipant coursePartic, DateFormat dateFormat) {
 		Object[] ret = null;
-		if (coursePartic.getDynAttrList() == null) {
+		if (CollectionUtils.isEmpty(coursePartic.getDynAttrList())) {
 			return ret;
 		}
 		ret = new Object[coursePartic.getDynAttrList().size()];
 		CourseApplDynAttr dynAttr = null;
 		for (int i = 0; i < coursePartic.getDynAttrList().size(); i++) {
-			dynAttr = (CourseApplDynAttr)ret[i];
+			dynAttr = coursePartic.getDynAttrList().get(i);
 			switch (dynAttr.getCourseApplDynConfig().getType()) {
 			 case BOOLEAN: ret[i] = getNotNullBool(dynAttr.isBooleanValue());
 				 break;
-			 case DATE:  ret[i]  = dateFormat.format(dynAttr.getDateValue());
+			 case DATE:  ret[i]  = dynAttr.getDateValue() != null ? dateFormat.format(dynAttr.getDateValue()) : "";
 				 break;
 			 case DOUBLE: ret[i] = getNotNullDouble(dynAttr.getDoubleValue());
 				 break;
