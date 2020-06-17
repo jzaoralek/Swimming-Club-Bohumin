@@ -482,6 +482,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		ListModel<Object> model = listbox.getListModel();
 		CourseApplication item = null;
 		Course course = null;
+		Object[] row =  null;
 		for (int i = 0; i < model.getSize(); i++) {
 			if (model.getElementAt(i) instanceof CourseApplication) {
 				item = (CourseApplication)model.getElementAt(i);
@@ -491,26 +492,45 @@ public class CourseApplicationListVM extends BaseContextVM {
 					item.getCourseParticipant().setDynAttrList(courseService.getDynAttrByCoursePartic(item.getCourseParticipant()));
 				}
 				if (this.pageMode == PageMode.COURSE_APPLICATION_LIST) {
-					data.put(String.valueOf(i+1),
-						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
-								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
-								item.getCourseParticRepresentative().getContact().getCompleteName(),								
-								dateFormat.format(item.getModifAt()),
-								item.getCourseParticipant().getInCourseInfo(),
-								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
-								item.getCourseParticipant().getPersonalNo().replace("/", ""),
-								item.getCourseParticRepresentative().getContact().getPhone1(),
-								item.getCourseParticRepresentative().getContact().getEmail1(),								
-								getNotNullString(item.getCourseParticipant().getContact().getStreet()),
-								getNotNullLong(item.getCourseParticipant().getContact().getLandRegistryNumber()),
-								getNotNullString(item.getCourseParticipant().getContact().getHouseNumber()),
-								getNotNullString(item.getCourseParticipant().getContact().getCity()),
-								getNotNullString(item.getCourseParticipant().getContact().getZipCode()),
-								getNotNullString(item.getCourseParticipant().getHealthInsurance()),
-								course != null ? course.getName() : "",
-								course != null && course.getCourseLocation() != null ? course.getCourseLocation().getName() : "",
-								addDynAttrValues(item.getCourseParticipant(), dateFormat), // dynamic attributes
-					});
+					row = new Object[17 + (CollectionUtils.isEmpty(item.getCourseParticipant().getDynAttrList())  ? 0 : item.getCourseParticipant().getDynAttrList().size())];
+					row [0] = item.getCourseParticipant().getContact().getCompleteName();
+					row [1] = getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null);
+					row [2] = item.getCourseParticRepresentative().getContact().getCompleteName();						
+					row [3] = dateFormat.format(item.getModifAt());
+					row [4] = item.getCourseParticipant().getInCourseInfo();
+					row [5] = !item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no");
+					row [6] = item.getCourseParticipant().getPersonalNo().replace("/", "");
+					row [7] = item.getCourseParticRepresentative().getContact().getPhone1();
+					row [8] = item.getCourseParticRepresentative().getContact().getEmail1();					
+					row [9] = getNotNullString(item.getCourseParticipant().getContact().getStreet());
+					row [10] = getNotNullLong(item.getCourseParticipant().getContact().getLandRegistryNumber());
+					row [11] = getNotNullString(item.getCourseParticipant().getContact().getHouseNumber());
+					row [12] = getNotNullString(item.getCourseParticipant().getContact().getCity());
+					row [13] = getNotNullString(item.getCourseParticipant().getContact().getZipCode());
+					row [14] = getNotNullString(item.getCourseParticipant().getHealthInsurance());
+					row [15] = course != null ? course.getName() : "";
+					row [16] = course != null && course.getCourseLocation() != null ? course.getCourseLocation().getName() : "";  //16
+					addDynAttrValues(row, 18, item.getCourseParticipant(), dateFormat);
+					data.put(String.valueOf(i+1), row);
+//						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
+//								getDateConverter().coerceToUi(item.getCourseParticipant().getBirthdate(), null, null),
+//								item.getCourseParticRepresentative().getContact().getCompleteName(),								
+//								dateFormat.format(item.getModifAt()),
+//								item.getCourseParticipant().getInCourseInfo(),
+//								!item.isCurrentParticipant() ? Labels.getLabel("txt.ui.common.yes") : Labels.getLabel("txt.ui.common.no"),
+//								item.getCourseParticipant().getPersonalNo().replace("/", ""),
+//								item.getCourseParticRepresentative().getContact().getPhone1(),
+//								item.getCourseParticRepresentative().getContact().getEmail1(),								
+//								getNotNullString(item.getCourseParticipant().getContact().getStreet()),
+//								getNotNullLong(item.getCourseParticipant().getContact().getLandRegistryNumber()),
+//								getNotNullString(item.getCourseParticipant().getContact().getHouseNumber()),
+//								getNotNullString(item.getCourseParticipant().getContact().getCity()),
+//								getNotNullString(item.getCourseParticipant().getContact().getZipCode()),
+//								getNotNullString(item.getCourseParticipant().getHealthInsurance()),
+//								course != null ? course.getName() : "",
+//								course != null && course.getCourseLocation() != null ? course.getCourseLocation().getName() : "",  //17
+//								addDynAttrValues(item.getCourseParticipant(), dateFormat), // dynamic attributes
+//					});
 				} else {
 					data.put(String.valueOf(i+1),
 						new Object[] { item.getCourseParticipant().getContact().getCompleteName(),
@@ -526,7 +546,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getHouseNumber()),
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity()),
 								getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode()),
-								addDynAttrValues(item.getCourseParticipant(), dateFormat), // dynamic attributes
+//								addDynAttrValues(item.getCourseParticipant(), dateFormat), // dynamic attributes
 								});
 				}
 			}
@@ -549,32 +569,29 @@ public class CourseApplicationListVM extends BaseContextVM {
 		}
 	}
 	
-	public Object[] addDynAttrValues(CourseParticipant coursePartic, DateFormat dateFormat) {
-		Object[] ret = null;
+	public void addDynAttrValues(Object[] row, int startIndex, CourseParticipant coursePartic, DateFormat dateFormat) {
 		if (CollectionUtils.isEmpty(coursePartic.getDynAttrList())) {
-			return ret;
+			return;
 		}
-		ret = new Object[coursePartic.getDynAttrList().size()];
 		CourseApplDynAttr dynAttr = null;
-		for (int i = 0; i < coursePartic.getDynAttrList().size(); i++) {
+		for (int i = startIndex; i < (startIndex + coursePartic.getDynAttrList().size()); i++) {
 			dynAttr = coursePartic.getDynAttrList().get(i);
 			switch (dynAttr.getCourseApplDynConfig().getType()) {
-			 case BOOLEAN: ret[i] = getNotNullBool(dynAttr.isBooleanValue());
+			 case BOOLEAN: row[i] = getNotNullBool(dynAttr.isBooleanValue());
 				 break;
-			 case DATE:  ret[i]  = dynAttr.getDateValue() != null ? dateFormat.format(dynAttr.getDateValue()) : "";
+			 case DATE:  row[i]  = dynAttr.getDateValue() != null ? dateFormat.format(dynAttr.getDateValue()) : "";
 				 break;
-			 case DOUBLE: ret[i] = getNotNullDouble(dynAttr.getDoubleValue());
+			 case DOUBLE: row[i] = getNotNullDouble(dynAttr.getDoubleValue());
 				 break;
-			 case INT: ret[i] = getNotNullInt(dynAttr.getIntValue());
+			 case INT: row[i] = getNotNullInt(dynAttr.getIntValue());
 				 break;
-			 case TEXT: ret[i] = getNotNullString(dynAttr.getTextValue());
+			 case TEXT: row[i] = getNotNullString(dynAttr.getTextValue());
 				 break;
 			 default: throw new IllegalArgumentException("Not supported cCourseApplDynConfigType: " 
 				 + dynAttr.getCourseApplDynConfig().getType());
 			}
 		}
-		
-		return ret;
+		System.out.println(row);
 	}
 	
 	private Course getCourseByCourseParticipant(CourseParticipant cp) {

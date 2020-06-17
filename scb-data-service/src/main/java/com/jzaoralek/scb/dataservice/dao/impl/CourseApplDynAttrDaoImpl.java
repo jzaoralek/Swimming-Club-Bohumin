@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -109,7 +110,9 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 		paramMap.addValue(COURSE_PARTIC_UUID_PARAM, coursePartic.getUuid().toString());
 		/* Tohle je riziko, protoze po zmene prihlasky se mohou zobrazit/skryt dyn. atributy
 		 * Resenim je pridat do course_application atribut createdAt.*/
-		paramMap.addValue(COURSE_PARTIC_CREATED_AT_PARAM, coursePartic.getModifAt());
+		paramMap.addValue(COURSE_PARTIC_CREATED_AT_PARAM, coursePartic.getModifAt() != null 
+															? coursePartic.getModifAt() 
+															: Calendar.getInstance().getTime());
 		
 		return namedJdbcTemplate.query(SELECT_BY_COURSE_APPLICATION, 
 				paramMap, 
