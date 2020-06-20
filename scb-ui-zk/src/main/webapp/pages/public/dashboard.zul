@@ -14,7 +14,7 @@
 		<vlayout sclass="dashboar-public">
 			<label value="${vm.welcomeInfo}" sclass="scb-headline-big"/>
 			
-			<button label="@load(vm.newCourseApplicationTitle)" 
+			<button label="${c:l('txt.ui.common.courseApplication')}" 
 				href="/pages/public/prihlaska.zul"
 				iconSclass="z-icon-file-text"
 				visible="@load(vm.isCourseApplicationAllowed())"

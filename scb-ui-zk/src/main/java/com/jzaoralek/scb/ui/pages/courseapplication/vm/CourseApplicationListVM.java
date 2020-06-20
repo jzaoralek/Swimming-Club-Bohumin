@@ -472,7 +472,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.zipCode");
 			if (dynAttrPresent) {
 				// add dynamic attributes headers
-				addDynAttrCols(dynAttrConfigList, headerArray, lh.getChildren().size()+7);
+				addDynAttrCols(dynAttrConfigList, headerArray, lh.getChildren().size()+8);
 			}
 		}
 		data.put("0", headerArray);
@@ -574,7 +574,6 @@ public class CourseApplicationListVM extends BaseContextVM {
 			}
 			rowIdx++;
 		}
-		System.out.println(row);
 	}
 	
 	private Course getCourseByCourseParticipant(CourseParticipant cp) {
