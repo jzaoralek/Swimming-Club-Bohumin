@@ -993,6 +993,41 @@ span.login-failed{
 	border-color: red !important;
 }
 
+div.scb-z-validation-error-input{
+	border: none !important;
+}
+
+span.scb-z-validation-error-input{
+	border: none !important;
+}
+
+.scb-z-validation-error-input input.z-bandbox-input{
+	border-color: red !important;
+	border-right-color: #CFCFCF !important;
+}
+
+.scb-z-validation-error-input a.z-bandbox-button{
+	border-color: red !important;
+}
+
+.scb-z-validation-error-input input.z-combobox-input{
+	border-color: red !important;
+	border-right-color: #CFCFCF !important;
+}
+
+.scb-z-validation-error-input a.z-combobox-button{
+	border-color: red !important;
+}
+
+.scb-z-validation-error-input input.z-datebox-input{
+	border-color: red !important;
+	border-right-color: #CFCFCF !important;
+}
+
+.scb-z-validation-error-input a.z-datebox-button{
+	border-color: red !important;
+}
+
 /* FORM */
 .scb-form-grid-2 .z-cell{
 	padding: 10px 0px;

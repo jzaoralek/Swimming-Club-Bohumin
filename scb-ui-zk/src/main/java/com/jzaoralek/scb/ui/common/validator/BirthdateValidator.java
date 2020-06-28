@@ -36,6 +36,7 @@ public class BirthdateValidator extends ScbAbstractValidator {
 				
 			}
 		}
+		removeValidationStyle(ctx);
 	}
 
 }

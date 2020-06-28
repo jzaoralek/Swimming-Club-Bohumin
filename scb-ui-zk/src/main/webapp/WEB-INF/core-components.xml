@@ -79,4 +79,10 @@
 	    <macro-uri>/pages/common/component/course-copy-params.zul</macro-uri>
 	</component>
 	
+	<!-- Boolean ikona -->
+	<component>
+	    <component-name>boolean-icon</component-name>    
+	    <macro-uri>/pages/common/component/boolean-icon.zul</macro-uri>
+	</component>
+	
 </language-addon>

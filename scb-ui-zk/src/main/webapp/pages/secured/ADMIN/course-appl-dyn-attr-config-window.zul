@@ -1,0 +1,99 @@
+<window id="modalWindow"
+	title="@init(vm.pageHeadline)" 
+	border="normal" 
+    width="375px"
+    position="center,center" 
+    closable="true">
+    
+    <style>
+		<!-- cut/hide the vertical borders in the grid rows -->
+		tr.z-row td.z-row-inner { border-right: 0px #CCC;  }
+		
+		.z-row:hover > .z-row-inner, .z-row:hover > .z-cell {background:none; !important}			
+	</style>
+	
+    <vbox align="center" viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.configuration.vm.CourseApplDynAttrWinVM')"
+    	validationMessages="@id('vmsgs')"
+	    form="@id('fx') @load(vm) @save(vm, before='submitCmd')" >
+    	
+    	<grid hflex="1" sclass="form-grid" >
+			<columns>
+                <column align="center" hflex="1"/>
+            </columns>
+			<rows style="background: white;" >
+				<row>
+					<cell>
+						<vbox hflex="1">
+							<label value="${c:l('txt.ui.common.name')}"/>
+							<textbox id="dynAttrname"
+								value="@bind(fx.item.name) @validator(vm.notNullValidator)"
+								maxlength="240"
+								placeholder="*"
+								sclass="form-input-text"
+								tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+								tabindex="1"
+								hflex="1" />
+							<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+								<span sclass="alert alert-danger" visible="@load(not empty vmsgs[dynAttrname])" >
+									<label value="@bind(vmsgs[dynAttrname])" />
+								</span>
+							</hbox>
+						</vbox>
+					</cell>		
+				</row>
+				<row>
+					<cell>
+						<vbox hflex="1" vflex="1">
+							<label value="${c:l('txt.ui.common.dataType')}"/>
+							<listbox id="dynAttrType" model="@load(vm.dynAttrTypeList)"
+								mold="select"
+								disabled="@load(vm.editMode)"
+								selectedItem="@bind(vm.dynAttrTypeSelected)"
+								style="background: white;"
+								hflex="1" >
+								<template name="model">
+					            	<listitem label="@bind(each.label)" value="@bind(each)"/>
+								</template>
+							</listbox>
+						</vbox>
+					</cell>
+				</row>
+				<row>
+					<cell>
+						<vbox hflex="1" vflex="1">
+							<label value="${c:l('txt.ui.common.required')}"/>
+							<listbox selectedItem="@bind(vm.item.required)"
+								mold="select"
+								height="25px" >
+								<listitem label="Ano" value="${true}" />
+								<listitem label="Ne" value="${false}" />
+							</listbox>
+						</vbox>
+					</cell>
+				</row>
+				<row>
+					<cell>
+						<vbox hflex="1" vflex="1">
+							<label value="${c:l('txt.ui.common.description2')}"/>
+							<textbox value="@bind(fx.item.description)"
+								maxlength="1000"
+								multiline="true"
+								sclass="form-input-text"
+								tabindex="2"
+								hflex="1"
+								height="95px" />
+						</vbox>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		
+		<button label="OK"
+			onClick="@command('submitCmd', window=modalWindow)"
+			sclass="btn-success"
+			tabindex="3"
+			style="margin-top: 10px"
+			iconSclass="z-icon-check"  />
+	    
+    </vbox>
+</window>

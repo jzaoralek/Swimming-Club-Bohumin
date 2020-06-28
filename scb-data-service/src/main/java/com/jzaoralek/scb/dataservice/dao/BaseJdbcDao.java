@@ -71,4 +71,8 @@ public abstract class BaseJdbcDao {
 	  cal.setTime(date);
 	  return cal;
 	}
+	
+	protected static boolean fetchBoolean(int value) {
+		return value == 1;
+	}
 }

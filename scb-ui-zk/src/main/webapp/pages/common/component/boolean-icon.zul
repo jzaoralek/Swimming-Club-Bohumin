@@ -1,0 +1,10 @@
+<zk>
+	<custom-attributes booleanValue="${arg.booleanValue}" />
+	<custom-attributes iconVisible="${arg.iconVisible}" />
+	<custom-attributes customSclass="${arg.customSclass}" />
+	
+	<a iconSclass="z-icon-check-circle ${customSclass}"
+       	style="${booleanValue ? 'color: #78C128; margin-right: 5px;' : 'color: grey; margin-right: 5px;'}"
+       	tooltiptext="${booleanValue ? c:l('txt.ui.common.active') : c:l('txt.ui.common.inactive')}"
+       	if="${iconVisible}" />
+</zk>

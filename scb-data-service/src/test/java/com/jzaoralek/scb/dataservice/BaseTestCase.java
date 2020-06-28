@@ -7,13 +7,21 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.util.CollectionUtils;
 
+import com.jzaoralek.scb.dataservice.dao.ContactDao;
+import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
+import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
+import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem;
 import com.jzaoralek.scb.dataservice.domain.CodeListItem.CodeListType;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig.CourseApplDynAttrConfigType;
 import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
+import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.IdentEntity;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
@@ -62,6 +70,26 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 	protected static final DayOfWeek DAY_OF_WEEK = DayOfWeek.MONDAY;
 	protected static final UUID COURSE_UUID = UUID.randomUUID();
 	protected static final UUID USER_UUID = UUID.randomUUID();
+	
+	protected static final Date DYN_CONFIG_CREATED_AT = Calendar.getInstance().getTime();
+	protected static final String DYN_CONFIG_DESCRIPTION = "description";
+	protected static final String DYN_CONFIG_NAME = "name";
+	protected static final boolean DYN_CONFIG_REQUIRED = true;
+	protected static final CourseApplDynAttrConfigType DYN_CONFIG_TYPE = CourseApplDynAttrConfigType.DOUBLE;
+	
+	protected UUID COURSE_PARTICIPANT_UUID;
+	
+	@Autowired
+	protected ScbUserDao scbUserDao;
+
+	@Autowired
+	protected ContactDao contactDao;
+
+	@Autowired
+	protected CourseParticipantDao courseParticipantDao;
+	
+	@Autowired
+	protected CourseApplicationDao courseApplicationDao;
 
 	protected void fillIdentEntity(IdentEntity identEntity) {
 		if (identEntity == null) {
@@ -189,5 +217,38 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 		ret.setCourseUuid(COURSE_UUID);
 
 		return ret;
+	}
+	
+	protected CourseApplDynAttrConfig buildCourseApplDynAttrConfig() {
+		CourseApplDynAttrConfig ret = new CourseApplDynAttrConfig();
+		fillIdentEntity(ret);
+		ret.setCreatedAt(DYN_CONFIG_CREATED_AT);
+		ret.setDescription(DYN_CONFIG_DESCRIPTION);
+		ret.setName(DYN_CONFIG_NAME);
+		ret.setRequired(true);
+		ret.setTerminatedAt(null);
+		ret.setType(CourseApplDynAttrConfigType.DOUBLE);
+		
+		return ret;
+	}
+	
+	protected CourseApplication buildCourseApplication() {
+		CourseApplication item = new CourseApplication();
+		fillIdentEntity(item);
+		CourseParticipant courseParticipant = buildCourseParticipantUUIDGenerated();
+		COURSE_PARTICIPANT_UUID = courseParticipant.getUuid();
+		item.setCourseParticipant(courseParticipant);
+		item.setCourseParticRepresentative(buildScbUser());
+		item.setYearFrom(YEAR_FROM);
+		item.setYearTo(YEAR_TO);
+
+		contactDao.insert(item.getCourseParticipant().getContact());
+		courseParticipantDao.insert(item.getCourseParticipant());
+
+		contactDao.insert(item.getCourseParticRepresentative().getContact());
+		scbUserDao.insert(item.getCourseParticRepresentative());
+		
+		return item;
+		
 	}
 }

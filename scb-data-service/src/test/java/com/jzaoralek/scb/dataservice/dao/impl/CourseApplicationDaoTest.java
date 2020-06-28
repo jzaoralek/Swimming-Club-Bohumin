@@ -8,52 +8,19 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jzaoralek.scb.dataservice.BaseTestCase;
-import com.jzaoralek.scb.dataservice.dao.ContactDao;
-import com.jzaoralek.scb.dataservice.dao.CourseApplicationDao;
-import com.jzaoralek.scb.dataservice.dao.CourseParticipantDao;
-import com.jzaoralek.scb.dataservice.dao.ScbUserDao;
-import com.jzaoralek.scb.dataservice.domain.CourseApplication;
-import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 
 
 public class CourseApplicationDaoTest extends BaseTestCase {
-
-	@Autowired
-	private CourseApplicationDao courseApplicationDao;
-
-	@Autowired
-	private ScbUserDao scbUserDao;
-
-	@Autowired
-	private ContactDao contactDao;
-
-	@Autowired
-	private CourseParticipantDao courseParticipantDao;
-
-	private UUID COURSE_PARTICIPANT_UUID;
 
 	private CourseApplication item;
 
 	@Before
 	public void setUp() {
-		item = new CourseApplication();
-		fillIdentEntity(item);
-		CourseParticipant courseParticipant = buildCourseParticipantUUIDGenerated();
-		COURSE_PARTICIPANT_UUID = courseParticipant.getUuid();
-		item.setCourseParticipant(courseParticipant);
-		item.setCourseParticRepresentative(buildScbUser());
-		item.setYearFrom(YEAR_FROM);
-		item.setYearTo(YEAR_TO);
-
-		contactDao.insert(item.getCourseParticipant().getContact());
-		courseParticipantDao.insert(item.getCourseParticipant());
-
-		contactDao.insert(item.getCourseParticRepresentative().getContact());
-		scbUserDao.insert(item.getCourseParticRepresentative());
+		item = buildCourseApplication();
 		courseApplicationDao.insert(item);
 	}
 

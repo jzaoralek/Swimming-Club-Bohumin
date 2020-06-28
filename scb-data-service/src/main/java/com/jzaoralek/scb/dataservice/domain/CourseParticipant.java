@@ -61,6 +61,7 @@ public class CourseParticipant implements IdentEntity {
 	private IscusRole iscusRole;
 	private String iscusParticId;
 	private String iscusSystemId;
+	private List<CourseApplDynAttr> dynAttrList;
 
 	/*
 	 * Atribut neulozeny v databazi, pouzity ve statistice dochazka.
@@ -268,6 +269,12 @@ public class CourseParticipant implements IdentEntity {
 	public void setCourseType(CourseType courseType) {
 		this.courseType = courseType;
 	}
+	public List<CourseApplDynAttr> getDynAttrList() {
+		return dynAttrList;
+	}
+	public void setDynAttrList(List<CourseApplDynAttr> dynAttrList) {
+		this.dynAttrList = dynAttrList;
+	}
 	
 	public String getInCourseInfo() {
 		String ret = null;
@@ -325,6 +332,7 @@ public class CourseParticipant implements IdentEntity {
 				+ ", varsymbolCore=" + varsymbolCore + ", notifiedSemester1PaymentAt=" + notifiedSemester1PaymentAt
 				+ ", notifiedSemester2PaymentAt=" + notifiedSemester2PaymentAt + ", courseParticipationInterruptedAt="
 				+ courseParticipationInterruptedAt + ", iscusRole=" + iscusRole + ", iscusParticId=" + iscusParticId
-				+ ", iscusSystemId=" + iscusSystemId + ", lessonAttendance=" + lessonAttendance + "]";
+				+ ", iscusSystemId=" + iscusSystemId + ", dynAttrList=" + dynAttrList + ", lessonAttendance="
+				+ lessonAttendance + "]";
 	}
 }

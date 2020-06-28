@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.domain;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.util.StringUtils;
@@ -103,5 +104,5 @@ public class CourseApplication implements IdentEntity {
 				+ yearFrom + ", yearTo=" + yearTo + ", payed=" + payed + ", courseParticipant=" + courseParticipant
 				+ ", courseParticRepresentative=" + courseParticRepresentative + ", currentParticipant="
 				+ currentParticipant + "]";
-	}	
+	}
 }

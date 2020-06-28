@@ -1,6 +1,5 @@
 <window id="modalWindow"
 	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.payments.vm.PaymentInstructionWinVM')"
-	title="@init(vm.pageHeadline)" 
 	border="normal" 
     width="750px"
     position="center,center" 

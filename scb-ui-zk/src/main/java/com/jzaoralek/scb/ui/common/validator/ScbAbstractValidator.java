@@ -17,16 +17,19 @@ import com.jzaoralek.scb.ui.common.utils.ComponentUtils;
 public abstract class ScbAbstractValidator extends AbstractValidator {
 
     private static final String VALIDATION_CLASS = "scb-input-invalid";
+    private static final String INVALID_INPUT_SCLASS = "scb-z-validation-error-input";
 
     /**
      * Přidá na komponentu validační styl (css třídu)
      * 
      */
+    @Override
     protected void addInvalidMessage(ValidationContext ctx, String message) {
         Component comp = ctx.getBindContext().getComponent();
         if (comp instanceof HtmlBasedComponent) {
             HtmlBasedComponent htmlBased = (HtmlBasedComponent) comp;
             ComponentUtils.addSclass(htmlBased, VALIDATION_CLASS);
+            ComponentUtils.addSclass(htmlBased, INVALID_INPUT_SCLASS);
         }
 
         super.addInvalidMessage(ctx, message);
@@ -42,6 +45,7 @@ public abstract class ScbAbstractValidator extends AbstractValidator {
         if (comp instanceof HtmlBasedComponent) {
             HtmlBasedComponent htmlBased = (HtmlBasedComponent) comp;
             ComponentUtils.removeSclass(htmlBased, VALIDATION_CLASS);
+            ComponentUtils.removeSclass(htmlBased, INVALID_INPUT_SCLASS);
         }
     }
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
+import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
@@ -89,4 +91,5 @@ public interface CourseService {
 			UUID courseUuidOrig, 
 			Calendar from, 
 			Calendar to);
+	List<CourseApplDynAttr> getDynAttrByCoursePartic(CourseParticipant coursePartic);
 }

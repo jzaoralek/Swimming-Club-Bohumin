@@ -15,6 +15,8 @@
 			validationMessages="@id('vmsgs')"
 		    form="@id('fx') @load(vm) @save(vm, before='submit')" >
 		    
+		    <custom-attributes submitCmd="submit" />
+		    
 		    <vlayout>
 				<page-toolbar width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())"/>
 	            <label value="${vm.courseParticipant.contact.completeName}" sclass="scb-headline-big"/>
@@ -380,6 +382,102 @@
 															sclass="form-input-textarea"
 															maxlength="@load(vm.getHealthInfoMaxlength())" />
 													</vbox>
+												</cell>
+											</row>
+											<!-- Dynamic attributes -->
+											<!-- The same fragment in pages/shared/prihlaska.zul and pages/secured/TRAINER/ucastnik.zul !!! -->
+											<row>
+												<cell style="padding-left: 0px; padding-right: 0px;">
+													<grid hflex="1" vflex="min"
+														model="@load(vm.courseParticipant.dynAttrList)">
+														<columns>
+															<column align="left" valign="bottom" />
+														</columns>
+														<template name="model">
+															<!-- Zobrazovány jsou pouze Dynamické atributy DynamickyAtributCiselniku.jeAktivni = 'true'. -->
+															<row visible="@load(empty(each.courseParticUuid) or each.courseApplDynConfig.active)"> 
+																<cell>
+																	<vbox hflex="1" >
+																		<!-- Typ TEXT -->
+																		<vbox hflex="1"
+																			if="${each.courseApplDynConfig.type == 'TEXT'}" >
+																			<label value="${each.courseApplDynConfig.name}" />
+																			<textbox id="${each.courseApplDynConfig.uuid.toString()}"
+																				value="@bind(each.textValue) @save(each.textValue, before={submitCmd}) @validator(vm.notNullValidator, required=each.courseApplDynConfig.required)"
+																				maxlength="240"
+																				placeholder="${each.courseApplDynConfig.required ? '*' : ''}"
+																				sclass="form-input-text"
+																				tooltiptext="${each.courseApplDynConfig.description}"
+																				hflex="1" />	
+																			<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+																				<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[each.courseApplDynConfig.uuid.toString()])" >
+																					<label value="@load(vmsgs[each.courseApplDynConfig.uuid.toString()])" />
+																				</span>
+																			</hbox>
+																		</vbox>
+																		<!-- Typ DATE -->
+																		<vbox hflex="1"
+																			if="${each.courseApplDynConfig.type == 'DATE'}" >
+																			<label value="${each.courseApplDynConfig.name}" />
+																			<datebox id="${each.courseApplDynConfig.uuid.toString()}"
+																				value="@bind(each.dateValue) @save(each.dateValue, before={submitCmd}) @validator(vm.notNullObjectValidator, required=each.courseApplDynConfig.required)"
+											                            		format="@load(vm.dateFormat)" 
+											                            		maxlength="@load(vm.getDateMaxlength())"
+											                            		placeholder="${each.courseApplDynConfig.required ? '*' : ''}"
+											                            		tooltiptext="${each.courseApplDynConfig.description}" />
+																			<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+																				<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[each.courseApplDynConfig.uuid.toString()])" >
+																					<label value="@bind(vmsgs[each.courseApplDynConfig.uuid.toString()])" />
+																				</span>
+																			</hbox>
+																		</vbox>
+																		<!-- Typ INT -->
+																		<vbox hflex="1"
+																			if="${each.courseApplDynConfig.type == 'INT'}" >
+																			<label value="${each.courseApplDynConfig.name}" />
+																			<intbox id="${each.courseApplDynConfig.uuid.toString()}"
+																				value="@bind(each.intValue) @save(each.intValue, before={submitCmd}) @validator(vm.notNullObjectValidator, required=each.courseApplDynConfig.required)"
+																				placeholder="${each.courseApplDynConfig.required ? '*' : ''}"
+																				tooltiptext="${each.courseApplDynConfig.description}" />
+																			<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+																				<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[each.courseApplDynConfig.uuid.toString()])" >
+																					<label value="@bind(vmsgs[each.courseApplDynConfig.uuid.toString()])" />
+																				</span>
+																			</hbox>
+																		</vbox>
+																		<!-- Typ DOUBLE -->
+																		<vbox hflex="1"
+																			if="${each.courseApplDynConfig.type == 'DOUBLE'}" >
+																			<label value="${each.courseApplDynConfig.name}" />
+																			<doublebox id="${each.courseApplDynConfig.uuid.toString()}"
+																				value="@bind(each.doubleValue) @save(each.doubleValue, before={submitCmd}) @validator(vm.notNullObjectValidator, required=each.courseApplDynConfig.required)"
+																				placeholder="${each.courseApplDynConfig.required ? '*' : ''}"
+																				tooltiptext="${each.courseApplDynConfig.description}" />
+																			<hbox hflex="1" align="end" pack="end" sclass="form-grid-validation-hbox">
+																				<span sclass="alert alert-danger" hflex="min" visible="@load(not empty vmsgs[each.courseApplDynConfig.uuid.toString()])" >
+																					<label value="@bind(vmsgs[each.courseApplDynConfig.uuid.toString()])" />
+																				</span>
+																			</hbox>
+																		</vbox>
+																		<!-- Typ BOOLEAN -->
+																		<vbox hflex="1"
+																			if="${each.courseApplDynConfig.type == 'BOOLEAN'}" >
+																			<label value="${each.courseApplDynConfig.name}" />
+																			<hlayout width="150px">
+																				<radiogroup id="${each.courseApplDynConfig.uuid}_dynRadioGroup" selectedItem="@bind(each.booleanValue)"  />
+																				<radio label="${c:l('txt.ui.common.yes')}" 
+																					radiogroup="${each.courseApplDynConfig.uuid}_dynRadioGroup"
+																					value="${true}" />
+								                								<radio label="${c:l('txt.ui.common.no')}" 
+								                									radiogroup="${each.courseApplDynConfig.uuid}_dynRadioGroup"
+								                									value="${false}"/>
+																			</hlayout>
+																		</vbox>
+																	</vbox>
+																</cell>
+															</row>
+														</template>
+													</grid>
 												</cell>
 											</row>
 										</rows>
