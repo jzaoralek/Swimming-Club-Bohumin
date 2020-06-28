@@ -413,8 +413,12 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 			Calendar from, 
 			Calendar to) {
 		List<CourseCourseParticipantVO> courseCourseParticipantVOList = new ArrayList<>();
+		CourseCourseParticipantVO coursePartcVOItem = null;
 		for (CourseParticipant item : courseParticipantList) {
-			courseCourseParticipantVOList.add(getCourseCourseParticipantVO(item.getUuid(), courseUuidOrig, false));
+			coursePartcVOItem = getCourseCourseParticipantVO(item.getUuid(), courseUuidOrig, false);
+			if (coursePartcVOItem != null) {
+				courseCourseParticipantVOList.add(coursePartcVOItem);				
+			}
 		}
 		// aktualizace course_uuid v course_course_participant, cilem je nemenit varsymbol
 		courseApplicationService.updateCourseParticCourseUuid(

@@ -1,12 +1,10 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +20,12 @@ import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
-import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
-import com.jzaoralek.scb.ui.common.utils.DateUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -112,7 +108,20 @@ public class ParticipantToCourseWinVM extends BaseVM {
 	@NotifyChange("*")
 	@Command
 	public void changeCourseCmd() {
-		this.courseApplicationList = courseApplicationService.getInCourse(this.courseSelected.getUuid(), course.getYearFrom(), course.getYearTo());
+		List<CourseParticipant> courseParticList = courseService.getByCourseParticListByCourseUuid(this.courseSelected.getUuid(), false);
+		List<CourseApplication> courseApplicationList = null;
+		if (!CollectionUtils.isEmpty(courseParticList)) {
+			courseApplicationList = new ArrayList<>();
+			CourseApplication courseApplication = null;
+			for (CourseParticipant coursePartic : courseParticList) {
+				courseApplication = new CourseApplication();
+				courseApplication.setCourseParticipant(coursePartic);
+				courseApplicationList.add(courseApplication);
+			}	
+		}
+//		orig solution
+//		this.courseApplicationList = courseApplicationService.getInCourse(this.courseSelected.getUuid(), course.getYearFrom(), course.getYearTo());
+		this.courseApplicationList = courseApplicationList;
 		this.courseApplicationListVisible = true;
 	}
 
