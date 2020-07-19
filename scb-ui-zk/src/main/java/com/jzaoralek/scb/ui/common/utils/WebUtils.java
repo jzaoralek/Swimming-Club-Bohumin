@@ -402,6 +402,12 @@ public final class WebUtils {
 			return true;
 		}
 		
+		logger.info("validateBirthNoCheckSum():: birthNo: {}", birthNo);
+		
+		if (birthNo.length() != 10) {
+			return false;
+		}
+		
 		int rcWithoutLastNo = Integer.parseInt(birthNo.substring(0, 9));
 		int modulo = rcWithoutLastNo%11;
 		int lastNo = Integer.parseInt(String.valueOf(birthNo.charAt(birthNo.length()-1)));
