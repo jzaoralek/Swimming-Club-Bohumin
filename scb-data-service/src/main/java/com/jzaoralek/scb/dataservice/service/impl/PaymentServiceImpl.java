@@ -162,6 +162,11 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 				mailToUser.append(lineSeparator);
 			}
 			
+			// instrukce pro spravne zadani variabilniho symbolu
+			mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text5", null, Locale.getDefault()));
+			mailToUser.append(lineSeparator);
+			mailToUser.append(lineSeparator);
+			
 			// volitelny text
 			if (StringUtils.hasText(optionalText)) {
 				mailToUser.append(optionalText);
