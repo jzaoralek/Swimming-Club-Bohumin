@@ -122,7 +122,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 	private void initCourseTypeCache() {
 		this.courseType = (CourseType)WebUtils.getSessAtribute(WebConstants.COURSE_TYPE_PARAM);
 		if (this.courseType == null)  {
-			this.courseType = CourseType.TWO_SEMESTER;
+			this.courseType = CourseType.STANDARD;
 			updateCourseTypeCache(this.courseType);
 		}
 	}

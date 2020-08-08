@@ -1,4 +1,5 @@
 <window id="modalWindow"
+	title="${c:l('txt.ui.common.PaymentInstruction')}"
 	viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.payments.vm.PaymentInstructionWinVM')"
 	border="normal" 
     width="750px"
