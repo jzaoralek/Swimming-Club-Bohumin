@@ -212,8 +212,8 @@ public final class WebUtils {
 		}
 		return messagesList;
 	}
-
 	public static List<Listitem> getMessageItemsFromEnumWithEmptyItem(EnumSet<? extends Enum<?>> enumSet){
+
 
 		List<Listitem> messagesList = getMessageItemsFromEnum(enumSet);
 		Listitem item= new Listitem();

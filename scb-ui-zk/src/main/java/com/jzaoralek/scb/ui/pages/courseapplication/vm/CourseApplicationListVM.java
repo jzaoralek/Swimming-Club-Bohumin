@@ -92,7 +92,13 @@ public class CourseApplicationListVM extends BaseContextVM {
 	private boolean unregToCurrYear;
 	private String unregToCurrYearLabel;
 	private final List<Listitem> coursePaymentStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(CoursePaymentState.class));
-	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.of(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER, PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER, PaymentNotifSendState.SENT_FIRST_SEMESTER, PaymentNotifSendState.SENT_SECOND_SEMESTER));
+	// filter items notif state for two semester course
+	private final List<Listitem> paymentNotifStateListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.of(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER, 
+																														PaymentNotifSendState.NOT_SENT_SECOND_SEMESTER, 
+																														PaymentNotifSendState.SENT_FIRST_SEMESTER, 
+																													PaymentNotifSendState.SENT_SECOND_SEMESTER));
+	// filter items notif state for standard course
+	private final List<Listitem> paymentNotifStateStandardCourseListWithEmptyItem = initPaymentNotifStateListStandardcourse();
 	private String bankAccountNumber;
 	private int yearFrom;
 	private CourseType courseType;
@@ -113,6 +119,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 			@Override
 			public void onEvent(Event event) {
 				if (event.getName().equals(ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT.name())) {
+					// initCourseTypeCache();
 					loadData();
 				}
 			}
@@ -139,6 +146,30 @@ public class CourseApplicationListVM extends BaseContextVM {
 		} else {
 			throw new IllegalStateException("Unexpected page url: " + WebUtils.getCurrentUrl());
 		}
+	}
+	
+	/**
+	 * Init filter items notif state for standard course.
+	 * @return
+	 */
+	private static List<Listitem> initPaymentNotifStateListStandardcourse() {
+		List<Listitem> messagesList = new ArrayList<>(2);
+		Listitem emptyItem = new Listitem();
+		emptyItem.setLabel("");
+		emptyItem.setValue(null);
+		messagesList.add(0, emptyItem);
+		
+		Listitem notSentItem = new Listitem();
+		notSentItem.setLabel(Labels.getLabel("txt.ui.common.copy.notSent"));
+		notSentItem.setValue(PaymentNotifSendState.NOT_SENT_FIRST_SEMESTER);
+		messagesList.add(notSentItem);
+		
+		Listitem sentItem = new Listitem();
+		sentItem.setLabel(Labels.getLabel("txt.ui.common.copy.sent"));
+		sentItem.setValue(PaymentNotifSendState.SENT_FIRST_SEMESTER);
+		messagesList.add(sentItem);
+		
+		return messagesList;
 	}
 
 	@NotifyChange("*")
@@ -821,8 +852,15 @@ public class CourseApplicationListVM extends BaseContextVM {
 		return coursePaymentStateListWithEmptyItem;
 	}
 	
+	@DependsOn("courseType")
 	public List<Listitem> getPaymentNotifStateListWithEmptyItem() {
-		return paymentNotifStateListWithEmptyItem;
+		if (courseType == CourseType.STANDARD) {
+			// for standard course only Sent and Not sent values
+			return paymentNotifStateStandardCourseListWithEmptyItem;
+		} else {
+			// for two semester course Sent and Not sent for I. and II. semester
+			return paymentNotifStateListWithEmptyItem;			
+		}
 	}
 	
 	public String getBankAccountNumber() {
