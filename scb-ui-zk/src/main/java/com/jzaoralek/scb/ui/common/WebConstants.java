@@ -18,7 +18,7 @@ public final class WebConstants {
     public static final String DATE_COL_WIDTH = "120px";
 
 	public static final String WEB_DATE_PATTERN = "dd.MM.yyyy";
-	public static final String WEB_DATE_ISCUS_PATTERN = "dd.MM.yy";
+	public static final String WEB_DATE_ISCUS_PATTERN = "dd.MM.yyyy";
 	public static final String WEB_DATETIME_PATTERN = "dd.MM.yyyy H:mm:ss";
 	public static final String WEB_TIME_PATTERN = "H:mm";
 	public static final String WEB_TIME_SECONDS_PATTERN = "mm:ss.ms";

@@ -737,7 +737,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		headerArray[15] = Labels.getLabel("txt.ui.common.email");
 		headerArray[16] = Labels.getLabel("txt.ui.iscus.particId");
 		headerArray[17] = Labels.getLabel("txt.ui.iscus.ClubLabels");
-		headerArray[17] = Labels.getLabel("txt.ui.iscus.systemIdNotEdit");
+		headerArray[18] = Labels.getLabel("txt.ui.iscus.systemIdNotEdit");
 		
 		data.put("0", headerArray);
 
