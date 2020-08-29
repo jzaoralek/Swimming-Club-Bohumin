@@ -9,13 +9,14 @@
 				<row if="${!vm.securedMode}" >
 					<cell   >
 						<vbox hflex="1">
-							<label value="${c:l('txt.ui.common.SelectCourseLocation')}"/>
+							<label value="${c:l('txt.ui.common.courseLocation2')}"/>
 							<!-- Vyber mista konani kurzu -->
 							<combobox model="@init(vm.courseLocationList)"
 								onSelect="@command('courseLocationSelectCmd')"
 								selectedItem="@bind(vm.courseLocationSelected)"
 								style="background: white;"
 								hflex="1"
+								placeholder="${c:l('txt.ui.common.SelectCourseLocation')}"
 								focus="${vm.courseSelectionRequired}"
 								readonly="true"
 								if="${!vm.securedMode}" >

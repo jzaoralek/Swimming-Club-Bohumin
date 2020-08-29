@@ -221,7 +221,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 		
 		// nacist podle username, pokud existuje, nastavit uuid, provede se jen update
-		ScbUser userDb = scbUserDao.getByUsername(courseParticRepresentative.getContact().getEmail1());
+		ScbUser userDb = scbUserDao.getByUsername(courseParticRepresentative.getUsername());
 		if (userDb != null) {
 			courseParticRepresentative.setUuid(userDb.getUuid());
 			courseParticRepresentative.getContact().setUuid(userDb.getContact().getUuid());
@@ -234,7 +234,6 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		fillIdentEntity(courseParticRepresentative);
 		if (insert) {
 			// insert
-
 			//TODO: situace kdy uzivatel uz existuje, nacist podle username, generovani hesla
 			courseParticRepresentative.setUsername(courseParticRepresentative.getContact().getEmail1());
 			courseParticRepresentative.setPassword(SecurityUtils.generatePassword());

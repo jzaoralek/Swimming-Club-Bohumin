@@ -169,9 +169,12 @@
 					                	
 					                	<popup id="contactPopup_${each.uuid}" width="400px">
 									    	<vbox style="margin: 5px;">
-									    		
 									    		<label value="${c:l('txt.ui.common.contact')}" width="100%" sclass="sp-popup-headline"/>
 									    		<grid width="100%">
+									    			<columns>
+									    				<column width="75px"/>
+									    				<column hflex="1"/>
+									    			</columns>
 													<rows>
 														<row>
 															<label value="${c:l('txt.ui.common.phone')}"/>
