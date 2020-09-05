@@ -162,9 +162,9 @@
 			                		onClick="@command('detailCmd', uuid=each.uuid, courseUuid=each.courseParticipant.courseUuid, newTab=true)" 
 			                		style="text-decoration: underline !important" />
 			                </listcell>
-			                <listcell label="${each.courseParticipant.courseName}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+			                <listcell label="${each.courseParticipant.courseName}" onDoubleClick="@command('detailCmd', uuid=each.uuid, courseUuid=each.courseParticipant.courseUuid)" />
 			                <!-- Instrukce k platbe -->
-			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+			                <listcell onDoubleClick="@command('detailCmd', uuid=each.uuid, courseUuid=each.courseParticipant.courseUuid)" >
 			                	<hbox popup="paymentInstructionPopup_${each.uuid}_${each.courseParticipant.courseUuid}, position=after_end" hflex="1" pack="center">
 				                	<!-- Instrukce prvni pololeti (two-semester) / platba (standard) -->
 				                	<a sclass="big-icon" iconSclass="z-icon-check-circle" style="color: green;"
@@ -186,7 +186,7 @@
 			                </listcell>
 			                <!-- Stav plateb -->
 			                <listcell tooltiptext="@load(each.courseParticipant.coursePaymentVO.stateTotal) @converter(vm.enumLabelConverter)" 
-			                	onDoubleClick="@command('detailCmd', uuid=each.uuid)" >
+			                	onDoubleClick="@command('detailCmd', uuid=each.uuid, courseUuid=each.courseParticipant.courseUuid)" >
 									<a sclass="big-icon" iconSclass="z-icon-circle" style="font-size: 20px; color: red;" 
 										visible="@load(each.courseParticipant.coursePaymentVO.stateTotal eq 'NO_PAYMENT')"
 										popup="paymentSumPopup_${each.uuid}_${each.courseParticipant.varsymbolCore}, position=after_end" />
