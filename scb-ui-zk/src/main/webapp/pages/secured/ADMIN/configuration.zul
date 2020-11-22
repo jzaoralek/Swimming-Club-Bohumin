@@ -57,7 +57,10 @@
 													<listitem label="${each}" value="${each}" />
 												</template>
 											</listbox>
-											<textbox if="${each.type eq 'STRING'}" value="@bind(each.value)" hflex="1" disabled="${each.superAdminConfig}" />
+											<textbox if="${each.type eq 'STRING'}" 
+												value="@bind(each.value)" 
+												hflex="1" 
+												disabled="${each.superAdminConfig}" />
 							                <listbox selectedItem="@bind(each.value)"
 												if="${each.type eq 'BOOLEAN'}"
 												disabled="${each.superAdminConfig}"
@@ -66,7 +69,10 @@
 												<listitem label="Ano" value="true" />
 												<listitem label="Ne" value="false" />
 											</listbox>
-							                <label value="@load(each.value)" visible="${each.type eq 'INTEGER'}" />
+							                <intbox if="${each.type eq 'INTEGER'}" 
+												value="@bind(each.value)" 
+												hflex="1" 
+												disabled="${each.superAdminConfig}" />
 						                </listcell>
 						                <listcell>
 						                	<button iconSclass="z-icon-check" 
@@ -169,7 +175,10 @@
 													<listitem label="${each}" value="${each}" />
 												</template>
 											</listbox>
-											<textbox if="${each.type eq 'STRING'}" value="@bind(each.value)" hflex="1" disabled="${each.superAdminConfig}" />
+											<textbox if="${each.type eq 'STRING'}" 
+												value="@bind(each.value)" 
+												hflex="1" 
+												disabled="${each.superAdminConfig}" />
 							                <listbox selectedItem="@bind(each.value)"
 												if="${each.type eq 'BOOLEAN'}"
 												disabled="${each.superAdminConfig}"
@@ -178,7 +187,10 @@
 												<listitem label="Ano" value="true" />
 												<listitem label="Ne" value="false" />
 											</listbox>
-							                <label value="@load(each.value)" visible="${each.type eq 'INTEGER'}" />
+							                <intbox if="${each.type eq 'INTEGER'}" 
+												value="@bind(each.value)" 
+												hflex="1" 
+												disabled="${each.superAdminConfig}" />
 						                </listcell>
 						                <listcell>
 						                	<button iconSclass="z-icon-check" 

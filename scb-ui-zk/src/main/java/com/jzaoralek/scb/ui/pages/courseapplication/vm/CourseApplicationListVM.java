@@ -54,6 +54,7 @@ import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplDynAttrConfigService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
@@ -435,7 +436,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		}
 		
 		String[] years = getYearsFromContext();
-		final String yearFromTo = years[0] + "/" + years[1];
+		final String yearFromTo = years[0] + ConfigurationServiceImpl.COURSE_YEAR_DELIMITER + years[1];
 		
 		Map<String, Object> args = new HashMap<>();
 		args.put(WebConstants.COURSE_APPLICATION_LIST_PARAM, this.courseApplicationList);

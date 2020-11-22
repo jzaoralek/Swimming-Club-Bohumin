@@ -10,7 +10,6 @@ import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
@@ -19,7 +18,6 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
-import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -29,9 +27,6 @@ import com.jzaoralek.scb.ui.common.vm.BaseVM;
 public class PaymentDetailVM extends BaseVM {
 
 	private final List<Listitem> paymentTypeList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(PaymentType.class));;
-
-	@WireVariable
-	private PaymentService paymentService;
 	
 	private Payment payment;
 	private Listitem paymentType;

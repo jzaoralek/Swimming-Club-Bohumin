@@ -49,9 +49,6 @@ public class PaymentListVM extends BaseVM {
 	private static final String MANUAL_PAYMENT_PAIR_WINDOW = "/pages/secured/ADMIN/seznam-bank-plateb-nezpar-window.zul";
 	
 	@WireVariable
-	private PaymentService paymentService;
-	
-	@WireVariable
 	private CourseService courseService;
 	
 	private List<Payment> paymentList;

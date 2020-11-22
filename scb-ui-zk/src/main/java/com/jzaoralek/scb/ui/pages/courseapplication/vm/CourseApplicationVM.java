@@ -220,45 +220,6 @@ public class CourseApplicationVM extends BaseVM {
 				
 				// overeni validni adresy pred  submitem
 				addressValidationBeforeSubmit(this.application.getCourseParticipant().getContact(), this.courseApplNotVerifiedAddressAllowed, this::submitCore);
-//				if (this.application.getCourseParticipant().getContact().isAddressValid()) {
-//					// adresa je validni, mozno ulozit
-//					submitCore();
-//				} else {
-//					// automaticke overeni nevalidní adresy
-//					placeValidation(this.application.getCourseParticipant().getContact());
-//					// kontrola platnosti adresy po automatickem overeni
-//					if (this.application.getCourseParticipant().getContact().isAddressValid()) {
-//						// adresa je validni, mozno ulozit
-//						submitCore();
-//					} else {
-//						if (!this.courseApplNotVerifiedAddressAllowed) {
-//							// neni povoleno odeslat prihlasku s nevalidni adresou
-//							// adresa neni validni, zastaveni odeslani
-//							MessageBoxUtils.showOkWarningDialog("msg.ui.warn.ProcessNotValidAddress", 
-//									"msg.ui.quest.title.NotValidAddress", 
-//									new SzpEventListener() {
-//								@Override
-//								public void onOkEvent() {
-//									// nothing
-//								}
-//							});
-//							
-//						} else {
-//							// je povoleno odeslat adresu s nevalidní adresou
-//							// adresa neni validni, dotaz jestli pokracovat
-//							MessageBoxUtils.showDefaultConfirmDialog(
-//								"msg.ui.quest.ProcessNotValidAddress",
-//								"msg.ui.quest.title.NotValidAddress",
-//								new SzpEventListener() {
-//									@Override
-//									public void onOkEvent() {
-//										submitCore();
-//									}
-//								}
-//							);							
-//						}	
-//					}					
-//				}
 			}
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught for application: " + this.application, e);
