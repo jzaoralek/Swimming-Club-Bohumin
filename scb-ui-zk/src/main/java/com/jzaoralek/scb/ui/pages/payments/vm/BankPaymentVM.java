@@ -44,9 +44,6 @@ public class BankPaymentVM extends BaseContextVM {
 	@WireVariable
 	private BankPaymentService bankPaymentService;
 	
-	@WireVariable
-	private PaymentService paymentService;
-	
 	private List<Transaction> transactionList;
 	private List<Transaction> transactionListBase;
 	private Calendar dateFrom;

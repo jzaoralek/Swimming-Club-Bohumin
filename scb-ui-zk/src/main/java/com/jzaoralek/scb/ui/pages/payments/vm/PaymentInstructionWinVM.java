@@ -16,8 +16,6 @@ import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
-import com.jzaoralek.scb.dataservice.service.PaymentService;
-import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -29,9 +27,6 @@ public class PaymentInstructionWinVM extends BaseVM {
 
 	@WireVariable
 	private CourseApplicationService courseApplicationService;
-	
-	@WireVariable
-	private PaymentService paymentService;
 	
 	private List<PaymentInstruction> paymentInstructionList;
 	private boolean firstSemester;
@@ -87,16 +82,13 @@ public class PaymentInstructionWinVM extends BaseVM {
 		}
 		
 		this.paymentInstructionList = new ArrayList<>();
-		int semester = firstSemester ? 1 :2;
 		for (CourseApplication courseApplication : courseApplicationList) {
-			this.paymentInstructionList.add(new PaymentInstruction(courseApplication.getCourseParticipant().getContact().getCompleteName()
-					, courseApplication.getCourseParticRepresentative().getContact().getEmail1()
-					, courseApplication.getCourseParticipant().getCourseName()
-					, firstSemester ? courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceFirstSemester() : courseApplication.getCourseParticipant().getCoursePaymentVO().getPriceSecondSemester()
-					, semester
-					, PaymentUtils.buildCoursePaymentVarsymbol(yearFrom, semester, courseApplication.getCourseParticipant().getVarsymbolCore())
-					, bankAccountNumber
-					, courseApplication.getCourseParticipant().getUuid()));
+			this.paymentInstructionList.add(
+					PaymentInstruction.ofCourseApplication(courseApplication,
+													this.courseType,
+													yearFrom, 
+													firstSemester, 
+													bankAccountNumber));
 		}
 	}
 	

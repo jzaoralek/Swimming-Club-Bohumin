@@ -163,6 +163,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 	
 	@Override
+	public boolean isCourseApplicationPaymentAllowed() {
+		return Boolean.valueOf(configurationDao.getByName(Config.ConfigName.COURSE_APPLICATION_PAYMENT_INSTRUCS.name()).getValue());
+	}
+	
+	@Override
+	public int getCourseApplPaymentDeadline() {
+		return Integer.valueOf(configurationDao.getByName(Config.ConfigName.COURSE_APPLICATION_PAYMENT_DEADLINE.name()).getValue());
+	}
+	
+	@Override
 	public String getRecaptchaSitekey() {
 		return this.recaptchaSitekey;
 	}

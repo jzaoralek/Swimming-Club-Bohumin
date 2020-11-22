@@ -3,6 +3,7 @@ package com.jzaoralek.scb.ui.common.vm;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
@@ -30,15 +31,19 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
+import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig.CourseApplicationFileType;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.Mail;
+import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationFileConfigService;
 import com.jzaoralek.scb.dataservice.service.MailService;
+import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
+import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
 import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -91,6 +96,9 @@ public class BaseVM {
 	
 	@WireVariable
 	protected RuianService ruianServiceRest;
+	
+	@WireVariable
+	protected PaymentService paymentService;
 
 	protected String returnToPage;
 	protected String returnToUrl;
@@ -448,6 +456,76 @@ public class BaseVM {
 		mailService.sendMail(buildMailCourseParticRepresentative(courseApplication, headline));
 		// mail to club
 		mailService.sendMail(buildMailToClub(courseApplication));
+		// send payment instructions
+		processPaymentInstruction(courseApplication);
+	}
+	
+	/**
+	 * Send payment instructions to course participant representative.
+	 * Conditions
+	 * - module payment is available
+	 * - course participant is in course
+	 * - account number is filled
+	 */
+	public void processPaymentInstruction(CourseApplication courseApplication) {
+		// check if module payment is available
+		if (!configurationService.isPaymentsAvailable()) {
+			return;
+		}		
+		// check if course participant is in course
+		if (CollectionUtils.isEmpty(courseApplication.getCourseParticipant().getCourseList())) {
+			return;
+		}
+		
+		final String bankAccountNumber = configurationService.getBankAccountNumber();
+		// check if account number is filled
+		if (!StringUtils.hasText(bankAccountNumber)) {
+			return;
+		}
+		
+		// check if send payment instructions after course application create sis allowed
+		if (!configurationService.isCourseApplicationPaymentAllowed()) {
+			return;
+		}
+		
+		// set payment deadline from configuration
+		int paymentDeadlineDays = configurationService.getCourseApplPaymentDeadline();
+		if (paymentDeadlineDays == 0) {
+			paymentDeadlineDays = 5;
+		}
+		// payment deadline set to sysdate plus 2 weeks
+		Calendar paymentDeadline = Calendar.getInstance();
+		paymentDeadline.add(Calendar.DATE, paymentDeadlineDays);
+		
+		String yearFromTo = courseApplication.getYearFrom() + 
+									ConfigurationServiceImpl.COURSE_YEAR_DELIMITER + 
+									courseApplication.getYearTo();
+		
+		// set CoursePaymentVO
+		Course course = courseApplication.getCourseParticipant().getCourseList().get(0);
+		CoursePaymentVO coursePaymentVO = new CoursePaymentVO(0, 
+													course.getPriceSemester1(), 
+													course.getPriceSemester2());
+		courseApplication.getCourseParticipant().setCoursePaymentVO(coursePaymentVO);
+		
+		// set course name
+		courseApplication.getCourseParticipant().setCourseName(course.getName());
+		
+		List<PaymentInstruction> paymentInstructionList = Arrays.asList(PaymentInstruction.ofCourseApplication(courseApplication,
+				course.getCourseType(),
+				courseApplication.getYearFrom(), 
+				true, 
+				bankAccountNumber));
+		
+		paymentService.processPaymentInstruction(paymentInstructionList
+				, yearFromTo
+				, WebConstants.LINE_SEPARATOR
+				, getDateConverter().coerceToUi(paymentDeadline.getTime(), null, null)
+				, null
+				, buildMailSignature()
+				, true
+				, course.getCourseType());
+		
 	}
 	
 	public Mail buildMailCourseParticRepresentative(CourseApplication courseApplication, String headline) {
