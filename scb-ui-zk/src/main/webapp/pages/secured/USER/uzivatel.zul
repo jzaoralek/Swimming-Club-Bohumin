@@ -41,6 +41,8 @@
 											sclass="form-input-text"
 											tabindex="1"
 											hflex="1" />
+										<button label="${c:l('txt.ui.common.change')}"
+											onClick="@command('changeUsernameCmd')"/>
 									</hbox>
 								</vbox>
 							</cell>

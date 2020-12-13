@@ -1,0 +1,92 @@
+<!-- Komponenta pro zmenu uzivatelskeho jmena.
+     Dostupna pro roli ADMIN a USER.
+ -->
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul"?>
+<?component name="validMsg" macroURI="/pages/common/component/validMsg.zul"?>
+<zk>
+	<div self="@{define(mainContent)}"
+		height="100%"	
+	    hflex="1"
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.user.vm.ChangeUsernameVM')"
+		validationMessages="@id('vmsgs')"
+		sclass="scb-view scb-view-900" >
+		
+		<custom-attributes submitCmd="submitCmd" />
+		
+		<hlayout>
+			<hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}">
+				<button onClick="@command('backCmd')" 
+					label="${c:l('txt.ui.common.Back')}" 
+					iconSclass="z-icon-arrow-left" 
+					sclass="btn-light fix-btn-icon"/>
+			</hlayout>
+            <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
+        </hlayout>
+	    
+		<vlayout>
+
+			<!-- Formular -->
+			<grid hflex="1" sclass="scb-form-grid">
+				<columns>
+					<column hflex="1" />
+			    </columns>
+				<rows>
+					<row>
+						<!-- Email/Uzivatelske jmeno -->
+						<cell style="padding-top:20px">
+							<vlayout hflex="1">
+								<label value="${c:l('txt.ui.common.Username')}"/>
+								<textbox id="representativeUsername"
+									value="@bind(vm.user.username) @save(vm.user.username, before={submitCmd}) @validator(vm.usernameValidator, validate=true, showMessageBoxWarning=false)" 
+									maxlength="100"
+									placeholder="*"
+									sclass="form-input-text"
+									focus="true"
+									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+									tabindex="1"
+									hflex="1" />
+								<validMsg  hflex="1" vmsg="${vmsgs}" elem="${representativeUsername}"/>
+							</vlayout>							
+						</cell>
+					</row>
+					<row>
+						<cell>
+							<!-- Email/Uzivatelske jmeno zopakovani -->
+							<vbox hflex="1">
+								<label value="${c:l('txt.ui.common.enterAgain')} ${c:l('txt.ui.common.Username')}"/>
+								<hbox hflex="1">
+									<textbox id="representativeEmailRepeat" 
+										value="@bind(vm.usernameRepeat) @save(vm.usernameRepeat, before={submitCmd}) @validator(vm.equalValueValidator, compareTo=representativeUsername.value)"
+										placeholder="*"
+										sclass="form-input-text"
+										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+										tabindex="2"
+										hflex="1" />
+								</hbox>
+								<validMsg  hflex="1" vmsg="${vmsgs}" elem="${representativeEmailRepeat}"/>
+							</vbox>
+						</cell>
+					</row>
+					<row>
+						<cell>
+							<hlayout hflex="1" style="margin-bottom: 10px;">
+								<checkbox checked="@bind(vm.updateEmail1)" tabindex="3" />
+								<label value="${c:l('txt.ui.common.changeEmail1')}"/>
+							</hlayout>
+						</cell>
+					</row>
+				</rows>
+			</grid>
+				
+			<button label="Uložit"
+				onClick="@command(submitCmd)" 
+				iconSclass="z-icon-check"
+				sclass="btn-success"
+				style="margin-top: 25px;"/>
+		</vlayout>
+		
+		<popup id="emailPopup" >
+	        <label value="${c:l('txt.ui.common.email.info')}" />
+	    </popup>
+	</div>
+</zk>

@@ -12,6 +12,7 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
@@ -20,6 +21,7 @@ import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
@@ -76,6 +78,17 @@ public class UserVM extends BaseVM {
 			LOG.warn("ScbValidationException caught during storing user: " + this.user, e);
 			WebUtils.showNotificationError(e.getMessage());
 		}
+	}
+	
+	@Command
+	public void changeUsernameCmd() {
+		if (!isLoggedUserAdmin()) {
+			return;
+		}
+		
+		Executions.sendRedirect(WebPages.CHANGE_USERNAME_ADMIN.getUrl() + 
+				"?" + WebConstants.UUID_PARAM + "=" + this.user.getUuid() + 
+				"&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.USER_LIST);
 	}
 	
 	/**

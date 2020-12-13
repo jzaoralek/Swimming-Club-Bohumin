@@ -8,6 +8,7 @@ import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
@@ -16,6 +17,8 @@ import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
+import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
@@ -71,6 +74,16 @@ public class UserRepresentativeVM extends BaseVM {
 			    }
 			});
 		}
+	}
+	
+	/**
+	 * Zmena hesla uzivatele.
+	 */
+	@Command
+	public void changeUsernameCmd() {
+		Executions.sendRedirect(WebPages.CHANGE_USERNAME_USER.getUrl() + 
+				"?" + WebConstants.UUID_PARAM + "=" + this.user.getUuid() + 
+				"&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.USER_REPRESENTATIVE_DETAIL);
 	}
 	
 	public ScbUser getUser() {
