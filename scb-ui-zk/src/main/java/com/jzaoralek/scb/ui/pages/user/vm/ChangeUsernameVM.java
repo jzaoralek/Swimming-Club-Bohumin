@@ -49,6 +49,8 @@ public class ChangeUsernameVM extends BaseVM {
 			}
 			scbUserService.store(this.user);
 			
+			sendMailWithChangedUsername(this.user);
+			
 			if (isLoggedUserAdmin()) {
 				// admin - redirect na detail uzivatele
 				WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.usernameChanged", new Object[] {this.user.getUsername()}));
@@ -64,10 +66,6 @@ public class ChangeUsernameVM extends BaseVM {
 		}
 	}
 	
-	private void buildPageHeadline() {
-		this.pageHeadline = Labels.getLabel("txt.ui.common.changeUsername") + " | " + user.getUsername();
-	}
-	
 	protected void buildReturnToPage(String fromPage) {
 		if (isLoggedUserAdmin()) {
 			// admin
@@ -78,6 +76,36 @@ public class ChangeUsernameVM extends BaseVM {
 			// user as course participant representative
 			setReturnPage(fromPage);
 		}
+	}
+	
+	private void sendMailWithChangedUsername(ScbUser user) {
+		StringBuilder mailToUser = new StringBuilder();
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.usernameChange.text0"));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		if (this.updateEmail1) {
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.usernameChange.text1.inclEmail", new Object[] {configurationService.getBaseURL()}));
+		} else {
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.usernameChange.text1", new Object[] {configurationService.getBaseURL()}));			
+		}
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.usernameChange.text2", new Object[] {user.getUsername()}));
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(Labels.getLabel("msg.ui.mail.text.usernameChange.text3", new Object[] {user.getPassword()}));
+		if (this.updateEmail1) {
+			mailToUser.append(WebConstants.LINE_SEPARATOR);
+			mailToUser.append(Labels.getLabel("msg.ui.mail.text.usernameChange.text4", new Object[] {user.getContact().getEmail1()}));
+		}
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(WebConstants.LINE_SEPARATOR);
+		mailToUser.append(buildMailSignature());
+
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.changeUsername"), mailToUser.toString(), null, false);
+	}
+	
+	private void buildPageHeadline() {
+		this.pageHeadline = Labels.getLabel("txt.ui.common.changeUsername") + " | " + user.getUsername();
 	}
 	
 	public ScbUser getUser() {

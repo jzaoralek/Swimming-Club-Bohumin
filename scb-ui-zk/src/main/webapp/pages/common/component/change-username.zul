@@ -82,7 +82,12 @@
 				onClick="@command(submitCmd)" 
 				iconSclass="z-icon-check"
 				sclass="btn-success"
-				style="margin-top: 25px;"/>
+				style="margin-top: 25px; margin-bottom: 10px;"/>
+			
+			<!-- Course application representative instruction. -->		
+			<label value="${c:l('msg.ui.info.usernameChange.postActionMsg')}"
+				if="${!vm.isLoggedUserAdmin()}"/>
+			
 		</vlayout>
 		
 		<popup id="emailPopup" >
