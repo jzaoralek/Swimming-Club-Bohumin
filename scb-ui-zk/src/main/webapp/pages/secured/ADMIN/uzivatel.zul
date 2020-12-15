@@ -42,20 +42,19 @@
 						<cell style="padding-top:20px">
 							<vlayout hflex="1">
 								<label value="${c:l('txt.ui.common.Username')}"/>
-								<hbox hflex="1">
-									<textbox id="representativeUsername"
-										value="@bind(fx.user.username) @validator(vm.notNullValidator)" 
-										maxlength="100"
-										placeholder="*"
-										readonly="@load(vm.updateMode)"
-										sclass="form-input-text"
-										tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
-										tabindex="12"
-										hflex="1" />
-									<button label="${c:l('txt.ui.common.change')}"
-										onClick="@command('changeUsernameCmd')"
-										if="${vm.isLoggedUserAdmin()}"/>
-								</hbox>
+								<textbox id="representativeUsername"
+									value="@bind(fx.user.username) @validator(vm.notNullValidator)" 
+									maxlength="100"
+									placeholder="*"
+									readonly="@load(vm.updateMode)"
+									sclass="form-input-text"
+									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
+									tabindex="12"
+									hflex="1" />
+								<button label="${c:l('txt.ui.common.change')}"
+									onClick="@command('changeUsernameCmd')"
+									if="${vm.isLoggedUserAdmin() and vm.updateMode}"
+									style="margin-top: 5px;" />
 								<validMsg  hflex="1"  vmsg="${vmsgs}" elem="${representativeUsername}"/>
 							</vlayout>
 						</cell>
