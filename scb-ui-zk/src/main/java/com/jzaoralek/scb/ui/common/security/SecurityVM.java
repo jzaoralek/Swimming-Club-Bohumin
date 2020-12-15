@@ -27,11 +27,6 @@ public class SecurityVM extends BaseVM {
 	}
 
     @Command
-    public void logoutCmd() {
-    	Executions.sendRedirect("/logout");
-    }
-
-    @Command
 	public void changePasswordCmd() {
 		WebUtils.openModal(CHANGE_PASSWORD_WINDOW);
 	}

@@ -122,6 +122,11 @@ public class BaseVM {
 	public static String getOrgNameStatic() {
 		return orgName;
 	}
+	
+	@Command
+    public void logoutCmd() {
+    	Executions.sendRedirect("/logout");
+    }
 
     /**
      * Dodatečně označí položku hlavního menu

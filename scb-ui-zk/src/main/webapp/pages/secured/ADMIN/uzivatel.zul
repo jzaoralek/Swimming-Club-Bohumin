@@ -51,6 +51,10 @@
 									tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 									tabindex="12"
 									hflex="1" />
+								<button label="${c:l('txt.ui.common.change')}"
+									onClick="@command('changeUsernameCmd')"
+									if="${vm.isLoggedUserAdmin() and vm.updateMode}"
+									style="margin-top: 5px;" />
 								<validMsg  hflex="1"  vmsg="${vmsgs}" elem="${representativeUsername}"/>
 							</vlayout>
 						</cell>

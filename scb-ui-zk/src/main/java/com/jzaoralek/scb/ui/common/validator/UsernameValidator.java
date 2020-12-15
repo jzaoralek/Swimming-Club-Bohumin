@@ -30,6 +30,13 @@ private ScbUserService scbUserService;
 			return;
 		}
 		
+		// zobrazeni doplnujiciho warningu v messageBoxu, default true
+		Boolean showMessageBoxWarning = Boolean.TRUE; 
+		Object showMessageBoxWarningObj = ctx.getValidatorArg("showMessageBoxWarning");
+		if (showMessageBoxWarningObj != null && showMessageBoxWarningObj instanceof Boolean) {
+			showMessageBoxWarning = (Boolean)showMessageBoxWarningObj;
+		}
+		
 		String value = (String) ctx.getProperty().getValue();
 		if (value != null) {
 			// remove whitespaces from input string
@@ -48,11 +55,13 @@ private ScbUserService scbUserService;
 		
 		final ScbUser scbUser = scbUserService.getByUsername(value);
 		if (scbUser != null) {
-			String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists", 
-					new Object[] {value, scbUser.getContact().getCompleteName()});			
-			Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), 
-					Messagebox.OK, 
-					Messagebox.EXCLAMATION);
+			if (showMessageBoxWarning) {
+				String question = Labels.getLabel("msg.ui.quest.participantRepresentativeExists", 
+						new Object[] {value, scbUser.getContact().getCompleteName()});			
+				Messagebox.show(question, Labels.getLabel("txt.ui.common.warning"), 
+						Messagebox.OK, 
+						Messagebox.EXCLAMATION);				
+			}
 			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.notUniqueUsername"));
             return;
 		}
