@@ -55,7 +55,10 @@ public class MailServiceImpl implements MailService {
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "false");
         properties.put("mail.smtp.port", mailSmtpPort);
-
+        // SSL props
+        properties.put("mail.smtp.ssl.trust", "*");
+        properties.put("mail.smtp.ssl.enable", "true");
+        
        // Get the default Session object.
        Authenticator auth = new SMTPAuthenticator();
        Session session = Session.getDefaultInstance(properties, auth);
@@ -86,7 +89,7 @@ public class MailServiceImpl implements MailService {
           if (attachmentList != null && !attachmentList.isEmpty()) {
         	  for (Attachment attachment : attachmentList) {
         		  if (attachment != null) {
-        			  DataSource dataSource = new ByteArrayDataSource(attachment.getByteArray(), "application/pdf");
+        			  DataSource dataSource = new ByteArrayDataSource(attachment.getByteArray(), attachment.getContentType());
         			  MimeBodyPart pdfBodyPart = new MimeBodyPart();
         			  pdfBodyPart.setDataHandler(new DataHandler(dataSource));
         			  pdfBodyPart.setFileName(attachment.getName());
