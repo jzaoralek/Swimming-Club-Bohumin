@@ -1,7 +1,9 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -20,6 +22,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -27,12 +30,16 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
+import com.jzaoralek.scb.dataservice.dao.MailSendDao;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Mail;
+import com.jzaoralek.scb.dataservice.domain.MailSend;
+import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.MailService;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 @Service("mailService")
-public class MailServiceImpl implements MailService {
+public class MailServiceImpl extends BaseAbstractService implements MailService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailServiceImpl.class);
 
@@ -47,6 +54,9 @@ public class MailServiceImpl implements MailService {
 
     @Value("${smtp.pwd}")
     private String mailSmtpPassword;
+    
+    @Autowired
+    private MailSendDao mailSendDao;
 
     @Async
     @Override
@@ -71,6 +81,15 @@ public class MailServiceImpl implements MailService {
        if (LOG.isDebugEnabled()) {
     	   LOG.debug("Mail session created.");
        }
+       
+       // store send mail to database
+       MailSend mailSend = new MailSend(to, cc, subject, text, attachmentList);
+       mailSend.setHtml(html);
+       // fillIdentEntity(mailSend);
+       mailSend.setUuid(UUID.randomUUID());
+       mailSend.setModifAt(Calendar.getInstance().getTime());
+       mailSend.setModifBy(ANONYM_USER_UUID);
+       
        try{
           // Create a default MimeMessage object.
           MimeMessage message = new MimeMessage(session);
@@ -119,14 +138,21 @@ public class MailServiceImpl implements MailService {
 
           // Send message
           Transport.send(message);
+          mailSend.setSuccess(true);  
 
           if (LOG.isDebugEnabled()) {
         	  LOG.debug("Mail send - OK");
-          }
+          }          
        } catch (MessagingException mex) {
     	   LOG.error("MessagingException. Check settings: ", mex);
+    	   mailSend.setSuccess(false);
+    	   mailSend.setDescription(mex.getCause().getLocalizedMessage());
        } catch (Exception e) {
     	   LOG.error("Exception during sendMail processing: ", e);
+    	   mailSend.setSuccess(false);
+    	   mailSend.setDescription(e.getCause().getLocalizedMessage());
+       } finally {
+    	   mailSendDao.insert(mailSend);    	   
        }
     }
 
