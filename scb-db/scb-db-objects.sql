@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS  course_application_file_config;
 DROP TABLE IF EXISTS  user_trainer_course;
 DROP TABLE IF EXISTS  course_application_dyn_attribute_config;
 DROP TABLE IF EXISTS course_application_dyn_attribute;
+DROP TABLE IF EXISTS mail_message_send;
 
 CREATE TABLE contact(
 	uuid varchar(36),
@@ -274,6 +275,21 @@ CREATE TABLE course_application_dyn_attribute (
 	double_value DOUBLE,
 	boolean_value ENUM('0','1'),
 	modif_at TIMESTAMP  NOT NULL,
+	modif_by varchar(36) NOT NULL,
+	PRIMARY KEY (uuid)
+);
+
+CREATE TABLE mail_message_send (
+	uuid varchar(36),
+	mail_to VARCHAR(1000) NOT NULL,
+	mail_cc VARCHAR(1000) NOT NULL,
+	mail_subject VARCHAR(1000) CHARACTER SET utf8,
+	mail_text LONGTEXT CHARACTER SET utf8,
+	success ENUM('0','1') NOT NULL DEFAULT '1',
+    description TEXT NULL,
+	attachments ENUM('0','1') NOT NULL DEFAULT '0',
+	html ENUM('0','1') NOT NULL DEFAULT '0',
+	modif_at TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );

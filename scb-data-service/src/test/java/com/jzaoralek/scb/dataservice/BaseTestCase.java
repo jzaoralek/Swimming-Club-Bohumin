@@ -251,4 +251,16 @@ public abstract class BaseTestCase extends AbstractTransactionalJUnit4SpringCont
 		return item;
 		
 	}
+	
+	protected Date getYesterday() {
+	    final Calendar cal = Calendar.getInstance();
+	    cal.add(Calendar.DATE, -1);
+	    return cal.getTime();
+	}
+	
+	protected Date getTomorrow() {
+	    final Calendar cal = Calendar.getInstance();
+	    cal.add(Calendar.DATE, 1);
+	    return cal.getTime();
+	}
 }
