@@ -228,9 +228,9 @@
 						        </listhead>
 						        <template name="model">
 						            <listitem>
-						                <listcell label="${each.to}" />
-						                <listcell label="${each.subject}" />
-						                <listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" />
+						               <listcell label="${each.to}" style="white-space: nowrap;" />
+						               <listcell label="${each.subject}" />
+						               <listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" />
 						            </listitem>
 						        </template>
 						    </listbox>

@@ -382,11 +382,7 @@ public class EmailDetailWinVM extends BaseVM {
 		fromCal.add(Calendar.DATE, -1);
 		Calendar toCal = Calendar.getInstance();
 		
-		List<MailSend> sendList = mailService.getByDateInterval(fromCal.getTime(), toCal.getTime());
-		this.mailSendList = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
-			this.mailSendList.addAll(sendList);
-		}
+		this.mailSendList = mailService.getByDateInterval(fromCal.getTime(), toCal.getTime());
 	}
 	
 	@NotifyChange("mailSendSelected")
