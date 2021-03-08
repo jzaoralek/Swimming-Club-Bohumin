@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.ui.pages.email;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,11 +30,11 @@ import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Popup;
-import org.zkoss.zul.SimpleListModel;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Mail;
+import com.jzaoralek.scb.dataservice.domain.MailSend;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
@@ -66,6 +67,9 @@ public class EmailDetailWinVM extends BaseVM {
 	private boolean ccVisible = false;
 	private final EmailAddressFilter filter = new EmailAddressFilter();
 	private ListModel<String> emailListModel;
+	private List<MailSend> mailSendList;
+	private List<MailSend> mailSendSelectedList;
+	private MailSend mailSendSelected;
 
 	//	@Wire
 //	private Bandpopup mailToPopup;
@@ -371,6 +375,26 @@ public class EmailDetailWinVM extends BaseVM {
 		ccTxt.setFocus(true);
 	}
 	
+	@NotifyChange("mailSendList")
+	@Command
+	public void mailSendSelectedCmd() {
+		Calendar fromCal = Calendar.getInstance();
+		fromCal.add(Calendar.DATE, -1);
+		Calendar toCal = Calendar.getInstance();
+		
+		List<MailSend> sendList = mailService.getByDateInterval(fromCal.getTime(), toCal.getTime());
+		this.mailSendList = new ArrayList<>();
+		for (int i = 0; i < 100; i++) {
+			this.mailSendList.addAll(sendList);
+		}
+	}
+	
+	@NotifyChange("mailSendSelected")
+	@Command
+	public void onMailSelectCmd() {
+//		this.mailSendSelected = this.mailSendSelectedList.get(0);
+	}
+	
 	/**
 	 * Prida emailove adresy do seznamu adresatu.
 	 * @param mailToList
@@ -470,6 +494,18 @@ public class EmailDetailWinVM extends BaseVM {
 	}
 	public ListModel<String> getEmailListModel() {
 		return emailListModel;
+	}
+	public List<MailSend> getMailSendList() {
+		return mailSendList;
+	}
+	public List<MailSend> getMailSendSelectedList() {
+		return mailSendSelectedList;
+	}
+	public void setMailSendSelectedList(List<MailSend> mailSendSelectedList) {
+		this.mailSendSelectedList = mailSendSelectedList;
+	}
+	public MailSend getMailSendSelected() {
+		return mailSendSelected;
 	}
 	
 	public static class EmailAddressFilter {

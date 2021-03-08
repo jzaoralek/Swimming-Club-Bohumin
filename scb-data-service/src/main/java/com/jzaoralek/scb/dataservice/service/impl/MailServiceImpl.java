@@ -1,7 +1,9 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -36,7 +38,6 @@ import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.MailSend;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.MailService;
-import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 @Service("mailService")
 public class MailServiceImpl extends BaseAbstractService implements MailService {
@@ -201,5 +202,20 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
 				}				
 			}
 		}
+	}
+    
+    @Override
+	public List<MailSend> getByDateInterval(Date from, Date to) {
+    	if (from == null || to == null) {
+    		return null;
+    	}
+		return mailSendDao.getByDateInterval(from, to);
+	}
+
+	@Override
+	public MailSend getByUuid(UUID uuid) {
+		Objects.requireNonNull(uuid, "uuid is null");
+		
+		return mailSendDao.getByUuid(uuid);
 	}
 }
