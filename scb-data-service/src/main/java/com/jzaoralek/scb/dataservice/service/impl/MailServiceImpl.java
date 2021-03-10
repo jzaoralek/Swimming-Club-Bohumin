@@ -147,11 +147,11 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
        } catch (MessagingException mex) {
     	   LOG.error("MessagingException. Check settings: ", mex);
     	   mailSend.setSuccess(false);
-    	   mailSend.setDescription(mex.getCause().getLocalizedMessage());
+    	   mailSend.setDescription(mex.getMessage());
        } catch (Exception e) {
     	   LOG.error("Exception during sendMail processing: ", e);
     	   mailSend.setSuccess(false);
-    	   mailSend.setDescription(e.getCause().getLocalizedMessage());
+    	   mailSend.setDescription(e.getMessage());
        } finally {
     	   mailSendDao.insert(mailSend);    	   
        }

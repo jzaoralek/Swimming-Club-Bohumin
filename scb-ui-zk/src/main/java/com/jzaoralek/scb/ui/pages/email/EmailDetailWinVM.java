@@ -379,7 +379,7 @@ public class EmailDetailWinVM extends BaseVM {
 	@Command
 	public void mailSendSelectedCmd() {
 		Calendar fromCal = Calendar.getInstance();
-		fromCal.add(Calendar.DATE, -1);
+		fromCal.add(Calendar.DATE, -30);
 		Calendar toCal = Calendar.getInstance();
 		
 		this.mailSendList = mailService.getByDateInterval(fromCal.getTime(), toCal.getTime());
