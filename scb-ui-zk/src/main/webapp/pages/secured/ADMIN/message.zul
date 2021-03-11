@@ -198,76 +198,97 @@
 			        </tabpanel>
 			        <tabpanel hflex="1">
 			        	<!-- Odeslane zpravy -->
-			        	<vbox spacing="0" hflex="1" >
-		                    <listbox model="@load(vm.mailSendList)"
-								id="courseList"
-								hflex="1"
-								height="563px"
-								multiple="true"
-								checkmark="true"
-								selectedItems="@bind(vm.mailSendSelectedList)"
-								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
-								class="listbox-400 mobile-inherit-width" >
-					        
-						        <!-- Filter -->
-<!-- 									<auxhead height="37px"> -->
-<!-- 										<auxheader class="filter"> -->
-<!-- 										</auxheader> -->
-<!-- 									</auxhead> -->
-								
-								<listhead>
-						            <listheader sort="auto(to)" 
-						            	align="left" 
-						            	hflex="min" />
-						            <listheader 
-						            	tooltiptext="${c:l('txt.ui.common.participantCount')}" 
-						            	sort="auto(subject)" 
-						            	align="left"
-						            	hflex="1"  />
-						            <listheader width="170px" align="center" />
-						            <listheader width="65px" align="center" />
-						        </listhead>
-						        <template name="model">
-						            <listitem>
-						            	<listcell style="white-space: nowrap;" >
-						               		${each.to}
-						            	</listcell>
-						            	<listcell label="${each.subject}" />
-						            	<listcell label="@load(each.modifAt) @converter(vm.dateTimeConverter)" />
-						            	<listcell>
-						               		<a sclass="big-icon"
-						               			iconSclass="z-icon-check-circle" 
-						               			style="color: green;"
-						               			tooltiptext="${c:l('txt.ui.mail.SendSuccess')}"
-						               			if="${each.success}" />
-						               		<a sclass="big-icon"
-						               			iconSclass="z-icon-exclamation-triangle" 
-						               			style="color: red;"
-						               			tooltiptext="${c:l('txt.ui.mail.SendFailed')}"
-						               			popup="failedSendPopup_${each.uuid}, position=after_end"
-						               			if="${!each.success}" />
-						               		<popup id="failedSendPopup_${each.uuid}" width="440px">
-						               			<vbox hflex="1">
-						               				<label value="${c:l('txt.ui.mail.SendFailed')}"/>
-						               				<textbox multiline="true"
-						               					rows="15"
-						               					hflex="1"
-						               					readonly="true"
-						               					value="${each.description}"/>
-						               			</vbox>
-						               		</popup>
-						               	</listcell>
-						            </listitem>
-						            
-<!-- 						            <popup id="mailContentPopup_${each.uuid}" width="440px"> -->
-<!-- 				               			<ckeditor hflex="1" -->
-<!-- 											height="420px"  -->
-<!-- 											value="@bind(vm.mailSendSelected.text)" -->
-<!-- 											customConfigurationsPath="/resources/js/ckeditor.js" > -->
-<!-- 										</ckeditor> -->
-<!-- 				               		</popup>	 -->
-						        </template>
-						    </listbox>
+			        	<vbox>
+				        	<hbox style="margin-left: 5px; margin-bottom: 10px;" >
+					        	<!-- Odstranit -->
+					        	<button onClick="@command('deleteMailSendSelectedCmd')"
+									tooltiptext="${c:l('txt.ui.common.Delete')}"
+									sclass="btn-danger"
+									disabled="@load(empty(vm.mailSendSelectedList))"
+			        				iconSclass="z-icon-times" />
+			        			
+					        	<!-- Refresh -->
+					        	<button tooltiptext="${c:l('txt.ui.common.copy.courseList.desc')}"
+			        				iconSclass="z-icon-refresh"
+			        				onClick="@command('loadSendSelectedCmd')"
+			        				style="margin-right: 5px;" />				        				
+				        	</hbox>
+		        			
+				        	<hbox spacing="0" hflex="1" >
+			                    <listbox model="@load(vm.mailSendList)"
+									id="courseList"
+									hflex="1"
+									height="553px"
+									multiple="true"
+									checkmark="true"
+									nonselectableTags="*"
+									style="margin-right: 10px;"
+									selectedItems="@bind(vm.mailSendSelectedList)"
+									emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+									class="listbox-400 mobile-inherit-width" >
+						        
+							        <!-- Filter -->
+<!-- 										<auxhead height="37px"> -->
+<!-- 											<auxheader class="filter"> -->
+<!-- 											</auxheader> -->
+<!-- 										</auxhead> -->
+									
+									<listhead>
+							            <listheader sort="auto(to)" 
+							            	align="left" 
+							            	hflex="min"
+							            	valign="top" />
+							            <listheader 
+							            	tooltiptext="${c:l('txt.ui.common.participantCount')}" 
+							            	sort="auto(subject)" 
+							            	align="left"
+							            	hflex="1"  />
+							            <listheader width="65px" align="center" />
+							        </listhead>
+							        <template name="model">
+							            <listitem onClick="@command('mailDetailOpenCmd', item=each)">
+							            	<listcell style="white-space: nowrap;" >
+							               		${each.to}
+							            	</listcell>
+							            	<listcell>
+							            		<vlayout>
+							            			<label value="@load(each.modifAt) @converter(vm.dateTimeConverter)" />
+							            			<label value="${each.subject}"/>
+							            		</vlayout>
+							            	</listcell>
+							            	<listcell>
+							               		<a sclass="big-icon"
+							               			iconSclass="z-icon-check-circle" 
+							               			style="color: green;"
+							               			tooltiptext="${c:l('txt.ui.mail.SendSuccess')}"
+							               			if="${each.success}" />
+							               		<a sclass="big-icon"
+							               			iconSclass="z-icon-exclamation-triangle" 
+							               			style="color: red;"
+							               			tooltiptext="${c:l('txt.ui.mail.SendFailed')}"
+							               			popup="failedSendPopup_${each.uuid}, position=after_end"
+							               			if="${!each.success}" />
+							               		<popup id="failedSendPopup_${each.uuid}" width="440px">
+							               			<vbox hflex="1">
+							               				<label value="${c:l('txt.ui.mail.SendFailed')}"/>
+							               				<textbox multiline="true"
+							               					rows="15"
+							               					hflex="1"
+							               					readonly="true"
+							               					value="${each.description}"/>
+							               			</vbox>
+							               		</popup>
+							               	</listcell>
+							            </listitem>
+							        </template>
+							    </listbox>
+							    
+							    <ckeditor hflex="1"
+							    	height="543px"
+							    	value="@bind(vm.mailSendSelected.text)"
+							    	customConfigurationsPath="/resources/js/ckeditor-readonly.js" >
+								</ckeditor>
+			                </hbox>
 		                </vbox>
 			        </tabpanel>
 			    </tabpanels>

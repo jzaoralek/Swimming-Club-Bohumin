@@ -70,6 +70,7 @@ public class EmailDetailWinVM extends BaseVM {
 	private List<MailSend> mailSendList;
 	private List<MailSend> mailSendSelectedList;
 	private MailSend mailSendSelected;
+	private boolean mailSendTabLoaded;
 
 	//	@Wire
 //	private Bandpopup mailToPopup;
@@ -262,6 +263,23 @@ public class EmailDetailWinVM extends BaseVM {
 		);
 	}
 	
+	@NotifyChange("mailSendSelected")
+	@Command
+	public void mailDetailOpenCmd(@BindingParam(WebConstants.ITEM_PARAM) MailSend item, 
+							@ContextParam(ContextType.COMPONENT) Component component) {
+		this.mailSendSelected = mailService.getByUuid(item.getUuid());
+	}
+	
+	@NotifyChange("mailSendList")
+	@Command
+	public void deleteMailSendSelectedCmd() {
+		if (CollectionUtils.isEmpty(this.mailSendSelectedList)) {
+			return;
+		}
+		mailService.delete(this.mailSendSelectedList);
+		loadMailSendList();
+	}
+	
 	/**
 	 * Prevede rucne zadany email do seznamu kontaktu prijemcu.
 	 * @param recipientType
@@ -378,17 +396,24 @@ public class EmailDetailWinVM extends BaseVM {
 	@NotifyChange("mailSendList")
 	@Command
 	public void mailSendSelectedCmd() {
+		if (!this.mailSendTabLoaded) {
+			loadMailSendList();	
+			this.mailSendTabLoaded = true;
+		}
+	}
+	
+	@NotifyChange("mailSendList")
+	@Command
+	public void loadSendSelectedCmd() {
+		loadMailSendList();
+	}
+	
+	private void loadMailSendList() {
 		Calendar fromCal = Calendar.getInstance();
 		fromCal.add(Calendar.DATE, -30);
 		Calendar toCal = Calendar.getInstance();
 		
 		this.mailSendList = mailService.getByDateInterval(fromCal.getTime(), toCal.getTime());
-	}
-	
-	@NotifyChange("mailSendSelected")
-	@Command
-	public void onMailSelectCmd() {
-//		this.mailSendSelected = this.mailSendSelectedList.get(0);
 	}
 	
 	/**

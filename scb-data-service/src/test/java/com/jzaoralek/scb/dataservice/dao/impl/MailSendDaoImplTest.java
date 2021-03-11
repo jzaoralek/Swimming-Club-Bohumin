@@ -1,10 +1,12 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.MailSendDao;
@@ -55,5 +57,13 @@ public class MailSendDaoImplTest extends BaseTestCase {
 	@Test
 	public void testGetBankPaymentByDateInterval() {
 		assertList(mailSendDao.getByDateInterval(getYesterday(), getTomorrow()), 1 , ITEM_UUID);
+	}
+	
+	@Test
+	public void testDelete() {
+		mailSendDao.delete(Arrays.asList(item));
+		List<MailSend> list = mailSendDao.getByDateInterval(getYesterday(), getTomorrow());
+		
+		Assert.assertTrue(list.isEmpty());
 	}
 }

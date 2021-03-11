@@ -30,6 +30,7 @@
 					hflex="1"
 					multiple="${vm.isLoggedUserInRole('ADMIN')}"
 					checkmark="${vm.isLoggedUserInRole('ADMIN')}"
+					nonselectableTags="*"
 					selectedItems="@bind(vm.selectedItems)"
 					onSelect="@command('onSelectCmd')"
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"

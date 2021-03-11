@@ -218,4 +218,9 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
 		
 		return mailSendDao.getByUuid(uuid);
 	}
+	
+	@Override
+	public void delete(List<MailSend> mailSendList) {
+		mailSendDao.delete(mailSendList);
+	}
 }

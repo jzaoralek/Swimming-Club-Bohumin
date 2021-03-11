@@ -2,6 +2,7 @@ package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 			+ " FROM mail_message_send WHERE modif_at BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM +
 			" ORDER BY modif_at desc";
 	private static final String SELECT_BY_UUID = "SELECT * FROM mail_message_send WHERE uuid=:" + UUID_PARAM;
+	private static final String DELETE_BY_UUIDS = "DELETE FROM mail_message_send WHERE uuid IN ( :uuids ) ";
 	
 	@Autowired
 	protected MailSendDaoImpl(DataSource ds) {
@@ -73,6 +75,19 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
+	}
+	
+	@Override
+	public void delete(List<MailSend> mailSendList) {
+		List<String> uuidList = new ArrayList<>();
+		for (MailSend item : mailSendList) {
+			uuidList.add(item.getUuid().toString());
+		}
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("uuids", uuidList);
+		
+		namedJdbcTemplate.update(DELETE_BY_UUIDS, paramMap);			
 	}
 	
 	public static final class MailSendRowMapper implements RowMapper<MailSend> {

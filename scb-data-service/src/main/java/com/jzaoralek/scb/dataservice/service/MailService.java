@@ -14,4 +14,5 @@ public interface MailService {
 	void sendMailBatch(List<Mail> mailList);
 	List<MailSend> getByDateInterval(Date from, Date to);
 	MailSend getByUuid(UUID uuid);
+	void delete(List<MailSend> mailSendList);
 }

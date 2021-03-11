@@ -11,4 +11,5 @@ public interface MailSendDao {
 	void insert(MailSend mail);
 	List<MailSend> getByDateInterval(Date from, Date to);
 	MailSend getByUuid(UUID uuid);
+	void delete(List<MailSend> mailSendList);
 }
