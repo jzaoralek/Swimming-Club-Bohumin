@@ -234,40 +234,44 @@
 <!-- 										</auxhead> -->
 									
 									<listhead>
-							            <listheader sort="auto(to)" 
+							            <listheader
 							            	align="left" 
-							            	hflex="min"
-							            	valign="top" />
+							            	width="40px" />
 							            <listheader 
 							            	tooltiptext="${c:l('txt.ui.common.participantCount')}" 
-							            	sort="auto(subject)" 
 							            	align="left"
-							            	hflex="1"  />
-							            <listheader width="65px" align="center" />
+							            	hflex="1"
+							            	valign="top" />
+							            <listheader width="130px" 
+							            	align="right" />
 							        </listhead>
 							        <template name="model">
 							            <listitem onClick="@command('mailDetailOpenCmd', item=each)">
-							            	<listcell style="white-space: nowrap;" >
-							               		${each.to}
-							            	</listcell>
+							            	<listcell />
 							            	<listcell>
 							            		<vlayout>
-							            			<label value="@load(each.modifAt) @converter(vm.dateTimeConverter)" />
-							            			<label value="${each.subject}"/>
+							            			<label value="${each.to}" style="font-size: 12px;"/>
+							            			<label value="${each.subject}" style="font-size: 12px;"/>
 							            		</vlayout>
 							            	</listcell>
 							            	<listcell>
-							               		<a sclass="big-icon"
-							               			iconSclass="z-icon-check-circle" 
-							               			style="color: green;"
-							               			tooltiptext="${c:l('txt.ui.mail.SendSuccess')}"
-							               			if="${each.success}" />
-							               		<a sclass="big-icon"
-							               			iconSclass="z-icon-exclamation-triangle" 
-							               			style="color: red;"
-							               			tooltiptext="${c:l('txt.ui.mail.SendFailed')}"
-							               			popup="failedSendPopup_${each.uuid}, position=after_end"
-							               			if="${!each.success}" />
+							            		<hlayout>
+							            			<vlayout width="60px" style="margin-right: 5px;">
+								            			<label value="@load(each.modifAt) @converter(vm.dateTimeConverter)" 
+								            				style="font-size: 12px;" />							            				
+							            			</vlayout>
+								               		<a sclass="big-icon"
+								               			iconSclass="z-icon-check-circle" 
+								               			style="color: green;"
+								               			tooltiptext="${c:l('txt.ui.mail.SendSuccess')}"
+								               			if="${each.success}" />
+								               		<a sclass="big-icon"
+								               			iconSclass="z-icon-exclamation-triangle" 
+								               			style="color: red;"
+								               			tooltiptext="${c:l('txt.ui.mail.SendFailed')}"
+								               			popup="failedSendPopup_${each.uuid}, position=after_end"
+								               			if="${!each.success}" />
+							            		</hlayout>
 							               		<popup id="failedSendPopup_${each.uuid}" width="440px">
 							               			<vbox hflex="1">
 							               				<label value="${c:l('txt.ui.mail.SendFailed')}"/>
@@ -282,12 +286,13 @@
 							            </listitem>
 							        </template>
 							    </listbox>
-							    
+							    							    							    
 							    <ckeditor hflex="1"
-							    	height="543px"
-							    	value="@bind(vm.mailSendSelected.text)"
+							    	height="475px"
+							    	value="@load(vm.mailSendSelected.text)"
 							    	customConfigurationsPath="/resources/js/ckeditor-readonly.js" >
 								</ckeditor>
+								
 			                </hbox>
 		                </vbox>
 			        </tabpanel>
