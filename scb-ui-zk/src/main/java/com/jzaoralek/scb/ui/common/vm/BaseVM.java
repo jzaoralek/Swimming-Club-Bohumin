@@ -315,7 +315,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 		
-		return new Mail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null);
+		return new Mail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.newUserAdmin", new Object[] {configurationService.getOrgName()}), mailToUser.toString(), null, false);
 	}
 	
 	public List<Boolean> getBooleanListItem() {
@@ -584,7 +584,8 @@ public class BaseVM {
 				, null
 				, Labels.getLabel("txt.ui.menu.application")
 				, mailToRepresentativeSb.toString()
-				, attachmentList);
+				, attachmentList
+				, false);
 	}
 	
 	private String getLineSeparator() {
@@ -602,7 +603,7 @@ public class BaseVM {
 		String representativeInfo = courseApplication.getCourseParticRepresentative().getContact().getFirstname() + " " + courseApplication.getCourseParticRepresentative().getContact().getSurname() + ", " + courseApplication.getCourseParticRepresentative().getContact().getEmail1() + ", " + courseApplication.getCourseParticRepresentative().getContact().getPhone1();
 		mailToClupSb.append(Labels.getLabel("msg.ui.mail.text.newApplication.text2", new Object[] {representativeInfo}));
 
-		return new Mail(ConfigUtil.getOrgEmail(configurationService), null, Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null);
+		return new Mail(ConfigUtil.getOrgEmail(configurationService), null, Labels.getLabel("msg.ui.mail.subject.newApplication", new Object[] {courseApplicationYear}), mailToClupSb.toString(), null, false);
 	}
 	
 	protected void sendMailWithResetpassword(ScbUser user) {
@@ -620,7 +621,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 
-		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false);
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false, false);
 	}
 	
 	@SuppressWarnings("unchecked")

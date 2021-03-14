@@ -9,7 +9,13 @@ import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.MailSend;
 
 public interface MailService {
-	void sendMail(String to, String cc, String subject, String text, List<Attachment> attachmentList, boolean html);
+	void sendMail(String to, 
+			String cc, 
+			String subject, 
+			String text, 
+			List<Attachment> attachmentList, 
+			boolean html,
+			boolean audit);
 	void sendMail(Mail mail);
 	void sendMailBatch(List<Mail> mailList);
 	List<MailSend> getByDateInterval(Date from, Date to);

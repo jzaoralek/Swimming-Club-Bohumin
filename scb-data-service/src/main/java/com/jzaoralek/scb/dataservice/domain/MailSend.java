@@ -22,7 +22,7 @@ public class MailSend extends Mail implements IdentEntity {
 				String subject, 
 				String text, 
 				List<Attachment> attachmentList) {
-		super(to, cc, subject, text, attachmentList);
+		super(to, cc, subject, text, attachmentList, true);
 	}
 
 	@Override

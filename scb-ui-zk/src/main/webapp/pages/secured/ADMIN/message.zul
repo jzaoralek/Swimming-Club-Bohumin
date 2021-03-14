@@ -222,7 +222,7 @@
 									multiple="true"
 									checkmark="true"
 									nonselectableTags="*"
-									style="margin-right: 10px;"
+									style="margin-right: 10px; min-width: 300px"
 									selectedItems="@bind(vm.mailSendSelectedList)"
 									emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 									class="listbox-400 mobile-inherit-width" >

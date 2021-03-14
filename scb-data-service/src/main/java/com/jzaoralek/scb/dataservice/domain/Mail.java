@@ -10,14 +10,17 @@ public class Mail {
 	private String text;
 	private List<Attachment> attachmentList;
 	private boolean html;
+	/** Store email to database. */
+	private boolean storeToDb;
 
-	public Mail(String to, String cc, String subject, String text, List<Attachment> attachmentList) {
+	public Mail(String to, String cc, String subject, String text, List<Attachment> attachmentList, boolean storeToDb) {
 		super();
 		this.to = to;
 		this.cc = cc;
 		this.subject = subject;
 		this.text = text;
 		this.attachmentList = attachmentList;
+		this.storeToDb = storeToDb;
 	}
 	
 	/**
@@ -29,8 +32,8 @@ public class Mail {
 	 * @param attachmentList
 	 * @return
 	 */
-	public static Mail ofHtml(String to, String cc, String subject, String text, List<Attachment> attachmentList) {
-		Mail ret = new Mail(to, cc, subject, text, attachmentList);
+	public static Mail ofHtml(String to, String cc, String subject, String text, List<Attachment> attachmentList, boolean storeToDb) {
+		Mail ret = new Mail(to, cc, subject, text, attachmentList, storeToDb);
 		ret.setHtml(true);
 		
 		return  ret;
@@ -72,10 +75,16 @@ public class Mail {
 	public void setHtml(boolean html) {
 		this.html = html;
 	}
-	
+	public boolean isStoreToDb() {
+		return storeToDb;
+	}
+	public void setStoreToDb(boolean storeToDb) {
+		this.storeToDb = storeToDb;
+	}
+
 	@Override
 	public String toString() {
-		return "Mail [to=" + to + ", subject=" + subject + ", text=" + text + ", attachmentList=" + attachmentList
-				+ "]";
-	}
+		return "Mail [to=" + to + ", cc=" + cc + ", subject=" + subject + ", text=" + text + ", "
+				+ "html=" + html + ", storeToDb=" + storeToDb + "]";
+	}	
 }

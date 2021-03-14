@@ -61,7 +61,13 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
 
     @Async
     @Override
-    public void sendMail(String to, String cc, String subject, String text, List<Attachment> attachmentList, boolean html) {
+    public void sendMail(String to, 
+    		String cc, 
+    		String subject, 
+    		String text, 
+    		List<Attachment> attachmentList, 
+    		boolean html, 
+    		boolean storeToDb) {
         if (LOG.isDebugEnabled()) {
         	LOG.debug("Send email '" + subject + "' to '" + to + "'.");
         }
@@ -153,7 +159,12 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
     	   mailSend.setSuccess(false);
     	   mailSend.setDescription(e.getMessage());
        } finally {
-    	   mailSendDao.insert(mailSend);    	   
+    	   if (!storeToDb) {
+    		   mailSend = null;
+    	   } else {
+    		   // store send mail to DB
+    		   mailSendDao.insert(mailSend);
+    	   }
        }
     }
 
@@ -177,7 +188,7 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
         	LOG.debug("Send email: " + mail);
         }
 		
-		sendMail(mail.getTo(), mail.getCc(), mail.getSubject(), mail.getText(), mail.getAttachmentList(), mail.isHtml());
+		sendMail(mail.getTo(), mail.getCc(), mail.getSubject(), mail.getText(), mail.getAttachmentList(), mail.isHtml(), mail.isStoreToDb());
 	}
     
     @Async

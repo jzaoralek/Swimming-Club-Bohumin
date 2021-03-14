@@ -45,12 +45,12 @@ public class PaymentTaskImpl implements PaymentTask {
 			Pair<GregorianCalendar, GregorianCalendar> dateFromTo = PaymentUtils.getDefaultDateFromTo(configurationService);
 			int newPaymentCount = bankPaymentService.updateBankPayments(dateFromTo.getValue0(), dateFromTo.getValue1());
 			// notification email about success processing
-			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PROCESS_PAYMENT_SUCCESS_MAIL_SUBJECT, "Zpracovano " + newPaymentCount + " novych plateb.", null, false);
+			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PROCESS_PAYMENT_SUCCESS_MAIL_SUBJECT, "Zpracovano " + newPaymentCount + " novych plateb.", null, false, false);
 		} catch (Exception e) {
 			// notification email about processing with error
 			String exceptionStr = ExcUtil.traceMessage(e).toString();
-			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, PROCESS_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false);
-			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PROCESS_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false);
+			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, PROCESS_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false);
+			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PROCESS_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false);
 			LOG.error("Unexpected excetion during updating bank payments.", e);
 		}
 	}
@@ -65,12 +65,12 @@ public class PaymentTaskImpl implements PaymentTask {
 			Pair<GregorianCalendar, GregorianCalendar> dateFromTo = PaymentUtils.getDefaultDateFromTo(configurationService);
 			int processPaymentCount = bankPaymentService.processPaymentPairing(dateFromTo.getValue0(), dateFromTo.getValue1());
 			// notification email about success processing
-			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PAIRING_PAYMENT_SUCCESS_MAIL_SUBJECT, "Zparovano " + processPaymentCount + " plateb.", null, false);
+			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PAIRING_PAYMENT_SUCCESS_MAIL_SUBJECT, "Zparovano " + processPaymentCount + " plateb.", null, false, false);
 		} catch (Exception e) {
 			// notification email about processing with error
 			String exceptionStr = ExcUtil.traceMessage(e).toString();
-			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, PAIRING_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false);
-			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PAIRING_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false);
+			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, PAIRING_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false);
+			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PAIRING_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false);
 			LOG.error("Unexpected excetion during bank payments pairing.", e);
 		}
 	}

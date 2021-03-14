@@ -193,13 +193,13 @@ public class EmailDetailWinVM extends BaseVM {
 		if (!CollectionUtils.isEmpty(this.mailToContactSet)) {
 			// unikatnost prohnanim pres Set
 			this.mailToContactSet.forEach(i -> mailAddrSet.add(i.getEmail1().trim()));
-			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList)));		
+			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList, true)));	
 		}
 		
 		if (!CollectionUtils.isEmpty(this.mailCcContactSet)) {
 			// unikatnost prohnanim pres Set
 			this.mailCcContactSet.forEach(i -> mailAddrSet.add(i.getEmail1().trim()));	
-			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList)));			
+			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList, true))); 		
 		}
 		
 		mailService.sendMailBatch(mailList);
