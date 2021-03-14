@@ -9,7 +9,11 @@ import com.jzaoralek.scb.dataservice.domain.MailSend;
 public interface MailSendDao {
 
 	void insert(MailSend mail);
-	List<MailSend> getByDateInterval(Date from, Date to);
+	List<MailSend> getMailSendListByCriteria(Date dateFrom, 
+			Date dateTo, 
+			String mailTo,
+			String mailSubject,
+			String mailText);
 	MailSend getByUuid(UUID uuid);
 	void delete(List<MailSend> mailSendList);
 }

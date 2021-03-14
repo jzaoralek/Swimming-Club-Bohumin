@@ -413,7 +413,7 @@ public class EmailDetailWinVM extends BaseVM {
 		fromCal.add(Calendar.DATE, -30);
 		Calendar toCal = Calendar.getInstance();
 		
-		this.mailSendList = mailService.getByDateInterval(fromCal.getTime(), toCal.getTime());
+		this.mailSendList = mailService.getMailSendListByCriteria(fromCal.getTime(), toCal.getTime(), null, null, null);
 	}
 	
 	/**

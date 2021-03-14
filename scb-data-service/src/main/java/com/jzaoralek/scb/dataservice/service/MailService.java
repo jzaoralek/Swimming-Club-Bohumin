@@ -18,7 +18,12 @@ public interface MailService {
 			boolean audit);
 	void sendMail(Mail mail);
 	void sendMailBatch(List<Mail> mailList);
-	List<MailSend> getByDateInterval(Date from, Date to);
+	List<MailSend> getMailSendListByCriteria(Date dateFrom, 
+						Date dateTo, 
+						String mailTo,
+						String mailSubject,
+						String mailText);
 	MailSend getByUuid(UUID uuid);
 	void delete(List<MailSend> mailSendList);
+	
 }

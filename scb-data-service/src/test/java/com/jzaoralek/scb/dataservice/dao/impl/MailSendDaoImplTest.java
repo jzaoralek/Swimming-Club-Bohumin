@@ -56,13 +56,13 @@ public class MailSendDaoImplTest extends BaseTestCase {
 	
 	@Test
 	public void testGetBankPaymentByDateInterval() {
-		assertList(mailSendDao.getByDateInterval(getYesterday(), getTomorrow()), 1 , ITEM_UUID);
+		assertList(mailSendDao.getMailSendListByCriteria(getYesterday(), getTomorrow(), MAIL_TO, MAIL_SUBJECT, MAIL_TEXT), 1 , ITEM_UUID);
 	}
 	
 	@Test
 	public void testDelete() {
 		mailSendDao.delete(Arrays.asList(item));
-		List<MailSend> list = mailSendDao.getByDateInterval(getYesterday(), getTomorrow());
+		List<MailSend> list = mailSendDao.getMailSendListByCriteria(getYesterday(), getTomorrow(), MAIL_TO, MAIL_SUBJECT, MAIL_TEXT);
 		
 		Assert.assertTrue(list.isEmpty());
 	}

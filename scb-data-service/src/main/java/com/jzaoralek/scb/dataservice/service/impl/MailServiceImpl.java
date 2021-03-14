@@ -216,11 +216,15 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
 	}
     
     @Override
-	public List<MailSend> getByDateInterval(Date from, Date to) {
-    	if (from == null || to == null) {
+	public List<MailSend> getMailSendListByCriteria(Date dateFrom, 
+										Date dateTo, 
+										String mailTo,
+										String mailSubject,
+										String mailText) {
+    	if (dateFrom == null || dateTo == null) {
     		return null;
     	}
-		return mailSendDao.getByDateInterval(from, to);
+		return mailSendDao.getMailSendListByCriteria(dateFrom, dateTo, mailTo, mailSubject, mailText);
 	}
 
 	@Override

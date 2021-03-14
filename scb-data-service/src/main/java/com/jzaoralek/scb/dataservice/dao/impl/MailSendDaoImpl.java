@@ -14,6 +14,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.MailSendDao;
@@ -32,9 +33,13 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 	
 	private static final String INSERT = "INSERT INTO mail_message_send(uuid, mail_to, mail_cc, mail_subject, mail_text, success, description, attachments, html, modif_at, modif_by)"
 			+ "VALUES (:"+UUID_PARAM+", :"+MAIL_TO_PARAM+", :"+MAIL_CC_PARAM+", :"+MAIL_SUBJECT_PARAM+", :"+MAIL_TEXT_PARAM+", :"+SUCCESS_PARAM+", :"+DESCRIPTION_PARAM+", :"+ATTACHMENTS_PARAM+", :"+HTML_PARAM+",:"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
-	private static final String SELECT_BY_DATE_INTERVAL = "SELECT uuid, mail_to, mail_cc, mail_subject, success, description, attachments, html, modif_at, modif_by "
-			+ " FROM mail_message_send WHERE modif_at BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM +
-			" ORDER BY modif_at desc";
+	private static final String SELECT_MAIL_SEND_BASE = "SELECT uuid, mail_to, mail_cc, mail_subject, success, description, attachments, html, modif_at, modif_by "
+			+ " FROM mail_message_send WHERE modif_at BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM;
+			;
+	private static final String SELECT_MAIL_TO_WHERE_CLAUSE = " AND mail_to LIKE %:"+MAIL_TO_PARAM+"%";
+	private static final String SELECT_MAIL_SUBJECT_WHERE_CLAUSE = " AND mail_to LIKE %:"+MAIL_SUBJECT_PARAM+"%";
+	private static final String SELECT_MAIL_TEXT_WHERE_CLAUSE = " AND mail_to LIKE %:"+MAIL_TEXT_PARAM+"%";
+	private static final String SELECT_MAIL_ORDER_BY_CLAUSE = " ORDER BY modif_at desc";
 	private static final String SELECT_BY_UUID = "SELECT * FROM mail_message_send WHERE uuid=:" + UUID_PARAM;
 	private static final String DELETE_BY_UUIDS = "DELETE FROM mail_message_send WHERE uuid IN ( :uuids ) ";
 	
@@ -60,11 +65,35 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 	}
 
 	@Override
-	public List<MailSend> getByDateInterval(Date from, Date to) {
+	public List<MailSend> getMailSendListByCriteria(Date dateFrom, 
+			Date dateTo, 
+			String mailTo,
+			String mailSubject,
+			String mailText) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue(DATE_FROM_PARAM, from);
-		paramMap.addValue(DATE_TO_PARAM, to);
-		return namedJdbcTemplate.query(SELECT_BY_DATE_INTERVAL, paramMap, new MailSendRowMapper(false));
+		paramMap.addValue(DATE_FROM_PARAM, dateFrom);
+		paramMap.addValue(DATE_TO_PARAM, dateTo);
+		
+		StringBuilder sb = new StringBuilder(SELECT_MAIL_SEND_BASE);
+		
+		if (StringUtils.hasText(mailTo)) {
+			paramMap.addValue(MAIL_TO_PARAM, mailTo);
+			sb.append(SELECT_MAIL_TO_WHERE_CLAUSE);
+		}
+		
+		if (StringUtils.hasText(mailSubject)) {
+			paramMap.addValue(MAIL_SUBJECT_PARAM, mailSubject);
+			sb.append(SELECT_MAIL_SUBJECT_WHERE_CLAUSE);
+		}
+		
+		if (StringUtils.hasText(mailText)) {
+			paramMap.addValue(MAIL_TEXT_PARAM, mailText);
+			sb.append(SELECT_MAIL_TEXT_WHERE_CLAUSE);
+		}
+		
+		sb.append(SELECT_MAIL_ORDER_BY_CLAUSE);
+		
+		return namedJdbcTemplate.query(SELECT_MAIL_SEND_BASE, paramMap, new MailSendRowMapper(false));
 	}
 	
 	@Override
