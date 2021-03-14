@@ -71,4 +71,5 @@ public final class WebConstants {
 	public static final String EMAIL_LIST_SEPARATOR = ";";
 	
 	public static final String COLON = ": ";
+	public static final String SEMICOLON_DELIM = " | ";
 }

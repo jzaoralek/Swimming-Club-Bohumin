@@ -199,21 +199,83 @@
 			        <tabpanel hflex="1">
 			        	<!-- Odeslane zpravy -->
 			        	<vbox>
-				        	<hbox style="margin-left: 5px; margin-bottom: 10px;" >
-					        	<!-- Odstranit -->
-					        	<button onClick="@command('deleteMailSendSelectedCmd')"
-									tooltiptext="${c:l('txt.ui.common.Delete')}"
-									sclass="btn-danger"
-									disabled="@load(empty(vm.mailSendSelectedList))"
-			        				iconSclass="z-icon-times" />
-			        			
-					        	<!-- Refresh -->
-					        	<button tooltiptext="${c:l('txt.ui.common.copy.courseList.desc')}"
-			        				iconSclass="z-icon-refresh"
-			        				onClick="@command('loadSendSelectedCmd')"
-			        				style="margin-right: 5px;" />				        				
-				        	</hbox>
-		        			
+			        		<vbox hflex="1">
+					        	<hbox style="margin-left: 5px; margin-bottom: 10px;" hflex="1" >
+						        	<!-- Odstranit -->
+						        	<button onClick="@command('deleteMailSendSelectedCmd')"
+										tooltiptext="${c:l('txt.ui.common.Delete')}"
+										sclass="btn-danger"
+										disabled="@load(empty(vm.mailSendSelectedList))"
+				        				iconSclass="z-icon-times" />
+				        			
+				        			<!-- Filtr -->
+				        			<bandbox id="mailSendFilter" 
+				        				hflex="1" 
+										sclass="form-input-text"
+										value="@load(vm.mailSendFilterStrValue)"
+										mold="rounded"
+										readonly="true"
+										buttonVisible="true"
+										autodrop="true" 
+										popup="mailSendFilterPopup" >
+										<bandpopup height="min" width="460px" id="mailSendFilterPopup" >
+											<grid>
+												<columns>
+													<column width="135px"/>
+													<column hflex="1"/>
+												</columns>
+												<rows>
+													<row>
+														<label value="${c:l('txt.ui.common.from')}"/>
+														<datebox value="@bind(vm.mailSendFilterFromDate)" 
+															readonly="true" 
+															hflex="1" />
+													</row>
+													<row>
+														<label value="${c:l('txt.ui.common.to')}"/>
+														<datebox value="@bind(vm.mailSendFilterToDate)" 
+															readonly="true" 
+															hflex="1" />
+													</row>
+													<row>
+														<label value="${c:l('txt.ui.common.To')}"/>
+														<textbox value="@bind(vm.mailSendFilterMailTo)" 
+															onOK="@command('loadSendSelectedCmd')" 
+															hflex="1" />
+													</row>
+													<row>
+														<label value="${c:l('txt.ui.common.Predmet')}"/>
+														<textbox value="@bind(vm.mailSendFilterMailSubject)" 
+															onOK="@command('loadSendSelectedCmd')" 
+															hflex="1" />
+													</row>
+													<row>
+														<label value="${c:l('txt.ui.common.contentText')}"/>
+														<textbox value="@bind(vm.mailSendFilterMailText)" 
+															onOK="@command('loadSendSelectedCmd')" 
+															hflex="1" />
+													</row>
+													<row>
+														<cell/>
+														<cell align="right">
+															<button label="${c:l('txt.ui.common.search')}"
+										        				iconSclass="z-icon-search"
+										        				onClick="@command('loadSendSelectedCmd')" />
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</bandpopup>
+									</bandbox>
+				        			
+				        			
+						        	<!-- Refresh -->
+						        	<button tooltiptext="${c:l('txt.ui.common.copy.courseList.desc')}"
+				        				iconSclass="z-icon-refresh"
+				        				onClick="@command('loadSendSelectedCmd')"
+				        				style="margin-right: 5px;" />				        				
+					        	</hbox>
+		        			</vbox>
 				        	<hbox spacing="0" hflex="1" >
 			                    <listbox model="@load(vm.mailSendList)"
 									id="courseList"

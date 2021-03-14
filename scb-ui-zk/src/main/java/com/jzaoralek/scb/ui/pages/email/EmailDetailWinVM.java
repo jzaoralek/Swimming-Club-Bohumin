@@ -3,10 +3,12 @@ package com.jzaoralek.scb.ui.pages.email;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
@@ -37,6 +39,7 @@ import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.MailSend;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.utils.DateUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -71,6 +74,11 @@ public class EmailDetailWinVM extends BaseVM {
 	private List<MailSend> mailSendSelectedList;
 	private MailSend mailSendSelected;
 	private boolean mailSendTabLoaded;
+	private Date mailSendFilterFromDate;
+	private Date mailSendFilterToDate;
+	private String mailSendFilterMailTo;
+	private String mailSendFilterMailSubject;
+	private String mailSendFilterMailText;
 
 	//	@Wire
 //	private Bandpopup mailToPopup;
@@ -393,27 +401,66 @@ public class EmailDetailWinVM extends BaseVM {
 		ccTxt.setFocus(true);
 	}
 	
-	@NotifyChange("mailSendList")
+	/**
+	 * Tab Send messages selected.
+	 */
+	@NotifyChange({"mailSendList","mailSendFilterFromDate","mailSendFilterToDate"})
 	@Command
 	public void mailSendSelectedCmd() {
 		if (!this.mailSendTabLoaded) {
+			// default filter init
+			initMailSendFilter();
 			loadMailSendList();	
 			this.mailSendTabLoaded = true;
 		}
 	}
 	
-	@NotifyChange("mailSendList")
+	@NotifyChange({"mailSendList","mailSendFilterFromDate","mailSendFilterToDate"})
 	@Command
 	public void loadSendSelectedCmd() {
 		loadMailSendList();
 	}
 	
+	/**
+	 * Default mail send filter init.
+	 */
+	private void initMailSendFilter() {
+		Calendar fromDateCal = Calendar.getInstance();
+		fromDateCal.add(Calendar.DATE, -30);
+		mailSendFilterFromDate = fromDateCal.getTime();
+		mailSendFilterToDate = Calendar.getInstance().getTime();
+	}
+	
 	private void loadMailSendList() {
-		Calendar fromCal = Calendar.getInstance();
-		fromCal.add(Calendar.DATE, -30);
-		Calendar toCal = Calendar.getInstance();
+		this.mailSendList = mailService.getMailSendListByCriteria(DateUtil.normalizeToDay(mailSendFilterFromDate), 
+															DateUtil.normalizeToDayTimestamp(mailSendFilterToDate), 
+															mailSendFilterMailTo, 
+															mailSendFilterMailSubject, 
+															mailSendFilterMailText);
+	}
+	
+	/**
+	 * String representation of mail send filter.
+	 * @return
+	 */
+	@DependsOn({"mailSendFilterFromDate","mailSendFilterToDate"})
+	public String getMailSendFilterStrValue() {
+		List<String> filterItemList = new ArrayList<>();
+		if (mailSendFilterFromDate != null) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.from") + WebConstants.COLON 
+					+ getDateConverter().coerceToUi(mailSendFilterFromDate, null, null));
+		}
 		
-		this.mailSendList = mailService.getMailSendListByCriteria(fromCal.getTime(), toCal.getTime(), null, null, null);
+		if (mailSendFilterToDate != null) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.to") + WebConstants.COLON 
+					+ getDateConverter().coerceToUi(mailSendFilterToDate, null, null));
+		}
+		
+		if (!CollectionUtils.isEmpty(filterItemList)) {
+			return filterItemList.stream().collect(Collectors.joining(WebConstants.SEMICOLON_DELIM));			
+		} else {
+			return null;			
+		}
 	}
 	
 	/**
@@ -527,6 +574,36 @@ public class EmailDetailWinVM extends BaseVM {
 	}
 	public MailSend getMailSendSelected() {
 		return mailSendSelected;
+	}
+	public Date getMailSendFilterFromDate() {
+		return mailSendFilterFromDate;
+	}
+	public void setMailSendFilterFromDate(Date mailSendFilterFromDate) {
+		this.mailSendFilterFromDate = mailSendFilterFromDate;
+	}
+	public Date getMailSendFilterToDate() {
+		return mailSendFilterToDate;
+	}
+	public void setMailSendFilterToDate(Date mailSendFilterToDate) {
+		this.mailSendFilterToDate = mailSendFilterToDate;
+	}
+	public String getMailSendFilterMailTo() {
+		return mailSendFilterMailTo;
+	}
+	public void setMailSendFilterMailTo(String mailSendFilterMailTo) {
+		this.mailSendFilterMailTo = mailSendFilterMailTo;
+	}
+	public String getMailSendFilterMailSubject() {
+		return mailSendFilterMailSubject;
+	}
+	public void setMailSendFilterMailSubject(String mailSendFilterMailSubject) {
+		this.mailSendFilterMailSubject = mailSendFilterMailSubject;
+	}
+	public String getMailSendFilterMailText() {
+		return mailSendFilterMailText;
+	}
+	public void setMailSendFilterMailText(String mailSendFilterMailText) {
+		this.mailSendFilterMailText = mailSendFilterMailText;
 	}
 	
 	public static class EmailAddressFilter {

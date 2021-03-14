@@ -36,9 +36,9 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 	private static final String SELECT_MAIL_SEND_BASE = "SELECT uuid, mail_to, mail_cc, mail_subject, success, description, attachments, html, modif_at, modif_by "
 			+ " FROM mail_message_send WHERE modif_at BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM;
 			;
-	private static final String SELECT_MAIL_TO_WHERE_CLAUSE = " AND mail_to LIKE %:"+MAIL_TO_PARAM+"%";
-	private static final String SELECT_MAIL_SUBJECT_WHERE_CLAUSE = " AND mail_to LIKE %:"+MAIL_SUBJECT_PARAM+"%";
-	private static final String SELECT_MAIL_TEXT_WHERE_CLAUSE = " AND mail_to LIKE %:"+MAIL_TEXT_PARAM+"%";
+	private static final String SELECT_MAIL_TO_WHERE_CLAUSE = " AND mail_to LIKE :"+MAIL_TO_PARAM;
+	private static final String SELECT_MAIL_SUBJECT_WHERE_CLAUSE = " AND mail_subject LIKE :"+MAIL_SUBJECT_PARAM;
+	private static final String SELECT_MAIL_TEXT_WHERE_CLAUSE = " AND mail_text LIKE :"+MAIL_TEXT_PARAM;
 	private static final String SELECT_MAIL_ORDER_BY_CLAUSE = " ORDER BY modif_at desc";
 	private static final String SELECT_BY_UUID = "SELECT * FROM mail_message_send WHERE uuid=:" + UUID_PARAM;
 	private static final String DELETE_BY_UUIDS = "DELETE FROM mail_message_send WHERE uuid IN ( :uuids ) ";
@@ -77,23 +77,23 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 		StringBuilder sb = new StringBuilder(SELECT_MAIL_SEND_BASE);
 		
 		if (StringUtils.hasText(mailTo)) {
-			paramMap.addValue(MAIL_TO_PARAM, mailTo);
+			paramMap.addValue(MAIL_TO_PARAM, "%" + mailTo.toLowerCase().trim() + "%");
 			sb.append(SELECT_MAIL_TO_WHERE_CLAUSE);
 		}
 		
 		if (StringUtils.hasText(mailSubject)) {
-			paramMap.addValue(MAIL_SUBJECT_PARAM, mailSubject);
+			paramMap.addValue(MAIL_SUBJECT_PARAM, "%" + mailSubject.toLowerCase().trim() + "%");
 			sb.append(SELECT_MAIL_SUBJECT_WHERE_CLAUSE);
 		}
 		
 		if (StringUtils.hasText(mailText)) {
-			paramMap.addValue(MAIL_TEXT_PARAM, mailText);
+			paramMap.addValue(MAIL_TEXT_PARAM, "%" + mailText.toLowerCase().trim() + "%");
 			sb.append(SELECT_MAIL_TEXT_WHERE_CLAUSE);
 		}
 		
 		sb.append(SELECT_MAIL_ORDER_BY_CLAUSE);
 		
-		return namedJdbcTemplate.query(SELECT_MAIL_SEND_BASE, paramMap, new MailSendRowMapper(false));
+		return namedJdbcTemplate.query(sb.toString(), paramMap, new MailSendRowMapper(false));
 	}
 	
 	@Override
