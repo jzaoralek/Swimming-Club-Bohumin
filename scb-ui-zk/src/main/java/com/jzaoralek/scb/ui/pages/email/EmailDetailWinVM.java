@@ -29,6 +29,7 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Bandbox;
+import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Popup;
@@ -417,7 +418,21 @@ public class EmailDetailWinVM extends BaseVM {
 	
 	@NotifyChange({"mailSendList","mailSendFilterFromDate","mailSendFilterToDate"})
 	@Command
-	public void loadSendSelectedCmd() {
+	public void loadSendSelectedCmd(@BindingParam("bandbox") Bandbox bandbox) {
+		loadMailSendList();
+		
+		if (bandbox != null) {
+			bandbox.close();			
+		}
+	}
+	
+	@NotifyChange({"mailSendList","mailSendFilterFromDate","mailSendFilterToDate","mailSendFilterMailTo","mailSendFilterMailSubject","mailSendFilterMailText"})
+	@Command
+	public void clearMailSendFilterCmd() {
+		mailSendFilterMailTo = null;
+		mailSendFilterMailSubject = null;
+		mailSendFilterMailText = null;
+		initMailSendFilter();
 		loadMailSendList();
 	}
 	
@@ -454,6 +469,21 @@ public class EmailDetailWinVM extends BaseVM {
 		if (mailSendFilterToDate != null) {
 			filterItemList.add(Labels.getLabel("txt.ui.common.to") + WebConstants.COLON 
 					+ getDateConverter().coerceToUi(mailSendFilterToDate, null, null));
+		}
+		
+		if (mailSendFilterMailTo != null) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.To") + WebConstants.COLON 
+					+ mailSendFilterMailTo);
+		}
+		
+		if (mailSendFilterMailSubject != null) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.Predmet") + WebConstants.COLON 
+					+ mailSendFilterMailSubject);
+		}
+		
+		if (mailSendFilterMailText != null) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.contentText") + WebConstants.COLON 
+					+ mailSendFilterMailText);
 		}
 		
 		if (!CollectionUtils.isEmpty(filterItemList)) {

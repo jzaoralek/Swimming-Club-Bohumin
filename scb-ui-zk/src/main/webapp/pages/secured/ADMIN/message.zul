@@ -240,34 +240,37 @@
 													<row>
 														<label value="${c:l('txt.ui.common.To')}"/>
 														<textbox value="@bind(vm.mailSendFilterMailTo)" 
-															onOK="@command('loadSendSelectedCmd')" 
+															onOK="@command('loadSendSelectedCmd', bandbox=mailSendFilter)" 
 															hflex="1" />
 													</row>
 													<row>
 														<label value="${c:l('txt.ui.common.Predmet')}"/>
 														<textbox value="@bind(vm.mailSendFilterMailSubject)" 
-															onOK="@command('loadSendSelectedCmd')" 
+															onOK="@command('loadSendSelectedCmd', bandbox=mailSendFilter)" 
 															hflex="1" />
 													</row>
 													<row>
 														<label value="${c:l('txt.ui.common.contentText')}"/>
 														<textbox value="@bind(vm.mailSendFilterMailText)" 
-															onOK="@command('loadSendSelectedCmd')" 
+															onOK="@command('loadSendSelectedCmd', bandbox=mailSendFilter)" 
 															hflex="1" />
 													</row>
 													<row>
 														<cell/>
 														<cell align="right">
-															<button label="${c:l('txt.ui.common.search')}"
+										        			<button label="${c:l('txt.ui.common.search')}"
 										        				iconSclass="z-icon-search"
-										        				onClick="@command('loadSendSelectedCmd')" />
+										        				onClick="@command('loadSendSelectedCmd', bandbox=mailSendFilter)" />
+															<button label="${c:l('txt.ui.common.CleanFilter')}"
+										        				onClick="@command('clearMailSendFilterCmd')"
+										        				style="margin-left: 5px;"
+										        				sclass="btn-light" />
 														</cell>
 													</row>
 												</rows>
 											</grid>
 										</bandpopup>
 									</bandbox>
-				        			
 				        			
 						        	<!-- Refresh -->
 						        	<button tooltiptext="${c:l('txt.ui.common.copy.courseList.desc')}"
@@ -350,6 +353,7 @@
 							    </listbox>
 							    							    							    
 							    <ckeditor hflex="1"
+							    	if="false"
 							    	height="475px"
 							    	value="@load(vm.mailSendSelected.text)"
 							    	customConfigurationsPath="/resources/js/ckeditor-readonly.js" >
