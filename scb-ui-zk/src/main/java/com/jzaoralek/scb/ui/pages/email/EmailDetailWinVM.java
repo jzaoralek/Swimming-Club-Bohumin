@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -418,7 +419,7 @@ public class EmailDetailWinVM extends BaseVM {
 	
 	@NotifyChange({"mailSendList","mailSendFilterFromDate","mailSendFilterToDate"})
 	@Command
-	public void loadSendSelectedCmd(@BindingParam("bandbox") Bandbox bandbox) {
+	public void loadSendSelectedCmd(@BindingParam("popup") Popup bandbox) {
 		loadMailSendList();
 		
 		if (bandbox != null) {
@@ -451,7 +452,7 @@ public class EmailDetailWinVM extends BaseVM {
 															DateUtil.normalizeToDayTimestamp(mailSendFilterToDate), 
 															mailSendFilterMailTo, 
 															mailSendFilterMailSubject, 
-															mailSendFilterMailText);
+															WebUtils.escapeHtml(mailSendFilterMailText)); // escape czech letters to html entites
 	}
 	
 	/**
@@ -471,17 +472,17 @@ public class EmailDetailWinVM extends BaseVM {
 					+ getDateConverter().coerceToUi(mailSendFilterToDate, null, null));
 		}
 		
-		if (mailSendFilterMailTo != null) {
+		if (StringUtils.hasText(mailSendFilterMailTo)) {
 			filterItemList.add(Labels.getLabel("txt.ui.common.To") + WebConstants.COLON 
 					+ mailSendFilterMailTo);
 		}
 		
-		if (mailSendFilterMailSubject != null) {
+		if (StringUtils.hasText(mailSendFilterMailSubject)) {
 			filterItemList.add(Labels.getLabel("txt.ui.common.Predmet") + WebConstants.COLON 
 					+ mailSendFilterMailSubject);
 		}
 		
-		if (mailSendFilterMailText != null) {
+		if (StringUtils.hasText(mailSendFilterMailText)) {
 			filterItemList.add(Labels.getLabel("txt.ui.common.contentText") + WebConstants.COLON 
 					+ mailSendFilterMailText);
 		}
