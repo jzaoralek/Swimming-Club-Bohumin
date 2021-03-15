@@ -205,6 +205,7 @@
 										tooltiptext="${c:l('txt.ui.common.Delete')}"
 										sclass="btn-danger"
 										height="33px"
+										style="height: 33px;"
 										disabled="@load(empty(vm.mailSendSelectedList))"
 				        				iconSclass="z-icon-times" />
 				        			
@@ -285,7 +286,7 @@
 				        				iconSclass="z-icon-refresh"
 				        				onClick="@command('loadSendSelectedCmd')"
 				        				height="33px"
-				        				style="margin-left: 5px;" />				        				
+				        				style="margin-left: 5px;height: 33px;" />				        				
 					        	</hbox>
 		        			</vbox>
 				        	<hbox spacing="0" hflex="1" >
@@ -324,7 +325,10 @@
 							            	<listcell/>
 							            	<listcell>
 							            		<vlayout>
-							            			<label value="${each.to}" style="font-size: 12px;"/>
+							            			<label value="${each.to}" 
+							            				style="font-size: 12px; text-decoration: underline !important"
+							            				onClick="@command('mailDetailOpenCmd', item=each)" 
+							            				popup="mailDetailPopup, position=after_start" />
 							            			<label value="${each.subject}" 
 							            				style="font-size: 12px; text-decoration: underline !important"
 							            				onClick="@command('mailDetailOpenCmd', item=each)" 
@@ -378,7 +382,7 @@
 				<hbox hflex="1" pack="start" align="center" style="background: #F0F3F5; padding: 5px;">
 					<button tooltiptext="${c:l('txt.ui.ToClose')}"
 						iconSclass="z-icon-times"
-						style="margin-right: 5px;"
+						style="margin-right: 5px; height: 33px;"
 		      			onClick="mailDetailPopup.close(); mailDetailPopup.invalidate();"
 		      			sclass="btn-light" />
 					<label value="@load(vm.mailSendSelected.subject)"

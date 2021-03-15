@@ -12,7 +12,7 @@ CKEDITOR.editorConfig = function(config) {
 			[ 'Bold', 'Italic', 'Underline', 'Subscript',
 					'Superscript', 'TextColor', 'BGColor', '-', 'Cut', 'Copy',
 					'Paste', '-', 'NumberedList',
-					'BulletedList'],
+					'BulletedList', '-', 'Link', 'Unlink'],
 			[ 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ],
 			[ 'Format', 'Font', 'FontSize', 'Maximize' ] ];
 };
