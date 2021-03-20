@@ -15,7 +15,8 @@ public interface MailService {
 			String text, 
 			List<Attachment> attachmentList, 
 			boolean html,
-			boolean audit);
+			boolean audit,
+			String toCompleteName);
 	void sendMail(Mail mail);
 	void sendMailBatch(List<Mail> mailList);
 	List<MailSend> getMailSendListByCriteria(Date dateFrom, 

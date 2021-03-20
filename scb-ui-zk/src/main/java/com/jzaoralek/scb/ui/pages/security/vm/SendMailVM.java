@@ -44,7 +44,8 @@ public class SendMailVM extends BaseVM {
 				, "text mailu"
 				, attachmentList
 				, false
-				, false);        
+				, false
+				, null);        
 	}
 	
 	@Command

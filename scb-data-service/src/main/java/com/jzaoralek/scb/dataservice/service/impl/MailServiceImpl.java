@@ -67,7 +67,8 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
     		String text, 
     		List<Attachment> attachmentList, 
     		boolean html, 
-    		boolean storeToDb) {
+    		boolean storeToDb,
+    		String toCompleteName) {
         if (LOG.isDebugEnabled()) {
         	LOG.debug("Send email '" + subject + "' to '" + to + "'.");
         }
@@ -90,7 +91,7 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
        }
        
        // store send mail to database
-       MailSend mailSend = new MailSend(to, cc, subject, text, attachmentList);
+       MailSend mailSend = new MailSend(to, cc, subject, text, attachmentList, toCompleteName);
        mailSend.setHtml(html);
        // fillIdentEntity(mailSend);
        mailSend.setUuid(UUID.randomUUID());
@@ -188,7 +189,14 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
         	LOG.debug("Send email: " + mail);
         }
 		
-		sendMail(mail.getTo(), mail.getCc(), mail.getSubject(), mail.getText(), mail.getAttachmentList(), mail.isHtml(), mail.isStoreToDb());
+		sendMail(mail.getTo(), 
+				mail.getCc(), 
+				mail.getSubject(), 
+				mail.getText(), 
+				mail.getAttachmentList(), 
+				mail.isHtml(), 
+				mail.isStoreToDb(), 
+				mail.getToCompleteName());
 	}
     
     @Async

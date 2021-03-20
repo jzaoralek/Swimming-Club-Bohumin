@@ -85,4 +85,9 @@
 	    <macro-uri>/pages/common/component/boolean-icon.zul</macro-uri>
 	</component>
 	
+	<component>
+	    <component-name>mail-send-recipient-template</component-name>    
+	    <macro-uri>/pages/common/component/mail-send-recipient-template.zul</macro-uri>
+	</component>
+	
 </language-addon>

@@ -30,10 +30,11 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 	private static final String SUCCESS_PARAM = "SUCCESS";
 	private static final String ATTACHMENTS_PARAM = "ATTACHMENTS";
 	private static final String HTML_PARAM = "HTML";
+	private static final String MAIL_TO_COMPLETE_NAME_PARAM = "MAIL_TO_COMPLETE_NAME";
 	
-	private static final String INSERT = "INSERT INTO mail_message_send(uuid, mail_to, mail_cc, mail_subject, mail_text, success, description, attachments, html, modif_at, modif_by)"
-			+ "VALUES (:"+UUID_PARAM+", :"+MAIL_TO_PARAM+", :"+MAIL_CC_PARAM+", :"+MAIL_SUBJECT_PARAM+", :"+MAIL_TEXT_PARAM+", :"+SUCCESS_PARAM+", :"+DESCRIPTION_PARAM+", :"+ATTACHMENTS_PARAM+", :"+HTML_PARAM+",:"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+")";
-	private static final String SELECT_MAIL_SEND_BASE = "SELECT uuid, mail_to, mail_cc, mail_subject, success, description, attachments, html, modif_at, modif_by "
+	private static final String INSERT = "INSERT INTO mail_message_send(uuid, mail_to, mail_cc, mail_subject, mail_text, success, description, attachments, html, modif_at, modif_by, mail_to_complete_name)"
+			+ "VALUES (:"+UUID_PARAM+", :"+MAIL_TO_PARAM+", :"+MAIL_CC_PARAM+", :"+MAIL_SUBJECT_PARAM+", :"+MAIL_TEXT_PARAM+", :"+SUCCESS_PARAM+", :"+DESCRIPTION_PARAM+", :"+ATTACHMENTS_PARAM+", :"+HTML_PARAM+",:"+MODIF_AT_PARAM+", :"+MODIF_BY_PARAM+", :"+MAIL_TO_COMPLETE_NAME_PARAM+")";
+	private static final String SELECT_MAIL_SEND_BASE = "SELECT uuid, mail_to, mail_cc, mail_subject, success, description, attachments, html, modif_at, modif_by, mail_to_complete_name "
 			+ " FROM mail_message_send WHERE modif_at BETWEEN :"+DATE_FROM_PARAM+" AND :"+DATE_TO_PARAM;
 			;
 	private static final String SELECT_MAIL_TO_WHERE_CLAUSE = " AND mail_to LIKE :"+MAIL_TO_PARAM;
@@ -60,6 +61,7 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 		paramMap.addValue(DESCRIPTION_PARAM, mail.getDescription());
 		paramMap.addValue(ATTACHMENTS_PARAM, mail.isAttachments() ? "1" : "0");
 		paramMap.addValue(HTML_PARAM, mail.isHtml() ? "1" : "0");
+		paramMap.addValue(MAIL_TO_COMPLETE_NAME_PARAM, mail.getToCompleteName());
 		
 		namedJdbcTemplate.update(INSERT, paramMap);
 	}
@@ -133,8 +135,9 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 			String mail_cc = rs.getString("mail_cc");
 			String mail_subject = rs.getString("mail_subject");
 			String mail_text = inclText ? rs.getString("mail_text") : null;
+			String mailToCompleteName = rs.getString("mail_to_complete_name");
 			
-			MailSend ret = new MailSend(mailTo, mail_cc, mail_subject, mail_text, null);
+			MailSend ret = new MailSend(mailTo, mail_cc, mail_subject, mail_text, null, mailToCompleteName);
 			fetchIdentEntity(rs, ret);
 			ret.setSuccess(fetchBoolean(rs.getInt("success")));
 			ret.setDescription(rs.getString("description"));

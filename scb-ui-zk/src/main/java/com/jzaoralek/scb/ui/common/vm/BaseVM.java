@@ -621,7 +621,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 
-		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false, false);
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false, false, null);
 	}
 	
 	@SuppressWarnings("unchecked")

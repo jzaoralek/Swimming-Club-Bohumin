@@ -21,8 +21,10 @@ public class MailSend extends Mail implements IdentEntity {
 				String cc, 
 				String subject, 
 				String text, 
-				List<Attachment> attachmentList) {
+				List<Attachment> attachmentList,
+				String toCompleteName) {
 		super(to, cc, subject, text, attachmentList, true);
+		this.setToCompleteName(toCompleteName);
 	}
 
 	@Override

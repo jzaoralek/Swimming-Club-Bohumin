@@ -101,7 +101,7 @@ public class ChangeUsernameVM extends BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 
-		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.changeUsername"), mailToUser.toString(), null, false, false);
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.changeUsername"), mailToUser.toString(), null, false, false, null);
 	}
 	
 	private void buildPageHeadline() {

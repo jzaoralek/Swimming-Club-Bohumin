@@ -282,6 +282,7 @@ CREATE TABLE course_application_dyn_attribute (
 CREATE TABLE mail_message_send (
 	uuid varchar(36),
 	mail_to VARCHAR(1000) NOT NULL,
+    mail_to_complete_name VARCHAR(1000) NULL,
 	mail_cc VARCHAR(1000) NULL,
 	mail_subject VARCHAR(1000) CHARACTER SET utf8,
 	mail_text LONGTEXT CHARACTER SET utf8,

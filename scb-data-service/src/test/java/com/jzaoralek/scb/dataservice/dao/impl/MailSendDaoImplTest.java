@@ -21,6 +21,7 @@ public class MailSendDaoImplTest extends BaseTestCase {
 	private static final boolean SUCCESS = true;
 	private static final boolean ATTACHMENTS = false;
 	private static final boolean HTML = false;
+	private static final String MAIL_TO_COMPLETE_NAME = "mailToCompleteName";
 	
 	@Autowired
 	private MailSendDao mailSendDao;
@@ -29,7 +30,7 @@ public class MailSendDaoImplTest extends BaseTestCase {
 	
 	@Before
 	public void setUp() {
-		item = new MailSend(MAIL_TO, MAIL_CC, MAIL_SUBJECT, MAIL_TEXT, null);
+		item = new MailSend(MAIL_TO, MAIL_CC, MAIL_SUBJECT, MAIL_TEXT, null, MAIL_TO_COMPLETE_NAME);
 		fillIdentEntity(item);
 		item.setSuccess(SUCCESS);
 		item.setAttachments(ATTACHMENTS);
@@ -48,10 +49,10 @@ public class MailSendDaoImplTest extends BaseTestCase {
 		Assert.assertTrue(MAIL_CC.equals(item.getCc()));
 		Assert.assertTrue(MAIL_SUBJECT.equals(item.getSubject()));
 		Assert.assertTrue(MAIL_TEXT.equals(item.getText()));
-		
 		Assert.assertTrue(SUCCESS == item.isSuccess());
 		Assert.assertTrue(ATTACHMENTS == item.isAttachments());
 		Assert.assertTrue(HTML == item.isHtml());
+		Assert.assertTrue(MAIL_TO_COMPLETE_NAME.equals(item.getToCompleteName()));
 	}
 	
 	@Test

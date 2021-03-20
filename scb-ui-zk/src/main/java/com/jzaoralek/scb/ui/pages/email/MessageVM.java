@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -30,13 +31,13 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Bandbox;
-import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.MailSend;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -51,11 +52,11 @@ import com.jzaoralek.scb.ui.common.vm.BaseVM;
 import com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM.RecipientType;
 
 /**
- * View model for email message detail window.
+ * View model for email message page.
  * @author jakub.zaoralek
  *
  */
-public class EmailDetailWinVM extends BaseVM {
+public class MessageVM extends BaseVM {
 
 	private static final String MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY = "msg.ui.quest.title.messageSendConfirm";
 	private static final String MAIL_TO_CONTACT_SET_ATTRIBUTE = "mailToContactSet";
@@ -74,7 +75,6 @@ public class EmailDetailWinVM extends BaseVM {
 	private ListModel<String> emailListModel;
 	private List<MailSend> mailSendList;
 	private List<MailSend> mailSendSelectedList;
-	private MailSend mailSendSelected;
 	private boolean mailSendTabLoaded;
 	private Date mailSendFilterFromDate;
 	private Date mailSendFilterToDate;
@@ -199,17 +199,17 @@ public class EmailDetailWinVM extends BaseVM {
 	
 	private void sendMessage() {
 		List<Mail> mailList = new ArrayList<>();
-		Set<String> mailAddrSet = new LinkedHashSet<>();
+		Set<Pair<String, String>> mailAddrSet = new LinkedHashSet<>();
 		if (!CollectionUtils.isEmpty(this.mailToContactSet)) {
 			// unikatnost prohnanim pres Set
-			this.mailToContactSet.forEach(i -> mailAddrSet.add(i.getEmail1().trim()));
-			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList, true)));	
+			this.mailToContactSet.forEach(i -> mailAddrSet.add(Pair.with(i.getEmail1().trim(), i.getCompleteName())));
+			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i.getValue0(), null,  this.messageSubject, this.messageText, this.attachmentList, true, i.getValue1())));	
 		}
 		
 		if (!CollectionUtils.isEmpty(this.mailCcContactSet)) {
 			// unikatnost prohnanim pres Set
-			this.mailCcContactSet.forEach(i -> mailAddrSet.add(i.getEmail1().trim()));	
-			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList, true))); 		
+			this.mailCcContactSet.forEach(i -> mailAddrSet.add(Pair.with(i.getEmail1().trim(), i.getCompleteName())));	
+			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i.getValue0(), null,  this.messageSubject, this.messageText, this.attachmentList, true, i.getValue1()))); 		
 		}
 		
 		mailService.sendMailBatch(mailList);
@@ -273,11 +273,19 @@ public class EmailDetailWinVM extends BaseVM {
 		);
 	}
 	
-	@NotifyChange("mailSendSelected")
 	@Command
-	public void mailDetailOpenCmd(@BindingParam(WebConstants.ITEM_PARAM) MailSend item, 
-							@ContextParam(ContextType.COMPONENT) Component component) {
-		this.mailSendSelected = mailService.getByUuid(item.getUuid());
+	public void mailDetailOpenCmd(@BindingParam(WebConstants.ITEM_PARAM) MailSend item) {
+		if (item == null) {
+			throw new IllegalArgumentException("mailSend is null");
+		}
+		
+		MailSend mailSendDetail = mailService.getByUuid(item.getUuid());
+		
+		Map<String, Object> args = new HashMap<>();
+		args.put(WebConstants.ITEM_PARAM, mailSendDetail);
+		WebUtils.openModal("/pages/secured/ADMIN/message-detail-window.zul", 
+								mailSendDetail.getSubject(), 
+								args);
 	}
 	
 	@NotifyChange("mailSendList")
@@ -289,6 +297,7 @@ public class EmailDetailWinVM extends BaseVM {
 		mailService.delete(this.mailSendSelectedList);
 		loadMailSendList();
 	}
+	
 	
 	/**
 	 * Prevede rucne zadany email do seznamu kontaktu prijemcu.
@@ -602,9 +611,6 @@ public class EmailDetailWinVM extends BaseVM {
 	}
 	public void setMailSendSelectedList(List<MailSend> mailSendSelectedList) {
 		this.mailSendSelectedList = mailSendSelectedList;
-	}
-	public MailSend getMailSendSelected() {
-		return mailSendSelected;
 	}
 	public Date getMailSendFilterFromDate() {
 		return mailSendFilterFromDate;

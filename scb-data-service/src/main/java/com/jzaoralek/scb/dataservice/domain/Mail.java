@@ -12,6 +12,7 @@ public class Mail {
 	private boolean html;
 	/** Store email to database. */
 	private boolean storeToDb;
+	private String toCompleteName;
 
 	public Mail(String to, String cc, String subject, String text, List<Attachment> attachmentList, boolean storeToDb) {
 		super();
@@ -32,9 +33,16 @@ public class Mail {
 	 * @param attachmentList
 	 * @return
 	 */
-	public static Mail ofHtml(String to, String cc, String subject, String text, List<Attachment> attachmentList, boolean storeToDb) {
+	public static Mail ofHtml(String to, 
+			String cc, 
+			String subject, 
+			String text, 
+			List<Attachment> attachmentList, 
+			boolean storeToDb,
+			String toCompleteName) {
 		Mail ret = new Mail(to, cc, subject, text, attachmentList, storeToDb);
 		ret.setHtml(true);
+		ret.setToCompleteName(toCompleteName);
 		
 		return  ret;
 	}
@@ -81,10 +89,17 @@ public class Mail {
 	public void setStoreToDb(boolean storeToDb) {
 		this.storeToDb = storeToDb;
 	}
+	public String getToCompleteName() {
+		return toCompleteName;
+	}
+	public void setToCompleteName(String toCompleteName) {
+		this.toCompleteName = toCompleteName;
+	}
 
 	@Override
 	public String toString() {
-		return "Mail [to=" + to + ", cc=" + cc + ", subject=" + subject + ", text=" + text + ", "
-				+ "html=" + html + ", storeToDb=" + storeToDb + "]";
+		return "Mail [to=" + to + ", cc=" + cc + ", subject=" + subject + ", text=" + text + ", attachmentList="
+				+ attachmentList + ", html=" + html + ", storeToDb=" + storeToDb + ", toCompleteName=" + toCompleteName
+				+ "]";
 	}	
 }
