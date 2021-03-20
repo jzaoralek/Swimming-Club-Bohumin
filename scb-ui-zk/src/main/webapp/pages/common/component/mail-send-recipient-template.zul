@@ -7,12 +7,12 @@
 	<custom-attributes mailSend="${arg.mailSend}" />
 	
 	<hbox align="center" style="border-color: #c8ced3 !important; background-color: #eee !important; padding-left: 10px; padding-right: 10px; border-radius: 14px;" >
-		<label value="${empty(mailSend.toCompleteName) ? mailSend.to : mailSend.toCompleteName}" 
+		<label value="${mailSend.completeNameEmpty ? mailSend.to : mailSend.toCompleteName}" 
 			tooltip="mailSendContactPopup_${mailSend.uuid}" 
 			style="font-size: 12px; cursor: pointer;"/>
 		<popup id="mailSendContactPopup_${mailSend.uuid}" width="300px">
 		   	<vlayout style="margin: 5px;">
-		   		<label value="${empty(mailSend.toCompleteName) ? c:l('txt.ui.common.UnknownContact') : mailSend.toCompleteName}" 
+		   		<label value="${mailSend.completeNameEmpty ? c:l('txt.ui.common.UnknownContact') : mailSend.toCompleteName}" 
 		   			width="100%"
 		   			sclass="sp-popup-headline"/>
 		   		<grid width="100%">

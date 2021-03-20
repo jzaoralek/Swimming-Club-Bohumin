@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.dao.impl;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Assert;
@@ -63,6 +64,14 @@ public class MailSendDaoImplTest extends BaseTestCase {
 	@Test
 	public void testDelete() {
 		mailSendDao.delete(Arrays.asList(item));
+		List<MailSend> list = mailSendDao.getMailSendListByCriteria(getYesterday(), getTomorrow(), MAIL_TO, MAIL_SUBJECT, MAIL_TEXT);
+		
+		Assert.assertTrue(list.isEmpty());
+	}
+	
+	@Test
+	public void testDeleteSendMailToDate() {
+		mailSendDao.deleteToDate(Calendar.getInstance().getTime());
 		List<MailSend> list = mailSendDao.getMailSendListByCriteria(getYesterday(), getTomorrow(), MAIL_TO, MAIL_SUBJECT, MAIL_TEXT);
 		
 		Assert.assertTrue(list.isEmpty());

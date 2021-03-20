@@ -26,5 +26,6 @@ public interface MailService {
 						String mailText);
 	MailSend getByUuid(UUID uuid);
 	void delete(List<MailSend> mailSendList);
+	void deleteSendMailToDate(Date dateTo);
 	
 }

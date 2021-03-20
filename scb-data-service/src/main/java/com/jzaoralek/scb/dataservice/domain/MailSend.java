@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.util.StringUtils;
+
 /**
  * Send email, contains additional attributes for status etc.
  *
@@ -79,6 +81,10 @@ public class MailSend extends Mail implements IdentEntity {
 
 	public void setAttachments(boolean attachments) {
 		this.attachments = attachments;
+	}
+	
+	public boolean isCompleteNameEmpty() {
+		return (StringUtils.hasText(getToCompleteName()));
 	}
 
 	@Override

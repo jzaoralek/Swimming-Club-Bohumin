@@ -43,6 +43,7 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 	private static final String SELECT_MAIL_ORDER_BY_CLAUSE = " ORDER BY modif_at desc";
 	private static final String SELECT_BY_UUID = "SELECT * FROM mail_message_send WHERE uuid=:" + UUID_PARAM;
 	private static final String DELETE_BY_UUIDS = "DELETE FROM mail_message_send WHERE uuid IN ( :uuids ) ";
+	private static final String DELETE_TO_DATE = "DELETE FROM mail_message_send WHERE modif_at < :" + DATE_TO_PARAM;
 	
 	@Autowired
 	protected MailSendDaoImpl(DataSource ds) {
@@ -121,6 +122,14 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 		namedJdbcTemplate.update(DELETE_BY_UUIDS, paramMap);			
 	}
 	
+	@Override
+	public void deleteToDate(Date dateTo) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue(DATE_TO_PARAM, dateTo);
+		
+		namedJdbcTemplate.update(DELETE_TO_DATE, paramMap);
+	}
+	
 	public static final class MailSendRowMapper implements RowMapper<MailSend> {
 		
 		private final boolean inclText;
@@ -147,4 +156,6 @@ public class MailSendDaoImpl extends BaseJdbcDao implements MailSendDao {
 			return ret;
 		}
 	}
+
+	
 }

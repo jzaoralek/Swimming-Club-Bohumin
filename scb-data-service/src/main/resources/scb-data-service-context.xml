@@ -52,7 +52,9 @@
 	<task:scheduled-tasks>
 		<!-- Download new bank payments -->
 		<task:scheduled ref="paymentTask" method="updateBankPayments" cron="0 0 5 * * ?"/>
-		<!-- Pairing of new bavnk payments -->
+		<!-- Pairing of new bank payments -->
 		<task:scheduled ref="paymentTask" method="processPaymentPairing" cron="0 5 5 * * ?"/>
+		<!-- Deleting old send emails -->
+		<task:scheduled ref="mailSendTask" method="deleteHistMailSendList" cron="0 5 7 * * ?"/>
 	</task:scheduled-tasks>
 </beans>

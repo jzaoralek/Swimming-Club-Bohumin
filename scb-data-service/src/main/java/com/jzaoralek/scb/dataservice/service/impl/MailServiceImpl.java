@@ -246,4 +246,9 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
 	public void delete(List<MailSend> mailSendList) {
 		mailSendDao.delete(mailSendList);
 	}
+
+	@Override
+	public void deleteSendMailToDate(Date dateTo) {
+		mailSendDao.deleteToDate(dateTo);
+	}
 }

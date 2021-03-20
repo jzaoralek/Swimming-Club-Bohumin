@@ -16,4 +16,5 @@ public interface MailSendDao {
 			String mailText);
 	MailSend getByUuid(UUID uuid);
 	void delete(List<MailSend> mailSendList);
+	void deleteToDate(Date dateTo);
 }
