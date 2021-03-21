@@ -8,7 +8,7 @@
 	
 	<hbox align="center" style="border-color: #c8ced3 !important; background-color: #eee !important; padding-left: 10px; padding-right: 10px; border-radius: 14px;" >
 		<label value="${mailSend.completeNameEmpty ? mailSend.to : mailSend.toCompleteName}" 
-			tooltip="mailSendContactPopup_${mailSend.uuid}" 
+			popup="mailSendContactPopup_${mailSend.uuid}" 
 			style="font-size: 12px; cursor: pointer;"/>
 		<popup id="mailSendContactPopup_${mailSend.uuid}" width="300px">
 		   	<vlayout style="margin: 5px;">
