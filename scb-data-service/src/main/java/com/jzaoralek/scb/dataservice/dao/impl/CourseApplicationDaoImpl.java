@@ -50,6 +50,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", cp.birthdate " +
 					", cp.personal_number " +
 					", cp.health_insurance " +
+					", con_repr.uuid \"representative_uuid\" " +
 					", con_repr.firstname \"representative_firstname\" " +
 					", con_repr.surname \"representative_surname\" " +
 					", con_repr.phone1 " +
@@ -95,6 +96,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", cp.birthdate " +
 			", cp.personal_number " +
 			", cp.health_insurance " +
+			", con_repr.uuid \"representative_uuid\" " +
 			", con_repr.firstname \"representative_firstname\" " +
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +
@@ -149,6 +151,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", cp.birthdate " +
 			", cp.personal_number " +
 			", cp.health_insurance " +
+			", con_repr.uuid \"representative_uuid\" " +
 			", con_repr.firstname \"representative_firstname\" " +
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +
@@ -193,6 +196,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 					", cp.birthdate " +
 					", cp.personal_number " +
 					", cp.health_insurance " +
+					", con_repr.uuid \"representative_uuid\" " +
 					", con_repr.firstname \"representative_firstname\" " +
 					", con_repr.surname \"representative_surname\" " +
 					", con_repr.phone1 " +
@@ -239,6 +243,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", cp.birthdate " +
 			", cp.personal_number " +
 			", cp.health_insurance " +
+			", con_repr.uuid \"representative_uuid\" " +
 			", con_repr.firstname \"representative_firstname\" " +
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +
@@ -758,6 +763,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 			ScbUser courseParticRepresentative = new ScbUser();
 			Contact courseParticRepresentativeContact = new Contact();
+			courseParticRepresentativeContact.setUuid(UUID.fromString(rs.getString("representative_uuid")));
 			courseParticRepresentativeContact.setFirstname(rs.getString("representative_firstname"));
 			courseParticRepresentativeContact.setSurname(rs.getString("representative_surname"));
 			courseParticRepresentativeContact.setPhone1(rs.getString("phone1"));

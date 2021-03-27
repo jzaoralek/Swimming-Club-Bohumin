@@ -9,6 +9,7 @@
 	
 	<hbox align="center" style="margin-right: 5px; border-color: #c8ced3 !important; background-color: #eee !important; padding-left: 10px; padding-right: 5px; border-radius: 14px;" >
 		<label value="${empty(each.uuid) ? each.email1 : each.completeName}"
+			tooltip="contactPopup_${each.email1}"
 			popup="contactPopup_${each.email1}" style="cursor: pointer;"/>
 		<a onClick="@command('removeRecipientCmd', item=each, recipientType=recipientType)" 
 			iconSclass="z-icon-times"
