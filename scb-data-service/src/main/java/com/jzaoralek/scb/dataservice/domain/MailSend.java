@@ -84,7 +84,7 @@ public class MailSend extends Mail implements IdentEntity {
 	}
 	
 	public boolean isCompleteNameEmpty() {
-		return (StringUtils.hasText(getToCompleteName()));
+		return (!StringUtils.hasText(getToCompleteName()));
 	}
 
 	@Override

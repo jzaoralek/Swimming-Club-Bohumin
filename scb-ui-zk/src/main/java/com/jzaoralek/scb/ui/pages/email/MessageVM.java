@@ -202,19 +202,29 @@ public class MessageVM extends BaseVM {
 		Set<Pair<String, String>> mailAddrSet = new LinkedHashSet<>();
 		if (!CollectionUtils.isEmpty(this.mailToContactSet)) {
 			// unikatnost prohnanim pres Set
-			this.mailToContactSet.forEach(i -> mailAddrSet.add(Pair.with(i.getEmail1().trim(), i.getCompleteName())));
-			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i.getValue0(), null,  this.messageSubject, this.messageText, this.attachmentList, true, i.getValue1())));	
+			this.mailToContactSet.forEach(i -> mailAddrSet.add(Pair.with(i.getEmail1().trim(), buildCompleteName(i))));
+			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i.getValue0(), null,  this.messageSubject, this.messageText, this.attachmentList, true, i.getValue1())));
 		}
 		
 		if (!CollectionUtils.isEmpty(this.mailCcContactSet)) {
 			// unikatnost prohnanim pres Set
-			this.mailCcContactSet.forEach(i -> mailAddrSet.add(Pair.with(i.getEmail1().trim(), i.getCompleteName())));	
+			this.mailCcContactSet.forEach(i -> mailAddrSet.add(Pair.with(i.getEmail1().trim(), buildCompleteName(i))));	
 			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i.getValue0(), null,  this.messageSubject, this.messageText, this.attachmentList, true, i.getValue1()))); 		
 		}
 		
 		mailService.sendMailBatch(mailList);
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
 		clearMessage();
+	}
+	
+	private String buildCompleteName(Contact contact) {
+		if (contact != null 
+				&& StringUtils.hasText(contact.getFirstname()) 
+				&& StringUtils.hasText(contact.getSurname())) {
+			return contact.getSurname() + " " + contact.getFirstname();
+		}
+		return null;
+		
 	}
 	
 	/**
