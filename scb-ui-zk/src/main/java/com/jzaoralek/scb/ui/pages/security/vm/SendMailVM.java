@@ -43,7 +43,9 @@ public class SendMailVM extends BaseVM {
 				, Labels.getLabel("txt.ui.menu.application")
 				, "text mailu"
 				, attachmentList
-				, false);        
+				, false
+				, false
+				, null);        
 	}
 	
 	@Command

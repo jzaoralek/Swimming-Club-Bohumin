@@ -3,16 +3,14 @@
  */
 CKEDITOR.editorConfig = function(config) {
 	config.resize_enabled = false;
-	config.removePlugins = 'elementspath';
+	config.readOnly = true;
 	config.toolbar = 'Complex';
-	config.toolbar_Simple = [ [ 'Bold', 'Italic', '-', 'NumberedList',
-			'BulletedList', '-', 'Link', 'Unlink', '-', 'About' ] ];
 	config.toolbar_Complex = [
 			[ 'Undo', 'Redo' ],
 			[ 'Bold', 'Italic', 'Underline', 'Subscript',
 					'Superscript', 'TextColor', 'BGColor', '-', 'Cut', 'Copy',
 					'Paste', '-', 'NumberedList',
-					'BulletedList', '-', 'Link', 'Unlink'],
+					'BulletedList'],
 			[ 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ],
 			[ 'Format', 'Font', 'FontSize', 'Maximize' ] ];
 };

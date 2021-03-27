@@ -122,16 +122,4 @@ public class PaymentDaoImplTest extends BaseTestCase {
 		Assert.assertTrue(idPohybuList.size() == 1);
 		Assert.assertTrue(idPohybuList.iterator().next().equals(String.valueOf(BANK_TRANS_ID_POHYBU)));
 	}
-	
-	private Date getYesterday() {
-	    final Calendar cal = Calendar.getInstance();
-	    cal.add(Calendar.DATE, -1);
-	    return cal.getTime();
-	}
-	
-	private Date getTomorrow() {
-	    final Calendar cal = Calendar.getInstance();
-	    cal.add(Calendar.DATE, 1);
-	    return cal.getTime();
-	}
 }

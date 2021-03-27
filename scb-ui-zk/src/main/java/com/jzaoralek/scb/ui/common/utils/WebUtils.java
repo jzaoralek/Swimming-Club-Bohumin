@@ -15,13 +15,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -626,5 +626,18 @@ public final class WebUtils {
 		sb.append(" - ");
 		sb.append(Converters.getTimeconverter().coerceToUi(lesson.getTimeTo(), null, null));
 		return sb.toString();
+	}
+	
+	/**
+	 * Transform national letters to html entites.
+	 * @param value
+	 * @return
+	 */
+	public static String escapeHtml(String value) {
+		if (!StringUtils.hasText(value)) {
+			return null;
+		}
+		
+		return StringEscapeUtils.escapeHtml(value);
 	}
 }

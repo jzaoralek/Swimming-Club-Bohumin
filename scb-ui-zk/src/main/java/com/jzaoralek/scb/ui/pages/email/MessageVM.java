@@ -1,11 +1,16 @@
 package com.jzaoralek.scb.ui.pages.email;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
@@ -29,13 +34,15 @@ import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Popup;
-import org.zkoss.zul.SimpleListModel;
 
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
+import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.Mail;
+import com.jzaoralek.scb.dataservice.domain.MailSend;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
+import com.jzaoralek.scb.ui.common.utils.DateUtil;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
@@ -45,11 +52,11 @@ import com.jzaoralek.scb.ui.common.vm.BaseVM;
 import com.jzaoralek.scb.ui.pages.courseapplication.vm.MailRecipientSelectionVM.RecipientType;
 
 /**
- * View model for email message detail window.
+ * View model for email message page.
  * @author jakub.zaoralek
  *
  */
-public class EmailDetailWinVM extends BaseVM {
+public class MessageVM extends BaseVM {
 
 	private static final String MESSAGE_SEND_CONFIRM_TITLE_MSG_KEY = "msg.ui.quest.title.messageSendConfirm";
 	private static final String MAIL_TO_CONTACT_SET_ATTRIBUTE = "mailToContactSet";
@@ -66,6 +73,14 @@ public class EmailDetailWinVM extends BaseVM {
 	private boolean ccVisible = false;
 	private final EmailAddressFilter filter = new EmailAddressFilter();
 	private ListModel<String> emailListModel;
+	private List<MailSend> mailSendList;
+	private List<MailSend> mailSendSelectedList;
+	private boolean mailSendTabLoaded;
+	private Date mailSendFilterFromDate;
+	private Date mailSendFilterToDate;
+	private String mailSendFilterMailTo;
+	private String mailSendFilterMailSubject;
+	private String mailSendFilterMailText;
 
 	//	@Wire
 //	private Bandpopup mailToPopup;
@@ -184,17 +199,17 @@ public class EmailDetailWinVM extends BaseVM {
 	
 	private void sendMessage() {
 		List<Mail> mailList = new ArrayList<>();
-		Set<String> mailAddrSet = new LinkedHashSet<>();
+		Set<Pair<String, String>> mailAddrSet = new LinkedHashSet<>();
 		if (!CollectionUtils.isEmpty(this.mailToContactSet)) {
 			// unikatnost prohnanim pres Set
-			this.mailToContactSet.forEach(i -> mailAddrSet.add(i.getEmail1().trim()));
-			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList)));		
+			this.mailToContactSet.forEach(i -> mailAddrSet.add(Pair.with(i.getEmail1().trim(), i.getCompleteName())));
+			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i.getValue0(), null,  this.messageSubject, this.messageText, this.attachmentList, true, i.getValue1())));	
 		}
 		
 		if (!CollectionUtils.isEmpty(this.mailCcContactSet)) {
 			// unikatnost prohnanim pres Set
-			this.mailCcContactSet.forEach(i -> mailAddrSet.add(i.getEmail1().trim()));	
-			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i, null,  this.messageSubject, this.messageText, this.attachmentList)));			
+			this.mailCcContactSet.forEach(i -> mailAddrSet.add(Pair.with(i.getEmail1().trim(), i.getCompleteName())));	
+			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i.getValue0(), null,  this.messageSubject, this.messageText, this.attachmentList, true, i.getValue1()))); 		
 		}
 		
 		mailService.sendMailBatch(mailList);
@@ -257,6 +272,32 @@ public class EmailDetailWinVM extends BaseVM {
 			}
 		);
 	}
+	
+	@Command
+	public void mailDetailOpenCmd(@BindingParam(WebConstants.ITEM_PARAM) MailSend item) {
+		if (item == null) {
+			throw new IllegalArgumentException("mailSend is null");
+		}
+		
+		MailSend mailSendDetail = mailService.getByUuid(item.getUuid());
+		
+		Map<String, Object> args = new HashMap<>();
+		args.put(WebConstants.ITEM_PARAM, mailSendDetail);
+		WebUtils.openModal("/pages/secured/ADMIN/message-detail-window.zul", 
+								mailSendDetail.getSubject(), 
+								args);
+	}
+	
+	@NotifyChange("mailSendList")
+	@Command
+	public void deleteMailSendSelectedCmd() {
+		if (CollectionUtils.isEmpty(this.mailSendSelectedList)) {
+			return;
+		}
+		mailService.delete(this.mailSendSelectedList);
+		loadMailSendList();
+	}
+	
 	
 	/**
 	 * Prevede rucne zadany email do seznamu kontaktu prijemcu.
@@ -372,6 +413,97 @@ public class EmailDetailWinVM extends BaseVM {
 	}
 	
 	/**
+	 * Tab Send messages selected.
+	 */
+	@NotifyChange({"mailSendList","mailSendFilterFromDate","mailSendFilterToDate"})
+	@Command
+	public void mailSendSelectedCmd() {
+		if (!this.mailSendTabLoaded) {
+			// default filter init
+			initMailSendFilter();
+			loadMailSendList();	
+			this.mailSendTabLoaded = true;
+		}
+	}
+	
+	@NotifyChange({"mailSendList","mailSendFilterFromDate","mailSendFilterToDate"})
+	@Command
+	public void loadSendSelectedCmd(@BindingParam("popup") Popup bandbox) {
+		loadMailSendList();
+		
+		if (bandbox != null) {
+			bandbox.close();			
+		}
+	}
+	
+	@NotifyChange({"mailSendList","mailSendFilterFromDate","mailSendFilterToDate","mailSendFilterMailTo","mailSendFilterMailSubject","mailSendFilterMailText"})
+	@Command
+	public void clearMailSendFilterCmd() {
+		mailSendFilterMailTo = null;
+		mailSendFilterMailSubject = null;
+		mailSendFilterMailText = null;
+		initMailSendFilter();
+		loadMailSendList();
+	}
+	
+	/**
+	 * Default mail send filter init.
+	 */
+	private void initMailSendFilter() {
+		Calendar fromDateCal = Calendar.getInstance();
+		fromDateCal.add(Calendar.DATE, -30);
+		mailSendFilterFromDate = fromDateCal.getTime();
+		mailSendFilterToDate = Calendar.getInstance().getTime();
+	}
+	
+	private void loadMailSendList() {
+		this.mailSendList = mailService.getMailSendListByCriteria(DateUtil.normalizeToDay(mailSendFilterFromDate), 
+															DateUtil.normalizeToDayTimestamp(mailSendFilterToDate), 
+															mailSendFilterMailTo, 
+															mailSendFilterMailSubject, 
+															WebUtils.escapeHtml(mailSendFilterMailText)); // escape czech letters to html entites
+	}
+	
+	/**
+	 * String representation of mail send filter.
+	 * @return
+	 */
+	@DependsOn({"mailSendFilterFromDate","mailSendFilterToDate"})
+	public String getMailSendFilterStrValue() {
+		List<String> filterItemList = new ArrayList<>();
+		if (mailSendFilterFromDate != null) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.from") + WebConstants.COLON 
+					+ getDateConverter().coerceToUi(mailSendFilterFromDate, null, null));
+		}
+		
+		if (mailSendFilterToDate != null) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.to") + WebConstants.COLON 
+					+ getDateConverter().coerceToUi(mailSendFilterToDate, null, null));
+		}
+		
+		if (StringUtils.hasText(mailSendFilterMailTo)) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.To") + WebConstants.COLON 
+					+ mailSendFilterMailTo);
+		}
+		
+		if (StringUtils.hasText(mailSendFilterMailSubject)) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.Predmet") + WebConstants.COLON 
+					+ mailSendFilterMailSubject);
+		}
+		
+		if (StringUtils.hasText(mailSendFilterMailText)) {
+			filterItemList.add(Labels.getLabel("txt.ui.common.contentText") + WebConstants.COLON 
+					+ mailSendFilterMailText);
+		}
+		
+		if (!CollectionUtils.isEmpty(filterItemList)) {
+			return filterItemList.stream().collect(Collectors.joining(WebConstants.SEMICOLON_DELIM));			
+		} else {
+			return null;			
+		}
+	}
+	
+	/**
 	 * Prida emailove adresy do seznamu adresatu.
 	 * @param mailToList
 	 */
@@ -470,6 +602,45 @@ public class EmailDetailWinVM extends BaseVM {
 	}
 	public ListModel<String> getEmailListModel() {
 		return emailListModel;
+	}
+	public List<MailSend> getMailSendList() {
+		return mailSendList;
+	}
+	public List<MailSend> getMailSendSelectedList() {
+		return mailSendSelectedList;
+	}
+	public void setMailSendSelectedList(List<MailSend> mailSendSelectedList) {
+		this.mailSendSelectedList = mailSendSelectedList;
+	}
+	public Date getMailSendFilterFromDate() {
+		return mailSendFilterFromDate;
+	}
+	public void setMailSendFilterFromDate(Date mailSendFilterFromDate) {
+		this.mailSendFilterFromDate = mailSendFilterFromDate;
+	}
+	public Date getMailSendFilterToDate() {
+		return mailSendFilterToDate;
+	}
+	public void setMailSendFilterToDate(Date mailSendFilterToDate) {
+		this.mailSendFilterToDate = mailSendFilterToDate;
+	}
+	public String getMailSendFilterMailTo() {
+		return mailSendFilterMailTo;
+	}
+	public void setMailSendFilterMailTo(String mailSendFilterMailTo) {
+		this.mailSendFilterMailTo = mailSendFilterMailTo;
+	}
+	public String getMailSendFilterMailSubject() {
+		return mailSendFilterMailSubject;
+	}
+	public void setMailSendFilterMailSubject(String mailSendFilterMailSubject) {
+		this.mailSendFilterMailSubject = mailSendFilterMailSubject;
+	}
+	public String getMailSendFilterMailText() {
+		return mailSendFilterMailText;
+	}
+	public void setMailSendFilterMailText(String mailSendFilterMailText) {
+		this.mailSendFilterMailText = mailSendFilterMailText;
 	}
 	
 	public static class EmailAddressFilter {

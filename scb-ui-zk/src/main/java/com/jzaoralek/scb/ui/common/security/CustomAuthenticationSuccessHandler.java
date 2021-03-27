@@ -13,17 +13,27 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
-public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    
+    private RequestCache requestCache = new HttpSessionRequestCache();
 
     @Override
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException {
-        String targetUrl = determineTargetUrl(authentication);
+    	
+        String targetUrl = canUseCachedRequestUrl(request, response)
+    			? requestCache.getRequest(request, response).getRedirectUrl()
+    			: determineTargetUrl(authentication);
 
         if (response.isCommitted()) {
             return;
@@ -60,6 +70,17 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
 
         return url;
+    }
+    
+    private boolean canUseCachedRequestUrl(HttpServletRequest request, HttpServletResponse response) {
+    	SavedRequest originalRequest = requestCache.getRequest(request, response);
+    	logger.debug("originalRequest =" + originalRequest);
+    	if (!(originalRequest instanceof DefaultSavedRequest) 
+    			|| !StringUtils.hasText(originalRequest.getRedirectUrl())) {
+    		return false;
+    	}
+    	
+    	return true;
     }
 
     private static boolean isUser(List<String> roles) {

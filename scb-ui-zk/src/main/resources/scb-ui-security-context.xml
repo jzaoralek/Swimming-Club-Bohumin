@@ -12,7 +12,7 @@
 			login-processing-url="/login"
 			username-parameter="username"
 			password-parameter="password"
-			authentication-success-handler-ref="customSuccessHandler"
+			authentication-success-handler-ref="customAuthenticationSuccessHandler"
 			authentication-failure-url="/pages/common/login.zul?loginFailure=true" />
 		<csrf disabled="true" />
 		<logout invalidate-session="true" logout-url="/logout" logout-success-url="/pages/common/login.zul" />
@@ -26,6 +26,6 @@
 	</authentication-manager>
 
 	<beans:bean id="customUserDetailsService" class="com.jzaoralek.scb.dataservice.service.impl.CustomUserDetailsService" />
-	<beans:bean id="customSuccessHandler" class="com.jzaoralek.scb.ui.common.security.CustomSuccessHandler" />
+	<beans:bean id="customAuthenticationSuccessHandler" class="com.jzaoralek.scb.ui.common.security.CustomAuthenticationSuccessHandler" />
 	
 </beans:beans>

@@ -26,4 +26,4 @@ public class BankPaymentServiceTest extends BaseTestCase {
 		AccountStatement transactions = bankPaymentService.transactions(datumOd, datumDo);
 		Assert.assertNotNull(transactions);
 	}
-}
+} 

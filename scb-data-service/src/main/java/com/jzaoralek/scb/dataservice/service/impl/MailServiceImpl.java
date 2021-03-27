@@ -1,7 +1,11 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -20,6 +24,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -27,12 +32,15 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
+import com.jzaoralek.scb.dataservice.dao.MailSendDao;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Mail;
+import com.jzaoralek.scb.dataservice.domain.MailSend;
+import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 
 @Service("mailService")
-public class MailServiceImpl implements MailService {
+public class MailServiceImpl extends BaseAbstractService implements MailService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailServiceImpl.class);
 
@@ -47,10 +55,20 @@ public class MailServiceImpl implements MailService {
 
     @Value("${smtp.pwd}")
     private String mailSmtpPassword;
+    
+    @Autowired
+    private MailSendDao mailSendDao;
 
     @Async
     @Override
-    public void sendMail(String to, String cc, String subject, String text, List<Attachment> attachmentList, boolean html) {
+    public void sendMail(String to, 
+    		String cc, 
+    		String subject, 
+    		String text, 
+    		List<Attachment> attachmentList, 
+    		boolean html, 
+    		boolean storeToDb,
+    		String toCompleteName) {
         if (LOG.isDebugEnabled()) {
         	LOG.debug("Send email '" + subject + "' to '" + to + "'.");
         }
@@ -71,6 +89,15 @@ public class MailServiceImpl implements MailService {
        if (LOG.isDebugEnabled()) {
     	   LOG.debug("Mail session created.");
        }
+       
+       // store send mail to database
+       MailSend mailSend = new MailSend(to, cc, subject, text, attachmentList, toCompleteName);
+       mailSend.setHtml(html);
+       // fillIdentEntity(mailSend);
+       mailSend.setUuid(UUID.randomUUID());
+       mailSend.setModifAt(Calendar.getInstance().getTime());
+       mailSend.setModifBy(ANONYM_USER_UUID);
+       
        try{
           // Create a default MimeMessage object.
           MimeMessage message = new MimeMessage(session);
@@ -119,14 +146,26 @@ public class MailServiceImpl implements MailService {
 
           // Send message
           Transport.send(message);
+          mailSend.setSuccess(true);  
 
           if (LOG.isDebugEnabled()) {
         	  LOG.debug("Mail send - OK");
-          }
+          }          
        } catch (MessagingException mex) {
     	   LOG.error("MessagingException. Check settings: ", mex);
+    	   mailSend.setSuccess(false);
+    	   mailSend.setDescription(mex.getMessage());
        } catch (Exception e) {
     	   LOG.error("Exception during sendMail processing: ", e);
+    	   mailSend.setSuccess(false);
+    	   mailSend.setDescription(e.getMessage());
+       } finally {
+    	   if (!storeToDb) {
+    		   mailSend = null;
+    	   } else {
+    		   // store send mail to DB
+    		   mailSendDao.insert(mailSend);
+    	   }
        }
     }
 
@@ -150,7 +189,14 @@ public class MailServiceImpl implements MailService {
         	LOG.debug("Send email: " + mail);
         }
 		
-		sendMail(mail.getTo(), mail.getCc(), mail.getSubject(), mail.getText(), mail.getAttachmentList(), mail.isHtml());
+		sendMail(mail.getTo(), 
+				mail.getCc(), 
+				mail.getSubject(), 
+				mail.getText(), 
+				mail.getAttachmentList(), 
+				mail.isHtml(), 
+				mail.isStoreToDb(), 
+				mail.getToCompleteName());
 	}
     
     @Async
@@ -175,5 +221,34 @@ public class MailServiceImpl implements MailService {
 				}				
 			}
 		}
+	}
+    
+    @Override
+	public List<MailSend> getMailSendListByCriteria(Date dateFrom, 
+										Date dateTo, 
+										String mailTo,
+										String mailSubject,
+										String mailText) {
+    	if (dateFrom == null || dateTo == null) {
+    		return null;
+    	}
+		return mailSendDao.getMailSendListByCriteria(dateFrom, dateTo, mailTo, mailSubject, mailText);
+	}
+
+	@Override
+	public MailSend getByUuid(UUID uuid) {
+		Objects.requireNonNull(uuid, "uuid is null");
+		
+		return mailSendDao.getByUuid(uuid);
+	}
+	
+	@Override
+	public void delete(List<MailSend> mailSendList) {
+		mailSendDao.delete(mailSendList);
+	}
+
+	@Override
+	public void deleteSendMailToDate(Date dateTo) {
+		mailSendDao.deleteToDate(dateTo);
 	}
 }
