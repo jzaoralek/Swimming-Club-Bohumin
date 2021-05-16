@@ -32,13 +32,20 @@ public interface CourseApplicationFileConfigDao {
 	List<CourseApplicationFileConfig> getAll();
 	
 	/**
+	 * Load course application file config by UUID.
+	 * @param uuid
+	 * @return
+	 */
+	CourseApplicationFileConfig getByUuid(UUID uuid);
+	
+	/**
 	 * Create new course application file config.
 	 * @param config
 	 */
 	void insert(CourseApplicationFileConfig config);
 	
 	/**
-	 * update course application file config.
+	 * Update course application file config.
 	 * @param config
 	 */
 	void update(CourseApplicationFileConfig config);

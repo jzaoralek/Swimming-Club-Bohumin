@@ -36,7 +36,8 @@ public class CourseApplicationFileConfigDaoImpl extends BaseJdbcDao implements C
 	private static final String SELECT_ALL_COLLUMNS_BASE = "SELECT uuid, type, file_uuid, page_text, page_attachment, email_attachment, description, modif_at, modif_by FROM course_application_file_config ";
 	private static final String SELECT_FOR_PAGE = SELECT_ALL_COLLUMNS_BASE + " WHERE page_text = '1'";
 	private static final String SELECT_FOR_EMAIL = SELECT_ALL_COLLUMNS_BASE + "WHERE email_attachment = '1'";
-	private static final String SELECT_ALL = SELECT_ALL_COLLUMNS_BASE + " ORDER BY type'";
+	private static final String SELECT_ALL = SELECT_ALL_COLLUMNS_BASE + " ORDER BY type";
+	private static final String SELECT_BY_UUID = SELECT_ALL_COLLUMNS_BASE + " where uuid=:" + UUID_PARAM;
 	
 	private static final String INSERT_COURSE_APPL_FILE_CONFIG = "INSERT INTO course_application_file_config"
 			+ "(uuid,type,file_uuid,page_text,page_attachment,email_attachment,description,modif_at,modif_by)"
@@ -52,8 +53,8 @@ public class CourseApplicationFileConfigDaoImpl extends BaseJdbcDao implements C
 			+ "email_attachment = :"+EMAIl_ATTACH_PARAM+",description = :"+DESCRIPTION_PARAM+","
 			+ "modif_at = :"+MODIF_AT_PARAM+",modif_by = :"+MODIF_BY_PARAM+" WHERE uuid = :"+UUID_PARAM;
 	
-	private static final String DELETE_COURSE_APPL_FILE_CONFIG = "DELETE FROM course_application_file_config WHERE id = :" + UUID_PARAM;
-	private static final String DELETE_FILE = "DELETE FROM file WHERE id = :" + UUID_PARAM;
+	private static final String DELETE_COURSE_APPL_FILE_CONFIG = "DELETE FROM course_application_file_config WHERE uuid = :" + UUID_PARAM;
+	private static final String DELETE_FILE = "DELETE FROM file WHERE uuid = :" + UUID_PARAM;
 	
 	@Autowired
 	protected CourseApplicationFileConfigDaoImpl(DataSource ds) {
@@ -83,6 +84,16 @@ public class CourseApplicationFileConfigDaoImpl extends BaseJdbcDao implements C
 	@Override
 	public List<CourseApplicationFileConfig> getAll() {
 		return namedJdbcTemplate.query(SELECT_ALL, new CourseApplicationFileConfigRowMapper(false, this));
+	}
+	
+	@Override
+	public CourseApplicationFileConfig getByUuid(UUID uuid) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue(UUID_PARAM, uuid.toString());
+		try {
+			return namedJdbcTemplate.queryForObject(SELECT_BY_UUID, paramMap, new CourseApplicationFileConfigRowMapper(true, this));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	@Override
