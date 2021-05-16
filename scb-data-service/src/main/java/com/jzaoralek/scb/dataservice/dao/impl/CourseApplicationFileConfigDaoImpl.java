@@ -99,14 +99,18 @@ public class CourseApplicationFileConfigDaoImpl extends BaseJdbcDao implements C
 	@Override
 	public void insert(CourseApplicationFileConfig config) {
 		namedJdbcTemplate.update(INSERT_COURSE_APPL_FILE_CONFIG, buildCourseApplFileConfigParamMap(config));
-		insertFile(config.getAttachment());
+		if (config.getAttachment() != null) {
+			insertFile(config.getAttachment());			
+		}
 	}
 
 	@Override
 	public void update(CourseApplicationFileConfig config) {
 		namedJdbcTemplate.update(UPDATE_COURSE_APPL_FILE_CONFIG, buildCourseApplFileConfigParamMap(config));
 		deleteFile(config.getAttachmentUuid());
-		insertFile(config.getAttachment());
+		if (config.getAttachment() != null) {
+			insertFile(config.getAttachment());			
+		}
 	}
 	
 	private MapSqlParameterSource buildCourseApplFileConfigParamMap(CourseApplicationFileConfig config) {

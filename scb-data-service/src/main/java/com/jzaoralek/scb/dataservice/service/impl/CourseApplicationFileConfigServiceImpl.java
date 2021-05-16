@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +34,32 @@ public class CourseApplicationFileConfigServiceImpl extends BaseAbstractService 
 		return courseApplicationFileConfigDao.getFileByUuid(uuid);
 	}
 
+	@Override
+	public List<CourseApplicationFileConfig> getAll() {
+		return courseApplicationFileConfigDao.getAll();
+	}
+
+	@Override
+	public CourseApplicationFileConfig getByUuid(UUID uuid) {
+		Objects.requireNonNull(uuid, "uuid is null");
+		return courseApplicationFileConfigDao.getByUuid(uuid);
+	}
+
+	@Override
+	public void insert(CourseApplicationFileConfig config) {
+		Objects.requireNonNull(config, "config is null");
+		courseApplicationFileConfigDao.insert(config);
+	}
+
+	@Override
+	public void update(CourseApplicationFileConfig config) {
+		Objects.requireNonNull(config, "config is null");
+		courseApplicationFileConfigDao.update(config);
+	}
+
+	@Override
+	public void delete(CourseApplicationFileConfig config) {
+		Objects.requireNonNull(config, "config is null");
+		courseApplicationFileConfigDao.delete(config);
+	}
 }
