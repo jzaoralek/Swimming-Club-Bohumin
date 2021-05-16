@@ -241,7 +241,7 @@ CREATE TABLE file (
 
 CREATE TABLE course_application_file_config(
 	uuid varchar(36),
-	type ENUM('GDPR','HEALTH_INFO','HEALTH_EXAM', 'CLUB_RULES') NOT NULL UNIQUE,
+	type ENUM('GDPR','HEALTH_INFO','HEALTH_EXAM', 'CLUB_RULES', 'OTHER') NOT NULL,
 	file_uuid varchar(36) REFERENCES file(uuid),
 	page_text ENUM('0','1') NOT NULL,
 	page_attachment ENUM('0','1') NOT NULL,

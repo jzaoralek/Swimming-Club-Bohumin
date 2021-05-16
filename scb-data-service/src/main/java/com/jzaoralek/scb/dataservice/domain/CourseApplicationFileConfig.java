@@ -9,7 +9,8 @@ public class CourseApplicationFileConfig implements IdentEntity {
 		GDPR,
 		HEALTH_INFO,
 		HEALTH_EXAM,
-		CLUB_RULES;
+		CLUB_RULES,
+		OTHER;
 	}
 	private UUID uuid;
 	private String modifBy;
