@@ -94,7 +94,10 @@
 				</row>
 				<row>
 					<cell>
-						file upload
+						<a label="@load(vm.item.attachment.name)" 
+							onClick="@command('downloadFileCmd')"
+							iconSclass="z-icon-download"
+							visible="@load(vm.attachmentPresent)" />
 					</cell>
 				</row>
 			</rows>

@@ -155,6 +155,8 @@ public class ConfigVM extends BaseVM {
 		Consumer<CourseApplicationFileConfig> callback = this::storeFileConfig;
 		args.put(WebConstants.CALLBACK_PARAM, callback);
 		if (item != null) {
+			// add file detail
+			item.setAttachment(courseApplicationFileConfigService.getFileByUuid(item.getAttachmentUuid()));
 			args.put(WebConstants.ITEM_PARAM, item);			
 		}
 		WebUtils.openModal(WebPages.COURSE_APPL_FILE_CONFIG_WINDOW.getUrl(), 

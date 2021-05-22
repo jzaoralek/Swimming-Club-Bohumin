@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Window;
 
@@ -45,10 +46,38 @@ public class CourseApplFileConfigWinVM extends BaseVM  {
 		}
 	}
 	
+	/**
+	 * Save changes.
+	 * @param window
+	 */
 	@Command
 	public void submitCmd(@BindingParam("window") Window window) {
+		// validation, attachment is required if pageAttachment or emailAttachment
+		if ((this.item.isPageAttachment() || this.item.isEmailAttachment()) 
+				&& !isAttachmentPresent()) {
+			WebUtils.showNotificationWarning(Labels.getLabel("msg.ui.warn.fileIsRequired"));
+			return;
+		}
+		
 		this.callback.accept(this.item);
 		window.detach();
+	}
+	
+	/**
+	 * Download attachment if present.
+	 */
+	@Command
+	public void downloadFileCmd() {
+		if (!isAttachmentPresent()) {
+			return;
+		}
+//		Attachment attachment = courseApplicationFileConfigService.getFileByUuid(this.item.getAttachmentUuid());
+		WebUtils.downloadAttachment(this.item.getAttachment());			
+	}
+	
+	public boolean isAttachmentPresent() {
+		return this.item.getAttachment() != null
+				&& this.item.getAttachment().getByteArray() != null;
 	}
 	
 	public boolean isEditMode() {
