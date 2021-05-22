@@ -25,16 +25,10 @@ public interface CourseApplicationFileConfigService {
 	CourseApplicationFileConfig getByUuid(UUID uuid);
 	
 	/**
-	 * Create new course application file config.
+	 * Store course application file config.
 	 * @param config
 	 */
-	void insert(CourseApplicationFileConfig config);
-	
-	/**
-	 * Update course application file config.
-	 * @param config
-	 */
-	void update(CourseApplicationFileConfig config);
+	void store(CourseApplicationFileConfig config);
 	
 	/**
 	 * Delete course application file config.

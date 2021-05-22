@@ -201,6 +201,83 @@
 						        </template>
 						    </listbox>
 						    
+						    <!-- Soubory na prihlasce -->
+						    <listbox model="@load(vm.fileConfigList)"
+								id="fileConfigList"
+								width="100%"
+								emptyMessage="${c:l('txt.ui.common.noDataFound')}"
+								class="listbox" >
+								
+								<auxhead>
+						            <auxheader class="header" colspan="6" >
+						            	<hlayout sclass="pull-left">
+						            		<label value="${c:l('txt.ui.common.courseApplicationFiles')}" 
+				            					style="vertical-align:middle; display:inline-block; margin-right: 5px;font-weight: bold;" />
+											
+											<!-- Novy -->
+							            	<button onClick="@command('newFileConfigCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
+				            					sclass="add-item-btn" 
+				            					iconSclass="z-icon-plus"
+				            					style="margin-left: 10px;" />
+
+						            	</hlayout>
+						            	
+						            	<hlayout sclass="pull-right">
+						            	</hlayout>
+						            </auxheader>
+						        </auxhead>
+						        
+						        <listhead>
+						            <listheader label="${c:l('txt.ui.common.type')}" align="left" sort="auto(type)" hflex="1" />
+						            <listheader label="${c:l('txt.ui.common.description2')}" align="left" sort="auto(description)" hflex="2"/>
+						            <listheader label="${c:l('txt.ui.common.PageText')}" align="center" sort="auto(pageText)" hflex="min"/>
+						            <listheader label="${c:l('txt.ui.common.PageAttachment')}" align="center" sort="auto(pageAttachment)" hflex="min"/>	
+						            <listheader label="${c:l('txt.ui.common.EmailAttachment')}" align="center" sort="auto(emailAttachment)" hflex="min"/>				            
+						            <listheader width="105px" align="center" >
+						            	<button iconSclass="z-icon-refresh" 
+						            		onClick="@command('refreshFileConfigListCmd')" 
+						            		tooltiptext="${c:l('txt.ui.common.refreshData')}" 
+						            		sclass="toolbar-btn"/>
+						            </listheader>
+						        </listhead>
+						         
+						        <template name="model">
+						            <listitem>
+						                <listcell label="@load(each.type) @converter(vm.enumLabelConverter)"
+						                	 onDoubleClick="@command('detailFileConfigCmd', item=each)" />	 
+						                <listcell label="${each.description}"
+						                	onDoubleClick="@command('detailFileConfigCmd', item=each)" />
+						                <listcell onDoubleClick="@command('detailFileConfigCmd', item=each)">
+						                	<boolean-icon booleanValue="${each.pageText}" 
+						                		iconVisible="true"
+						                		customSclass="big-icon" />
+						                </listcell>
+						                <listcell onDoubleClick="@command('detailFileConfigCmd', item=each)">
+						                	<boolean-icon booleanValue="${each.pageAttachment}" 
+						                		iconVisible="true"
+						                		customSclass="big-icon" />
+						                </listcell>
+						                <listcell onDoubleClick="@command('detailFileConfigCmd', item=each)">
+						                	<boolean-icon booleanValue="${each.emailAttachment}" 
+						                		iconVisible="true"
+						                		customSclass="big-icon" />
+						                </listcell>
+						                <listcell>
+						                	<hlayout>
+							                	<button iconSclass="z-icon-ellipsis-h"
+							                		popup="menuDynAttrConfig_${each.uuid}, position=after_end" 
+							                		style="margin-left: 2px;margin-right: 5px;" />
+							                	<menupopup id="menuDynAttrConfig_${each.uuid}" >
+							                		<!-- Detail -->
+								                	<menuitem label="Detail" 
+								                		onClick="@command('detailFileConfigCmd', item=each)" />
+										       	</menupopup>
+						                	</hlayout>
+						                </listcell>
+						            </listitem>
+						        </template>
+						    </listbox>
+						    
 						    <!-- Dynamicke atributy na prihlasce -->
 						    <listbox model="@load(vm.courseApplDynAttrConfigList)"
 								id="courseApplDynAttrConfigList"

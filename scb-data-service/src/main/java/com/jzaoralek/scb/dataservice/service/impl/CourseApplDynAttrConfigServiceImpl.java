@@ -54,7 +54,7 @@ public class CourseApplDynAttrConfigServiceImpl extends BaseAbstractService impl
 		}
 
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Storing config: " + config);
+			LOG.debug("Store file config: " + config);
 		}
 		
 		boolean insertMode = config.getUuid() == null;

@@ -21,9 +21,11 @@ import com.jzaoralek.scb.dataservice.domain.Config;
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigCategory;
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigName;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
+import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
 import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplDynAttrConfigService;
+import com.jzaoralek.scb.dataservice.service.CourseApplicationFileConfigService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
@@ -39,8 +41,12 @@ public class ConfigVM extends BaseVM {
 	@WireVariable
 	private CourseApplDynAttrConfigService courseApplDynAttrConfigService;
 	
+	@WireVariable
+	private CourseApplicationFileConfigService courseApplicationFileConfigService;
+	
 	private List<Config> configListBasic;
 	private List<Config> configListCourseApplication;
+	private List<CourseApplicationFileConfig> fileConfigList;
 	private List<CourseApplDynAttrConfig> courseApplDynAttrConfigList;
 	private List<String> courseYearList;
 	private String courseApplicationTitle;
@@ -50,6 +56,7 @@ public class ConfigVM extends BaseVM {
 	public void init() {
 		initConfigBasic();
 		initConfigCourseApplication();
+		initFileConfigList();
 		initCourseApplDynAttrConfig();
 		this.courseYearList = configurationService.getCourseYearList();
 		this.courseApplicationTitle = getConfigCourseApplicationTitle();
@@ -61,6 +68,11 @@ public class ConfigVM extends BaseVM {
 
 	private void initConfigCourseApplication() {
 		this.configListCourseApplication = configurationService.getByCategory(ConfigCategory.COURSE_APPLICATION);
+	}
+	
+	private void initFileConfigList() {
+		this.fileConfigList = courseApplicationFileConfigService.getAll();
+		BindUtils.postNotifyChange(null, null, this, "fileConfigList");
 	}
 	
 	private void initCourseApplDynAttrConfig() {
@@ -97,6 +109,11 @@ public class ConfigVM extends BaseVM {
 		initCourseApplDynAttrConfig();
 	}
 	
+	@Command
+	public void refreshFileConfigListCmd() {
+		initFileConfigList();
+	}
+	
 	/**
 	 * Save course application title.
 	 */
@@ -114,6 +131,50 @@ public class ConfigVM extends BaseVM {
 	public void useStandardCourseApplicationTitleCmd() {
 		this.courseApplicationTitle = getDefaultCourseApplicationTitle();
 		updateCourseApplicationTitle();
+	}
+	
+	/**
+	 * Open modal for new file config.
+	 */
+	@Command
+	public void newFileConfigCmd() {
+		detailFileConfig(null);
+	}
+	
+	/**
+	 * Open modal for detail file config.
+	 * @param item
+	 */
+	@Command
+	public void detailFileConfigCmd(@BindingParam(WebConstants.ITEM_PARAM) CourseApplicationFileConfig item) {
+		detailFileConfig(item);
+	}
+	
+	private void detailFileConfig(CourseApplicationFileConfig item) {
+		Map<String, Object> args = new HashMap<>();
+		Consumer<CourseApplicationFileConfig> callback = this::storeFileConfig;
+		args.put(WebConstants.CALLBACK_PARAM, callback);
+		if (item != null) {
+			args.put(WebConstants.ITEM_PARAM, item);			
+		}
+		WebUtils.openModal(WebPages.COURSE_APPL_FILE_CONFIG_WINDOW.getUrl(), 
+				Labels.getLabel("txt.ui.common.FileConfig"), 
+				args);
+	}
+	
+	private void storeFileConfig(final CourseApplicationFileConfig item) {
+		Objects.requireNonNull(item, "item is null");
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+			return;
+		}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Storing CourseApplicationFileConfig: " + item);
+		}
+		
+		courseApplicationFileConfigService.store(item);
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.fileConfigStored"));
+		initFileConfigList();
 	}
 	
 	@Command
@@ -156,7 +217,6 @@ public class ConfigVM extends BaseVM {
 			WebUtils.showNotificationError(e.getMessage());
 		}
 	}
-	
 	
 	/**
 	 * Delete course application dynamic attribute.
@@ -250,6 +310,9 @@ public class ConfigVM extends BaseVM {
 	}
 	public void setConfigListCourseApplication(List<Config> configListCourseApplication) {
 		this.configListCourseApplication = configListCourseApplication;
+	}
+	public List<CourseApplicationFileConfig> getFileConfigList() {
+		return fileConfigList;
 	}
 	public String getCourseApplicationTitle() {
 		return courseApplicationTitle;

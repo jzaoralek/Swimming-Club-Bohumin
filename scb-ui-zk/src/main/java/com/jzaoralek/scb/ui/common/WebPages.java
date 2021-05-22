@@ -19,6 +19,7 @@ public enum WebPages {
 	PAYMENT_LIST("/pages/secured/TRAINER/seznam-plateb.zul"),
 	PAYMENT_INSTRUCTION_WINDOW("/pages/secured/ADMIN/payment-instruction-window.zul"),
 	COURSE_APPL_DYN_ATTR_CONFIG_WINDOW("/pages/secured/ADMIN/course-appl-dyn-attr-config-window.zul"),
+	COURSE_APPL_FILE_CONFIG_WINDOW("/pages/secured/ADMIN/course-appl-file-config-window.zul"),
 	MESSAGE("/pages/secured/ADMIN/message.zul"),
 	CHANGE_USERNAME_ADMIN("/pages/secured/ADMIN/change-username.zul"),
 	CHANGE_USERNAME_USER("/pages/secured/USER/change-username.zul"),
