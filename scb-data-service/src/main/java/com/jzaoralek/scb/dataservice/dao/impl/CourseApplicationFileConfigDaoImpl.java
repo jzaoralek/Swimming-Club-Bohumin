@@ -12,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
 import com.jzaoralek.scb.dataservice.dao.CourseApplicationFileConfigDao;
@@ -107,9 +108,9 @@ public class CourseApplicationFileConfigDaoImpl extends BaseJdbcDao implements C
 	@Override
 	public void update(CourseApplicationFileConfig config) {
 		namedJdbcTemplate.update(UPDATE_COURSE_APPL_FILE_CONFIG, buildCourseApplFileConfigParamMap(config));
-		deleteFile(config.getAttachmentUuid());
 		if (config.getAttachment() != null) {
-			insertFile(config.getAttachment());			
+			deleteFile(config.getAttachmentUuid());			
+			insertFile(config.getAttachment());	
 		}
 	}
 	
@@ -141,7 +142,9 @@ public class CourseApplicationFileConfigDaoImpl extends BaseJdbcDao implements C
 
 	@Override
 	public void delete(CourseApplicationFileConfig config) {
-		deleteFile(config.getAttachmentUuid());
+		if (config.getAttachmentUuid() != null) {
+			deleteFile(config.getAttachmentUuid());			
+		}
 		namedJdbcTemplate.update(DELETE_COURSE_APPL_FILE_CONFIG, new MapSqlParameterSource().addValue(UUID_PARAM, config.getUuid().toString()));
 	}
 	
@@ -182,7 +185,10 @@ public class CourseApplicationFileConfigDaoImpl extends BaseJdbcDao implements C
 		public CourseApplicationFileConfig mapRow(ResultSet rs, int rowNum) throws SQLException {
 			CourseApplicationFileConfig ret = new CourseApplicationFileConfig();
 			fetchIdentEntity(rs, ret);
-			ret.setAttachmentUuid(UUID.fromString(rs.getString("file_uuid")));
+			String fileUuid = rs.getString("file_uuid");
+			if (StringUtils.hasText(fileUuid)) {
+				ret.setAttachmentUuid(UUID.fromString(fileUuid));				
+			}
 			if (ret.getAttachmentUuid() != null && this.loadAttachment) {
 				ret.setAttachment(dao.getFileByUuid(ret.getAttachmentUuid()));				
 			}

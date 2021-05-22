@@ -249,7 +249,7 @@
 						                	onDoubleClick="@command('detailFileConfigCmd', item=each)" />
 						                <listcell onDoubleClick="@command('detailFileConfigCmd', item=each)">
 						                	<boolean-icon booleanValue="${each.pageText}" 
-						                		iconVisible="true"
+						                		iconVisible="${each.pageTextContext}"
 						                		customSclass="big-icon" />
 						                </listcell>
 						                <listcell onDoubleClick="@command('detailFileConfigCmd', item=each)">
@@ -271,6 +271,11 @@
 							                		<!-- Detail -->
 								                	<menuitem label="Detail" 
 								                		onClick="@command('detailFileConfigCmd', item=each)" />
+								                	<!-- Odstraneni konfigurace souboru -->
+													<menuitem label="${c:l('txt.ui.common.Delete')}" 
+														onClick="@command('deleteFileConfigCmd', item=each)"
+														if="${each.canDelete}"
+														iconSclass="z-icon-times"/>
 										       	</menupopup>
 						                	</hlayout>
 						                </listcell>
@@ -354,7 +359,7 @@
 														onClick="@command('changeDynAttrConfigCmd', item=each, active=!each.active)"
 														iconSclass="${each.active ? 'z-icon-stop' : 'z-icon-play'}" >
 													</menuitem>
-													<!-- Odstraneni kurzu -->
+													<!-- Odstraneni dynamickeho atributu -->
 													<menuitem label="${c:l('txt.ui.common.Delete')}" 
 														onClick="@command('deleteDynAttrConfigCmd', item=each)"
 														iconSclass="z-icon-times"/>

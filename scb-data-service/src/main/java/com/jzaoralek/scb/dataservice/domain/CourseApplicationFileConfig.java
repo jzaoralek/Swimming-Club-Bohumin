@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.domain;
 
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.UUID;
 
 public class CourseApplicationFileConfig implements IdentEntity {
@@ -22,6 +23,25 @@ public class CourseApplicationFileConfig implements IdentEntity {
 	private boolean pageAttachment;
 	private boolean emailAttachment;
 	private String description;
+	
+	/**
+	 * Page text is visible only for GDPR, HEALTH_INFO and CLUB_RULES types.
+	 * @return
+	 */
+	public boolean isPageTextContext() {
+		return EnumSet.of(CourseApplicationFileType.GDPR, 
+						CourseApplicationFileType.HEALTH_INFO, 
+						CourseApplicationFileType.CLUB_RULES).
+					contains(this.type);
+	}
+	
+	/**
+	 * File config file can be deleted only for OTHER type.
+	 * @return
+	 */
+	public boolean isCanDelete() {
+		return this.type == CourseApplicationFileType.OTHER;
+	}
 	
 	@Override
 	public UUID getUuid() {

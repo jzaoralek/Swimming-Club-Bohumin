@@ -177,6 +177,38 @@ public class ConfigVM extends BaseVM {
 		initFileConfigList();
 	}
 	
+	/**
+	 * Delete file config.
+	 * @param item
+	 */
+	@Command
+    public void deleteFileConfigCmd(@BindingParam(WebConstants.ITEM_PARAM) final CourseApplicationFileConfig item) {
+		Objects.requireNonNull(item, "CourseApplicationFileConfig is null.");
+		
+		// check user role
+		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name()) 
+				|| !item.isCanDelete()) {
+			return;
+		}
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Deleting CourseApplDynAttrConfig with uuid: " + item.getUuid());
+		}
+		
+		MessageBoxUtils.showDefaultConfirmDialog(
+			"msg.ui.quest.deleteFileConfig",
+			"msg.ui.title.deleteRecord",
+			new SzpEventListener() {
+				@Override
+				public void onOkEvent() {
+					courseApplicationFileConfigService.delete(item);
+					WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.fileConfigDeleted"));
+					initFileConfigList();
+				}
+			}
+		);
+	}
+	
 	@Command
 	public void newDynAttrConfigCmd() {
 		Map<String, Object> args = new HashMap<>();
