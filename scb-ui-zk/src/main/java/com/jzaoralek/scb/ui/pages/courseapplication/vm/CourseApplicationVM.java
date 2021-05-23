@@ -221,7 +221,7 @@ public class CourseApplicationVM extends BaseVM {
 					return;
 				}
 				
-				// overeni validni adresy pred  submitem
+				// overeni validni adresy pred submitem
 				addressValidationBeforeSubmit(this.application.getCourseParticipant().getContact(), this.courseApplNotVerifiedAddressAllowed, this::submitCore);
 			}
 		} catch (ScbValidationException e) {

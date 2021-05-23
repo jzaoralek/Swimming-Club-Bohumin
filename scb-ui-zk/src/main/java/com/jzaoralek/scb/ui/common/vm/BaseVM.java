@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
@@ -551,7 +552,9 @@ public class BaseVM {
 		
         List<com.jzaoralek.scb.dataservice.domain.Attachment> attachmentList = new ArrayList<>();
         // attachment prihlaska
-        attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase()));
+        Attachment prihlaskaAttachment = new com.jzaoralek.scb.dataservice.domain.Attachment(byteArray, this.attachment.getName().toLowerCase());
+        prihlaskaAttachment.setContentType(WebConstants.APPLICATION_PDF_CONTENT_TYPE);
+        attachmentList.add(prihlaskaAttachment);
 
         // dynamic attachments (GDPR, HEALTH_INFO, HEALTH_EXAM, CLUB_RULES)
         List<CourseApplicationFileConfig> cafcList = courseApplicationFileConfigService.getListForEmail();

@@ -505,7 +505,7 @@
 						<vbox hflex="1" sclass="form-grid"
 							if="${vm.otherFileConfigEnabled}"
 							style="margin-top: 25px; margin-bottom: 25px; margin-left: 10px;">
-							<label value="${c:l('txt.ui.common.OtherFilesToDownload')}" style="font-weight: bold;" />
+							<label value="${c:l('txt.ui.common.OtherDocumentsToDownload')}" style="font-weight: bold;" />
 							<vlayout children="@load(vm.otherFileConfigList)" if="${vm.otherFileConfigEnabled}" >
 								<template name="children">
 									<vbox align="start" pack="center" >

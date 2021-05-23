@@ -251,6 +251,7 @@ CREATE TABLE course_application_file_config(
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
+ALTER TABLE course_application_file_config DROP INDEX type;
 
 CREATE TABLE course_application_dyn_attribute_config(
 	uuid varchar(36),
