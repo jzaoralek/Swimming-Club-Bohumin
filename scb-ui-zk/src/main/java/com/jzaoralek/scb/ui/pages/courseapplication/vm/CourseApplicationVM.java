@@ -67,6 +67,7 @@ public class CourseApplicationVM extends BaseVM {
 	private CourseApplicationFileConfig clubRulesAgreementConfig;
 	private CourseApplicationFileConfig healthInfoAgreementConfig;
 	private CourseApplicationFileConfig gdprAgreementConfig;
+	private List<CourseApplicationFileConfig> otherFileConfigList;
 	private boolean loggedByParticRepr;
 	private String recaptchaSitekey;
 	private String emailUsernameRepeat;
@@ -161,6 +162,8 @@ public class CourseApplicationVM extends BaseVM {
 			LOG.info("initAgreementFileConfig():: healthInfoAgreementConfig: " + healthInfoAgreementConfig);
 			this.gdprAgreementConfig = getByType(cafcPageList, CourseApplicationFileType.GDPR);
 			LOG.info("initAgreementFileConfig():: gdprAgreementConfig: " + gdprAgreementConfig);
+			this.otherFileConfigList = getByTypeList(cafcPageList, CourseApplicationFileType.OTHER);
+			LOG.info("initAgreementFileConfig():: otherFileConfig: " + otherFileConfigList);
 		}
 	}
 	
@@ -357,6 +360,17 @@ public class CourseApplicationVM extends BaseVM {
 		}
 	}
 	
+	@Command
+	public void downloadOtherAttachmentCmd(@BindingParam(WebConstants.ITEM_PARAM) CourseApplicationFileConfig fileConfig) {
+		if (fileConfig == null || fileConfig.getAttachmentUuid() == null) {
+			return;
+		}
+		Attachment attachment = courseApplicationFileConfigService.getFileByUuid(fileConfig.getAttachmentUuid());
+		if (attachment != null && attachment.getByteArray() != null) {
+			WebUtils.downloadAttachment(attachment);			
+		}
+	}
+	
 	/**
 	 * Otevre stranku pro odeslani emailu na emailove adresy vybranych ucastniku.
 	 */
@@ -448,6 +462,17 @@ public class CourseApplicationVM extends BaseVM {
 		return this.healthInfoAgreementConfig != null 
 				&& this.healthInfoAgreementConfig.isPageAttachment()
 				&& this.healthInfoAgreementConfig.getAttachmentUuid() != null;
+	}
+	
+	/**
+	 * Dostupnost ostatnich dokumentu ke stazeni.
+	 * @return
+	 */
+	public boolean isOtherFileConfigEnabled() {
+		return !CollectionUtils.isEmpty(this.otherFileConfigList)
+				&& this.otherFileConfigList.stream().
+									anyMatch(i -> (i.isPageAttachment() 
+													&& i.getAttachmentUuid() != null));
 	}
 	
 	public String getCourseRowColor(Course course) {
@@ -561,5 +586,8 @@ public class CourseApplicationVM extends BaseVM {
 	}
 	public String getEmailUsernameRepeat() {
 		return emailUsernameRepeat;
+	}
+	public List<CourseApplicationFileConfig> getOtherFileConfigList() {
+		return otherFileConfigList;
 	}
 }

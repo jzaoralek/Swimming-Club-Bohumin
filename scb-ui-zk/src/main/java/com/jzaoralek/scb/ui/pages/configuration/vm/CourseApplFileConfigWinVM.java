@@ -46,6 +46,8 @@ public class CourseApplFileConfigWinVM extends BaseVM  {
 		this.item = (CourseApplicationFileConfig) WebUtils.getArg(WebConstants.ITEM_PARAM);
 		if (item == null) {
 			this.item = new CourseApplicationFileConfig();
+			// potreba aby se file download zobrazil na prihlasce
+			this.item.setPageText(true);
 			this.item.setType(CourseApplicationFileType.OTHER);
 		} else {
 			this.editMode = true;

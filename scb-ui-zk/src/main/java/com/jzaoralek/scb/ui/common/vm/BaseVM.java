@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.javatuples.Pair;
 import org.slf4j.Logger;
@@ -435,6 +436,17 @@ public class BaseVM {
 			}
 		}
 		return ret;
+	}
+	
+	protected List<CourseApplicationFileConfig> getByTypeList(List<CourseApplicationFileConfig> cafcList
+														, CourseApplicationFileType type) {
+		if (cafcList == null || cafcList.isEmpty()) {
+			return null;
+		}
+		
+		return cafcList.stream().
+					filter(i -> i.getType() == type).
+					collect(Collectors.toList());
 	}
 	
 	/**
