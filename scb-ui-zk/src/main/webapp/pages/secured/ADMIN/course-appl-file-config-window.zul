@@ -56,7 +56,7 @@
 				<row visible="@load(vm.item.pageTextContext)">
 					<cell>
 						<vbox hflex="1" vflex="1">
-							<label value="${c:l('txt.ui.common.PageText')}"/>
+							<label value="${c:l('txt.ui.common.PageText.detail')}"/>
 							<listbox selectedItem="@bind(vm.item.pageText)"
 								mold="select"
 								height="25px" >
@@ -69,7 +69,7 @@
 				<row>
 					<cell>
 						<vbox hflex="1" vflex="1">
-							<label value="${c:l('txt.ui.common.PageAttachment')}"/>
+							<label value="${c:l('txt.ui.common.PageAttachment.detail')}"/>
 							<listbox selectedItem="@bind(vm.item.pageAttachment)"
 								mold="select"
 								height="25px" >
@@ -82,7 +82,7 @@
 				<row>
 					<cell>
 						<vbox hflex="1" vflex="1">
-							<label value="${c:l('txt.ui.common.EmailAttachment')}"/>
+							<label value="${c:l('txt.ui.common.EmailAttachment.detail')}"/>
 							<listbox selectedItem="@bind(vm.item.emailAttachment)"
 								mold="select"
 								height="25px" >
@@ -94,21 +94,36 @@
 				</row>
 				<row>
 					<cell>
-						<a label="@load(vm.item.attachment.name)" 
-							onClick="@command('downloadFileCmd')"
-							iconSclass="z-icon-download"
-							visible="@load(vm.attachmentPresent)" />
+						<vbox hflex="1" vflex="1">
+							<label value="${c:l('txt.ui.common.File')}"/>
+							<hbox visible="@load(vm.attachmentPresent)">
+								<a onClick="@command('downloadAttachmentCmd')"
+									iconSclass="z-icon-download"
+									style="margin-right: 5px;" />
+								<a label="@load(vm.item.attachment.name)" 
+									onClick="@command('downloadAttachmentCmd')" />
+								<a onClick="@command('removeAttachmentCmd')" 
+									iconSclass="z-icon-times" 
+									style="margin-left: 5px;"
+				                	tooltiptext="${c:l('txt.ui.common.remove')}" />							
+							</hbox>
+						</vbox>
 					</cell>
 				</row>
 			</rows>
 		</grid>
 		
-		<button label="OK"
-			onClick="@command('submitCmd', window=modalWindow)"
-			sclass="btn-success"
-			tabindex="3"
-			style="margin-top: 10px"
-			iconSclass="z-icon-check"  />
+		<hbox style="margin-top: 10px">
+			<button upload="true,native" 
+				onUpload="@command('uploadAttachmentCmd', event=event)"
+				label="@load(vm.uploadBtnLabel)"
+				iconSclass="z-icon-upload" />
+			
+			<button label="OK"
+				onClick="@command('submitCmd', window=modalWindow)"
+				sclass="btn-success"
+				iconSclass="z-icon-check" />
+		</hbox>
 	    
     </vbox>
 </window>

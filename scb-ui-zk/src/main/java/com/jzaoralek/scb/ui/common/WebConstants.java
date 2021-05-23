@@ -72,4 +72,6 @@ public final class WebConstants {
 	
 	public static final String COLON = ": ";
 	public static final String SEMICOLON_DELIM = " | ";
+	
+	public static final String APPL_FILE_CONTENT_TYPE = "application/file";
 }
