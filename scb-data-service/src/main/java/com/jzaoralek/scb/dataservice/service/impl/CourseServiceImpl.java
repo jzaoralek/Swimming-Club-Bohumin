@@ -95,6 +95,17 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 	}
 	
 	@Override
+	public List<Course> getAllActive(int yearFrom, int yearTo, boolean withLessons) {
+		List<Course> courseListAll = getAll(yearFrom, yearTo, withLessons);
+		// vyfiltrovat pouze aktivni
+		if (!CollectionUtils.isEmpty(courseListAll))  {
+			return courseListAll.stream().filter(i -> i.isActive()).collect(Collectors.toList());
+		}
+		
+		return courseListAll;
+	}
+	
+	@Override
 	public List<Course> getByTrainer(UUID userUuid, int yearFrom, int yearTo, boolean withLessons) {
 		List<Course> ret = courseDao.getByTrainer(userUuid, yearFrom, yearTo);
 		if (withLessons) {

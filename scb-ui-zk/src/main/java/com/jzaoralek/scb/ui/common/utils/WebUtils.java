@@ -349,12 +349,13 @@ public final class WebUtils {
 			return Collections.emptyList();
 		}
 		
-		if (location == null) {
+		if (location == null || location.getUuid() == null) {
 			return courseListBase;
 		}
 		
 		return courseListBase.stream()
-                .filter(line -> location.getUuid().toString().equals(line.getCourseLocation().getUuid().toString()))
+                .filter(line -> line.getCourseLocation() != null 
+                			&& location.getUuid().toString().equals(line.getCourseLocation().getUuid().toString()))
                 .collect(Collectors.toList());
 	}
 	

@@ -89,8 +89,8 @@ public class CourseApplicationUserVM extends BaseVM {
 		
 		// seznam mist konani
 		this.courseLocationList = courseService.getCourseLocationAll();
-		// seznam vsech kurzu
-		this.courseListAll = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
+		// seznam vsech active kurzu
+		this.courseListAll = courseService.getAllActive(this.application.getYearFrom(), this.application.getYearTo(), true);
 		
 		this.pageHeadline = this.courseParticipant.getContact().getCompleteName() + " - " + Labels.getLabel("txt.ui.loginToCourse");	
 	}

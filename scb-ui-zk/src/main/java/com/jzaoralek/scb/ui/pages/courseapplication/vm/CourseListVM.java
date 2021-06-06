@@ -62,6 +62,8 @@ public class CourseListVM extends CourseAbstractVM {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CourseListVM.class);
 
+	private static final CourseLocation emptyCourseLocation = buildEmptyCourseLocation();
+	
 	private List<Course> courseList;
 	private List<Course> courseListBase;
 	private List<CourseLocation> courseLocationList;
@@ -133,7 +135,7 @@ public class CourseListVM extends CourseAbstractVM {
 			if (this.showCourseFilter && this.externalFilter.getCourseLocationUuid() != null) {
 				List<CourseLocation> courseLocFilterred = this.courseLocationList.
 							stream().
-							filter(i -> i.getUuid().toString().equals(this.externalFilter.getCourseLocationUuid().toString())).
+							filter(i -> i.getUuid() != null && i.getUuid().toString().equals(this.externalFilter.getCourseLocationUuid().toString())).
 							collect(Collectors.toList());
 				this.courseLocationSelected = courseLocFilterred.stream().findFirst().orElse(null);
 			}
@@ -427,8 +429,22 @@ public class CourseListVM extends CourseAbstractVM {
 	
 	private void initCourseLocations() {
 		this.courseLocationList = courseService.getCourseLocationAll();
+		// na prvni pozici pridat prazdnou polozku pro moznos ze se mista konani zalozi po vytvoreni kurzu
+		this.courseLocationList.add(0, emptyCourseLocation);
 		// pokud vice nez jedno misto konani, zobrazit vyber mist konani
 		this.showCourseFilter = (this.courseLocationList != null && this.courseLocationList.size() > 1);
+	}
+	
+	/**
+	 * Build empty course location to filter.
+	 * @return
+	 */
+	private static CourseLocation buildEmptyCourseLocation() {
+		CourseLocation emptyCourseLocation = new CourseLocation();
+		emptyCourseLocation.setName(Labels.getLabel("txt.ui.common.all"));
+		emptyCourseLocation.setUuid(null);
+		
+		return emptyCourseLocation;
 	}
 
 	private Map<String, Object[]> buildExcelRowData(@BindingParam("listbox") Listbox listbox) {

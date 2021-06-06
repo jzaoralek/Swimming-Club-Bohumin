@@ -122,12 +122,8 @@ public class CourseApplicationVM extends BaseVM {
 			if (!this.securedMode) {
 				// seznam mist konani
 				this.courseLocationList = courseService.getCourseLocationAll();
-				// seznam vsech kurzu
-				this.courseListAll = courseService.getAll(this.application.getYearFrom(), this.application.getYearTo(), true);
-				// vyfiltrovat pouze aktivni
-				if (!CollectionUtils.isEmpty(this.courseListAll))  {
-					this.courseListAll = this.courseListAll.stream().filter(i -> i.isActive()).collect(Collectors.toList());
-				}
+				// seznam vsech aktivnich kurzu
+				this.courseListAll = courseService.getAllActive(this.application.getYearFrom(), this.application.getYearTo(), true);
 			} else {
 				// seznam vybranych kurzu
 				this.courseList = courseService.getByCourseParticipantUuid(this.application.getCourseParticipant().getUuid(), this.application.getYearFrom(), this.application.getYearTo());

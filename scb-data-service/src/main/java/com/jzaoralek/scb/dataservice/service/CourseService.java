@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttr;
-import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
@@ -16,6 +15,7 @@ import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 public interface CourseService {
 
 	List<Course> getAll(int yearFrom, int yearTo, boolean withLessons);
+	List<Course> getAllActive(int yearFrom, int yearTo, boolean withLessons);
 	List<Course> getByTrainer(UUID userUuid, int yearFrom, int yearTo, boolean withLessons);
 	List<Course> getAllExceptCourse(UUID courseUuid);
 	List<CourseParticipant> getByCourseParticListByCourseUuid(UUID courseUuid, boolean inclInterrupted);
