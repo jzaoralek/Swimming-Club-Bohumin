@@ -13,7 +13,7 @@
 			sclass="scb-view scb-view-900" 
 			viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseVM')"
 			validationMessages="@id('vmsgs')"
-       		form="@id('fx') @load(vm) @save(vm, before='submit')" >
+       		form="@id('fx') @load(vm) @save(vm, before={'submit','changeStateCmd'})" >
 		
 		<!-- Popup s parametry pro kopirovani kurzu. -->
 		<popup id="courseCopyPopup" vflex="1" >

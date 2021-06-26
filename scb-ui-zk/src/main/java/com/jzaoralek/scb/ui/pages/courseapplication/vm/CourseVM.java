@@ -193,9 +193,7 @@ public class CourseVM extends CourseAbstractVM {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Storing course: " + this.course);
 			}
-			this.course.fillYearFromTo(this.courseYearSelected);
-			courseService.store(this.course);
-			this.updateMode = true;
+			storeCourseCore();
 			loadData(this.course.getUuid());
 			WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.changesSaved"));
 		} catch (ScbValidationException e) {
@@ -206,6 +204,12 @@ public class CourseVM extends CourseAbstractVM {
 			throw new RuntimeException(e);
 		}
     }
+	
+	private void storeCourseCore() throws ScbValidationException {
+		this.course.fillYearFromTo(this.courseYearSelected);
+		courseService.store(this.course);
+		this.updateMode = true;
+	}
 
 	@NotifyChange("*")
 	@Command
@@ -333,16 +337,21 @@ public class CourseVM extends CourseAbstractVM {
 	@Command
 	public void changeStateCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid, 
 			@BindingParam(WebConstants.ACTIVE_PARAM) boolean active) {
-		// check user role
-		if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
-			return;
-		}
 		
-		courseService.updateState(Arrays.asList(uuid), active);
-		loadData(uuid);
-		
-		String msg = active ? "msg.ui.info.courseStarted" : "msg.ui.info.courseStopped";
-		WebUtils.showNotificationInfo(Labels.getLabel(msg, new Object[] {this.course.getName()}));
+		try {
+			// check user role
+			if (!isLoggedUserInRole(ScbUserRole.ADMIN.name())) {
+				return;
+			}
+			storeCourseCore();
+			courseService.updateState(Arrays.asList(uuid), active);
+			loadData(uuid);
+			String msg = active ? "msg.ui.info.courseStarted" : "msg.ui.info.courseStopped";
+			WebUtils.showNotificationInfo(Labels.getLabel(msg, new Object[] {this.course.getName()}));
+		} catch (ScbValidationException e) {
+			LOG.warn("ScbValidationException caught for course: " + this.course, e);
+			WebUtils.showNotificationError(e.getMessage());
+		} 
 	}
 	
 	@Override
