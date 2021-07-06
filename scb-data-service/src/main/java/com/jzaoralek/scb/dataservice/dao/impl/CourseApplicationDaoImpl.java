@@ -96,7 +96,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			", cp.birthdate " +
 			", cp.personal_number " +
 			", cp.health_insurance " +
-			", con_repr.uuid \"representative_uuid\" " +
+			", usr.uuid \"representative_uuid\" " +
 			", con_repr.firstname \"representative_firstname\" " +
 			", con_repr.surname \"representative_surname\" " +
 			", con_repr.phone1 " +

@@ -303,6 +303,11 @@ public class CourseApplicationListVM extends BaseContextVM {
 			return;
 		}
 		final List<CourseApplication> courseApplicationList = this.courseApplicationList;
+		
+		/* Seznam UUID ucastniku, na ktere byla odeslan mail.
+		 * Zamezuje opakovanemu odeslani pokud jeden ucastnik ve vice kurzech. */
+		Set<UUID> courseParticUuidSent = new HashSet<>();
+		
 		final String courseYearSelected = getCourseYearSelected();
 		final Object[] msgParams = new Object[] {this.courseApplicationList.size()};
 		MessageBoxUtils.showDefaultConfirmDialog(
@@ -313,7 +318,13 @@ public class CourseApplicationListVM extends BaseContextVM {
 				public void onOkEvent() {
 					StringBuilder mailToUser = null;
 					List<Mail> mailList = new ArrayList<>();
+					UUID courseParticUuid = null;
 					for (CourseApplication courseApplication : courseApplicationList) {
+						courseParticUuid = courseApplication.getCourseParticipant().getUuid();
+						if (courseParticUuidSent.contains(courseParticUuid)) {
+							// UUID ucastnika je jiz v odesilanych emailech, znovu nezarazovat.
+							continue;
+						}
 						mailToUser = new StringBuilder();
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text0"));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
@@ -321,7 +332,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text1", new Object[] {courseApplication.getCourseParticipant().getContact().getCompleteName(), courseYearSelected}));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
-						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text2", new Object[] {configurationService.getBaseURL(), courseApplication.getCourseParticipant().getUuid(), courseApplication.getCourseParticRepresentative().getUuid()}));
+						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text2", new Object[] {configurationService.getBaseURL(), courseParticUuid, courseApplication.getCourseParticRepresentative().getUuid()}));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text3"));
@@ -329,6 +340,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(buildMailSignature());						
 						mailList.add(new Mail(courseApplication.getCourseParticRepresentative().getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.subject", new Object[] {courseYearSelected}), mailToUser.toString(), null, false));	
+						
+						// Zaregistrovanu UUID ucastnika zarazeneho do odesilanych emailu.
+						courseParticUuidSent.add(courseParticUuid);
 					}
 					
 					mailService.sendMailBatch(mailList);
