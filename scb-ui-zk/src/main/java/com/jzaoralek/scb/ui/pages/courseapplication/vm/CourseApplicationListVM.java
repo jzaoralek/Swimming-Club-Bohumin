@@ -180,7 +180,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 			throw new IllegalArgumentException("CourseApplication is null");
 		}
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting application with uuid: " + item.getUuid());
+			LOG.debug("Deleting application with uuid: {}", item.getUuid());
 		}
 		final Object[] msgParams = new Object[] {item.getCourseParticipant().getContact().getCompleteName()};
 		final UUID uuid = item.getUuid();
@@ -195,7 +195,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT, null, null);
 						WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.applicationDeleted", msgParams));
 					} catch (ScbValidationException e) {
-						LOG.warn("ScbValidationException caught for application with uuid: " + uuid);
+						LOG.warn("ScbValidationException caught for application with uuid: {}", uuid);
 						WebUtils.showNotificationError(e.getMessage());
 					}
 				}
@@ -332,7 +332,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text1", new Object[] {courseApplication.getCourseParticipant().getContact().getCompleteName(), courseYearSelected}));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
-						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text2", new Object[] {configurationService.getBaseURL(), courseParticUuid, courseApplication.getCourseParticRepresentative().getUuid()}));
+						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text2", new Object[] {configurationService.getBaseURL(), courseParticUuid, courseApplication.getCourseParticRepresentative().getUuid(), String.valueOf(getYearFrom())}));
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(WebConstants.LINE_SEPARATOR);
 						mailToUser.append(Labels.getLabel("msg.ui.mail.unregisteredToCurrSeason.text3"));

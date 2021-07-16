@@ -70,8 +70,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 	@Override
 	@Transactional(rollbackFor=Throwable.class, readOnly=true)
 	public List<CourseApplication> getAll(int yearFrom, int yearTo) {
-		List<CourseApplication> ret = courseApplicationDao.getAll(yearFrom, yearTo);		
-		return ret;
+		return courseApplicationDao.getAll(yearFrom, yearTo);
 	}
 
 	@Override
@@ -120,7 +119,10 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		fillIdentEntity(courseApplication);
 		if (insert) {
 			// insert
-			courseApplication.fillYearFromTo(configurationService.getCourseApplicationYear());
+			if (courseApplication.getYearFrom() == 0 || courseApplication.getYearTo() == 0) {
+				// set yearFromTo only if it isn't already in courseApplication
+				courseApplication.fillYearFromTo(configurationService.getCourseApplicationYear());				
+			}
 			courseApplicationDao.insert(courseApplication);
 		} else {
 			// update
@@ -186,7 +188,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Deleting courseApplication: " + courseApplication);
+			LOG.debug("Deleting courseApplication: {}", courseApplication);
 		}
 
 		courseApplicationDao.delete(courseApplication);
@@ -296,7 +298,7 @@ public class CourseApplicationServiceImpl extends BaseAbstractService implements
 		}
 
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Storing CourseApplDynAttr: " + dynAttr);
+			LOG.debug("Storing CourseApplDynAttr: {}", dynAttr);
 		}
 		
 		boolean insertMode = dynAttr.getUuid() == null;

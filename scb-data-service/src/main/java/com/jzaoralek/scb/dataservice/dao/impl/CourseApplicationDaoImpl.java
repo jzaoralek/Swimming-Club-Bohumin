@@ -465,8 +465,8 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 
 	@Override
 	public void delete(CourseApplication courseApplication) {
-		courseParticipantDao.delete(courseApplication.getCourseParticipant());
-		//scbUserDao.delete(courseApplication.getCourseParticRepresentative());
+		// courseParticipantDao.delete(courseApplication.getCourseParticipant());
+		// scbUserDao.delete(courseApplication.getCourseParticRepresentative());
 		namedJdbcTemplate.update(DELETE, new MapSqlParameterSource().addValue(UUID_PARAM, courseApplication.getUuid().toString()));
 	}
 

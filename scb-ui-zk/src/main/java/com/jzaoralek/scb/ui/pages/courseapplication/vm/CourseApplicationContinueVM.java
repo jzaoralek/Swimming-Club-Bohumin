@@ -34,10 +34,7 @@ import com.jzaoralek.scb.ui.common.vm.BaseVM;
  */
 public class CourseApplicationContinueVM extends BaseVM {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CourseApplicationVM.class);
-	
-	@WireVariable
-	private ScbUserService scbUserService;
+	private static final Logger LOG = LoggerFactory.getLogger(CourseApplicationContinueVM.class);
 	
 	@WireVariable
 	private CourseService courseService;
@@ -49,15 +46,18 @@ public class CourseApplicationContinueVM extends BaseVM {
 	private boolean showWarnMessage;
 	private boolean showSuccessMessage;
 	private String message;
-	private Pair<Integer, Integer> yearFromTo;
 	
 	@Init
 	public void init(@QueryParam(WebConstants.COURSE_PARTICIPANT_UUID_PARAM) String particUuid
-			, @QueryParam(WebConstants.COURSE_PARTICIPANT_REPRESENTATIVE_UUID_PARAM) String particRepresentativeUuid) {
+			, @QueryParam(WebConstants.COURSE_PARTICIPANT_REPRESENTATIVE_UUID_PARAM) String particRepresentativeUuid
+			, @QueryParam(WebConstants.YEAR_FROM_PARAM) String yearFromParam) {
 		
-		LOG.info("Creating application through link, participantUuid: {}, representativeUuid: {}", particRepresentativeUuid);
+		LOG.info("Creating application through link, participantUuid: {}, representativeUuid: {}, yearFrom: {}", 
+												particRepresentativeUuid, 
+												particRepresentativeUuid, 
+												yearFromParam);
 		
-		if (!StringUtils.hasText(particUuid) || !StringUtils.hasText(particRepresentativeUuid)) {
+		if (!StringUtils.hasText(particUuid) || !StringUtils.hasText(particRepresentativeUuid) || !StringUtils.hasText(yearFromParam)) {
 			this.showErrMessage = true;
 			return;
 		}
@@ -96,9 +96,8 @@ public class CourseApplicationContinueVM extends BaseVM {
 		
 		// check if course participant isn't already registered to course
 		List<CourseApplication> courseApplicationList = courseApplicationService.getByCourseParticipantUuid(UUID.fromString(particUuid));
-		this.yearFromTo = configurationService.getYearFromTo();
-		Integer yearFrom = this.yearFromTo.getValue0();
-		Integer yearTo = this.yearFromTo.getValue1();
+		Integer yearFrom = Integer.valueOf(yearFromParam);
+		Integer yearTo = yearFrom + 1;
 		for (CourseApplication item : courseApplicationList) {
 			if (item.getYearFrom() == yearFrom && item.getYearTo() == yearTo) {
 				LOG.warn("Course participant: {} already has registered to course to year from: {} to: {}", particUuid, yearFrom, yearTo);
@@ -108,27 +107,30 @@ public class CourseApplicationContinueVM extends BaseVM {
 			}
 		}
 		
-		createNewCourseApplication(courseParticipant, particRepresentative);
+		createNewCourseApplication(courseParticipant, particRepresentative, yearFrom, yearTo);
 		this.message = Labels.getLabel("msg.ui.info.applicationForParticipantCreated", new Object[] {courseParticipant.getContact().getCompleteName(), String.valueOf(yearFrom), String.valueOf(yearTo)});
 		this.showSuccessMessage = true;		
 	}
 	
-	private void createNewCourseApplication(CourseParticipant courseParticipant, ScbUser courseParticipantRepresentative) {
+	private void createNewCourseApplication(CourseParticipant courseParticipant, 
+			ScbUser courseParticipantRepresentative,
+			Integer yearFrom,
+			Integer yearTo) {
 		CourseApplication courseApplication = new CourseApplication();
 		courseApplication.setCourseParticipant(courseParticipant);
 		courseApplication.setCourseParticRepresentative(courseParticipantRepresentative);
-		courseApplication.setYearFrom(this.yearFromTo.getValue0());
-		courseApplication.setYearTo(this.yearFromTo.getValue1());
+		courseApplication.setYearFrom(yearFrom);
+		courseApplication.setYearTo(yearTo);
 		
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Creating application: " + courseApplication);
+			LOG.debug("Creating application: {}", courseApplication);
 		}
 		
 		try {
 			courseApplicationService.store(courseApplication);
 			byte[] byteArray = JasperUtil.getReport(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {courseApplication.getYearFrom()}), configurationService);
 			this.attachment = buildCourseApplicationAttachment(courseApplication, byteArray);			
-			sendMail(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {String.valueOf(courseApplication.getYearFrom())+"/"+String.valueOf(courseApplication.getYearTo())}));
+			sendMail(courseApplication, Labels.getLabel("txt.ui.menu.applicationWithYear", new Object[] {String.valueOf(courseApplication.getYearFrom())+"/"+courseApplication.getYearTo()}));
 		} catch (ScbValidationException e) {
 			LOG.error("ScbValidationException caught for application: " + courseApplication, e);
 			WebUtils.showNotificationError(e.getMessage());
