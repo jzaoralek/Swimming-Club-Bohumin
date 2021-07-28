@@ -22,11 +22,14 @@ public class MailSendTaskImpl implements MailSendTask {
 	@Autowired
 	private MailService mailService;
 	
+	/**
+	 * Delete email messages older then 90 days.
+	 */
 	@Override
 	public void deleteHistMailSendList() {
 		try {
 			Calendar toCal = Calendar.getInstance();
-			toCal.add(Calendar.DATE, -31);
+			toCal.add(Calendar.DATE, -90);
 			mailService.deleteSendMailToDate(toCal.getTime());
 		} catch (Exception e) {
 			// notification email about processing with error
