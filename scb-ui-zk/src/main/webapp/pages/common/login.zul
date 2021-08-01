@@ -21,6 +21,8 @@
 		width="100%"
 		form="@id('fx') @load(vm) @save(vm, before={'loginCmd'})" >
 	
+		<login-mobile-info/>
+		
 		<div sclass="login-frame">
 			<div sclass="clear"></div>
 			<div sclass="login-frame-left">
@@ -84,7 +86,6 @@
 			<login-frame-right />
 		</div>
 		
-		<login-mobile-info/>
 		<div sclass="footer">
 			<login-footer/>
 		</div>
