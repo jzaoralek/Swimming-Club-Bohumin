@@ -776,7 +776,7 @@ public class CourseApplicationDaoImpl extends BaseJdbcDao implements CourseAppli
 			ret.setCourseParticRepresentative(courseParticRepresentative);
 
 			ret.setPayed(rs.getInt("payed") == 1);
-			ret.setCurrentParticipant(rs.getInt("current_participant") == 1);
+			ret.setCurrentParticipant(rs.getInt("current_participant") > 0);
 			
 			return ret;
 		}
