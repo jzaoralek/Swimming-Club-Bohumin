@@ -14,7 +14,7 @@
 		
 		<vlayout sclass="listbox-wrapper">
 			<label value="${c:l('txt.ui.common.participants')}" sclass="scb-headline-big"/>
-				
+
 				<listbox model="@load(vm.courseApplicationList)"
 					id="courseApplicationList"
 					hflex="1"
@@ -24,23 +24,21 @@
 					class="listbox" >
 			        <auxhead>
 			            <auxheader class="header" colspan="5" >
-			            	<hlayout sclass="pull-left">
+			            	<hlayout sclass="pull-left" width="275px;" >
 			            		<hbox hflex="1">
 			            			<!-- Prepinac typu kurzu -->
 									<label value="${c:l('txt.ui.menu.courses')}:" style="font-size: 16px; font-family: Helvetica Neue,Helvetica,Arial,sans-serif;"/>
-									<hlayout>
-										<radiogroup model="@load(vm.courseTypeList)" 
-											selectedItem="@bind(vm.courseType)"
-											hflex="1">
-											<template name="model">
-												<radio label="@load(each) @converter(vm.enumLabelConverter)" 
-													value="${each}"
-													checked="${each == vm.courseType}"
-													onCheck="@command('courseTypeChangeCmd', radio=self)"
-													tooltiptext="@load(vm.getCourseTypeDesc(each))" />
-											</template>
-										</radiogroup>
-									</hlayout>
+									<radiogroup model="@load(vm.courseTypeList)" 
+										selectedItem="@bind(vm.courseType)"
+										hflex="1">
+										<template name="model">
+											<radio label="@load(each) @converter(vm.enumLabelConverter)" 
+												value="${each}"
+												checked="${each == vm.courseType}"
+												onCheck="@command('courseTypeChangeCmd', radio=self)"
+												tooltiptext="@load(vm.getCourseTypeDesc(each))" />
+										</template>
+									</radiogroup>
 								</hbox>
 			            	</hlayout>
 			            	
