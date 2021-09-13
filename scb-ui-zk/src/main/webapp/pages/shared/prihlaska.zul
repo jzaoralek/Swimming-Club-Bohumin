@@ -244,9 +244,9 @@
 											<vlayout width="150px">
 												<label value="${c:l('txt.ui.common.birthNumber')}"/>
 												<textbox id="particBirthNumber" readonly="@load(!vm.editMode)"
-													value="@bind(vm.application.courseParticipant.personalNo) @save(vm.application.courseParticipant.personalNo, before={submitCmd}) @validator(vm.birthNumberValidator, notNull=true, validateFormat=vm.application.courseParticipant.contact.czechCitizenship)"
+													value="@bind(vm.application.courseParticipant.personalNo) @save(vm.application.courseParticipant.personalNo, before={submitCmd}) @validator(vm.birthNumberValidator, notNull=vm.application.courseParticipant.contact.czechCitizenship, validateFormat=vm.application.courseParticipant.contact.czechCitizenship)"
 				                            		maxlength="@load(vm.getBirthNumberMaxlength())"
-				                            		placeholder="*"
+				                            		placeholder="@load(vm.application.courseParticipant.contact.czechCitizenship ? '*' : '')"
 				                            		width="140px"
 				                            		sclass="form-input-text"
 				                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
