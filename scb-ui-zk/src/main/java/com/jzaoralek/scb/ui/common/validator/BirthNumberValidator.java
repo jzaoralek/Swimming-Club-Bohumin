@@ -5,6 +5,7 @@ import org.zkoss.bind.ValidationContext;
 import org.zkoss.util.resource.Labels;
 
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
+import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
 public class BirthNumberValidator extends ScbAbstractValidator {
@@ -21,7 +22,7 @@ public class BirthNumberValidator extends ScbAbstractValidator {
 		Boolean notNull = (Boolean)ctx.getBindContext().getValidatorArg("notNull");
 		
 		String valueWithoutDelim = WebUtils.getBirthDateWithoutDelims(value);
-		if (notNull != null && notNull && StringUtils.isEmpty(valueWithoutDelim)) {
+		if (notNull != null && notNull && !StringUtils.hasText(valueWithoutDelim)) {
 			// NOT NULL
 			super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.valueRequired"));
 			return;
@@ -40,7 +41,11 @@ public class BirthNumberValidator extends ScbAbstractValidator {
 		
 			try {
 				// DATE PART
-				String valuePreDelim = value.substring(0, value.indexOf("/"));
+				if (!value.contains(WebConstants.BIRTH_NO_DELIM)) {
+					super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaBirthNumber"));
+					return;
+				}
+				String valuePreDelim = value.substring(0, value.indexOf(WebConstants.BIRTH_NO_DELIM));
 				WebUtils.parseRcDatePart(valuePreDelim).getValue1();			
 			} catch (IllegalArgumentException e) {
 				super.addInvalidMessage(ctx, Labels.getLabel("msg.ui.validation.err.invalidaBirthNumber"));

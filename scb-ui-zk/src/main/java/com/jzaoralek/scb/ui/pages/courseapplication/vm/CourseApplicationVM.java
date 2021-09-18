@@ -289,6 +289,11 @@ public class CourseApplicationVM extends BaseVM {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Command
 	public void birtNumberOnChangeCmd(@BindingParam("personal_number") String personalNumber, @BindingParam("fx") final CourseApplicationVM fx) {
+		// pokud neni rodne cislo vyplneno, neni povinne, zrejme obcan neni CR, nic nekontrolujeme
+		if (!StringUtils.hasText(personalNumber)) {
+			return;
+		}
+		
 		// pokud existuje ucastnik se stejnym rodnym cislem jako je zadane rodne cislo, zobrazit upozorneni a nepovolit vyplnit.
 		if (courseApplicationService.existsByPersonalNumber(personalNumber)) {
 			String question = Labels.getLabel("msg.ui.quest.participantPersonalNoExists",new Object[] {personalNumber});			

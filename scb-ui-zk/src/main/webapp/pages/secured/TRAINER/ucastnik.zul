@@ -131,9 +131,9 @@
 												<vbox width="150px" visible="@load(vm.isLoggedUserInRole('ADMIN'))">
 													<label value="${c:l('txt.ui.common.birthNumber')}"/>
 													<textbox id="particBirthNumber"
-														value="@bind(fx.participant.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true, validateFormat=vm.participant.courseParticipant.contact.czechCitizenship)"
+														value="@bind(fx.participant.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=fx.participant.courseParticipant.contact.czechCitizenship, validateFormat=fx.participant.courseParticipant.contact.czechCitizenship)"
 					                            		maxlength="@load(vm.getBirthNumberMaxlength())"
-					                            		placeholder="*"
+					                            		placeholder="@load(fx.participant.courseParticipant.contact.czechCitizenship ? '*' : '')"
 					                            		width="140px"
 					                            		sclass="form-input-text"
 					                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
@@ -627,7 +627,7 @@
 			            jq("$particBirthNumber").mask("999999/9999");
 			        });
 			    </script>
-	    
+			    
 			</vlayout>
 	</div>
 </zk>

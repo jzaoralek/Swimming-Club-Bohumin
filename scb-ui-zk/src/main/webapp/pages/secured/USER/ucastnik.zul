@@ -305,9 +305,9 @@
 														<vbox width="150px">
 															<label value="${c:l('txt.ui.common.birthNumber')}"/>
 															<textbox id="particBirthNumber"
-																value="@bind(fx.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=true, validateFormat=fx.courseParticipant.contact.czechCitizenship)"
+																value="@bind(fx.courseParticipant.personalNo) @validator(vm.birthNumberValidator, notNull=fx.courseParticipant.contact.czechCitizenship, validateFormat=fx.courseParticipant.contact.czechCitizenship)"
 							                            		maxlength="@load(vm.getBirthNumberMaxlength())"
-							                            		placeholder="*"
+							                            		placeholder="@load(fx.courseParticipant.contact.czechCitizenship ? '*' : '')"
 							                            		sclass="form-input-text"
 							                            		tooltiptext="${c:l('msg.ui.validation.err.valueRequired')}"
 							                            		tabindex="4"
@@ -318,6 +318,11 @@
 																	<label value="@bind(vmsgs[particBirthNumber])" />
 																</span>
 															</hbox>
+															<script type="text/javascript">
+														        zk.afterMount(function() {
+														            jq("$particBirthNumber").mask("999999/9999");
+														        });
+														    </script>
 														</vbox>
 														<vbox hflex="1">
 															<label value="${c:l('txt.ui.common.birthDate')}"/>

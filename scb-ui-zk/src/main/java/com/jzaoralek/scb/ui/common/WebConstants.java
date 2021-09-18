@@ -72,6 +72,7 @@ public final class WebConstants {
 	
 	public static final String COLON = ": ";
 	public static final String SEMICOLON_DELIM = " | ";
+	public static final String BIRTH_NO_DELIM = "/";
 	public static final String APPLICATION_PDF_CONTENT_TYPE = "application/pdf";
 	
 }
