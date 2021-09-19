@@ -70,7 +70,7 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
     		boolean storeToDb,
     		String toCompleteName) {
         if (LOG.isDebugEnabled()) {
-        	LOG.debug("Send email '" + subject + "' to '" + to + "'.");
+        	LOG.debug("Send email subject: {}, to: {}.", subject, to);
         }
         // Get system properties
         Properties properties = System.getProperties();
@@ -186,7 +186,7 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
     	}
 		
     	if (LOG.isDebugEnabled()) {
-        	LOG.debug("Send email: " + mail);
+        	LOG.debug("Send email: {}", mail);
         }
 		
 		sendMail(mail.getTo(), 
@@ -206,7 +206,7 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
     		return;
     	}
     	if (LOG.isDebugEnabled()) {
-     	   LOG.debug("Processiong mail count: " + mailList.size());
+     	   LOG.debug("Processiong mail count: {}", mailList.size());
         }
     	int counter = 0;
 		for (Mail item : mailList) {

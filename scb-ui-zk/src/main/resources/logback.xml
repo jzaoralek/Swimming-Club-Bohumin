@@ -20,11 +20,11 @@
         </encoder>
     </appender>
     
-	<logger name="com.jzaoralek.scb.dataservice" additivity="false">
-        <level value="TRACE" />
-        <appender-ref ref="consoleAppender" />
-        <appender-ref ref="dailyRollingFileAppender" />
-    </logger>
+<!-- 	<logger name="com.jzaoralek" additivity="false"> -->
+<!--         <level value="TRACE" /> -->
+<!--         <appender-ref ref="consoleAppender" /> -->
+<!--         <appender-ref ref="dailyRollingFileAppender" /> -->
+<!--     </logger> -->
 
 	<logger name="org.zkoss" additivity="false">
         <level value="WARN" />
@@ -33,7 +33,7 @@
     </logger>
 
     <root>
-        <level value="TRACE" />
+        <level value="INFO" />
         <appender-ref ref="consoleAppender" />
         <appender-ref ref="dailyRollingFileAppender" />
     </root>

@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,12 +25,15 @@ import com.jzaoralek.scb.dataservice.domain.security.SecuredUserProfileType;
 @Service("customUserDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(CustomUserDetailsService.class);
+	
 	@Autowired
 	private ScbUserDao scbUserDa;
 
 	@Override
 	@Transactional(readOnly=true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		LOG.info("loadUserByUsername():: username: {}", username);
 		ScbUser scbUser = scbUserDa.getByUsername(username);
 		if (scbUser == null) {
 			throw new UsernameNotFoundException("Username not found: " + username);
@@ -38,7 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	}
 
 	private static List<GrantedAuthority> getGrantedAuthorities(Set<SecuredUserProfile> profiles){
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
 
 		for (SecuredUserProfile userProfile : profiles) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_" + userProfile.getType()));
@@ -47,7 +52,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
 	private SecuredUser buildSecuredUser(ScbUser scbUser) {
-		Set<SecuredUserProfile> profiles = new HashSet<SecuredUserProfile>();
+		Set<SecuredUserProfile> profiles = new HashSet<>();
 		SecuredUserProfile profile = new SecuredUserProfile();
 		profile.setType(SecuredUserProfileType.fromScbUserRole(scbUser.getRole()).name());
 		profiles.add(profile);
