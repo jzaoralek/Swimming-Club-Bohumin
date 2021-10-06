@@ -36,7 +36,7 @@
 					emptyMessage="${c:l('txt.ui.common.noDataFound')}"
 					class="listbox-400 mobile-inherit-width" >
 		        <auxhead>
-		            <auxheader class="header" colspan="4" >
+		            <auxheader class="header" colspan="${vm.isLoggedUserInRole('ADMIN') ? '4' : 3}" >
 		            	<hlayout sclass="pull-left">	
 			            	<!-- Novy -->
 			            	<button onClick="@command('newItemCmd')" tooltiptext="${c:l('txt.ui.common.new')}" 
@@ -139,7 +139,8 @@
 					</auxheader>
 					<auxheader class="filter">
 					</auxheader>
-					<auxheader class="filter">
+					<auxheader class="filter" 
+						if="${vm.isLoggedUserInRole('ADMIN')}">
 					</auxheader>
 					<auxheader class="filter">
 					</auxheader>
@@ -148,11 +149,12 @@
 		        <listhead>
 		            <listheader label="${c:l('txt.ui.common.name')}" sort="auto(name)" align="left" hflex="1" valign="middle" />
 		            <listheader label="${c:l('txt.ui.common.participantCountAbbr')}" 
-		            	tooltiptext="${c:l('txt.ui.common.participantCount')}" 
+		            	tooltiptext="${c:l('txt.ui.common.participantCount')}"
+		            	if="${vm.isLoggedUserInRole('ADMIN')}"
 		            	sort="auto(participantListCount)" 
 		            	align="center" 
 		            	hflex="min"  />
-		            <listheader width="185px" align="center" />
+		            <listheader width="${vm.isLoggedUserInRole('ADMIN') ? '185px' : '125px'}" align="center" />
 		        </listhead>
 		         
 		        <template name="model">
@@ -162,7 +164,9 @@
 		                		iconVisible="${vm.isLoggedUserInRole('ADMIN')}" />
 					        <label value="${each.name}" onClick="@command('detailCmd', uuid=each.uuid)" style="text-decoration: underline !important" />
 		                </listcell>
-		                <listcell label="${each.participantListCount}" onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
+		                <listcell label="${each.participantListCount}" 
+		                	 if="${vm.isLoggedUserInRole('ADMIN')}"
+		                	onDoubleClick="@command('detailCmd', uuid=each.uuid)" />
 		                <listcell>
 		                	<hlayout>
 			                	<button label="Výuka" onClick="@command('courseLearningLessonsCmd', uuid=each.uuid)" />
