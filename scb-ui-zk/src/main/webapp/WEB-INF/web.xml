@@ -103,6 +103,20 @@
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	
+	<filter>
+		<filter-name>dynamicDatasourceFilter</filter-name>
+		<filter-class>com.jzaoralek.scb.ui.common.filter.DynamicDatasourceFilter</filter-class>
+		<init-param>
+        <param-name>excludedUrls</param-name>
+        <!-- Comma separated list of excluded servlets  -->
+        <param-value>/zkau,/resources,/favicon.ico,/pages</param-value>
+    </init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>dynamicDatasourceFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 	<!-- Potreba pro nastaveni datasource na JeTTy (lokalni prostredi) -->
     <resource-ref>
     	<res-ref-name>jdbc.sportlogic</res-ref-name>

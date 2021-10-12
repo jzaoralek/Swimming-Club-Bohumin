@@ -207,7 +207,8 @@
 				<configuration>
 					<scanIntervalSeconds>0</scanIntervalSeconds>
 					<webApp>
-						<contextPath>/scb-ui-zk</contextPath>
+<!-- 						<contextPath>/scb-ui-zk</contextPath> -->
+						<contextPath>/</contextPath>
 					</webApp>
 				</configuration>
 			</plugin>
