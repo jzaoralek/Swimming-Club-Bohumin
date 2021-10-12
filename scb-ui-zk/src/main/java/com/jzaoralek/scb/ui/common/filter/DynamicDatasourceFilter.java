@@ -49,7 +49,7 @@ public class DynamicDatasourceFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest)request;
 		String servletPath = req.getServletPath();
 		
-		if(isExcludedUrl(servletPath)) {
+		if(isExcludedUrl(servletPath) || "/".equals(servletPath)) {
 			// url is excluded (e.g. /zkau, /resources etc.) no need to check customer url part
 			chain.doFilter(request, response);
 			return;
@@ -63,13 +63,16 @@ public class DynamicDatasourceFilter implements Filter {
 		System.out.println(req.getRequestURI());
 		System.out.println("-----------------------");
 		
-//		int slashIndexOf = servletPath.indexOf("/");
-//		if (slashIndexOf != -1) {
-//			chain.doFilter(request, response);
-//		}
+		int slashIndexOf = servletPath.indexOf("/");
+		String customerUri = servletPath.substring(slashIndexOf);
+		String uriToRedirect = customerUri.replace(customerUri, "");
+		
+		// TODO 
+		// - logovani
+		// - url customer id uvnitr url
 		
 //		String strippedPath = req.getServletPath().substring(0, slashIndexOf);a
-		((HttpServletResponse)response).sendRedirect("http://www.seznam.cz");
+		((HttpServletResponse)response).sendRedirect(uriToRedirect);
 		
 //		chain.doFilter(request, response);
 	}
