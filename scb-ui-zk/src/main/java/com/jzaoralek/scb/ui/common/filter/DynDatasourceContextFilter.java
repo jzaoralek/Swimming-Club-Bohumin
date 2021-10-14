@@ -56,6 +56,7 @@ public class DynDatasourceContextFilter implements Filter {
 			chain.doFilter(request, response);
 			return;
 		}
+		
 		String servletPathFirstPart = SLASH + servletPathPartArr[1];
 		
 		if(isExcludedUrl(servletPathFirstPart) || SLASH.equals(servletPath)) {
