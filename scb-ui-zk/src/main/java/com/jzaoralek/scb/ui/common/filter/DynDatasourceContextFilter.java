@@ -18,6 +18,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
 /**
  * Filter to check customer url, add datasource and redirect to url withou customer part.
@@ -26,6 +28,7 @@ import com.jzaoralek.scb.dataservice.service.ScbUserService;
 public class DynDatasourceContextFilter implements Filter {
 
 	public static final String SLASH = "/";
+	public static final String CUST_URI_ATTR = "customerUri";
 	
 	@Autowired
 	private ScbUserService scbUserService;
@@ -57,7 +60,8 @@ public class DynDatasourceContextFilter implements Filter {
 			return;
 		}
 		
-		String servletPathFirstPart = SLASH + servletPathPartArr[1];
+		String customerUri = servletPathPartArr[1];
+		String servletPathFirstPart = SLASH + customerUri;
 		
 		if(isExcludedUrl(servletPathFirstPart) || SLASH.equals(servletPath)) {
 			// url is excluded (e.g. /zkau, /resources etc.) no need to check customer url part
@@ -65,14 +69,32 @@ public class DynDatasourceContextFilter implements Filter {
 			return;
         }
 		
-		// TODO: check customer url part
+		String customerUriSession = (String)WebUtils.getSessAtribute(CUST_URI_ATTR);
+		
+		// Pokud null nebo stejný jako v session -> redirect na url bez customer, nic neresit
+		
+		HttpServletResponse resp = (HttpServletResponse)response;
+		if (!customerUri.equals(customerUriSession)) {
+			// customer url jiny nez v session, -> kontrola zda-li je customer povolen
+			if (SecurityUtils.isUserLogged()) {
+				// zmena customer url v prihlasenem uzivateli -> nepovolit 403
+				resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return;
+			} else {
+				// zmena customer url v neprihlasenem uzivateli
+				// TODO: kontrola zda-li je customer povolen, pokud ne 403
+				// TODO: nastavit DS
+				// uložit do session
+				WebUtils.setSessAtribute(CUST_URI_ATTR, customerUri);
+			}
+		}
 		
 		// remove customer uri and redirect
 		String uriToRedirect = servletPath.replace(servletPathFirstPart, "");
 		
-		// TODO: logging
+//		TODO: logging
 		
-		((HttpServletResponse)response).sendRedirect(uriToRedirect);
+		resp.sendRedirect(uriToRedirect);
 	}
 
 	@Override
