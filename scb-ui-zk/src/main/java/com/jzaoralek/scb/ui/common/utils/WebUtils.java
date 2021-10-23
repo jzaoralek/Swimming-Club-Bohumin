@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,11 +15,14 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -94,6 +98,23 @@ public final class WebUtils {
 		return (HttpServletRequest)Executions.getCurrent().getNativeRequest();
 	}
 	
+	public static HttpServletResponse getResponse() {
+		return (HttpServletResponse)Executions.getCurrent().getNativeResponse();
+	}
+	
+	public static Optional<String> readCookie(String key, HttpServletRequest request) {
+	    return Arrays.stream(request.getCookies())
+	      .filter(c -> key.equals(c.getName()))
+	      .map(Cookie::getValue)
+	      .findAny();
+	}
+	
+	public static void setCookie(String key, String value, HttpServletResponse response) {
+		Cookie cookie = new Cookie(key, value);
+		cookie.setDomain("sportologic.cz");
+		response.addCookie(cookie);
+	}
+	
 	public static void setSessAtribute(String atr, Object obj) {
 		Execution exec = Executions.getCurrent();
 		if (exec == null || exec.getSession() == null) {
@@ -108,6 +129,14 @@ public final class WebUtils {
 			return null;
 		}
 		return exec.getSession().getAttribute(atr);
+	}
+	
+	public static void setSessAtribute(String atr, Object obj, HttpServletRequest request) {
+		request.getSession().setAttribute(atr, obj);
+	}
+	
+	public static Object getSessAtribute(String atr, HttpServletRequest request) {
+		return request.getSession().getAttribute(atr);
 	}
 
 	public static void removeSessAtribute(String atr) {
