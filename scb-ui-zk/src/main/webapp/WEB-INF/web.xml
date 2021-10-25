@@ -109,7 +109,7 @@
 		<init-param>
         <param-name>excludedUrls</param-name>
         <!-- Comma separated list of excluded servlets  -->
-        <param-value>/zkau,/resources,/favicon.ico</param-value>
+        <param-value>/zkau,/resources,/favicon.ico,/pages</param-value>
     </init-param>
 	</filter>
 	<filter-mapping>
