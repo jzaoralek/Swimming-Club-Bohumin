@@ -111,7 +111,8 @@ public final class WebUtils {
 	
 	public static void setCookie(String key, String value, HttpServletResponse response) {
 		Cookie cookie = new Cookie(key, value);
-		cookie.setDomain("sportologic.cz");
+		// set cookie expiration to one year
+		cookie.setMaxAge(365 * 24 * 60 * 60);
 		response.addCookie(cookie);
 	}
 	

@@ -14,6 +14,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -26,10 +28,17 @@ import com.jzaoralek.scb.ui.common.utils.WebUtils;
  * Filter to check customer url, add datasource and redirect to url withou customer part.
  *
  */
+
+// TODO: OneApp
+// Problem: pokud je po otevreni prohlizece, tzn. nova session zadana url s pages, např. http://localhost:7002/pages/common/login.zul nezkontroluje se cookie context
+// Dořešit ukladani /pages do cookie.
 public class DynDatasourceContextFilter implements Filter {
 
-	public static final String SLASH = "/";
-	public static final String CUST_URI_ATTR = "customerUri";
+	private static final Logger LOG = LoggerFactory.getLogger(DynDatasourceContextFilter.class);
+	
+	private static final String PAGES_PREFIX = "/pages";
+	private static final String SLASH = "/";
+	private static final String CUST_URI_ATTR = "customerUri";
 	
 	@Autowired
 	private ScbUserService scbUserService;
@@ -69,20 +78,48 @@ public class DynDatasourceContextFilter implements Filter {
 			}			
 		}
 		
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Customer URI entered in servletPath: {}", customerUri);
+		}
+		
 		// ziskat customerUri ze session
 		String customerUriSessionOrCookie = (String)WebUtils.getSessAtribute(CUST_URI_ATTR, req);
 		// pokud customerUri není v session získat z cookies
 		if (!StringUtils.hasText(customerUriSessionOrCookie)) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Customer URI stored in session is NULL, trying to get from cookie.");
+			}
 			Optional<String> cookieOpt = WebUtils.readCookie(CUST_URI_ATTR, req);
 			if (cookieOpt.isPresent()) {
 				customerUriSessionOrCookie = cookieOpt.get();
-			}			
+			}
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Customer URI from cookie: {}", customerUriSessionOrCookie);
+			}
+		}
+		
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Customer URI stored in session|cookie: {}", customerUriSessionOrCookie);
 		}
 		
 		HttpServletResponse resp = (HttpServletResponse)response;
+		if (servletPath.startsWith(PAGES_PREFIX)) {
+			if (!StringUtils.hasText(customerUriSessionOrCookie)) {
+				// enter direct URL e.g. /pages/common/login.zul without customer URI and previous value in cookies -> 403
+				LOG.warn("Entered direct URL with servlet path: {} without customerUri value in cookies, redirect to 403 Forbidden.", servletPath);
+				resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return;				
+			} else {
+				// url starts with /pages, in cookie customer URI, continue
+				chain.doFilter(request, response);
+				return;
+			}
+		}
+		
 		// customerUri je null a není v sesion ani cookies -> 403
 		if (!StringUtils.hasText(customerUri) && !StringUtils.hasText(customerUriSessionOrCookie)) {
 			// TODO: OneApp - nahradit za redirect na stranku kde si vybere customera
+			LOG.warn("Customer URI entered in servletPath and stored in session|cookie are NULL, redirect to 403 Forbidden.");
 			resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
@@ -94,23 +131,26 @@ public class DynDatasourceContextFilter implements Filter {
 		
 		if (SLASH.equals(servletPath)) {
 			// url without customerUri, no need to check customer url part
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Empty servlet path, customer URI stored in session|cookie: {} -> continue.", customerUriSessionOrCookie);
+			}
 			chain.doFilter(request, response);
 			return;
         }
 		
-		// TODO: OneApp - vyzkoušet že se chová korektně pokud při první návštěvě není v session ani v cookies
-		
 		// Pokud customerUri null nebo stejný jako v session -> redirect na url bez customer, nic neresit
-		if (!customerUri.equals(customerUriSessionOrCookie)) {
+		if (customerUri != null && !customerUri.equals(customerUriSessionOrCookie)) {
 			// customer url jiny nez v session -> kontrola zda-li je customer povolen
 			if (SecurityUtils.isUserLogged()) {
 				// zmena customer url v prihlasenem uzivateli -> nepovolit 403
+				LOG.warn("Change customer URI by logged user from {} to {}, redirect to 403 Forbidden.", customerUriSessionOrCookie, customerUri);
 				resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 				return;
 			} else {
 				// zmena customer url v neprihlasenem uzivateli
 				// TODO: OneApp - kontrola zda-li je customer povolen, pokud ne 403
 				// TODO: OneApp - nastavit DS
+				LOG.warn("Change customer URI by unlogged user from {} to {}", customerUriSessionOrCookie, customerUri);
 				// uložit do session
 				WebUtils.setSessAtribute(CUST_URI_ATTR, customerUri, req);
 				// uložit do cookies
@@ -120,9 +160,8 @@ public class DynDatasourceContextFilter implements Filter {
 		
 		// remove customer uri and redirect
 		String uriToRedirect = servletPath.replace(servletPathFirstPart, "");
-		
-//		TODO: OneApp - logging
-		
+		LOG.info("Remove customer URI: {} from servlet path: {}.", servletPathFirstPart, servletPath);
+		LOG.info("Redirect to {}", uriToRedirect);
 		resp.sendRedirect(uriToRedirect);
 	}
 
