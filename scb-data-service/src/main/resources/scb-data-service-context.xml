@@ -23,7 +23,7 @@
 	<task:executor id="sportoLogicTaskExecutor" pool-size="5" />
 	<task:annotation-driven executor="sportoLogicTaskExecutor"/>
 
-	<jee:jndi-lookup id="dataSource" jndi-name="jdbc.sportlogic" />
+<!-- 	<jee:jndi-lookup id="dataSource" jndi-name="jdbc.sportlogic" /> -->
 
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

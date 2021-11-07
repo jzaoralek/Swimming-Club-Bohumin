@@ -14,14 +14,16 @@ public final class ConfigUtil {
 	private ConfigUtil() {}
 	
 	public static String getOrgName(ConfigurationService configurationService) {
-		String orgNameSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_NAME.name());
-		if (StringUtils.hasText(orgNameSession)) {
-			return orgNameSession;
-		} else {
-			String value = configurationService.getOrgName();
-			addToSessionConfigCache(ConfigName.ORGANIZATION_NAME, value); 
-			return value;
-		}
+//		String orgNameSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_NAME.name());
+//		if (StringUtils.hasText(orgNameSession)) {
+//			return orgNameSession;
+//		} else {
+//			String value = configurationService.getOrgName();
+//			addToSessionConfigCache(ConfigName.ORGANIZATION_NAME, value); 
+//			return value;
+//		}
+		
+		return configurationService.getOrgName();
 	}
 	
 	public static String getOrgEmail(ConfigurationService configurationService) {

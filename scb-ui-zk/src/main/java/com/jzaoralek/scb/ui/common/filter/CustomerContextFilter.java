@@ -22,23 +22,23 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
+import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
 /**
- * Filter to check customer url, add datasource and redirect to url withou customer part.
- *
+ * Filter to check customer url context, set to cookies and session 
+ * and redirect to url withou customer part.
+ * Customer datasource is set in SportologicExecutionInit.java.
  */
 
 // TODO: OneApp
-// 1. Přejmenovat na CustomerContextFilter, řeší jen nastavení customer conetxtu do session a cookie
-// 2. Nový servlet/filter CustomerDatasourceFilter, který vytáhne ze session nebo cookie a nastaví datasource,
-// 3. Problem: pokud je v nové session zadána url bez customer contextu, např. http://localhost:7002/pages/common/login.zul, nenastavi se CustomerUri
-public class DynDatasourceContextFilter implements Filter {
+// Problem: pokud je v nové session zadána url bez customer contextu, např. http://localhost:7002/pages/common/login.zul, nenastavi se CustomerUri
+public class CustomerContextFilter implements Filter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DynDatasourceContextFilter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CustomerContextFilter.class);
 	
 	private static final String SLASH = "/";
-	private static final String CUST_URI_ATTR = "customerUri";
+	private static final String CUST_URI_ATTR = WebConstants.CUST_URI_ATTR;
 	
 	@Autowired
 	private ScbUserService scbUserService;
@@ -133,7 +133,7 @@ public class DynDatasourceContextFilter implements Filter {
 			} else {
 				// zmena customer url v neprihlasenem uzivateli
 				// TODO: OneApp - kontrola zda-li je customer povolen, pokud ne 403
-				// TODO: OneApp - nastavit DS
+				
 				LOG.warn("Change customer URI by unlogged user from {} to {}", customerUriSessionOrCookie, customerUriContext);
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Storing customer URI to session and cookie: {}.", customerUriContext);
