@@ -5,8 +5,10 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
@@ -14,6 +16,7 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 public class RoutingTestConfiguration {
 
 	@Bean
+	@Primary
     public DataSource dataSource() {
         Map<Object, Object> targetDataSources = new HashMap<>();
         DataSource clientADatasource = clientADatasource();

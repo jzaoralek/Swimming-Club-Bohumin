@@ -19,7 +19,7 @@
 	<context:component-scan base-package="com.jzaoralek.scb.dataservice.service" />
 
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="adminDataSource" />
 	</bean>
 
 	<aop:aspectj-autoproxy proxy-target-class="true" />
@@ -37,7 +37,7 @@
 		</property> 
 	</bean> 
 
-	<bean id="dataSource"
+	<bean id="adminDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="${db_url}" />

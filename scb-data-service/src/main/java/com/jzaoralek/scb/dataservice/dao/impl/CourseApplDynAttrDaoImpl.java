@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -91,7 +92,7 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 			+ "WHERE course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM;
 	
 	@Autowired
-	protected CourseApplDynAttrDaoImpl(DataSource ds) {
+	protected CourseApplDynAttrDaoImpl(@Qualifier("adminDataSource")DataSource ds) {
 		super(ds);
 	}
 	
