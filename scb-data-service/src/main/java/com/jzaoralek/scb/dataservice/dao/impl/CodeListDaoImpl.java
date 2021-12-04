@@ -8,7 +8,6 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -34,7 +33,7 @@ public class CodeListDaoImpl extends BaseJdbcDao implements CodeListDao {
 	private static final String DELETE = "DELETE FROM codelist_item where uuid = :" + UUID_PARAM;
 
 	@Autowired
-	public CodeListDaoImpl(@Qualifier("adminDataSource")DataSource ds) {
+	public CodeListDaoImpl(DataSource ds) {
 		super(ds);
 	}
 

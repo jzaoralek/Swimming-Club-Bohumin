@@ -92,7 +92,7 @@ public class CourseApplDynAttrDaoImpl extends BaseJdbcDao implements CourseApplD
 			+ "WHERE course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM;
 	
 	@Autowired
-	protected CourseApplDynAttrDaoImpl(@Qualifier("adminDataSource")DataSource ds) {
+	protected CourseApplDynAttrDaoImpl(DataSource ds) {
 		super(ds);
 	}
 	
