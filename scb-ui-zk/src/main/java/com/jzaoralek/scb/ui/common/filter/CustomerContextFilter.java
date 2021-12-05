@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -39,6 +40,7 @@ public class CustomerContextFilter implements Filter {
 	
 	private static final String SLASH = "/";
 	private static final String CUST_URI_ATTR = WebConstants.CUST_URI_ATTR;
+	private static final String CUST_URI_COOKIE = WebConstants.CUST_URI_COOKIE;
 	
 	@Autowired
 	private ScbUserService scbUserService;
@@ -82,9 +84,9 @@ public class CustomerContextFilter implements Filter {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Customer URI stored in session is NULL, trying to get from cookie.");
 			}
-			Optional<String> cookieOpt = WebUtils.readCookie(CUST_URI_ATTR, req);
-			if (cookieOpt.isPresent()) {
-				customerUriSessionOrCookie = cookieOpt.get();
+			String cookie = WebUtils.readCookieValue(CUST_URI_COOKIE, req);
+			if (StringUtils.hasText(cookie)) {
+				customerUriSessionOrCookie = cookie;
 			}
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Customer URI get from cookie: {}", customerUriSessionOrCookie);
@@ -133,14 +135,16 @@ public class CustomerContextFilter implements Filter {
 			} else {
 				// zmena customer url v neprihlasenem uzivateli
 				// TODO: OneApp - kontrola zda-li je customer povolen, pokud ne 403
-				
-				LOG.warn("Change customer URI by unlogged user from {} to {}", customerUriSessionOrCookie, customerUriContext);
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Storing customer URI to session and cookie: {}.", customerUriContext);
+				if (customerUriContext.equals("scb") || customerUriContext.equals("kosatky")) {
+					LOG.warn("Change customer URI by unlogged user from {} to {}", customerUriSessionOrCookie, customerUriContext);
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Storing customer URI to session and cookie: {}.", customerUriContext);
+					}
+					// uložit do session a cookie
+					WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriContext, req);
+					WebUtils.setCookie(CUST_URI_COOKIE, customerUriContext, resp);
+//					ClientDatabaseContextHolder.set(customerUriContext);
 				}
-				// uložit do session a cookie
-				WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriContext, req);
-				WebUtils.setCookie(CUST_URI_ATTR, customerUriContext, resp);				
 			}
 		}
 		

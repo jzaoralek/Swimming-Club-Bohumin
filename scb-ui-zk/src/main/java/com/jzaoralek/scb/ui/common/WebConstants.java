@@ -48,6 +48,7 @@ public final class WebConstants {
 	public static final String COMPONENT_PARAM = "component";
 	public static final String ACTIVE_PARAM = "active";
 	public static final String CUST_URI_ATTR = "customerUri";
+	public static final String CUST_URI_COOKIE = "customerUriCookie";
 	
 	public static final String YEAR_FROM_PARAM = "yearFrom";
 	public static final String YEAR_TO_PARAM = "yearTo";

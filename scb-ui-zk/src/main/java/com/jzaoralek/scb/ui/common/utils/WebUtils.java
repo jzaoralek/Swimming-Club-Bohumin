@@ -102,15 +102,22 @@ public final class WebUtils {
 		return (HttpServletResponse)Executions.getCurrent().getNativeResponse();
 	}
 	
-	public static Optional<String> readCookie(String key, HttpServletRequest request) {
-	    return Arrays.stream(request.getCookies())
+	public static String readCookieValue(String key, HttpServletRequest request) {
+		Optional<String> cookie = Arrays.stream(request.getCookies())
 	      .filter(c -> key.equals(c.getName()))
 	      .map(Cookie::getValue)
 	      .findAny();
+		
+		if (cookie.isPresent()) {
+			return cookie.get();
+		}
+		
+		return null;
 	}
 	
 	public static void setCookie(String key, String value, HttpServletResponse response) {
 		Cookie cookie = new Cookie(key, value);
+		cookie.setPath("/");
 		// set cookie expiration to one year
 		cookie.setMaxAge(365 * 24 * 60 * 60);
 		response.addCookie(cookie);

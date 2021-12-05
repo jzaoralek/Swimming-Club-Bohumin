@@ -1,5 +1,8 @@
 package com.jzaoralek.scb.ui.common.listener;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -23,26 +26,53 @@ public class SportologicExecutionInit implements ExecutionInit {
 	public void init(Execution exec, Execution parent) throws Exception {
 		
 		// Setting of customer database from session context.
-		String sessionCustomerContext = (String)WebUtils.getSessAtribute(WebConstants.CUST_URI_ATTR);
+		String sessionCookieCustomerContext = (String)WebUtils.getSessAtribute(WebConstants.CUST_URI_ATTR);
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Session customer context: {}", sessionCustomerContext);
+			LOG.debug("Session customer context: {}", sessionCookieCustomerContext);
 		}
+		String cookieCustomerContext = WebUtils.readCookieValue(WebConstants.CUST_URI_COOKIE, (HttpServletRequest)exec.getNativeRequest());
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Cookie customer context: {}", cookieCustomerContext);
+		}
+		
+		if (!StringUtils.hasText(sessionCookieCustomerContext) 
+				&& StringUtils.hasText(cookieCustomerContext)) {
+			sessionCookieCustomerContext = cookieCustomerContext;
+		}
+		
 		String threadCustomerDatabase = ClientDatabaseContextHolder.getClientDatabase();
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Thread customer database: {}", threadCustomerDatabase);
 		}
 		
-		if (StringUtils.hasText(sessionCustomerContext) 
-				&& !StringUtils.hasText(threadCustomerDatabase)) {
-			LOG.info("Thread customer database is NULL, setting customer database from sessionContext: {}", sessionCustomerContext);
-			ClientDatabaseContextHolder.set(sessionCustomerContext);
+		if (StringUtils.hasText(threadCustomerDatabase) 
+					&& !StringUtils.hasText(cookieCustomerContext)) {
+			LOG.info("Thread customer database is not NULL, cookieCustomerContext is NULL, setting cookieCustomerContext: {}", cookieCustomerContext);
+			WebUtils.setCookie(WebConstants.CUST_URI_COOKIE, 
+							threadCustomerDatabase, 
+							(HttpServletResponse)exec.getNativeResponse());
 		}
 		
-		if (StringUtils.hasText(sessionCustomerContext) 
+		if (StringUtils.hasText(sessionCookieCustomerContext) 
 				&& StringUtils.hasText(threadCustomerDatabase)
-				&& !sessionCustomerContext.equals(threadCustomerDatabase)) {
-			LOG.info("Thread customer database differs from sessionContext, setting customer database from sessionContext: {}", sessionCustomerContext);
-			ClientDatabaseContextHolder.set(sessionCustomerContext);
+				&& sessionCookieCustomerContext.equals(threadCustomerDatabase)) {
+			LOG.info("Thread customer database is same as sessionCookieContext, setting customer database from sessionCookieContext: {}", sessionCookieCustomerContext);
+			ClientDatabaseContextHolder.set(sessionCookieCustomerContext);
+			return;
+		}
+		
+		if (StringUtils.hasText(sessionCookieCustomerContext) 
+				&& !StringUtils.hasText(threadCustomerDatabase)) {
+			LOG.info("Thread customer database is NULL, setting customer database from sessionCookieContext: {}", sessionCookieCustomerContext);
+			ClientDatabaseContextHolder.set(sessionCookieCustomerContext);
+			return;
+		}
+		
+		if (StringUtils.hasText(sessionCookieCustomerContext) 
+				&& StringUtils.hasText(threadCustomerDatabase)
+				&& !sessionCookieCustomerContext.equals(threadCustomerDatabase)) {
+			LOG.info("Thread customer database differs from sessionContext, setting customer database from sessionCookiContext: {}", sessionCookieCustomerContext);
+			ClientDatabaseContextHolder.set(sessionCookieCustomerContext);
 		}
 	}
 }
