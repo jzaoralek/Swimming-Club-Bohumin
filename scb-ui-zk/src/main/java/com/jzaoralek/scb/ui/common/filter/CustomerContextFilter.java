@@ -3,7 +3,6 @@ package com.jzaoralek.scb.ui.common.filter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -32,8 +30,6 @@ import com.jzaoralek.scb.ui.common.utils.WebUtils;
  * Customer datasource is set in SportologicExecutionInit.java.
  */
 
-// TODO: OneApp
-// Problem: pokud je v nové session zadána url bez customer contextu, např. http://localhost:7002/pages/common/login.zul, nenastavi se CustomerUri
 public class CustomerContextFilter implements Filter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CustomerContextFilter.class);
@@ -143,7 +139,6 @@ public class CustomerContextFilter implements Filter {
 					// uložit do session a cookie
 					WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriContext, req);
 					WebUtils.setCookie(CUST_URI_COOKIE, customerUriContext, resp);
-//					ClientDatabaseContextHolder.set(customerUriContext);
 				}
 			}
 		}
