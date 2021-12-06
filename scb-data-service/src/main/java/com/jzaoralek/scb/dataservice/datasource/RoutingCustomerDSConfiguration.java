@@ -32,9 +32,18 @@ public class RoutingCustomerDSConfiguration {
         						buildClientDatasource(custConfig));
         }
 
+        // Get default datasource.
+        DataSource defaultDataSource = null;
+        CustomerConfig custConfigDefault = admCustConfigDao.getDefault();
+        if (custConfigDefault != null) {
+        	defaultDataSource = buildClientDatasource(custConfigDefault);
+        } else {
+        	defaultDataSource = (DataSource)targetDataSources.get(0);
+        }
+
         ClientDataSourceRouter clientRoutingDatasource = new ClientDataSourceRouter();
         clientRoutingDatasource.setTargetDataSources(targetDataSources);
-        clientRoutingDatasource.setDefaultTargetDataSource(targetDataSources.get(0));
+        clientRoutingDatasource.setDefaultTargetDataSource(defaultDataSource);
         
         return clientRoutingDatasource;
     }

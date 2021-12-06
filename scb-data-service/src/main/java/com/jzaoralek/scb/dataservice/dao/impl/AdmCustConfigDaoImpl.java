@@ -23,9 +23,10 @@ public class AdmCustConfigDaoImpl extends BaseJdbcDao implements AdmCustConfigDa
 
 	private static final String CUST_ID_PARAM = "cust_id";
 	
-	private static final String SELECT_ALL = "SELECT * FROM customer_config ORDER BY cust_id";
-	private static final String SELECT_BY_UUID ="SELECT * FROM customer_config WHERE uuid=:" + UUID_PARAM;
-	private static final String SELECT_BY_CUST_ID ="SELECT * FROM customer_config WHERE cust_id=:" + CUST_ID_PARAM;
+	private static final String SELECT_ALL = "SELECT * FROM customer_config ORDER BY cust_name";
+	private static final String SELECT_BY_UUID = "SELECT * FROM customer_config WHERE uuid=:" + UUID_PARAM;
+	private static final String SELECT_BY_CUST_ID = "SELECT * FROM customer_config WHERE cust_id=:" + CUST_ID_PARAM;
+	private static final String SELECT_DEFAULT_CUST = "SELECT * FROM customer_config WHERE cust_default=1";
 	
 	@Autowired
 	protected AdmCustConfigDaoImpl(@Qualifier("adminDataSource")DataSource ds) {
@@ -57,6 +58,16 @@ public class AdmCustConfigDaoImpl extends BaseJdbcDao implements AdmCustConfigDa
 		}
 	}
 	
+	@Override
+	public CustomerConfig getDefault() {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		try {
+			return namedJdbcTemplate.queryForObject(SELECT_DEFAULT_CUST, paramMap, new AdmCustConfigRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+	
 	public static final class AdmCustConfigRowMapper implements RowMapper<CustomerConfig> {
 
 		@Override
@@ -65,6 +76,8 @@ public class AdmCustConfigDaoImpl extends BaseJdbcDao implements AdmCustConfigDa
 			fetchIdentEntity(rs, ret);
 			
 			ret.setCustId(rs.getString("cust_id"));
+			ret.setCustName(rs.getString("cust_name"));
+			ret.setCustDefault(fetchBoolean(rs.getInt("cust_default")));
 			ret.setDbUrl(rs.getString("db_url"));
 			ret.setDbUser(rs.getString("db_user"));
 			ret.setDbPassword(rs.getString("db_password"));

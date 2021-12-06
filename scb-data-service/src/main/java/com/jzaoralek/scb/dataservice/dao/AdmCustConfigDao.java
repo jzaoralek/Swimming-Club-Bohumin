@@ -10,4 +10,5 @@ public interface AdmCustConfigDao {
 	List<CustomerConfig> getAll();
 	CustomerConfig getByUuid(UUID uuid);
 	CustomerConfig getByCustId(String custId);
+	CustomerConfig getDefault();
 }

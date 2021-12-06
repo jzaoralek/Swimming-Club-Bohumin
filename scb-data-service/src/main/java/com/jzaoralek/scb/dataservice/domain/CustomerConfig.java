@@ -9,6 +9,8 @@ public class CustomerConfig implements IdentEntity {
 	private String modifBy;
 	private Date modifAt;
 	private String custId;
+	private String custName;
+	private boolean custDefault;
 	private String dbUrl;
 	private String dbUser;
 	private String dbPassword;
@@ -61,10 +63,23 @@ public class CustomerConfig implements IdentEntity {
 	public void setDbPassword(String dbPassword) {
 		this.dbPassword = dbPassword;
 	}
+	public String getCustName() {
+		return custName;
+	}
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+	public boolean isCustDefault() {
+		return custDefault;
+	}
+	public void setCustDefault(boolean custDefault) {
+		this.custDefault = custDefault;
+	}
 	
 	@Override
 	public String toString() {
 		return "CustomerConfig [uuid=" + uuid + ", modifBy=" + modifBy + ", modifAt=" + modifAt + ", custId=" + custId
-				+ ", dbUrl=" + dbUrl + ", dbUser=" + dbUser + ", dbPassword=" + dbPassword + "]";
+				+ ", custName=" + custName + ", custDefault=" + custDefault + ", dbUrl=" + dbUrl + ", dbUser=" + dbUser
+				+ ", dbPassword=" + dbPassword + "]";
 	}
 }

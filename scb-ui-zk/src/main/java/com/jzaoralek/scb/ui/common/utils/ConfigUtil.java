@@ -1,8 +1,12 @@
 package com.jzaoralek.scb.ui.common.utils;
 
+import java.util.Set;
+
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigName;
+import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 
 /**
@@ -66,6 +70,19 @@ public final class ConfigUtil {
 		} else {
 			Boolean value = configurationService.isPaymentsAvailable();
 			addToSessionConfigCache(ConfigName.PAYMENTS_AVAILABLE, value); 
+			return value;
+		}
+	}
+	
+	/* TODO: OneApp, vycistit po pridani noveho customera, 
+	 * tzn zavolat ConfigUtil.clearSessionConfigCache(ConfigName.ADM_CUST_CONFIG_IDS.name() */
+	public static Set<String> getCustomerConfigIds(AdmCustConfigService admCustConfigService) {
+		Set<String> custConfigIds = (Set<String>)WebUtils.getSessAtribute(ConfigName.ADM_CUST_CONFIG_IDS.name());
+		if (!CollectionUtils.isEmpty(custConfigIds)) {
+			return custConfigIds;
+		} else {
+			Set<String> value = admCustConfigService.getCustCongigIds();
+			addToSessionConfigCache(ConfigName.ADM_CUST_CONFIG_IDS, value);
 			return value;
 		}
 	}

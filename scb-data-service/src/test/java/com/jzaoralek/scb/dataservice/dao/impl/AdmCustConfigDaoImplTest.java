@@ -38,4 +38,9 @@ public class AdmCustConfigDaoImplTest extends BaseAdminTestCase {
 //		Assert.assertTrue(PASSWORD_GENERATED == item.isPasswordGenerated());
 //		Assert.assertTrue(ROLE == item.getRole());
 	}
+	
+	@Test
+	public void testGetDefault() {
+		CustomerConfig item = admCustConfigDao.getDefault();
+	}
 }

@@ -3,6 +3,7 @@ package com.jzaoralek.scb.ui.common.filter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -19,9 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.jzaoralek.scb.dataservice.service.ScbUserService;
+import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
 /**
@@ -39,7 +41,7 @@ public class CustomerContextFilter implements Filter {
 	private static final String CUST_URI_COOKIE = WebConstants.CUST_URI_COOKIE;
 	
 	@Autowired
-	private ScbUserService scbUserService;
+	private AdmCustConfigService admCustConfigService;
 	
 	private List<String> excludedUrls;
 	
@@ -130,16 +132,21 @@ public class CustomerContextFilter implements Filter {
 				return;
 			} else {
 				// zmena customer url v neprihlasenem uzivateli
-				// TODO: OneApp - kontrola zda-li je customer povolen, pokud ne 403
-				if (customerUriContext.equals("scb") || customerUriContext.equals("kosatky")) {
-					LOG.warn("Change customer URI by unlogged user from {} to {}", customerUriSessionOrCookie, customerUriContext);
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Storing customer URI to session and cookie: {}.", customerUriContext);
-					}
-					// uložit do session a cookie
-					WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriContext, req);
-					WebUtils.setCookie(CUST_URI_COOKIE, customerUriContext, resp);
+				// customer config ids Set
+			    Set<String> custConfigIds = ConfigUtil.getCustomerConfigIds(admCustConfigService);
+				// kontrola zda-li je customer povolen, pokud ne 403
+				if (!custConfigIds.contains(customerUriContext)) {
+					LOG.warn("Change customer URI to unknown customer context: {}, redirect to 403 Forbidden.", customerUriContext);
+					resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+					return;
 				}
+				LOG.warn("Change customer URI by unlogged user from {} to {}", customerUriSessionOrCookie, customerUriContext);
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Storing customer URI to session and cookie: {}.", customerUriContext);
+				}
+				// uložit do session a cookie
+				WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriContext, req);
+				WebUtils.setCookie(CUST_URI_COOKIE, customerUriContext, resp);
 			}
 		}
 		
