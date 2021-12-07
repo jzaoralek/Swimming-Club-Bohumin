@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
@@ -144,9 +145,12 @@ public class CustomerContextFilter implements Filter {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Storing customer URI to session and cookie: {}.", customerUriContext);
 				}
+				
+				// TODO: OneApp, doresit vycisteni config caches v ConfigUtil
+				
 				// uložit do session a cookie
 				WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriContext, req);
-				WebUtils.setCookie(CUST_URI_COOKIE, customerUriContext, resp);
+				WebUtils.setCookie(CUST_URI_COOKIE, customerUriContext, req, resp);
 			}
 		}
 		

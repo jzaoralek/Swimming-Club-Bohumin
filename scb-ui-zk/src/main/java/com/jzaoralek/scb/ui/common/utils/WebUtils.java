@@ -115,7 +115,21 @@ public final class WebUtils {
 		return null;
 	}
 	
-	public static void setCookie(String key, String value, HttpServletResponse response) {
+	public static void setCookie(String key, 
+								String value, 
+								HttpServletRequest request, 
+								HttpServletResponse response) {
+		Optional<Cookie> cookieOpt = Arrays.stream(request.getCookies())
+			      .filter(c -> key.equals(c.getName()))
+			      .findAny();
+		
+		// delete origin cookie
+		if (cookieOpt.isPresent()) {
+			cookieOpt.get().setMaxAge(0);
+			cookieOpt.get().setValue(null);
+			response.addCookie(cookieOpt.get());
+		}
+		
 		Cookie cookie = new Cookie(key, value);
 		cookie.setPath("/");
 		// set cookie expiration to one year

@@ -50,6 +50,7 @@ public class SportologicExecutionInit implements ExecutionInit {
 			LOG.info("Thread customer database is not NULL, cookieCustomerContext is NULL, setting cookieCustomerContext: {}", cookieCustomerContext);
 			WebUtils.setCookie(WebConstants.CUST_URI_COOKIE, 
 							threadCustomerDatabase, 
+							(HttpServletRequest)exec.getNativeRequest(),
 							(HttpServletResponse)exec.getNativeResponse());
 		}
 		
