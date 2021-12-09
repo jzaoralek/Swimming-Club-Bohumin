@@ -33,10 +33,12 @@ import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.dao.MailSendDao;
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.MailSend;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 
 @Service("mailService")
@@ -50,15 +52,16 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
 	@Value("${smtp.port}")
     private String mailSmtpPort;
 
-    @Value("${smtp.user}")
     private String mailSmtpUser;
 
-    @Value("${smtp.pwd}")
     private String mailSmtpPassword;
     
     @Autowired
     private MailSendDao mailSendDao;
 
+    @Autowired
+	private ConfigurationService configurationService;
+    
     @Async
     @Override
     public void sendMail(String to, 
@@ -68,7 +71,8 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
     		List<Attachment> attachmentList, 
     		boolean html, 
     		boolean storeToDb,
-    		String toCompleteName) {
+    		String toCompleteName,
+    		String clientDBCtx) {
         if (LOG.isDebugEnabled()) {
         	LOG.debug("Send email subject: {}, to: {}.", subject, to);
         }
@@ -82,6 +86,15 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
         properties.put("mail.smtp.ssl.trust", "*");
         properties.put("mail.smtp.ssl.enable", "true");
 
+        // setting of client DB context
+        if (LOG.isDebugEnabled()) {
+     	   LOG.debug("Settin client DB context: {}", clientDBCtx);
+        }
+        ClientDatabaseContextHolder.set(clientDBCtx);
+        
+        mailSmtpUser = configurationService.getSmtpUser();
+    	mailSmtpPassword = configurationService.getSmtpPwd();
+    	
        // Get the default Session object.
        Authenticator auth = new SMTPAuthenticator();
        Session session = Session.getDefaultInstance(properties, auth);
@@ -180,7 +193,7 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
 
     @Async
     @Override
-	public void sendMail(Mail mail) {
+	public void sendMail(Mail mail, String clientDBCtx) {
     	if (mail == null) {
     		return;
     	}
@@ -196,21 +209,23 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
 				mail.getAttachmentList(), 
 				mail.isHtml(), 
 				mail.isStoreToDb(), 
-				mail.getToCompleteName());
+				mail.getToCompleteName(),
+				clientDBCtx);
 	}
     
     @Async
 	@Override
-	public void sendMailBatch(List<Mail> mailList) {
+	public void sendMailBatch(List<Mail> mailList, String clientDBCtx) {
     	if (CollectionUtils.isEmpty(mailList)) {
     		return;
     	}
     	if (LOG.isDebugEnabled()) {
      	   LOG.debug("Processiong mail count: {}", mailList.size());
         }
+    	
     	int counter = 0;
 		for (Mail item : mailList) {
-			sendMail(item);
+			sendMail(item, clientDBCtx);
 			counter++;
 			if (counter%DataServiceConstants.MAIL_SENDER_BATCH_SIZE == 0) {
 				try {

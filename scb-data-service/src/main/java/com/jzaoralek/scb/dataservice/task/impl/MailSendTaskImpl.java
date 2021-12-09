@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.task.MailSendTask;
 import com.jzaoralek.scb.dataservice.utils.ExcUtil;
@@ -27,6 +28,7 @@ public class MailSendTaskImpl implements MailSendTask {
 	 */
 	@Override
 	public void deleteHistMailSendList() {
+		final String customerDBCtx = ClientDatabaseContextHolder.getClientDatabase();
 		try {
 			Calendar toCal = Calendar.getInstance();
 			toCal.add(Calendar.DATE, -90);
@@ -34,7 +36,7 @@ public class MailSendTaskImpl implements MailSendTask {
 		} catch (Exception e) {
 			// notification email about processing with error
 			String exceptionStr = ExcUtil.traceMessage(e).toString();
-			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, DELETING_HIST_SEND_EMAIL_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null);
+			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, DELETING_HIST_SEND_EMAIL_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null, customerDBCtx);
 			LOG.error("Unexpected excetion during deleting old send emails.", e);
 		}
 	}

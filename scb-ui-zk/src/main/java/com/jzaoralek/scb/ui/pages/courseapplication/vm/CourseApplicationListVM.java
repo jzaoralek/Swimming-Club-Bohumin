@@ -39,6 +39,7 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radio;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
@@ -310,6 +311,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		
 		final String courseYearSelected = getCourseYearSelected();
 		final Object[] msgParams = new Object[] {this.courseApplicationList.size()};
+		final String clientDBCtx = ClientDatabaseContextHolder.getClientDatabase();
 		MessageBoxUtils.showDefaultConfirmDialog(
 			"msg.ui.quest.sendMailToUnregisteredParticipant",
 			"msg.ui.title.sendMail",
@@ -345,7 +347,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						courseParticUuidSent.add(courseParticUuid);
 					}
 					
-					mailService.sendMailBatch(mailList);
+					mailService.sendMailBatch(mailList, clientDBCtx);
 					WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
 				}
 			},
@@ -372,6 +374,8 @@ public class CourseApplicationListVM extends BaseContextVM {
 		
 		final List<CourseApplication> courseApplicationListToSend = this.courseApplicationList;
 		
+		final String clientDBCtx = ClientDatabaseContextHolder.getClientDatabase();
+		
 		// dotaz
 		MessageBoxUtils.showDefaultConfirmDialog(
 			"msg.ui.quest.sendMailCourseApplication",
@@ -396,7 +400,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 					}
 					
 					// odeslani emailu
-					mailService.sendMailBatch(mailToSendList);
+					mailService.sendMailBatch(mailToSendList, clientDBCtx);
 					
 					WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseApplicationMailSent"));
 				}

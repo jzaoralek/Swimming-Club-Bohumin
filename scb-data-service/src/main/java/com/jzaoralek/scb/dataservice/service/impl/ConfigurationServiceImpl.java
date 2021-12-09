@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jzaoralek.scb.dataservice.dao.ConfigurationDao;
-import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Config;
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigCategory;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
@@ -191,5 +190,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public Config getByName(String name) {
 		return configurationDao.getByName(name);
+	}
+
+	@Override
+	public String getBankAuthToken() {
+		return configurationDao.getByName(Config.ConfigName.BANK_AUTH_TOKEN.name()).getValue();
+	}
+
+	@Override
+	public String getSmtpUser() {
+		return configurationDao.getByName(Config.ConfigName.SMTP_USER.name()).getValue();
+	}
+
+	@Override
+	public String getSmtpPwd() {
+		return configurationDao.getByName(Config.ConfigName.SMTP_PWD.name()).getValue();
 	}
 }

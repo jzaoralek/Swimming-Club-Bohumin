@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.dao.PaymentDao;
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.Payment;
@@ -189,9 +190,10 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 				subject = messageSource.getMessage("msg.ui.mail.paymentInstruction.subject.twoSemester", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault());
 			}
 			
-			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), null, subject, mailToUser.toString(), null, false));
+			String clientDBCtx = ClientDatabaseContextHolder.getClientDatabase();
+			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), null, subject, mailToUser.toString(), null, false), clientDBCtx);
 			// odeslani na platby@sportologic.cz
-			mailService.sendMail(new Mail(DataServiceConstants.PLATBY_EMAIL, null, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null, false));			
+			mailService.sendMail(new Mail(DataServiceConstants.PLATBY_EMAIL, null, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null, false), clientDBCtx);			
 			// aktualizace odeslani notifikace v course_course_participant
 			courseApplicationService.updateNotifiedPayment(Arrays.asList(paymentInstruction.getCourseParticipantUuid()), firstSemester);
 			

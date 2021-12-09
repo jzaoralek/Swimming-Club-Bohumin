@@ -26,6 +26,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
@@ -275,7 +276,7 @@ public class BaseVM {
 	}
 
 	protected void sendMailToNewUser(ScbUser user) {
-		mailService.sendMail(buildMailToNewUser(user));
+		mailService.sendMail(buildMailToNewUser(user), ClientDatabaseContextHolder.getClientDatabase());
 	}
 	
 	protected Mail buildMailToNewUser(ScbUser user) {
@@ -471,9 +472,10 @@ public class BaseVM {
 
 	public void sendMail(CourseApplication courseApplication, String headline) {
 		// mail to course participant representative
-		mailService.sendMail(buildMailCourseParticRepresentative(courseApplication, headline));
+		String clientDBCtx = ClientDatabaseContextHolder.getClientDatabase();
+		mailService.sendMail(buildMailCourseParticRepresentative(courseApplication, headline), clientDBCtx);
 		// mail to club
-		mailService.sendMail(buildMailToClub(courseApplication));
+		mailService.sendMail(buildMailToClub(courseApplication), clientDBCtx);
 		// send payment instructions
 		processPaymentInstruction(courseApplication);
 	}
@@ -636,7 +638,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 
-		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false, false, null);
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false, false, null, ClientDatabaseContextHolder.getClientDatabase());
 	}
 	
 	@SuppressWarnings("unchecked")
