@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.task.impl;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.javatuples.Pair;
 import org.slf4j.Logger;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
+import com.jzaoralek.scb.dataservice.dao.AdmCustConfigDao;
 import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
+import com.jzaoralek.scb.dataservice.domain.CustomerConfig;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
@@ -36,45 +39,62 @@ public class PaymentTaskImpl implements PaymentTask {
 	@Autowired
 	private MailService mailService;
 	
+	@Autowired
+	private AdmCustConfigDao admCustConfigDao;
+	
 	@Override
 	public void updateBankPayments() {
-		final String customerDBCtx = ClientDatabaseContextHolder.getClientDatabase();
-		try {
-			// kontrola zda-li povolen modul platby
-			if (!configurationService.isPaymentsAvailable()) {
-				return;
-			}
-			Pair<GregorianCalendar, GregorianCalendar> dateFromTo = PaymentUtils.getDefaultDateFromTo(configurationService);
-			int newPaymentCount = bankPaymentService.updateBankPayments(dateFromTo.getValue0(), dateFromTo.getValue1());
-			// notification email about success processing
-			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PROCESS_PAYMENT_SUCCESS_MAIL_SUBJECT, "Zpracovano " + newPaymentCount + " novych plateb.", null, false, false, null, customerDBCtx);
-		} catch (Exception e) {
-			// notification email about processing with error
-			String exceptionStr = ExcUtil.traceMessage(e).toString();
-			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, PROCESS_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null, customerDBCtx);
-			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PROCESS_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null, customerDBCtx);
-			LOG.error("Unexpected excetion during updating bank payments.", e);
+		List<CustomerConfig> custCfgs = admCustConfigDao.getAll();
+		String customerDBCtx = null;
+		for (CustomerConfig custCfg : custCfgs) {
+			ClientDatabaseContextHolder.set(custCfg.getCustId());
+			customerDBCtx = ClientDatabaseContextHolder.getClientDatabase();
+			try {
+				LOG.info("Bank payments update started for customer: {}", customerDBCtx);
+				// kontrola zda-li povolen modul platby
+				if (!configurationService.isPaymentsAvailable()) {
+					LOG.info("Customer: {} hasn't payments available.", customerDBCtx);
+					continue;
+				}
+				Pair<GregorianCalendar, GregorianCalendar> dateFromTo = PaymentUtils.getDefaultDateFromTo(configurationService);
+				int newPaymentCount = bankPaymentService.updateBankPayments(dateFromTo.getValue0(), dateFromTo.getValue1());
+				// notification email about success processing
+				mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PROCESS_PAYMENT_SUCCESS_MAIL_SUBJECT, "Zpracovano " + newPaymentCount + " novych plateb.", null, false, false, null, customerDBCtx);
+			} catch (Exception e) {
+				// notification email about processing with error
+				String exceptionStr = ExcUtil.traceMessage(e).toString();
+				mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, PROCESS_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null, customerDBCtx);
+				mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PROCESS_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null, customerDBCtx);
+				LOG.error("Unexpected excetion during updating bank payments.", e);
+			}			
 		}
 	}
 
 	@Override
 	public void processPaymentPairing() {
-		final String customerDBCtx = ClientDatabaseContextHolder.getClientDatabase();
-		try {
-			// kontrola zda-li je povolen modul platby
-			if (!configurationService.isPaymentsAvailable()) {
-				return;
-			}
-			Pair<GregorianCalendar, GregorianCalendar> dateFromTo = PaymentUtils.getDefaultDateFromTo(configurationService);
-			int processPaymentCount = bankPaymentService.processPaymentPairing(dateFromTo.getValue0(), dateFromTo.getValue1());
-			// notification email about success processing
-			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PAIRING_PAYMENT_SUCCESS_MAIL_SUBJECT, "Zparovano " + processPaymentCount + " plateb.", null, false, false, null, customerDBCtx);
-		} catch (Exception e) {
-			// notification email about processing with error
-			String exceptionStr = ExcUtil.traceMessage(e).toString();
-			mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, PAIRING_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null, customerDBCtx);
-			mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PAIRING_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null, customerDBCtx);
-			LOG.error("Unexpected excetion during bank payments pairing.", e);
+		List<CustomerConfig> custCfgs = admCustConfigDao.getAll();
+		String customerDBCtx = null;
+		for (CustomerConfig custCfg : custCfgs) {
+			ClientDatabaseContextHolder.set(custCfg.getCustId());
+			customerDBCtx = ClientDatabaseContextHolder.getClientDatabase();
+			try {
+				LOG.info("Process payments started for customer: {}", customerDBCtx);
+				// kontrola zda-li je povolen modul platby
+				if (!configurationService.isPaymentsAvailable()) {
+					LOG.info("Customer: {} hasn't payments available.", customerDBCtx);
+					continue;
+				}
+				Pair<GregorianCalendar, GregorianCalendar> dateFromTo = PaymentUtils.getDefaultDateFromTo(configurationService);
+				int processPaymentCount = bankPaymentService.processPaymentPairing(dateFromTo.getValue0(), dateFromTo.getValue1());
+				// notification email about success processing
+				mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PAIRING_PAYMENT_SUCCESS_MAIL_SUBJECT, "Zparovano " + processPaymentCount + " plateb.", null, false, false, null, customerDBCtx);
+			} catch (Exception e) {
+				// notification email about processing with error
+				String exceptionStr = ExcUtil.traceMessage(e).toString();
+				mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, PAIRING_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null, customerDBCtx);
+				mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PAIRING_PAYMENT_ERROR_MAIL_SUBJECT, exceptionStr, null, false, false, null, customerDBCtx);
+				LOG.error("Unexpected excetion during bank payments pairing.", e);
+			}			
 		}
 	}
 }

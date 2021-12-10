@@ -13,8 +13,8 @@
         <Arg>
             <New class="com.mysql.jdbc.jdbc2.optional.MysqlDataSource">
                 <Set name = "URL"><SystemProperty name="db.url" default="jdbc:mysql://localhost:3306/sprt_admin"/></Set>
-                <Set name = "User"><SystemProperty name="db.user" default="root"/></Set>
-                <Set name = "Password"><SystemProperty name="db.password" default="password"/></Set>
+                <Set name = "User"><SystemProperty name="db.user" default="sprt_admin"/></Set>
+                <Set name = "Password"><SystemProperty name="db.password" default="sprt_admin1234*"/></Set>
             </New>
         </Arg>
     </New>
