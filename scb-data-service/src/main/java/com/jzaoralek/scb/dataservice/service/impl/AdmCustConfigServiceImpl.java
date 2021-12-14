@@ -24,5 +24,10 @@ public class AdmCustConfigServiceImpl implements AdmCustConfigService {
 							.map(CustomerConfig::getCustId)
 							.collect(Collectors.toSet());
 	}
+	
+	@Override
+	public List<CustomerConfig> getCustomerAll() {
+		return admCustConfigDao.getAll();
+	}
 
 }

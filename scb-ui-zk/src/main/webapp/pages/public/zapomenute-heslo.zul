@@ -25,7 +25,7 @@
 				
 				<html>
 					<h1>${c:l('txt.ui.forgottenPassword')}</h1>
-					<h2>Zadejte email/uživatelské jméno.</h2>
+					<h2>${c:l('txt.ui.enterUsername')}</h2>
 				</html>
 				
 				<vlayout xmlns:h="xhtml" >

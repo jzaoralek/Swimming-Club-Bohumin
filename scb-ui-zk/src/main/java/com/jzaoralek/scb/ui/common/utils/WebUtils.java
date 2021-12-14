@@ -104,7 +104,9 @@ public final class WebUtils {
 	
 	public static String readCookieValue(String key, HttpServletRequest request) {
 		Optional<String> cookie = Arrays.stream(request.getCookies())
-	      .filter(c -> key.equals(c.getName()))
+	      .filter(c -> key.equals(c.getName()) 
+	    		  			&& "/".equals(c.getPath()) 
+	    		  			&& c.getMaxAge() != 0)
 	      .map(Cookie::getValue)
 	      .findAny();
 		

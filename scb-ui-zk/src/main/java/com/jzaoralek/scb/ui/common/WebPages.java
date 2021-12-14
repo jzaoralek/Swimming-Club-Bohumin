@@ -23,6 +23,7 @@ public enum WebPages {
 	MESSAGE("/pages/secured/ADMIN/message.zul"),
 	CHANGE_USERNAME_ADMIN("/pages/secured/ADMIN/change-username.zul"),
 	CHANGE_USERNAME_USER("/pages/secured/USER/change-username.zul"),
+	CUSTOMER_SELECTION("/pages/public/customer-selection.zul"),
 	LOGIN_PAGE("/pages/common/login.zul");
 	
 	private String url;

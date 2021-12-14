@@ -1,0 +1,62 @@
+<?page title="${c:l('txt.ui.organizationSelection')}" contentType="text/html;charset=UTF-8" ?>
+<?meta http-equiv="Content-Type" content="text/html; charset=UTF-8"?>
+<?component name="headline" macroURI="/pages/common/template/page-headline.zul" inline="true"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
+
+<?xel-method prefix="common" name="getOrgNameStatic"
+	class="com.jzaoralek.scb.ui.common.vm.BaseVM"
+	signature="com.jzaoralek.scb.ui.common.vm.BaseVM getOrgNameStatic()"?>
+	
+<?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
+<?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
+
+<zk>
+
+	<div sclass="login-page"
+		width="100%"
+		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.security.vm.CustomerSelectionVM')"
+		validationMessages="@id('vmsgs')"
+	    form="@id('fx') @load(vm) @save(vm, before='submit')" >
+	    
+	    <div sclass="login-frame">
+			<div sclass="clear"></div>
+			<div sclass="login-frame-left">
+				
+				<html>
+					<h1>${c:l('txt.ui.organizationSelection')}</h1>
+					<h2>${c:l('txt.ui.selectOrganization')}</h2>
+				</html>
+				
+				<vlayout xmlns:h="xhtml" >
+					
+					<vbox hflex="1" height="90px">
+						<!-- Vyber organizace -->
+						<combobox model="@init(vm.customerList)"
+							onSelect="@command('customerSelectCmd')"
+							selectedItem="@save(vm.customerSelected)"
+							style="background: white;"
+							hflex="1"
+							focus="true"
+							readonly="true" >
+							<template name="model">
+				            	<comboitem label="${each.custName}"/>
+							</template>
+						</combobox>
+					</vbox>
+				</vlayout>
+			</div>
+			
+			<div sclass="login-frame-right" >
+				<a label="Sportologic" sclass="brand" style="margin-top: 95px;" />
+			</div>
+		</div>
+		
+		<div sclass="login-mobile-info">
+			<div sclass="clear"></div>
+			<div sclass="frame">
+				<a label="Sportologic" sclass="brand" style="margin-bottom: 30px;"/>
+			</div>
+		</div>
+	</div>
+</zk>

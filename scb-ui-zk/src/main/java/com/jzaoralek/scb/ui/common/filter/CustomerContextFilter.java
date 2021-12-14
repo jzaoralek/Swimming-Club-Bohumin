@@ -21,9 +21,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
-import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.utils.ConfigUtil;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 
@@ -98,10 +98,18 @@ public class CustomerContextFilter implements Filter {
 			LOG.debug("Customer URI stored in session|cookie: {}", customerUriSessionOrCookie);
 		}
 		
+		HttpServletResponse resp = (HttpServletResponse)response;
+		
 		if (servletPathPartArr.length == 0 || SLASH.equals(servletPath)) {
 			// url without customerUri, no need to check customer url part
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Empty servlet path, customer URI stored in session|cookie: {} -> continue.", customerUriSessionOrCookie);
+			}
+			if (!StringUtils.hasText(customerUriSessionOrCookie)) {
+				// Redirect to customer selection.
+				LOG.warn("Customer URI not entered in servletPath and stored in session|cookie are NULL, redirect to customer selection.");
+				redirectToCustomerSelection(resp);
+				return;
 			}
 			chain.doFilter(request, response);
 			return;
@@ -113,13 +121,12 @@ public class CustomerContextFilter implements Filter {
 			LOG.debug("Customer URI from servletPath: {}", customerUriContext);
 		}
 		
-		HttpServletResponse resp = (HttpServletResponse)response;
-		
 		// customerUri je null a není v sesion ani cookies -> 403
 		if (!StringUtils.hasText(customerUriContext) && !StringUtils.hasText(customerUriSessionOrCookie)) {
-			// TODO: OneApp - nahradit za redirect na stranku kde si vybere customera
-			LOG.warn("Customer URI entered in servletPath and stored in session|cookie are NULL, redirect to 403 Forbidden.");
-			resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+			// TODO: OneApp - nikdy zde nedojde protoze servletPathFirstPart="/pages" a na zacatku se vyhodnoti jako excludedUrl
+			// Redirect to customer selection.
+			LOG.warn("Customer URI entered in servletPath and stored in session|cookie are NULL, redirect to customer selection.");
+			redirectToCustomerSelection(resp);
 			return;
 		}
 
@@ -159,6 +166,15 @@ public class CustomerContextFilter implements Filter {
 		LOG.info("Remove customer URI: {} from servlet path: {}.", servletPathFirstPart, servletPath);
 		LOG.info("Redirect to {}", uriToRedirect);
 		resp.sendRedirect(uriToRedirect);
+	}
+	
+	/**
+	 * Redirect to customer selection.
+	 * @param resp
+	 * @throws IOException
+	 */
+	private void redirectToCustomerSelection(HttpServletResponse resp) throws IOException {
+		resp.sendRedirect(WebPages.CUSTOMER_SELECTION.getUrl());
 	}
 
 	@Override
