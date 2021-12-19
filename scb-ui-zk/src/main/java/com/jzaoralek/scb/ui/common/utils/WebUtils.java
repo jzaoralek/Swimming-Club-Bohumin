@@ -103,6 +103,9 @@ public final class WebUtils {
 	}
 	
 	public static String readCookieValue(String key, HttpServletRequest request) {
+		if (request == null) {
+			return null;
+		}
 		Optional<String> cookie = Arrays.stream(request.getCookies())
 	      .filter(c -> key.equals(c.getName()) 
 	    		  			&& "/".equals(c.getPath()) 
