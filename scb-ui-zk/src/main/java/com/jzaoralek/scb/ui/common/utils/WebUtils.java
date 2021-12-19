@@ -106,9 +106,10 @@ public final class WebUtils {
 		if (request == null) {
 			return null;
 		}
+		
 		Optional<String> cookie = Arrays.stream(request.getCookies())
 	      .filter(c -> key.equals(c.getName()) 
-	    		  			&& "/".equals(c.getPath()) 
+	    		  			&& ("/".equals(c.getPath()) || c.getPath() == null) 
 	    		  			&& c.getMaxAge() != 0)
 	      .map(Cookie::getValue)
 	      .findAny();

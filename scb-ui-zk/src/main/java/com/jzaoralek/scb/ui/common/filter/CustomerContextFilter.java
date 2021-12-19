@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -131,7 +132,7 @@ public class CustomerContextFilter implements Filter {
 		}
 
 		// Pokud customerUri null nebo stejný jako v session -> redirect na url bez customer, nic neresit
-		if (customerUriContext != null && !customerUriContext.equals(customerUriSessionOrCookie)) {
+		if (StringUtils.hasText(customerUriContext) && !customerUriContext.equals(customerUriSessionOrCookie)) {
 			// customer url jiny nez v session -> kontrola zda-li je customer povolen
 			if (SecurityUtils.isUserLogged()) {
 				// zmena customer url v prihlasenem uzivateli -> nepovolit 403
@@ -161,9 +162,19 @@ public class CustomerContextFilter implements Filter {
 			}
 		}
 		
+		String uriToRedirect = null;
 		// remove customer uri and redirect
-		String uriToRedirect = servletPath.replace(servletPathFirstPart, "");
-		LOG.info("Remove customer URI: {} from servlet path: {}.", servletPathFirstPart, servletPath);
+		if (!SLASH.equals(servletPathFirstPart)) {
+			uriToRedirect = servletPath.replace(servletPathFirstPart, "");
+			LOG.info("Remove customer URI: {} from servlet path: {}.", servletPathFirstPart, servletPath);			
+		} else {
+			uriToRedirect = servletPathFirstPart;
+		}
+		
+		if (!StringUtils.hasText(uriToRedirect) || SLASH.equals(uriToRedirect)) {
+			// uriToredirect is empty, redirect to default page
+			uriToRedirect = WebPages.LOGIN_PAGE.getUrl();
+		} 
 		LOG.info("Redirect to {}", uriToRedirect);
 		resp.sendRedirect(uriToRedirect);
 	}
