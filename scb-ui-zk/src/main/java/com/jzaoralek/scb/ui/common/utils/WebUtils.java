@@ -107,6 +107,10 @@ public final class WebUtils {
 			return null;
 		}
 		
+		if (request.getCookies() == null) {
+			return null;
+		}
+		
 		Optional<String> cookie = Arrays.stream(request.getCookies())
 	      .filter(c -> key.equals(c.getName()) 
 	    		  			&& ("/".equals(c.getPath()) || c.getPath() == null) 
