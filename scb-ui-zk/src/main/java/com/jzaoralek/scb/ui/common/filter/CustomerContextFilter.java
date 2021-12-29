@@ -17,10 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -33,7 +33,6 @@ import com.jzaoralek.scb.ui.common.utils.WebUtils;
  * and redirect to url withou customer part.
  * Customer datasource is set in SportologicExecutionInit.java.
  */
-
 public class CustomerContextFilter implements Filter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CustomerContextFilter.class);
@@ -46,6 +45,11 @@ public class CustomerContextFilter implements Filter {
 	private AdmCustConfigService admCustConfigService;
 	
 	private List<String> excludedUrls;
+	
+	/** URL to redirect in case of root uri. 
+	 *  Used for sportologic.cz for redirect to sportologic.cz/web. */
+	@Value("${root.redirect}")
+    private String rootRedirect;
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -107,9 +111,13 @@ public class CustomerContextFilter implements Filter {
 				LOG.debug("Empty servlet path, customer URI stored in session|cookie: {} -> continue.", customerUriSessionOrCookie);
 			}
 			if (!StringUtils.hasText(customerUriSessionOrCookie)) {
+				if (StringUtils.hasText(rootRedirect)) {
+					// Root uri entered and redirect is configured -> redirect to configurated site.
+					resp.sendRedirect(rootRedirect);
+				}
 				// Redirect to customer selection.
 				LOG.warn("Customer URI not entered in servletPath and stored in session|cookie are NULL, redirect to customer selection.");
-				redirectToCustomerSelection(resp);
+				redirectToCustomerSelection(resp);				
 				return;
 			}
 			chain.doFilter(request, response);
