@@ -4,12 +4,14 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class CustomerConfig implements IdentEntity {
 
 	@Id
+	@GeneratedValue
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
