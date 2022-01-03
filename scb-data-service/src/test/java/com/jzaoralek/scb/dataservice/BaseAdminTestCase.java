@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.util.CollectionUtils;
 
-import com.jzaoralek.scb.dataservice.domain.IdentEntity;
+import com.sportologic.common.model.domain.IdentEntity;
 
 @ContextConfiguration(locations={"/scb-data-service-test-admin_context.xml"})
 public abstract class BaseAdminTestCase extends AbstractTransactionalJUnit4SpringContextTests {

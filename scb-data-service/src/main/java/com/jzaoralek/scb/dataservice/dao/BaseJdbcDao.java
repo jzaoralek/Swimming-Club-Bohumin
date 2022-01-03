@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.jzaoralek.scb.dataservice.domain.IdentEntity;
+import com.sportologic.common.model.domain.IdentEntity;
 
 public abstract class BaseJdbcDao {
 

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.dao.AdmCustConfigDao;
 import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
-import com.jzaoralek.scb.dataservice.domain.CustomerConfig;
+import com.sportologic.common.model.domain.CustomerConfig;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.task.MailSendTask;
 import com.jzaoralek.scb.dataservice.utils.ExcUtil;

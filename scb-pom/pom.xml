@@ -52,6 +52,13 @@
 				<version>${project.version}</version>
 			</dependency>
 			
+			<!-- Sportologic - model -->
+			<dependency>
+				<groupId>com.sportologic</groupId>
+				<artifactId>sprt-model</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
 			<!-- Spring -->
 			<dependency>
 				<groupId>org.springframework</groupId>

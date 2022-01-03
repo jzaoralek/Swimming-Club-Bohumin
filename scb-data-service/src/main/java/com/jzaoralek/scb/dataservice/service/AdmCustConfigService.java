@@ -3,7 +3,7 @@ package com.jzaoralek.scb.dataservice.service;
 import java.util.List;
 import java.util.Set;
 
-import com.jzaoralek.scb.dataservice.domain.CustomerConfig;
+import com.sportologic.common.model.domain.CustomerConfig;
 
 public interface AdmCustConfigService {
 

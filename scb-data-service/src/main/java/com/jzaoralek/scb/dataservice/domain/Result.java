@@ -3,6 +3,8 @@ package com.jzaoralek.scb.dataservice.domain;
 import java.util.Date;
 import java.util.UUID;
 
+import com.sportologic.common.model.domain.IdentEntity;
+
 public class Result implements IdentEntity {
 
 	private UUID uuid;

@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import org.springframework.util.StringUtils;
 
+import com.sportologic.common.model.domain.IdentEntity;
+
 /**
  * Contact used in CourseParticipant and User.
  *
