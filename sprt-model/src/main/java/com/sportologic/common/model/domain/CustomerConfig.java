@@ -3,8 +3,13 @@ package com.sportologic.common.model.domain;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class CustomerConfig implements IdentEntity {
 
+	@Id
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
