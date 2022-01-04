@@ -64,6 +64,27 @@
 			<artifactId>sprt-model</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+
+		<!-- DB flyway
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		-->
+		<!-- H2 DB for tests -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- MySql DB for tests
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>test</scope>
+		</dependency>
+		-->
 	</dependencies>
 
 	<build>
