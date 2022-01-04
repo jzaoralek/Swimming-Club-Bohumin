@@ -14,7 +14,7 @@ import java.util.UUID;
 @SpringBootTest
 public class CustomerConfigRepositoryTest {
 
-    private static String CUSTOMER_ID = "customerId";
+    private static String CUST_ID = "customerId";
 
     @Autowired
     private CustomerConfigRepository customerConfigRepository;
@@ -24,7 +24,7 @@ public class CustomerConfigRepositoryTest {
         CustomerConfig config = new CustomerConfig();
         config.setUuid(UUID.randomUUID());
         config.setCustDefault(false);
-        config.setCustId(CUSTOMER_ID);
+        config.setCustId(CUST_ID);
         config.setCustName("Customer name");
         config.setDbPassword("password");
         config.setDbUser("user");
@@ -39,6 +39,6 @@ public class CustomerConfigRepositoryTest {
         List<CustomerConfig> customerConfigList = customerConfigRepository.findAll();
         Assert.notNull(customerConfigList,"CustomerConfigList is null.");
         Assert.isTrue(customerConfigList.size() == 1, "Incorrect count");
-        Assert.isTrue(customerConfigList.get(0).getCustId().equals(CUSTOMER_ID), "CustId doesn't equals");
+        Assert.isTrue(customerConfigList.get(0).getCustId().equals(CUST_ID), "CustId doesn't equals");
     }
 }
