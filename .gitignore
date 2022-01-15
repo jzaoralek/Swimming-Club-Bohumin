@@ -1,3 +1,12 @@
 /scb-data-service/src/main/resources/config/wojnar.properties
 .settings
 .externalToolBuilders
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+*.md
+
+
