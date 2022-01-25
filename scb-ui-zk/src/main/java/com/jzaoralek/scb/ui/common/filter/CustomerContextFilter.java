@@ -98,7 +98,6 @@ public class CustomerContextFilter implements Filter {
 			}
 			// uložit do session
 			WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriSessionOrCookie, req);
-			ClientDatabaseContextHolder.set(customerUriSessionOrCookie);
 		}
 		
 		if (LOG.isDebugEnabled()) {
