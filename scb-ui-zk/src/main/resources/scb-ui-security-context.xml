@@ -25,7 +25,7 @@
 		<authentication-provider user-service-ref="customUserDetailsService" />
 	</authentication-manager>
 
-	<beans:bean id="customUserDetailsService" class="com.jzaoralek.scb.dataservice.service.impl.CustomUserDetailsService" />
+	<beans:bean id="customUserDetailsService" class="com.jzaoralek.scb.ui.common.security.CustomUserDetailsService" />
 	<beans:bean id="customAuthenticationSuccessHandler" class="com.jzaoralek.scb.ui.common.security.CustomAuthenticationSuccessHandler" />
 	
 </beans:beans>

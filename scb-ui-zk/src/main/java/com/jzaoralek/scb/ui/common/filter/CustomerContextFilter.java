@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -97,6 +98,7 @@ public class CustomerContextFilter implements Filter {
 			}
 			// uložit do session
 			WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriSessionOrCookie, req);
+			ClientDatabaseContextHolder.set(customerUriSessionOrCookie);
 		}
 		
 		if (LOG.isDebugEnabled()) {
@@ -167,6 +169,7 @@ public class CustomerContextFilter implements Filter {
 				// uložit do session a cookie
 				WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriContext, req);
 				WebUtils.setCookie(CUST_URI_COOKIE, customerUriContext, req, resp);
+				ClientDatabaseContextHolder.set(customerUriContext);
 			}
 		}
 		
