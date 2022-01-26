@@ -112,12 +112,16 @@ public class CustomerContextFilter implements Filter {
 				LOG.debug("Empty servlet path, customer URI stored in session|cookie: {} -> continue.", customerUriSessionOrCookie);
 			}
 			if (!StringUtils.hasText(customerUriSessionOrCookie)) {
+				LOG.warn("Customer URI not entered in servletPath and stored in session|cookie are NULL.");
+				LOG.warn("Customer URI rootRedirect: {}.", rootRedirect);
 				if (StringUtils.hasText(rootRedirect)) {
 					// Root uri entered and redirect is configured -> redirect to configurated site.
+					LOG.warn("RootRedirect not null, redirect to: {}.", rootRedirect);
 					resp.sendRedirect(rootRedirect);
+					return;
 				}
 				// Redirect to customer selection.
-				LOG.warn("Customer URI not entered in servletPath and stored in session|cookie are NULL, redirect to customer selection.");
+				LOG.warn("Redirect to customer selection.");
 				redirectToCustomerSelection(resp);				
 				return;
 			}
