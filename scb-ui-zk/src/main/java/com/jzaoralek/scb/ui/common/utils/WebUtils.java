@@ -129,9 +129,13 @@ public final class WebUtils {
 								String value, 
 								HttpServletRequest request, 
 								HttpServletResponse response) {
-		Optional<Cookie> cookieOpt = Arrays.stream(request.getCookies())
-			      .filter(c -> key.equals(c.getName()))
-			      .findAny();
+		Optional<Cookie> cookieOpt = Optional.empty();
+		if (request.getCookies() != null) {
+			// find origin cookie
+			cookieOpt = Arrays.stream(request.getCookies())
+					.filter(c -> key.equals(c.getName()))
+					.findAny();			
+		}
 		
 		// delete origin cookie
 		if (cookieOpt.isPresent()) {
