@@ -54,10 +54,12 @@ public class RoutingCustomerDSConfiguration {
 	 * @return
 	 */
 	private DataSource buildClientDatasource(CustomerConfig custConfig) {
-		MysqlDataSource oracleRootSource = new MysqlDataSource();
-		oracleRootSource.setUrl(custConfig.getDbUrl());
-	    oracleRootSource.setUser(custConfig.getDbUser());
-	    oracleRootSource.setPassword(custConfig.getDbPassword());
-	    return oracleRootSource;
+		MysqlDataSource mySqlRootSource = new MysqlDataSource();
+		mySqlRootSource.setUrl(custConfig.getDbUrl());
+	    mySqlRootSource.setUser(custConfig.getDbUser());
+	    mySqlRootSource.setPassword(custConfig.getDbPassword());
+	    mySqlRootSource.setCharacterEncoding("utf8");
+	    mySqlRootSource.setUseUnicode(true);
+	    return mySqlRootSource;
 	}
 }
