@@ -544,7 +544,8 @@ public class BaseVM {
 				, null
 				, buildMailSignature()
 				, true
-				, course.getCourseType());
+				, course.getCourseType()
+				, ClientDatabaseContextHolder.getClientDatabase());
 		
 	}
 	

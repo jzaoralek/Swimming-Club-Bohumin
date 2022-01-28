@@ -88,9 +88,9 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
 
         // setting of client DB context
         if (LOG.isDebugEnabled()) {
-     	   LOG.debug("Settin client DB context: {}", clientDBCtx);
+        	LOG.debug("Settin client DB context: {}", clientDBCtx);
         }
-        ClientDatabaseContextHolder.set(clientDBCtx);
+        ClientDatabaseContextHolder.set(clientDBCtx);        	
         
         mailSmtpUser = configurationService.getSmtpUser();
     	mailSmtpPassword = configurationService.getSmtpPwd();

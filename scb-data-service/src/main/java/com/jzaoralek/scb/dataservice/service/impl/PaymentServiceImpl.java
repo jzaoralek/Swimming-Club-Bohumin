@@ -105,7 +105,8 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			, String optionalText
 			, String mailSignature
 			, boolean firstSemester
-			, CourseType courseType) { 
+			, CourseType courseType
+			, String clientDBCtx) { 
 		if (CollectionUtils.isEmpty(paymentInstructionList)) {
 			return;
 		}
@@ -190,7 +191,6 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 				subject = messageSource.getMessage("msg.ui.mail.paymentInstruction.subject.twoSemester", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault());
 			}
 			
-			String clientDBCtx = ClientDatabaseContextHolder.getClientDatabase();
 			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), null, subject, mailToUser.toString(), null, false), clientDBCtx);
 			// odeslani na platby@sportologic.cz
 			mailService.sendMail(new Mail(DataServiceConstants.PLATBY_EMAIL, null, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null, false), clientDBCtx);			

@@ -13,6 +13,7 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Window;
 
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
@@ -69,7 +70,8 @@ public class PaymentInstructionWinVM extends BaseVM {
 				, this.optionalText
 				, buildMailSignature()
 				, this.firstSemester
-				, this.courseType);
+				, this.courseType
+				, ClientDatabaseContextHolder.getClientDatabase());
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentInstructionSent"));
 		EventQueueHelper.publish(ScbEventQueues.COURSE_APPLICATION_QUEUE, ScbEvent.RELOAD_COURSE_APPLICATION_DATA_EVENT, null, null);
