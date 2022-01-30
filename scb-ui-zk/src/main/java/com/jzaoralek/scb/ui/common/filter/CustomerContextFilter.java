@@ -186,15 +186,6 @@ public class CustomerContextFilter implements Filter {
 		// resp.sendRedirect(uriToRedirect);
 		req.getRequestDispatcher(uriToRedirect).forward(request, response);
 	}
-	
-	/**
-	 * Redirect to customer selection.
-	 * @param resp
-	 * @throws IOException
-	 */
-	private void redirectToCustomerSelection(HttpServletResponse resp) throws IOException {
-		resp.sendRedirect(WebPages.CUSTOMER_SELECTION.getUrl());
-	}
 
 	@Override
 	public void destroy() {
