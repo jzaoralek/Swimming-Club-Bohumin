@@ -31,8 +31,11 @@ import org.zkoss.bind.BindUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Page;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.impl.AbstractExecution;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listitem;
@@ -58,6 +61,8 @@ import com.jzaoralek.scb.ui.pages.courseapplication.vm.CourseApplicationVM;
 public final class WebUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(WebUtils.class);
+	
+	private static final String OPEN_WINS_ATTR = "OPEN_WINDOWS";
 	
 	private WebUtils() {}
 
@@ -153,8 +158,19 @@ public final class WebUtils {
 		if (!StringUtils.hasText(uri)) {
 			return;
 		}
-		Window window = (Window)Executions.createComponents(uri, null, null);
-		window.doModal();
+		if (!canOpenModal(uri)) {
+			logger.debug("Modalni okno {} je jiz otevrene!", uri);
+			return;
+		}
+		try {
+			Window window = (Window)Executions.createComponents(uri, null, null);
+			window.doModal();
+		} catch (UiException e) {
+			// vyjimku zahazujeme, nastava, pokud se pokusime, otevrit dane okno vicekrat
+			if (logger.isDebugEnabled()) {
+				logger.debug("UiException caught during opening popup windowName: " + uri, e);
+			}
+		}
 	}
 
 	// ==========================================================================
@@ -174,11 +190,44 @@ public final class WebUtils {
 		if (!StringUtils.hasText(page)) {
 			throw new IllegalArgumentException("URL stranky je null");
 		}
-		Window window = (Window) Executions.createComponents(page, null, args);
-		window.doModal();
-		if (StringUtils.hasText(windowName)) {
-			window.setTitle(windowName);
+		if (!canOpenModal(page)) {
+			logger.debug("Modalni okno {} je jiz otevrene!", page);
+			return;
 		}
+		try {
+			Window window = (Window) Executions.createComponents(page, null, args);
+			window.doModal();
+			if (StringUtils.hasText(windowName)) {
+				window.setTitle(windowName);
+			}			
+		} catch (UiException e) {
+			// vyjimku zahazujeme, nastava, pokud se pokusime, otevrit dane okno vicekrat
+			if (logger.isDebugEnabled()) {
+				logger.debug("UiException caught during opening popup windowName: " + page, e);
+			}
+		}
+	}
+	
+	/**
+	 * Vrátí TRUE, pokud není otevřeno žádné okno s URI "modalPath"
+	 * 
+	 * @param modalPath
+	 * @return
+	 */
+	public static boolean canOpenModal(String modalPath) {
+		Execution ex = Executions.getCurrent();
+		if (ex instanceof AbstractExecution) {
+			AbstractExecution aex = (AbstractExecution) ex;
+			Page page = aex.getCurrentPage();
+			Set<String> openWindows = (Set<String>) page.getAttribute(OPEN_WINS_ATTR);
+			if (openWindows == null) {
+				return true;
+			}
+			if (openWindows.contains(modalPath)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
