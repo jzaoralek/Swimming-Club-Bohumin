@@ -58,7 +58,7 @@ public class LearningLessonVM extends BaseVM {
 	public void submitCmd() {
 		this.learningLesson.setParticipantList(this.lessonParticipantList);
 		learningLessonService.store(this.learningLesson);
-		Executions.sendRedirect(this.returnToUrl);
+		WebUtils.sendRedirect(this.returnToUrl);
 	}
 
 	private void initData(LearningLesson learningLesson) {

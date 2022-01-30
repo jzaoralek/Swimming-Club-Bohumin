@@ -215,9 +215,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 		String targetPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_DETAIL.getUrl() : WebPages.PARTICIPANT_DETAIL.getUrl();
 		WebPages fromPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_LIST : WebPages.PARTICIPANT_LIST;
 		if (newTab != null && newTab) {
-			Executions.getCurrent().sendRedirect(targetPage + "?" + WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid, "_blank");
+			WebUtils.sendRedirect(targetPage + "?" + WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid, "_blank");
 		} else {
-			Executions.getCurrent().sendRedirect(targetPage + "?"+ WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid);
+			WebUtils.sendRedirect(targetPage + "?"+ WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid);
 		}
 	}
 	
@@ -226,7 +226,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		if (item ==  null) {
 			throw new IllegalArgumentException("CourseApplication is null");
 		}
-		Executions.sendRedirect(WebPages.PAYMENT_LIST.getUrl() + "?"+WebConstants.COURSE_PARTIC_UUID_PARAM+"="+item.getCourseParticipant().getUuid().toString() + "&" +WebConstants.COURSE_UUID_PARAM+"="+item.getCourseParticipant().getCourseUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST);
+		WebUtils.sendRedirect(WebPages.PAYMENT_LIST.getUrl() + "?"+WebConstants.COURSE_PARTIC_UUID_PARAM+"="+item.getCourseParticipant().getUuid().toString() + "&" +WebConstants.COURSE_UUID_PARAM+"="+item.getCourseParticipant().getCourseUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST);
 	}
 
 	@Command

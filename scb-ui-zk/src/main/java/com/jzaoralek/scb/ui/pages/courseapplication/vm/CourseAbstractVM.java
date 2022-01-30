@@ -1,6 +1,5 @@
 package com.jzaoralek.scb.ui.pages.courseapplication.vm;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -118,7 +117,7 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 			}
 			courseNew = courseService.copy(this.courseUuidFrom, this.courseCopy, this.copyParticipants, this.copyLessons, this.copyTrainers);
 			// redirect to new course
-			Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+courseNew.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+			WebUtils.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+courseNew.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 			WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseCopiedFromCourse", new Object[] {courseNew.getName(), this.copyFrom}));
 		} catch (ScbValidationException e) {
 			LOG.warn("ScbValidationException caught for course: " + courseNew, e);
@@ -159,7 +158,7 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 						courseService.delete(uuid);
 						if (redirectAfterAction) {
 							WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.courseDeleted", msgParams));
-							Executions.sendRedirect(WebPages.COURSE_LIST.getUrl());							
+							WebUtils.sendRedirect(WebPages.COURSE_LIST.getUrl());							
 						} else {
 							WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseDeleted", msgParams));
 							postDelete.run();

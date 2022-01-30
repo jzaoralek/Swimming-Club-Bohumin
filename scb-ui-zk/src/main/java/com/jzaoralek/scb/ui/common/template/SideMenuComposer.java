@@ -54,12 +54,12 @@ public class SideMenuComposer extends SelectorComposer<Component> {
      * 
      */
     private void init() {
-        String path = WebUtils.getRequestPath();
+        String path = WebUtils.buildCustCtxUri(WebUtils.getRequestPath());
         for (Component child : menuWrapper.getChildren()) {
             if (child instanceof A) {
                 A anchor = (A) child;
                 String href = anchor.getHref();
-                if (href != null && (path.endsWith(href) || (path.equals("/pages/index.zul") && href.equals("/")))) {
+                if (href != null && (path.endsWith(href) || (path.equals(WebUtils.buildCustCtxUri("/pages/index.zul")) && href.equals("/")))) {
                     ComponentUtils.addSclass(anchor, "scb-menu-active");
                 }
             }

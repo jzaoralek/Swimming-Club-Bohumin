@@ -55,7 +55,7 @@ public class ChangeUsernameVM extends BaseVM {
 			if (isLoggedUserAdmin()) {
 				// admin - redirect na detail uzivatele
 				WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.usernameChanged", new Object[] {this.user.getUsername()}));
-				Executions.sendRedirect(this.returnToPage);
+				WebUtils.sendRedirect(this.returnToPage);
 			} else {
 				// user as course participant representative - logout
 				logoutCmd();

@@ -29,7 +29,7 @@ public class SecurityVM extends BaseVM {
 	public void changePasswordCmd() {
 		WebUtils.openModal(CHANGE_PASSWORD_WINDOW);
 	}
-
+   
     public boolean isPaymentsAvailable() {
 		return ConfigUtil.isPaymentsAvailable(configurationService);
 	}

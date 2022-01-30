@@ -160,7 +160,7 @@ public class CourseListVM extends CourseAbstractVM {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
-		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+		WebUtils.sendRedirect("/pages/secured/ADMIN/kurz.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 	}
 
 	@Command
@@ -168,7 +168,7 @@ public class CourseListVM extends CourseAbstractVM {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
-		Executions.sendRedirect("/pages/secured/TRAINER/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+		WebUtils.sendRedirect("/pages/secured/TRAINER/kurz-vyuka.zul?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
 	}
 
 	@NotifyChange("*")

@@ -449,7 +449,79 @@ public final class WebUtils {
 	 * Redirect to new course page.
 	 */
 	public static void redirectToNewCourse() {
-		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+		sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+	}
+	
+	/**
+	 * Redirect to uri and add customer context.
+	 * @param uri
+	 */
+	public static void sendRedirect(String uri, HttpServletRequest req, String... args) {
+		sendRedirectCore(uri, req, args);
+	}
+	
+	/**
+	 * Redirect to uri and add customer context.
+	 * @param uri
+	 */
+	public static void sendRedirect(String uri, String... args) {
+		sendRedirectCore(uri, getRequest(), args);
+	}
+	
+	public static void sendRedirectCore(String uri, HttpServletRequest req, String... args) {
+		String customerCtx = getCustomerCtx(req);
+		if (!StringUtils.hasText(customerCtx)) {
+			throw new IllegalStateException("Customer context is null");
+		}
+		
+		if (args.length == 0) {
+			Executions.getCurrent().sendRedirect("/" + customerCtx + uri);			
+		} else if (args.length == 1) {
+			Executions.getCurrent().sendRedirect("/" + customerCtx + uri, args[0]);
+		}
+	}
+	
+	/**
+	 * Add customer ctx to uri.
+	 * @param uri
+	 * @return
+	 */
+	public static String buildCustCtxUri(String uri) {
+		return buildCustCtxUriCore(uri, getRequest());
+	}
+	
+	/**
+	 * Add customer ctx to uri.
+	 * @param uri
+	 * @param req
+	 * @return
+	 */
+	public static String buildCustCtxUri(String uri, HttpServletRequest req) {
+		return buildCustCtxUriCore(uri, req);
+		
+	}
+	
+	private static String buildCustCtxUriCore(String uri, HttpServletRequest req) {
+		String customerCtx = getCustomerCtx(req);
+		if (!StringUtils.hasText(customerCtx)) {
+			throw new IllegalStateException("Customer context is null");
+		}
+		return "/" + customerCtx + uri;
+	}
+	
+	/**
+	 * Get customer context from session or cookie.
+	 * @return
+	 */
+	public static String getCustomerCtx(HttpServletRequest req) {
+		if (req == null) {
+			req = getRequest();
+		}
+		String customerCtx = (String)getSessAtribute(WebConstants.CUST_URI_ATTR, req);
+		if (StringUtils.hasText(customerCtx)) {
+			return customerCtx;
+		}
+		return WebUtils.readCookieValue(WebConstants.CUST_URI_COOKIE, req);
 	}
 	
 	/**

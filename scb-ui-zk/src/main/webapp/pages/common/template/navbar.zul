@@ -30,7 +30,7 @@
 			-->
 			
 			<!-- Brand Name -->
-			<a label="${vm.orgName}" href="/" sclass="brand-name"/>
+			<a label="${vm.orgName}" href="${common:custCtxUri('/')}" sclass="brand-name"/>
 		</div>
 		
 		<hlayout sclass="right-side">
@@ -55,22 +55,12 @@
 				<menuitem label="${c:l('txt.ui.common.ToLogout')}" iconSclass="z-icon-sign-out" onClick="@command('logoutCmd')" />
 			</menupopup>
 			
-			<!--
-			<a sclass="navbar-btn"
-				href="/pages/public/prihlaska.zul" 
-				visible="@load(!vm.isUserLogged() and vm.isCourseApplicationAllowed())" xmlns:x="xhtml">
-				<x:i class="pe-7s-note2"></x:i>
-				<label value="${c:l('txt.ui.menu.application')}"/>
-			</a>
-			
-			-->
-			
 			<a sclass="navbar-btn" 
 				tooltiptext="${c:l('txt.ui.login')}"
-				href="/pages/common/login.zul"
+				href="${common:custCtxUri('/pages/common/login.zul')}"
 				visible="@load(!vm.isUserLogged())" xmlns:x="xhtml">
 				<x:i class="pe-7s-key"></x:i>
-				<label value="${c:l('txt.ui.login')}"  sclass="hide-on-mobile-platform"/>
+				<label value="${c:l('txt.ui.login')}" sclass="hide-on-mobile-platform"/>
 			</a>
 		</hlayout>
 	

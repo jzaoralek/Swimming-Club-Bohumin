@@ -38,7 +38,7 @@ public class ForgottenPasswordVM extends BaseVM {
 		sendMailWithResetpassword(user);
 		
 		WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.passwordResetAndSendToEmail2", new Object[] {user.getUsername()}));
-		Executions.sendRedirect(WebPages.LOGIN_PAGE.getUrl());
+		WebUtils.sendRedirect(WebPages.LOGIN_PAGE.getUrl());
 	}
 	
 	public String getUsername() {

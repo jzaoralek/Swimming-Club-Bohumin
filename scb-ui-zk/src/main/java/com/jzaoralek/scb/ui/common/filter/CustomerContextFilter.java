@@ -109,24 +109,19 @@ public class CustomerContextFilter implements Filter {
 		if (servletPathPartArr.length == 0 || SLASH.equals(servletPath)) {
 			// url without customerUri, no need to check customer url part
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Empty servlet path, customer URI stored in session|cookie: {} -> continue.", customerUriSessionOrCookie);
+				LOG.debug("Empty servlet path, customer URI stored in session|cookie: {}.", customerUriSessionOrCookie);
 			}
-			if (!StringUtils.hasText(customerUriSessionOrCookie)) {
-				LOG.warn("Customer URI not entered in servletPath and stored in session|cookie are NULL.");
-				LOG.warn("Customer URI rootRedirect: {}.", rootRedirect);
-				if (StringUtils.hasText(rootRedirect)) {
-					// Root uri entered and redirect is configured -> redirect to configurated site.
-					LOG.warn("RootRedirect not null, redirect to: {}.", rootRedirect);
-					resp.sendRedirect(rootRedirect);
-					return;
-				}
-				// Redirect to customer selection.
-				LOG.warn("Redirect to customer selection.");
-				redirectToCustomerSelection(resp);				
+			
+			if (StringUtils.hasText(rootRedirect)) {
+				// Root uri entered and redirect is configured -> redirect to configurated site.
+				LOG.warn("RootRedirect not null, redirect to: {}.", rootRedirect);
+				resp.sendRedirect(rootRedirect);
+				return;
+			} else {
+				LOG.warn("RootRedirect not null, redirect to 403 FORBIDDEN.");
+				resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 				return;
 			}
-			chain.doFilter(request, response);
-			return;
         }
 		
 		String customerUriContext = servletPathPartArr[1];
@@ -135,12 +130,10 @@ public class CustomerContextFilter implements Filter {
 			LOG.debug("Customer URI from servletPath: {}", customerUriContext);
 		}
 		
-		// customerUri je null a není v sesion ani cookies -> 403
-		if (!StringUtils.hasText(customerUriContext) && !StringUtils.hasText(customerUriSessionOrCookie)) {
-			// TODO: OneApp - nikdy zde nedojde protoze servletPathFirstPart="/pages" a na zacatku se vyhodnoti jako excludedUrl
-			// Redirect to customer selection.
-			LOG.warn("Customer URI entered in servletPath and stored in session|cookie are NULL, redirect to customer selection.");
-			redirectToCustomerSelection(resp);
+		if (!StringUtils.hasText(customerUriContext)) {
+			// customerUri je null -> 403
+			LOG.warn("RootRedirect not null, redirect to 403 FORBIDDEN.");
+			resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
 
@@ -190,7 +183,8 @@ public class CustomerContextFilter implements Filter {
 			uriToRedirect = WebPages.LOGIN_PAGE.getUrl();
 		} 
 		LOG.info("Redirect to {}", uriToRedirect);
-		resp.sendRedirect(uriToRedirect);
+		// resp.sendRedirect(uriToRedirect);
+		req.getRequestDispatcher(uriToRedirect).forward(request, response);
 	}
 	
 	/**

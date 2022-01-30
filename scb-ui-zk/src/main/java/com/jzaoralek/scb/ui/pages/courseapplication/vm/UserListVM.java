@@ -94,7 +94,7 @@ public class UserListVM extends BaseVM {
 		if (uuid ==  null) {
 			throw new IllegalArgumentException("uuid is null");
 		}
-		Executions.sendRedirect(WebPages.USER_DETAIL.getUrl()+"?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.USER_LIST);
+		WebUtils.sendRedirect(WebPages.USER_DETAIL.getUrl()+"?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.USER_LIST);
 	}
 
 	@Command
@@ -129,7 +129,7 @@ public class UserListVM extends BaseVM {
 
 	@Command
 	public void newItemCmd() {
-		Executions.sendRedirect(WebPages.USER_DETAIL.getUrl()+"?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.USER_LIST);
+		WebUtils.sendRedirect(WebPages.USER_DETAIL.getUrl()+"?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.USER_LIST);
 	}
 
 	@Command

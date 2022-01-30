@@ -36,14 +36,12 @@ public final class ExcelUtil {
 		try {
 			stream = new ByteArrayOutputStream();
 			workbook.write(stream);
-			//Filedownload.save(stream.toByteArray(), "application/file", filename);
 
 			Attachment attachment = new Attachment();
 			attachment.setByteArray(stream.toByteArray());
 			attachment.setContentType("application/file");
 			attachment.setName(filename);
 			Executions.getCurrent().getSession().setAttribute(WebConstants.ATTACHMENT_PARAM, attachment);
-//			Executions.sendRedirect("/downloadAttachment");
 			WebUtils.downloadAttachment(attachment);
 
 

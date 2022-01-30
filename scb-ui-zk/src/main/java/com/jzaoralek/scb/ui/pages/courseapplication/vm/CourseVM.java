@@ -230,7 +230,7 @@ public class CourseVM extends CourseAbstractVM {
 		}
 //		String targetPage = WebPages.PARTICIPANT_DETAIL.getUrl();
 //		WebPages fromPage = WebPages.COURSE_DETAIL;
-//		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
+//		WebUtils.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
 	}
 
 	@NotifyChange("*")

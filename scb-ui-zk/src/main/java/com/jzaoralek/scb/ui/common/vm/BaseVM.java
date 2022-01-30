@@ -128,6 +128,7 @@ public class BaseVM {
 	
 	@Command
     public void logoutCmd() {
+		//zde neni mozne pouzit WebUtils.sendRedirect
     	Executions.sendRedirect("/logout");
     }
 
@@ -269,9 +270,9 @@ public class BaseVM {
 	@Command
     public void backCmd() {
 		if (StringUtils.hasText(this.returnToUrl)) {
-			Executions.sendRedirect(this.returnToUrl);
+			WebUtils.sendRedirect(this.returnToUrl);
 		} else if (StringUtils.hasText(this.returnToPage)) {
-			Executions.sendRedirect(this.returnToPage);
+			WebUtils.sendRedirect(this.returnToPage);
 		}
 	}
 
@@ -422,7 +423,7 @@ public class BaseVM {
 		}
 		
 		WebUtils.setSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM, recipientList);
-		Executions.getCurrent().sendRedirect(WebPages.MESSAGE.getUrl(), "_blank");
+		WebUtils.sendRedirect(WebPages.MESSAGE.getUrl(), "_blank");
 	}
 	
 	protected CourseApplicationFileConfig getByType(List<CourseApplicationFileConfig> cafcList, CourseApplicationFileType type) {

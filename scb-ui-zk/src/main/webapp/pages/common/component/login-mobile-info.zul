@@ -1,8 +1,8 @@
 <div sclass="login-mobile-info">
 	<div sclass="clear"></div>
 	<div sclass="frame">
-		<a label="Sportologic" sclass="brand" href="/"/>
+		<a label="Sportologic" sclass="brand" href="${common:custCtxUri('/')}"/>
 		<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
-		<button label="Přihláška" href="/pages/public/prihlaska.zul" sclass="lpp" width="275px" />
+		<button label="Přihláška" href="${common:custCtxUri('/pages/public/prihlaska.zul')}" sclass="lpp" width="275px" />
 	</div>
 </div>

@@ -8,6 +8,10 @@
 <?xel-method prefix="common" name="isUserLogged"
 	class="com.jzaoralek.scb.dataservice.utils.SecurityUtils"
 	signature="com.jzaoralek.scb.dataservice.utils.SecurityUtils isUserLogged()"?>
+
+<?xel-method prefix="common" name="custCtxUri"
+     class="com.jzaoralek.scb.ui.common.utils.WebUtils"
+     signature="com.jzaoralek.scb.ui.common.utils.WebUtils buildCustCtxUri(java.lang.String)"?>
 	
 <zk>
 	<borderlayout sclass="scb-bl-main" apply="com.jzaoralek.scb.ui.common.template.TemplateComposer">

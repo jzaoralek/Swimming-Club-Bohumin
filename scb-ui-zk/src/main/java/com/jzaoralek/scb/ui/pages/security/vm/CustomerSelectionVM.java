@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.CustomerConfig;
 import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
 import com.jzaoralek.scb.ui.common.WebPages;
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
 /**
@@ -39,7 +39,7 @@ public class CustomerSelectionVM extends BaseVM {
 	 */
 	@Command
 	public void customerSelectCmd() {
-		Executions.sendRedirect("/" + customerSelected.getCustId() + WebPages.LOGIN_PAGE.getUrl());
+		WebUtils.sendRedirect("/" + customerSelected.getCustId() + WebPages.LOGIN_PAGE.getUrl());
 	}
 	
 	public List<CustomerConfig> getCustomerList() {
