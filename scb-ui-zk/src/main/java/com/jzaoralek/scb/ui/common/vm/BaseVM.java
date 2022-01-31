@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
@@ -34,8 +33,8 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
-import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig.CourseApplicationFileType;
+import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
@@ -80,7 +79,7 @@ public class BaseVM {
 	private final List<Listitem> roleList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(ScbUserRole.class));
 	private final List<Listitem> roleListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(ScbUserRole.class));
 	
-	protected static String orgName;
+	protected String orgName;
 	protected String orgEmail;
 	protected String orgPhone;
 	protected String welcomeInfo;
@@ -115,15 +114,10 @@ public class BaseVM {
 		this.existingUsernameValidator = new ExistingUsernameValidator(scbUserService);
 		this.birthNumberValidator = new BirthNumberValidator(configurationService);
 		this.usernameValidator = new UsernameValidator(scbUserService);
-		
-		// naplneni cashovanych hodnot z konfigurace
-		if (configurationService != null) {
-			orgName = ConfigUtil.getOrgName(configurationService);			
-		}
 	}
 
 	public static String getOrgNameStatic() {
-		return orgName;
+		return Labels.getLabel("txt.ui.appName");
 	}
 	
 	@Command
