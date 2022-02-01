@@ -140,7 +140,9 @@ public abstract class CourseAbstractVM extends BaseContextVM {
 	@Command
 	public void closeCopyPopupCmd() {
 		this.courseCopyPopup.close();
-		this.courseListCopyPopup.close();
+		if (this.courseListCopyPopup != null) {
+			this.courseListCopyPopup.close();			
+		}
 	}
 	
 	protected void deleteCore(Course course, boolean redirectAfterAction, Runnable postDelete) {
