@@ -1,7 +1,9 @@
 package com.jzaoralek.scb.ui.common.filter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,13 +41,15 @@ public class CustomerContextFilter implements Filter {
 	private static final Logger LOG = LoggerFactory.getLogger(CustomerContextFilter.class);
 	
 	private static final String SLASH = "/";
+	private static final String PAGES_EXCLUDE_URL = "/pages";
+	private static final String PAGES_URL_SECURED = "/pages/secured/";
 	private static final String CUST_URI_ATTR = WebConstants.CUST_URI_ATTR;
 	private static final String CUST_URI_COOKIE = WebConstants.CUST_URI_COOKIE;
 	
 	@Autowired
 	private AdmCustConfigService admCustConfigService;
 	
-	private List<String> excludedUrls;
+	private Set<String> excludedUrls;
 	
 	/** URL to redirect in case of root uri. 
 	 *  Used for sportologic.cz for redirect to sportologic.cz/web. */
@@ -59,7 +63,8 @@ public class CustomerContextFilter implements Filter {
 		
 		// exclude urls
 		String excludePattern = filterConfig.getInitParameter("excludedUrls");
-	    excludedUrls = Arrays.asList(excludePattern.split(","));
+	    excludedUrls = new HashSet<>(); ;
+	    excludedUrls.addAll(Arrays.asList(excludePattern.split(",")));
 	}
 
 	@Override
@@ -73,6 +78,27 @@ public class CustomerContextFilter implements Filter {
 		String[] servletPathPartArr = servletPath.split(SLASH);
 		String servletPathFirstPart = null;
 		
+		/*
+		 * 1. Verejne stranky musi mit identifikator klubu v linku. Buď striktně nebo zobrazit výběr klubu.
+		 * 2. samostatna vetev pro prihlaseneho a neprihlaseneho uzivatele, specificky pristupivat k /pages
+		 * 3. zobrazovat pro nepřihlášeného uživatele, pokud v url chybí context klubu, tzn. pokud začíná na pages
+		 * 4. odebrat z excludedUrl /pages a pote samostatná větev pro nepřihlášeného a přhlášeného uživatele
+		 * 5. pokud je prázdný dořešit redirect
+		 * 
+		 * TODO
+		 * - linky na verejne stranky s prefixem
+		 * - z prímého linku na neverejnou stránku odebrat customer context, pokud není uživatel přihlášen
+		 * - link na secured page prejde na url neobsahujici context http://localhost:7002/pages/secured/ADMIN/message.zul
+		 */
+		
+		if (SecurityUtils.isUserLogged()) {
+			// pro prihlaseneho uzivatele pridani /pages do excludeUrls
+			excludedUrls.add(PAGES_EXCLUDE_URL);
+		}
+		
+		// ********************************************
+		// Preskoceni excludeUrls
+		// ********************************************
 		if (servletPathPartArr.length > 0) {
 			servletPathFirstPart = SLASH + servletPathPartArr[1];
 			if(isExcludedUrl(servletPathFirstPart)) {
@@ -82,30 +108,40 @@ public class CustomerContextFilter implements Filter {
 			}			
 		}
 		
-		// ziskat customerUri ze session
-		String customerUriSessionOrCookie = (String)WebUtils.getSessAtribute(CUST_URI_ATTR, req);
-		// pokud customerUri není v session získat z cookies
-		if (!StringUtils.hasText(customerUriSessionOrCookie)) {
+		// ********************************************
+		// Ziskani customerCtx ze session nebo cookies
+		// ********************************************
+		String customerUriSessionOrCookie = null;
+		if (SecurityUtils.isUserLogged()) {
+			// ziskat customerUri ze session
+			customerUriSessionOrCookie = (String)WebUtils.getSessAtribute(CUST_URI_ATTR, req);
+			// pokud customerUri není v session získat z cookies
+			if (!StringUtils.hasText(customerUriSessionOrCookie)) {
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Customer URI stored in session is NULL, trying to get from cookie.");
+				}
+				String cookie = WebUtils.readCookieValue(CUST_URI_COOKIE, req);
+				if (StringUtils.hasText(cookie)) {
+					customerUriSessionOrCookie = cookie;
+				}
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Customer URI get from cookie: {}", customerUriSessionOrCookie);
+				}
+				// uložit do session
+				WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriSessionOrCookie, req);
+			}
+			
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Customer URI stored in session is NULL, trying to get from cookie.");
+				LOG.debug("Customer URI stored in session|cookie: {}", customerUriSessionOrCookie);
 			}
-			String cookie = WebUtils.readCookieValue(CUST_URI_COOKIE, req);
-			if (StringUtils.hasText(cookie)) {
-				customerUriSessionOrCookie = cookie;
-			}
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Customer URI get from cookie: {}", customerUriSessionOrCookie);
-			}
-			// uložit do session
-			WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriSessionOrCookie, req);
-		}
-		
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Customer URI stored in session|cookie: {}", customerUriSessionOrCookie);
+			
 		}
 		
 		HttpServletResponse resp = (HttpServletResponse)response;
 		
+		// ********************************************
+		// Url bez customerCtx
+		// ********************************************
 		if (servletPathPartArr.length == 0 || SLASH.equals(servletPath)) {
 			// url without customerUri, no need to check customer url part
 			if (LOG.isDebugEnabled()) {
@@ -177,6 +213,7 @@ public class CustomerContextFilter implements Filter {
 		}
 		
 		String uriToRedirect = null;
+		// prihlaseny uzivatel
 		// remove customer uri and redirect
 		if (!SLASH.equals(servletPathFirstPart)) {
 			uriToRedirect = servletPath.replace(servletPathFirstPart, "");
@@ -190,7 +227,14 @@ public class CustomerContextFilter implements Filter {
 			uriToRedirect = WebPages.LOGIN_PAGE.getUrl();
 		} 
 		LOG.info("Redirect to {}", uriToRedirect);
-		resp.sendRedirect(uriToRedirect);
+		
+		if (SecurityUtils.isUserLogged() || uriToRedirect.startsWith(PAGES_URL_SECURED)) {
+			// prihlaseny uzivatel nebo pristup k secured page pro neprihlaseneho uzivatele
+			resp.sendRedirect(uriToRedirect);
+		} else {
+			// neprihlaseny uziivatel - ponechani url s customer context
+			request.getRequestDispatcher(uriToRedirect).forward(request, response);
+		}
 	}
 	
 	/**
