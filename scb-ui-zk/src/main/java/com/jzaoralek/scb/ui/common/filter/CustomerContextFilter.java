@@ -39,6 +39,7 @@ public class CustomerContextFilter implements Filter {
 	private static final Logger LOG = LoggerFactory.getLogger(CustomerContextFilter.class);
 	
 	private static final String SLASH = "/";
+	private static final String PAGES_URL_SECURED = "/pages/secured/";
 	private static final String CUST_URI_ATTR = WebConstants.CUST_URI_ATTR;
 	private static final String CUST_URI_COOKIE = WebConstants.CUST_URI_COOKIE;
 	
@@ -73,6 +74,9 @@ public class CustomerContextFilter implements Filter {
 		String[] servletPathPartArr = servletPath.split(SLASH);
 		String servletPathFirstPart = null;
 		
+		// *************************************************
+		// Skip for non url resources like /zkau, /resources etc.
+		// *************************************************
 		if (servletPathPartArr.length > 0) {
 			servletPathFirstPart = SLASH + servletPathPartArr[1];
 			if(isExcludedUrl(servletPathFirstPart)) {
@@ -82,7 +86,9 @@ public class CustomerContextFilter implements Filter {
 			}			
 		}
 		
-		// ziskat customerUri ze session
+		// *************************************************
+		// Get customerCtx from session or cookie
+		// *************************************************
 		String customerUriSessionOrCookie = (String)WebUtils.getSessAtribute(CUST_URI_ATTR, req);
 		// pokud customerUri není v session získat z cookies
 		if (!StringUtils.hasText(customerUriSessionOrCookie)) {
@@ -106,10 +112,13 @@ public class CustomerContextFilter implements Filter {
 		
 		HttpServletResponse resp = (HttpServletResponse)response;
 		
+		// *************************************************
+		// Check customerCtx empty -> root redirect
+		// *************************************************
 		if (servletPathPartArr.length == 0 || SLASH.equals(servletPath)) {
 			// url without customerUri, no need to check customer url part
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Empty servlet path, customer URI stored in session|cookie: {}.", customerUriSessionOrCookie);
+				LOG.debug("Empty servlet path, check setting of rootRedirect.");
 			}
 			
 			if (StringUtils.hasText(rootRedirect)) {
@@ -118,7 +127,7 @@ public class CustomerContextFilter implements Filter {
 				resp.sendRedirect(rootRedirect);
 				return;
 			} else {
-				LOG.warn("RootRedirect not null, redirect to 403 FORBIDDEN.");
+				LOG.warn("RootRedirect null, redirect to 403 FORBIDDEN.");
 				resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 				return;
 			}
@@ -137,7 +146,9 @@ public class CustomerContextFilter implements Filter {
 			return;
 		}
 
-		// Pokud customerUri null nebo stejný jako v session -> redirect na url bez customer, nic neresit
+		// *************************************************
+		// Setting customerCtx from URL to session and cookie
+		// *************************************************
 		if (StringUtils.hasText(customerUriContext) && !customerUriContext.equals(customerUriSessionOrCookie)) {
 			// customer url jiny nez v session -> kontrola zda-li je customer povolen
 			if (SecurityUtils.isUserLogged()) {
@@ -169,13 +180,23 @@ public class CustomerContextFilter implements Filter {
 			}
 		}
 		
+		// *************************************************
+		// Redirect/forward to dest page
+		// *************************************************
 		String uriToRedirect = null;
-		// remove customer uri and redirect
 		if (!SLASH.equals(servletPathFirstPart)) {
+			// remove customer uri
 			uriToRedirect = servletPath.replace(servletPathFirstPart, "");
 			LOG.info("Remove customer URI: {} from servlet path: {}.", servletPathFirstPart, servletPath);			
 		} else {
 			uriToRedirect = servletPathFirstPart;
+		}
+		
+		if (!SecurityUtils.isUserLogged() 
+				&& uriToRedirect.startsWith(PAGES_URL_SECURED)) {
+			/* Access to secured page by anonymous user, redirect to default page.
+			 * TODO: potreba koncepcne doresit at je stranka zapamatovana. */
+			resp.sendRedirect(servletPathFirstPart + WebPages.LOGIN_PAGE.getUrl());
 		}
 		
 		if (!StringUtils.hasText(uriToRedirect) || SLASH.equals(uriToRedirect)) {
@@ -183,7 +204,7 @@ public class CustomerContextFilter implements Filter {
 			uriToRedirect = WebPages.LOGIN_PAGE.getUrl();
 		} 
 		LOG.info("Redirect to {}", uriToRedirect);
-		// resp.sendRedirect(uriToRedirect);
+		// Forward to destination page, customerCtx remains in URL.
 		req.getRequestDispatcher(uriToRedirect).forward(request, response);
 	}
 
