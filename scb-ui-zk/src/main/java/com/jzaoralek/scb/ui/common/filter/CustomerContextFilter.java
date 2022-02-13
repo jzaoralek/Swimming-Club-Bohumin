@@ -115,7 +115,11 @@ public class CustomerContextFilter implements Filter {
 		// *************************************************
 		// Check customerCtx empty -> root redirect
 		// *************************************************
-		if (servletPathPartArr.length == 0 || SLASH.equals(servletPath)) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("servletPath: {}", servletPath);
+			LOG.debug("servletPathPartArr.length: {}", servletPathPartArr.length);
+		}
+		if (servletPathPartArr.length == 0 || SLASH.equals(servletPath) || !StringUtils.hasText(servletPathPartArr[1])) {
 			// url without customerUri, no need to check customer url part
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Empty servlet path, check setting of rootRedirect.");
