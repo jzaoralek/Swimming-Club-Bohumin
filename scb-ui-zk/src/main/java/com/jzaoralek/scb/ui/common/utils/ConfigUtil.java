@@ -1,8 +1,13 @@
 package com.jzaoralek.scb.ui.common.utils;
 
+import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigName;
 import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
@@ -15,77 +20,77 @@ import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 public final class ConfigUtil {
 	
 	/** Config names cached in session. */
-//	private static EnumSet<ConfigName> CACHED_CONFIG_NAMES = EnumSet.of(ConfigName.ORGANIZATION_NAME,
-//																		ConfigName.ORGANIZATION_EMAIl,
-//																		ConfigName.ORGANIZATION_PHONE,
-//																		ConfigName.WELCOME_INFO,
-//																		ConfigName.PAYMENTS_AVAILABLE);
+	private static EnumSet<ConfigName> CACHED_CONFIG_NAMES = EnumSet.of(ConfigName.ORGANIZATION_NAME,
+																		ConfigName.ORGANIZATION_EMAIl,
+																		ConfigName.ORGANIZATION_PHONE,
+																		ConfigName.WELCOME_INFO,
+																		ConfigName.PAYMENTS_AVAILABLE);
 
 	private ConfigUtil() {}
 	
 	public static String getOrgName(ConfigurationService configurationService) {
-//		String orgNameSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_NAME.name());
-//		if (StringUtils.hasText(orgNameSession)) {
-//			return orgNameSession;
-//		} else {
-//			String value = configurationService.getOrgName();
-//			addToSessionConfigCache(ConfigName.ORGANIZATION_NAME, value); 
-//			return value;
-//		}
+		String orgNameSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_NAME.name());
+		if (StringUtils.hasText(orgNameSession)) {
+			return orgNameSession;
+		} else {
+			String value = configurationService.getOrgName();
+			addToSessionConfigCache(ConfigName.ORGANIZATION_NAME, value); 
+			return value;
+		}
 		
-		return configurationService.getOrgName();
+//		return configurationService.getOrgName();
 	}
 	
 	public static String getOrgEmail(ConfigurationService configurationService) {
-//		String orgEmailSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_EMAIl.name());
-//		if (StringUtils.hasText(orgEmailSession)) {
-//			return orgEmailSession;
-//		} else {
-//			String value = configurationService.getOrgEmail();
-//			addToSessionConfigCache(ConfigName.ORGANIZATION_EMAIl, value);
-//			return value;
-//		}
+		String orgEmailSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_EMAIl.name());
+		if (StringUtils.hasText(orgEmailSession)) {
+			return orgEmailSession;
+		} else {
+			String value = configurationService.getOrgEmail();
+			addToSessionConfigCache(ConfigName.ORGANIZATION_EMAIl, value);
+			return value;
+		}
 		
-		return configurationService.getOrgEmail();
+//		return configurationService.getOrgEmail();
 	}
 	
 	public static String getOrgPhone(ConfigurationService configurationService) {
-//		String orgPhoneSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_PHONE.name());
-//		if (StringUtils.hasText(orgPhoneSession)) {
-//			return orgPhoneSession;
-//		} else {
-//			String value = configurationService.getOrgPhone();
-//			addToSessionConfigCache(ConfigName.ORGANIZATION_PHONE, value);
-//			return value;
-//		}
+		String orgPhoneSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_PHONE.name());
+		if (StringUtils.hasText(orgPhoneSession)) {
+			return orgPhoneSession;
+		} else {
+			String value = configurationService.getOrgPhone();
+			addToSessionConfigCache(ConfigName.ORGANIZATION_PHONE, value);
+			return value;
+		}
 		
-		return configurationService.getOrgPhone();
+//		return configurationService.getOrgPhone();
 	}
 	
 	public static String getWelcomeInfo(ConfigurationService configurationService) {
-//		String welcomeInfoSession = (String)WebUtils.getSessAtribute(ConfigName.WELCOME_INFO.name());
-//		if (StringUtils.hasText(welcomeInfoSession)) {
-//			return welcomeInfoSession;
-//		} else {
-//			String value = configurationService.getWelcomeInfo();
-//			addToSessionConfigCache(ConfigName.WELCOME_INFO, value);
-//			return value;
-//		}
+		String welcomeInfoSession = (String)WebUtils.getSessAtribute(ConfigName.WELCOME_INFO.name());
+		if (StringUtils.hasText(welcomeInfoSession)) {
+			return welcomeInfoSession;
+		} else {
+			String value = configurationService.getWelcomeInfo();
+			addToSessionConfigCache(ConfigName.WELCOME_INFO, value);
+			return value;
+		}
 		
-		return configurationService.getWelcomeInfo();
+//		return configurationService.getWelcomeInfo();
 	}
 	
 	public static boolean isPaymentsAvailable(ConfigurationService configurationService) {
-//		Boolean paymentsAvailableSession = (Boolean)WebUtils.getSessAtribute(ConfigName.PAYMENTS_AVAILABLE.name());
-//		if (paymentsAvailableSession != null) {
-//			return paymentsAvailableSession;
-//		} else {
-//			Boolean value = configurationService.isPaymentsAvailable();
-//			addToSessionConfigCache(ConfigName.PAYMENTS_AVAILABLE, value); 
-//			return value;
-//		}
+		Boolean paymentsAvailableSession = (Boolean)WebUtils.getSessAtribute(ConfigName.PAYMENTS_AVAILABLE.name());
+		if (paymentsAvailableSession != null) {
+			return paymentsAvailableSession;
+		} else {
+			Boolean value = configurationService.isPaymentsAvailable();
+			addToSessionConfigCache(ConfigName.PAYMENTS_AVAILABLE, value); 
+			return value;
+		}
 		
-		return configurationService.isPaymentsAvailable();
+//		return configurationService.isPaymentsAvailable();
 	}
 	
 	/* TODO: OneApp, vycistit po pridani noveho customera, 
@@ -104,9 +109,10 @@ public final class ConfigUtil {
 	/**
 	 * Clearing all configes cached in session.
 	 */
-//	public static void clearCachedCfgs() {
-//		CACHED_CONFIG_NAMES.forEach(i -> clearSessionConfigCache(i.name()));
-//	}
+	public static void clearCachedCfgs(HttpSession session) {
+		Objects.requireNonNull(session, "session is null");
+		CACHED_CONFIG_NAMES.forEach(i -> session.removeAttribute(i.name()));
+	}
 	
 	public static void addToSessionConfigCache(ConfigName configName, Object value) {
 		WebUtils.setSessAtribute(configName.name(), value);

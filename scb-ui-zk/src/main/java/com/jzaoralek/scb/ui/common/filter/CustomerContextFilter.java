@@ -171,7 +171,8 @@ public class CustomerContextFilter implements Filter {
 					LOG.debug("Storing customer URI to session and cookie: {}.", customerUriContext);
 				}
 				
-				// TODO: OneApp, doresit vycisteni config caches v ConfigUtil
+				// clear config cache, contains OrgName, OrgEmail etc.
+				ConfigUtil.clearCachedCfgs(req.getSession());
 				
 				// uložit do session a cookie
 				WebUtils.setSessAtribute(CUST_URI_ATTR, customerUriContext, req);
