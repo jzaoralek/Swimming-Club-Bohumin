@@ -1,20 +1,20 @@
 package com.sportologic.common.model.domain;
 
+import com.sportologic.common.model.converter.UUIDConverter;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 @Entity
 public class CustomerConfig implements IdentEntity {
 
-	@Id
 	@GeneratedValue
+	@Convert(converter = UUIDConverter.class)
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
+	@Id
 	private String custId;
 	private String custName;
 	private boolean custDefault;
@@ -89,4 +89,5 @@ public class CustomerConfig implements IdentEntity {
 				+ ", custName=" + custName + ", custDefault=" + custDefault + ", dbUrl=" + dbUrl + ", dbUser=" + dbUser
 				+ ", dbPassword=" + dbPassword + "]";
 	}
+
 }

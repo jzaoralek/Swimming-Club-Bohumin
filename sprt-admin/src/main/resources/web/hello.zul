@@ -12,7 +12,8 @@
             </listhead>
             <template name="model">
                 <listitem>
-                    <listcell label="@bind(each.custName)"></listcell>
+                    <listcell label="@bind(each.custName)" />
+                    <listcell label="@load(each.uuid)" />
                 </listitem>
             </template>
         </listbox>
