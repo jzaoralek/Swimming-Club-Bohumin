@@ -17,5 +17,9 @@
                 </listitem>
             </template>
         </listbox>
+
+        <textbox value="@bind(vm.custName)" />
+        <button label="Vytvořit" onClick="@command('createCustConfigCmd')" />
+
     </window>
 </zk>

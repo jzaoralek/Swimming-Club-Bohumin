@@ -1,7 +1,7 @@
 package com.sportologic.common.model.domain;
 
 import com.sportologic.common.model.converter.UUIDConverter;
-
+import com.sportologic.common.model.converter.BooleanConverter;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
@@ -17,6 +17,7 @@ public class CustomerConfig implements IdentEntity {
 	@Id
 	private String custId;
 	private String custName;
+	@Convert(converter = BooleanConverter.class)
 	private boolean custDefault;
 	private String dbUrl;
 	private String dbUser;
