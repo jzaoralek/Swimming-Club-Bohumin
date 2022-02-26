@@ -49,7 +49,9 @@ public class CustomerConfigVM {
 
         customerConfigRepository.save(custConfig);
 
-        customerConfigRepository.create_db(custNameLowerCase);
+        // TODO: generovat
+        String usrPwd = "Password1*";
+        customerConfigRepository.create_db_user(custNameLowerCase, custNameLowerCase, usrPwd);
     }
 
     public List<CustomerConfig> getCustomerConfigList() {

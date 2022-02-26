@@ -22,6 +22,12 @@ public interface CustomerConfigRepository extends JpaRepository<CustomerConfig, 
             nativeQuery = true) */
     List<CustomerConfig> findAllCustom();
 
+    /**
+     * Create database and user with privileges.
+     * @param dbName
+     * @param usrName
+     * @param usrPwd
+     */
     @Procedure
-    void create_db(String dbName);
+    void create_db_user(String dbName, String usrName, String usrPwd);
 }
