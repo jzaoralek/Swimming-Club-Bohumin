@@ -1,6 +1,9 @@
 <zk>
-    <window title="Hello ZK - Spring Boot!" border="normal"
-            viewModel="@id('vm') @init('com.sportologic.sprtadmin.vm.CustomerConfigVM')" >
+    <window apply="org.zkoss.bind.BindComposer"
+            title="Hello ZK - Spring Boot!"
+            border="normal"
+            viewModel="@id('vm') @init('com.sportologic.sprtadmin.vm.CustomerConfigVM')"
+            validationMessages="@id('vmsgs')" >
         You are using ZK version <label value="${session.webApp.version}"/>
 
         <listbox height="160px"
@@ -18,8 +21,11 @@
             </template>
         </listbox>
 
-        <textbox value="@bind(vm.custName)" />
-        <button label="Vytvořit" onClick="@command('createCustConfigCmd')" />
-
+        <vlayout>
+            <textbox id="custName" value="@bind(vm.custName) @save(vm.custName, before='createCustConfigCmd')  @validator(vm.uniqueCustomerValidator)" />
+            <label id="m2" value="@bind(vmsgs[self.previousSibling])"/>
+            <label id="m1" value="@bind(vmsgs[custName])"/>
+            <button label="Vytvořit" onClick="@command('createCustConfigCmd')" />
+        </vlayout>
     </window>
 </zk>

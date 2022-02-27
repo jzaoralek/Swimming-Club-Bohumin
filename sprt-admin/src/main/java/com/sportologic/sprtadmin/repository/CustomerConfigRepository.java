@@ -30,4 +30,11 @@ public interface CustomerConfigRepository extends JpaRepository<CustomerConfig, 
      */
     @Procedure
     void create_db_user(String dbName, String usrName, String usrPwd);
+
+    /**
+     * Find customer by name.
+     * @param custName
+     * @return
+     */
+    CustomerConfig findByCustName(String custName);
 }
