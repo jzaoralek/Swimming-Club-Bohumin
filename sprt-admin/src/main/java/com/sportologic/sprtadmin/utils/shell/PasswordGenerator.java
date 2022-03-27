@@ -1,4 +1,4 @@
-package com.sportologic.sprtadmin.utils;
+package com.sportologic.sprtadmin.utils.shell;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
