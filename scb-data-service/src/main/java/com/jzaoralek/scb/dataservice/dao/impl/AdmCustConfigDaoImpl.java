@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jzaoralek.scb.dataservice.dao.AdmCustConfigDao;
 import com.jzaoralek.scb.dataservice.dao.BaseJdbcDao;
-import com.jzaoralek.scb.dataservice.domain.CustomerConfig;
+import com.sportologic.common.model.domain.CustomerConfig;
 
 @Repository
 public class AdmCustConfigDaoImpl extends BaseJdbcDao implements AdmCustConfigDao {

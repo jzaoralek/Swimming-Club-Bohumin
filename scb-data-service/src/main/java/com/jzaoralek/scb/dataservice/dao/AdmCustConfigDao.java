@@ -3,7 +3,8 @@ package com.jzaoralek.scb.dataservice.dao;
 import java.util.List;
 import java.util.UUID;
 
-import com.jzaoralek.scb.dataservice.domain.CustomerConfig;
+import com.sportologic.common.model.domain.CustomerConfig;
+
 
 public interface AdmCustConfigDao {
 

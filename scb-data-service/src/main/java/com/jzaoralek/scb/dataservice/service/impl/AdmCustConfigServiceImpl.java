@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jzaoralek.scb.dataservice.dao.AdmCustConfigDao;
-import com.jzaoralek.scb.dataservice.domain.CustomerConfig;
+import com.sportologic.common.model.domain.CustomerConfig;
 import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
 
 @Service("admCustConfigService")

@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
+import com.sportologic.common.model.domain.IdentEntity;
 
 public class CourseApplication implements IdentEntity {
 

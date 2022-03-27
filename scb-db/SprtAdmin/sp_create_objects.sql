@@ -1,0 +1,12 @@
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `exec_sql`;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `exec_sql`(IN  sql_in LONGTEXT)
+BEGIN
+    DECLARE SQLStmtDb LONGTEXT;
+    SET @SQLStmtDb = sql_in;
+	PREPARE StmtDb FROM @SQLStmtDb;
+	EXECUTE StmtDb;
+	DEALLOCATE PREPARE StmtDb;
+    
+END$$
+DELIMITER ;

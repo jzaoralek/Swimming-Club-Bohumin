@@ -1,15 +1,23 @@
-package com.jzaoralek.scb.dataservice.domain;
+package com.sportologic.common.model.domain;
 
+import com.sportologic.common.model.converter.UUIDConverter;
+import com.sportologic.common.model.converter.BooleanConverter;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
+@Entity
 public class CustomerConfig implements IdentEntity {
 
+	@GeneratedValue
+	@Convert(converter = UUIDConverter.class)
 	private UUID uuid;
 	private String modifBy;
 	private Date modifAt;
+	@Id
 	private String custId;
 	private String custName;
+	@Convert(converter = BooleanConverter.class)
 	private boolean custDefault;
 	private String dbUrl;
 	private String dbUser;
@@ -82,4 +90,5 @@ public class CustomerConfig implements IdentEntity {
 				+ ", custName=" + custName + ", custDefault=" + custDefault + ", dbUrl=" + dbUrl + ", dbUser=" + dbUser
 				+ ", dbPassword=" + dbPassword + "]";
 	}
+
 }

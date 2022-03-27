@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
+import com.sportologic.common.model.domain.IdentEntity;
+
 public class ScbUser implements IdentEntity {
 
 	/**

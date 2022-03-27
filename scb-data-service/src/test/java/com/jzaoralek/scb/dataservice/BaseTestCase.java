@@ -23,7 +23,7 @@ import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseApplDynAttrConfig;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
-import com.jzaoralek.scb.dataservice.domain.IdentEntity;
+import com.sportologic.common.model.domain.IdentEntity;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.Lesson.DayOfWeek;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;

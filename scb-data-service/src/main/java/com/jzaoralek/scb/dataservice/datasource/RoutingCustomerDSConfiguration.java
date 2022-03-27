@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import com.jzaoralek.scb.dataservice.dao.AdmCustConfigDao;
-import com.jzaoralek.scb.dataservice.domain.CustomerConfig;
+import com.sportologic.common.model.domain.CustomerConfig;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 @Configuration

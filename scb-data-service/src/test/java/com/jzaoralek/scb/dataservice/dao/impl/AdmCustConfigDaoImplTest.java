@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jzaoralek.scb.dataservice.BaseAdminTestCase;
 import com.jzaoralek.scb.dataservice.dao.AdmCustConfigDao;
-import com.jzaoralek.scb.dataservice.domain.CustomerConfig;
+import com.sportologic.common.model.domain.CustomerConfig;
 
 public class AdmCustConfigDaoImplTest extends BaseAdminTestCase {
 
