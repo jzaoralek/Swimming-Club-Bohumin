@@ -520,6 +520,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 			headerArray[lh.getChildren().size()+5] = Labels.getLabel("txt.ui.common.houseNo");
 			headerArray[lh.getChildren().size()+6] = Labels.getLabel("txt.ui.common.city");
 			headerArray[lh.getChildren().size()+7] = Labels.getLabel("txt.ui.common.zipCode");
+			headerArray[lh.getChildren().size()+8] = Labels.getLabel("txt.ui.common.birthNumber");
 			if (dynAttrPresent) {
 				// add dynamic attributes headers
 				addDynAttrCols(dynAttrConfigList, headerArray, lh.getChildren().size()+8);
@@ -562,7 +563,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 					addDynAttrValues(row, 16, item.getCourseParticipant(), dateFormat);
 					data.put(String.valueOf(i+1), row);
 				} else {
-					row = new Object[13 + (CollectionUtils.isEmpty(item.getCourseParticipant().getDynAttrList()) ? 0 : item.getCourseParticipant().getDynAttrList().size())];
+					row = new Object[14 + (CollectionUtils.isEmpty(item.getCourseParticipant().getDynAttrList()) ? 0 : item.getCourseParticipant().getDynAttrList().size())];
 					row [0] = item.getCourseParticipant().getContact().getCompleteName();
 					row [1] = item.getCourseParticipant().getCourseName();
 					row [2] = buildPaymentNotifiedInfo(item.getCourseParticipant());
@@ -576,8 +577,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 					row [10] = getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getHouseNumber());
 					row [11] = getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getCity());
 					row [12] = getNotNullStringEmptyChar(item.getCourseParticipant().getContact().getZipCode());
+					row [13] = getNotNullStringEmptyChar(item.getCourseParticipant().getPersonalNo());
 					// dynamic attributes
-					addDynAttrValues(row, 13, item.getCourseParticipant(), dateFormat);
+					addDynAttrValues(row, 14, item.getCourseParticipant(), dateFormat);
 					data.put(String.valueOf(i+1), row);
 				}
 			}
