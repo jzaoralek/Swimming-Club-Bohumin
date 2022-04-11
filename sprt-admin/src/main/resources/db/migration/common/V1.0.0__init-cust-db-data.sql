@@ -66,5 +66,7 @@ VALUES ('82bb29f4-8234-11e6-ae22-56b6b6499611', 'SWIMMING_STYLE', 'Znak', '',  n
 -- ADMIN USER
 INSERT INTO contact (uuid, firstname, surname, street, land_registry_number, house_number, city, zip_code, email1, email2, phone1, phone2, modif_at, modif_by) 
 VALUES ('62225052-4dd2-4150-91c3-8ebf26fd1571', 'Adrian', 'Kuder', null, null, null, 'Bohumín', null, 'kuder.a@zscsa.cz', null, '604920452', null, now(), 'SYSTEM');
+INSERT INTO user (uuid, username, password, password_generated, role, contact_uuid, modif_at, modif_by)
+VALUES ('56f26d38-e100-4505-ac74-ec65bf6869aa', 'a.kuder', 'popov', '0', 'ADMIN', '62225052-4dd2-4150-91c3-8ebf26fd1571', now(), 'SYSTEM');
 
 COMMIT;

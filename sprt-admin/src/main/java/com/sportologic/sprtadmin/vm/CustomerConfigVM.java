@@ -7,6 +7,8 @@ import com.sportologic.sprtadmin.utils.StreamGobbler;
 import com.sportologic.sprtadmin.utils.shell.PasswordGenerator;
 import com.sportologic.sprtadmin.utils.StringUtils;
 import com.sportologic.sprtadmin.validator.UniqueCustomerValidator;
+import com.sportologic.sprtadmin.vo.DBCredentials;
+import com.sportologic.sprtadmin.vo.DBInitData;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +51,31 @@ public class CustomerConfigVM {
     private List<CustomerConfig> customerConfigList;
     private String custName;
     private String dbBaseUrl;
+    private DBInitData dbInitData;
 
     @Init
     public void init() {
         customerConfigList = customerConfigRepository.findAllCustom();
         dbBaseUrl = configService.getDbBaseUrl();
         uniqueCustomerValidator = new UniqueCustomerValidator(customerConfigRepository);
-        System.out.println(getCustTablesInitSql("klub4"));
+        initDbInitFakeData();
+    }
+
+    private void initDbInitFakeData() {
+        dbInitData = new DBInitData();
+        dbInitData.setAdmUsername("a.kuder");
+        dbInitData.setAdmPassword("popov");
+        dbInitData.setAdmContactFirstname("Adrian");
+        dbInitData.setAdmContactSurname("Kuder");
+        dbInitData.setAdmContactEmail("a.kuder@seznam.cz");
+        dbInitData.setAdmContactPhone("602001002");
+        dbInitData.setConfigCaYear("2022/2023");
+        dbInitData.setConfigOrgPhone("602001002");
+        dbInitData.setConfigOrgEmail("klubmail@seznam.cz");
+        dbInitData.setConfigContactPerson("Adrian");
+        dbInitData.setConfigCourseApplicationTitle("Přihláška");
+        dbInitData.setConfigSmtpUser("klub@sportologic.cz");
+        dbInitData.setConfigSmptPwd("heslo");
     }
 
     @Command
@@ -64,7 +84,7 @@ public class CustomerConfigVM {
         String customerId = StringUtils.buildCustId(custName);
         custConfig.setUuid(UUID.randomUUID());
         custConfig.setCustId(customerId);
-        custConfig.setCustDefault(false);
+        custConfig.setCustDefault(true);
         custConfig.setCustName(custName);
         custConfig.setDbUrl(dbBaseUrl + customerId);
         custConfig.setDbUser(customerId);
@@ -78,16 +98,24 @@ public class CustomerConfigVM {
                                                 custConfig.getDbUser(),
                                                 custConfig.getDbPassword());
 
-        createDbObjects(custConfig.getDbUser(), custConfig.getDbPassword(), custConfig.getCustId());
-        createDbData(custConfig.getDbUser(), custConfig.getDbPassword(), custConfig.getCustId());
+        DBCredentials dbCred = new DBCredentials(custConfig.getDbUser(),
+                                                custConfig.getDbPassword(),
+                                                custConfig.getCustId());
+
+        createDbObjects(dbCred);
+
+        dbInitData.setConfigOrgName(custName);
+        dbInitData.setConfigWelcomeInfo("Vítejte");
+        dbInitData.setConfigBaseUrl("https://localhost:8080/" + customerId);
+        createDbData(dbCred, dbInitData);
         // System.out.println(getCustTablesInitSql("klub4"));
     }
 
-    public void createDbObjects(String user, String password, String schema) {
+    public void createDbObjects(DBCredentials dbCred) {
         try {
             StringBuilder cmdSb = new StringBuilder(DB_SCRIPT_SRC_FOLDER);
             cmdSb.append(DB_SCRIPT_CREATE_OBJECTS);
-            cmdSb.append(" " + user + " " + password + " " + schema);
+            cmdSb.append(" " + dbCred.getUsername() + " " + dbCred.getPassword() + " " + dbCred.getSchema());
             cmdSb.append(" " + DB_SCRIPT_SRC_FOLDER);
 
             String cmd = cmdSb.toString();
@@ -106,12 +134,28 @@ public class CustomerConfigVM {
         }
     }
 
-    public void createDbData(String user, String password, String schema) {
+    public void createDbData(DBCredentials dbCred, DBInitData dbInitData) {
         try {
             StringBuilder cmdSb = new StringBuilder(DB_SCRIPT_SRC_FOLDER);
             cmdSb.append(DB_SCRIPT_CREATE_DATA);
-            cmdSb.append(" " + user + " " + password + " " + schema);
-            cmdSb.append(" " + DB_SCRIPT_SRC_FOLDER);
+            cmdSb.append(" " + dbCred.getUsername() + " " + dbCred.getPassword() + " " + dbCred.getSchema());
+
+            cmdSb.append(" " + dbInitData.getAdmUsername());
+            cmdSb.append(" " + dbInitData.getAdmPassword());
+            cmdSb.append(" " + dbInitData.getAdmContactFirstname());
+            cmdSb.append(" " + dbInitData.getAdmContactSurname());
+            cmdSb.append(" " + dbInitData.getAdmContactEmail());
+            cmdSb.append(" " + dbInitData.getAdmContactPhone());
+            cmdSb.append(" " + dbInitData.getConfigCaYear());
+            cmdSb.append(" " + dbInitData.getConfigOrgName());
+            cmdSb.append(" " + dbInitData.getConfigOrgPhone());
+            cmdSb.append(" " + dbInitData.getConfigOrgEmail());
+            cmdSb.append(" " + dbInitData.getConfigWelcomeInfo());
+            cmdSb.append(" " + dbInitData.getConfigBaseUrl());
+            cmdSb.append(" " + dbInitData.getConfigContactPerson());
+            cmdSb.append(" " + dbInitData.getConfigCourseApplicationTitle());
+            cmdSb.append(" " + dbInitData.getConfigSmtpUser());
+            cmdSb.append(" " + dbInitData.getConfigSmptPwd());
 
             String cmd = cmdSb.toString();
             logger.info("Creating db data for customer: {}, script: {}", custName, cmd);
@@ -162,5 +206,13 @@ public class CustomerConfigVM {
         }
 
         return ret;
+    }
+
+    public DBInitData getDbInitData() {
+        return dbInitData;
+    }
+
+    public void setDbInitData(DBInitData dbInitData) {
+        this.dbInitData = dbInitData;
     }
 }
