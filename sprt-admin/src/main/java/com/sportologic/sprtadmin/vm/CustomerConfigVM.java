@@ -3,8 +3,10 @@ package com.sportologic.sprtadmin.vm;
 import com.sportologic.common.model.domain.CustomerConfig;
 import com.sportologic.sprtadmin.repository.CustomerConfigRepository;
 import com.sportologic.sprtadmin.service.ConfigService;
-import com.sportologic.sprtadmin.utils.StreamGobbler;
-import com.sportologic.sprtadmin.utils.shell.PasswordGenerator;
+import com.sportologic.sprtadmin.utils.shell.ShellScriptRunner;
+import com.sportologic.sprtadmin.utils.shell.ShellScriptVO;
+import com.sportologic.sprtadmin.utils.shell.StreamGobbler;
+import com.sportologic.sprtadmin.utils.PasswordGenerator;
 import com.sportologic.sprtadmin.utils.StringUtils;
 import com.sportologic.sprtadmin.validator.UniqueCustomerValidator;
 import com.sportologic.sprtadmin.vo.DBCredentials;
@@ -29,7 +31,6 @@ import java.util.concurrent.Executors;
 
 // TODO:
 // - validace - delka nazvu
-// Zalozeni DB objektu
 // - DB_SCRIPT_FOLDER z konfigurace
 @VariableResolver(org.zkoss.zkplus.spring.DelegatingVariableResolver.class)
 public class CustomerConfigVM {
@@ -59,23 +60,6 @@ public class CustomerConfigVM {
         dbBaseUrl = configService.getDbBaseUrl();
         uniqueCustomerValidator = new UniqueCustomerValidator(customerConfigRepository);
         initDbInitFakeData();
-    }
-
-    private void initDbInitFakeData() {
-        dbInitData = new DBInitData();
-        dbInitData.setAdmUsername("a.kuder");
-        dbInitData.setAdmPassword("popov");
-        dbInitData.setAdmContactFirstname("Adrian");
-        dbInitData.setAdmContactSurname("Kuder");
-        dbInitData.setAdmContactEmail("a.kuder@seznam.cz");
-        dbInitData.setAdmContactPhone("602001002");
-        dbInitData.setConfigCaYear("2022/2023");
-        dbInitData.setConfigOrgPhone("602001002");
-        dbInitData.setConfigOrgEmail("klubmail@seznam.cz");
-        dbInitData.setConfigContactPerson("Adrian");
-        dbInitData.setConfigCourseApplicationTitle("Přihláška");
-        dbInitData.setConfigSmtpUser("klub@sportologic.cz");
-        dbInitData.setConfigSmptPwd("heslo");
     }
 
     @Command
@@ -108,25 +92,20 @@ public class CustomerConfigVM {
         dbInitData.setConfigWelcomeInfo("Vítejte");
         dbInitData.setConfigBaseUrl("https://localhost:8080/" + customerId);
         createDbData(dbCred, dbInitData);
-        // System.out.println(getCustTablesInitSql("klub4"));
     }
 
-    public void createDbObjects(DBCredentials dbCred) {
+    private void createDbObjects(DBCredentials dbCred) {
         try {
-            StringBuilder cmdSb = new StringBuilder(DB_SCRIPT_SRC_FOLDER);
-            cmdSb.append(DB_SCRIPT_CREATE_OBJECTS);
-            cmdSb.append(" " + dbCred.getUsername() + " " + dbCred.getPassword() + " " + dbCred.getSchema());
-            cmdSb.append(" " + DB_SCRIPT_SRC_FOLDER);
+            logger.info("Creating db objects for customer: {}", custName);
+            ShellScriptVO shScript = new ShellScriptVO(DB_SCRIPT_SRC_FOLDER, DB_SCRIPT_CREATE_OBJECTS);
+            shScript.addArg(dbCred.getUsername());
+            shScript.addArg(dbCred.getPassword());
+            shScript.addArg(dbCred.getSchema());
+            shScript.addArg(DB_SCRIPT_SRC_FOLDER);
 
-            String cmd = cmdSb.toString();
-            logger.info("Creating db objects for customer: {}, script: {}", custName, cmd);
-            Process process = Runtime.getRuntime().exec(cmd);
+            ShellScriptRunner shRunner = new ShellScriptRunner(shScript);
+            int exitCode = shRunner.run();
 
-            StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
-            Executors.newSingleThreadExecutor().submit(streamGobbler);
-            int exitCode = 0;
-            exitCode = process.waitFor();
-            assert exitCode == 0;
             logger.info("Creating db objects for customer: {}, exitCode: {}", custName, exitCode);
         } catch (IOException | InterruptedException e) {
             logger.error("Exception caught during creating db objects for customer: {}", custName, e);
@@ -134,43 +113,56 @@ public class CustomerConfigVM {
         }
     }
 
-    public void createDbData(DBCredentials dbCred, DBInitData dbInitData) {
+    private void createDbData(DBCredentials dbCred, DBInitData dbInitData) {
         try {
-            StringBuilder cmdSb = new StringBuilder(DB_SCRIPT_SRC_FOLDER);
-            cmdSb.append(DB_SCRIPT_CREATE_DATA);
-            cmdSb.append(" " + dbCred.getUsername() + " " + dbCred.getPassword() + " " + dbCred.getSchema());
+            logger.info("Creating db data for customer: {}, script: {}", custName);
 
-            cmdSb.append(" " + dbInitData.getAdmUsername());
-            cmdSb.append(" " + dbInitData.getAdmPassword());
-            cmdSb.append(" " + dbInitData.getAdmContactFirstname());
-            cmdSb.append(" " + dbInitData.getAdmContactSurname());
-            cmdSb.append(" " + dbInitData.getAdmContactEmail());
-            cmdSb.append(" " + dbInitData.getAdmContactPhone());
-            cmdSb.append(" " + dbInitData.getConfigCaYear());
-            cmdSb.append(" " + dbInitData.getConfigOrgName());
-            cmdSb.append(" " + dbInitData.getConfigOrgPhone());
-            cmdSb.append(" " + dbInitData.getConfigOrgEmail());
-            cmdSb.append(" " + dbInitData.getConfigWelcomeInfo());
-            cmdSb.append(" " + dbInitData.getConfigBaseUrl());
-            cmdSb.append(" " + dbInitData.getConfigContactPerson());
-            cmdSb.append(" " + dbInitData.getConfigCourseApplicationTitle());
-            cmdSb.append(" " + dbInitData.getConfigSmtpUser());
-            cmdSb.append(" " + dbInitData.getConfigSmptPwd());
+            ShellScriptVO shScript = new ShellScriptVO(DB_SCRIPT_SRC_FOLDER, DB_SCRIPT_CREATE_DATA);
+            shScript.addArg(dbCred.getUsername());
+            shScript.addArg(dbCred.getPassword());
+            shScript.addArg(dbCred.getSchema());
+            shScript.addArg(dbInitData.getAdmUsername());
+            shScript.addArg(dbInitData.getAdmPassword());
+            shScript.addArg(dbInitData.getAdmContactFirstname());
+            shScript.addArg(dbInitData.getAdmContactSurname());
+            shScript.addArg(dbInitData.getAdmContactEmail());
+            shScript.addArg(dbInitData.getAdmContactPhone());
+            shScript.addArg(dbInitData.getConfigCaYear());
+            shScript.addArg(dbInitData.getConfigOrgName());
+            shScript.addArg(dbInitData.getConfigOrgPhone());
+            shScript.addArg(dbInitData.getConfigOrgEmail());
+            shScript.addArg(dbInitData.getConfigWelcomeInfo());
+            shScript.addArg(dbInitData.getConfigBaseUrl());
+            shScript.addArg(dbInitData.getConfigContactPerson());
+            shScript.addArg(dbInitData.getConfigCourseApplicationTitle());
+            shScript.addArg(dbInitData.getConfigSmtpUser());
+            shScript.addArg(dbInitData.getConfigSmptPwd());
 
-            String cmd = cmdSb.toString();
-            logger.info("Creating db data for customer: {}, script: {}", custName, cmd);
-            Process process = Runtime.getRuntime().exec(cmd);
+            ShellScriptRunner shRunner = new ShellScriptRunner(shScript);
+            int exitCode =shRunner.run();
 
-            StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
-            Executors.newSingleThreadExecutor().submit(streamGobbler);
-            int exitCode = 0;
-            exitCode = process.waitFor();
-            assert exitCode == 0;
             logger.info("Creating db data for customer: {}, exitCode: {}", custName, exitCode);
         } catch (IOException | InterruptedException e) {
             logger.error("Exception caught during creating db data for customer: {}", custName, e);
             throw new RuntimeException(e);
         }
+    }
+
+    private void initDbInitFakeData() {
+        dbInitData = new DBInitData();
+        dbInitData.setAdmUsername("a.kuder");
+        dbInitData.setAdmPassword("popov");
+        dbInitData.setAdmContactFirstname("Adrian");
+        dbInitData.setAdmContactSurname("Kuder");
+        dbInitData.setAdmContactEmail("a.kuder@seznam.cz");
+        dbInitData.setAdmContactPhone("602001002");
+        dbInitData.setConfigCaYear("2022/2023");
+        dbInitData.setConfigOrgPhone("602001002");
+        dbInitData.setConfigOrgEmail("klubmail@seznam.cz");
+        dbInitData.setConfigContactPerson("Adrian");
+        dbInitData.setConfigCourseApplicationTitle("Přihláška");
+        dbInitData.setConfigSmtpUser("klub@sportologic.cz");
+        dbInitData.setConfigSmptPwd("heslo");
     }
 
     public List<CustomerConfig> getCustomerConfigList() {
@@ -187,25 +179,6 @@ public class CustomerConfigVM {
 
     public UniqueCustomerValidator getUniqueCustomerValidator() {
         return uniqueCustomerValidator;
-    }
-
-    /**
-     * Get init SQL customer tables.
-     * @return
-     */
-    private String getCustTablesInitSql(String dbName) {
-        String ret = null;
-        try {
-            File file = ResourceUtils.getFile("classpath:db/migration/common/V1.0.0__init-cust-db-objects.sql");
-            String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString());
-            ret = content.replaceAll("##dbName##", dbName);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return ret;
     }
 
     public DBInitData getDbInitData() {
