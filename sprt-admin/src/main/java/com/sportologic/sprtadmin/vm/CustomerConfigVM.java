@@ -89,7 +89,7 @@ public class CustomerConfigVM {
         createDbObjects(dbCred);
 
         dbInitData.setConfigOrgName(custName);
-        dbInitData.setConfigWelcomeInfo("Vítejte");
+        dbInitData.setConfigWelcomeInfo("Vítejte na stránkách klubu " + custName);
         dbInitData.setConfigBaseUrl("https://localhost:8080/" + customerId);
         createDbData(dbCred, dbInitData);
     }
@@ -139,7 +139,7 @@ public class CustomerConfigVM {
             shScript.addArg(dbInitData.getConfigSmptPwd());
 
             ShellScriptRunner shRunner = new ShellScriptRunner(shScript);
-            int exitCode =shRunner.run();
+            int exitCode = shRunner.run();
 
             logger.info("Creating db data for customer: {}, exitCode: {}", custName, exitCode);
         } catch (IOException | InterruptedException e) {

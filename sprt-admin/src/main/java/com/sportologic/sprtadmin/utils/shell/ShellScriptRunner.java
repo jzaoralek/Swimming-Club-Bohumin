@@ -1,6 +1,5 @@
 package com.sportologic.sprtadmin.utils.shell;
 
-import com.sportologic.sprtadmin.vm.CustomerConfigVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +17,10 @@ public class ShellScriptRunner {
     }
 
     public int run() throws IOException, InterruptedException {
-        String shScript = shellScript.buildScript();
+        String[] shScript = shellScript.buildScript();
         logger.info("Running shell script: {}", shScript);
         System.out.println("Running shell script: " + shScript);
-        Process process = Runtime.getRuntime().exec(shellScript.buildScript());
+        Process process = Runtime.getRuntime().exec(shScript);
 
         StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
         Executors.newSingleThreadExecutor().submit(streamGobbler);

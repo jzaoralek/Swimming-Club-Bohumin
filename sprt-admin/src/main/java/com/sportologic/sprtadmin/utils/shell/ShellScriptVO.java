@@ -18,10 +18,13 @@ public class ShellScriptVO {
         this.args.add(arg);
     }
 
-    public String buildScript() {
-        StringBuilder cmdSb = new StringBuilder(srcFolder);
-        cmdSb.append(scriptFile);
-        this.args.forEach(i ->  cmdSb.append(" " + i));
-        return cmdSb.toString();
+    public String[] buildScript() {
+        String[] ret = new String[this.args.size() + 1];
+        ret[0] = srcFolder + scriptFile;
+        for (int i = 0; i < this.args.size(); i++) {
+            ret[i + 1] = this.args.get(i);
+        }
+        
+        return ret;
     }
 }
