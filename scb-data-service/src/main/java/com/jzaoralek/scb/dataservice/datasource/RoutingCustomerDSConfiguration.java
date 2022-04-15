@@ -12,25 +12,24 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import com.jzaoralek.scb.dataservice.dao.AdmCustConfigDao;
-import com.sportologic.common.model.domain.CustomerConfig;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import com.sportologic.common.model.domain.CustomerConfig;
 
 @Configuration
 public class RoutingCustomerDSConfiguration {
+
+	private AdmCustConfigDao admCustConfigDao;
+	private Map<Object, Object> targetDataSources;
 
 	@Bean
 	@Primary
 	@Autowired
     public DataSource dataSource(AdmCustConfigDao admCustConfigDao) {
-        Map<Object, Object> targetDataSources = new HashMap<>();
+        this.admCustConfigDao = admCustConfigDao;
         
-        // Load customer datasources from admin database.
-        // TODO: OneApp, configuration exception pokud prazdne
-        List<CustomerConfig> custConfigList = admCustConfigDao.getAll();
-        for (CustomerConfig custConfig : custConfigList) {
-        	targetDataSources.put(custConfig.getCustId(), 
-        						buildClientDatasource(custConfig));
-        }
+        // init datasources
+        targetDataSources = new HashMap<>();
+        updateTargetDataSources();
 
         // Get default datasource.
         DataSource defaultDataSource = null;
@@ -48,6 +47,17 @@ public class RoutingCustomerDSConfiguration {
         return clientRoutingDatasource;
     }
 	
+	public void updateTargetDataSources() {
+		targetDataSources.clear();
+        // Load customer datasources from admin database.
+        // TODO: OneApp, configuration exception pokud prazdne
+        List<CustomerConfig> custConfigList = admCustConfigDao.getAll();
+        for (CustomerConfig custConfig : custConfigList) {
+        	targetDataSources.put(custConfig.getCustId(), 
+        						buildClientDatasource(custConfig));
+        }
+	}
+	
 	/**
 	 * Create client datasource from CustomerConfig.
 	 * @param custConfig
@@ -61,5 +71,13 @@ public class RoutingCustomerDSConfiguration {
 	    mySqlRootSource.setCharacterEncoding("utf8");
 	    mySqlRootSource.setUseUnicode(true);
 	    return mySqlRootSource;
+	}
+	
+	public void setTargetDataSources(Map<Object, Object> targetDataSources) {
+		this.targetDataSources = targetDataSources;
+	}
+	
+	public Map<Object, Object> getTargetDataSources() {
+		return targetDataSources;
 	}
 }

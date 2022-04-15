@@ -18,4 +18,10 @@ public interface AdmCustConfigService {
 	 * @return
 	 */
 	List<CustomerConfig> getCustomerAll();
+	
+	/**
+	 * Updating customer datasource configuration.
+	 * After creating new customer instance.
+	 */
+	void updateCustomerDSConfiguration();
 }
