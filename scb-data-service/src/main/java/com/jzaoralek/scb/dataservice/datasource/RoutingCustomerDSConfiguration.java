@@ -6,10 +6,13 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.AdmCustConfigDao;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
@@ -18,6 +21,8 @@ import com.sportologic.common.model.domain.CustomerConfig;
 @Configuration
 public class RoutingCustomerDSConfiguration {
 
+	private final Logger LOG = LoggerFactory.getLogger(getClass());
+	
 	private AdmCustConfigDao admCustConfigDao;
 	private Map<Object, Object> targetDataSources;
 
@@ -28,8 +33,7 @@ public class RoutingCustomerDSConfiguration {
         this.admCustConfigDao = admCustConfigDao;
         
         // init datasources
-        targetDataSources = new HashMap<>();
-        updateTargetDataSources();
+        targetDataSources = buildTargetDataSources();
 
         // Get default datasource.
         DataSource defaultDataSource = null;
@@ -47,15 +51,20 @@ public class RoutingCustomerDSConfiguration {
         return clientRoutingDatasource;
     }
 	
-	public void updateTargetDataSources() {
-		targetDataSources.clear();
+	public Map<Object, Object> buildTargetDataSources() {
+		Map<Object, Object> ret = new HashMap<>();
         // Load customer datasources from admin database.
-        // TODO: OneApp, configuration exception pokud prazdne
         List<CustomerConfig> custConfigList = admCustConfigDao.getAll();
+        if (CollectionUtils.isEmpty(custConfigList)) {
+        	LOG.error("Empty customer config list.");
+        	throw new IllegalStateException("Empty customer config list.");
+        }
         for (CustomerConfig custConfig : custConfigList) {
-        	targetDataSources.put(custConfig.getCustId(), 
+        	ret.put(custConfig.getCustId(), 
         						buildClientDatasource(custConfig));
         }
+        
+        return ret;
 	}
 	
 	/**

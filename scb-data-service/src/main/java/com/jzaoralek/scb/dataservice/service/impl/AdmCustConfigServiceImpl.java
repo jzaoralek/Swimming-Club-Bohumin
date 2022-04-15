@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.sql.DataSource;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -22,6 +22,8 @@ import com.sportologic.common.model.domain.CustomerConfig;
 @Service("admCustConfigService")
 public class AdmCustConfigServiceImpl implements AdmCustConfigService, BeanFactoryAware {
 
+	private final Logger LOG = LoggerFactory.getLogger(getClass());
+	
 	@Autowired
 	private AdmCustConfigDao admCustConfigDao;
 	
@@ -42,35 +44,20 @@ public class AdmCustConfigServiceImpl implements AdmCustConfigService, BeanFacto
 
 	@Override
 	public void updateCustomerDSConfiguration() {
+		LOG.info("Updating customer data source configuration.");
 		RoutingCustomerDSConfiguration config = beanFactory.getBean(RoutingCustomerDSConfiguration.class);
-		config.updateTargetDataSources();
-		
 		
 		ClientDataSourceRouter ds = beanFactory.getBean(ClientDataSourceRouter.class);
-		ds.setTargetDataSources(config.getTargetDataSources());
+		// update target datasources
+		ds.setTargetDataSources(config.buildTargetDataSources());
 		ds.afterPropertiesSet();
 		
+		// remove and register DataSourec bean with updated datasources
 		DefaultListableBeanFactory defListBeanFactory = (DefaultListableBeanFactory)beanFactory;
 		defListBeanFactory.destroySingleton("dataSource");
 		defListBeanFactory.registerSingleton("dataSource", ds);
 		
-		ds = beanFactory.getBean(ClientDataSourceRouter.class);
-		System.out.println(ds);
-		
-		/*
-		String updateUrl = "https://download.acme.com/ip-database-latest.mdb";
-
-	    AbstractBeanDefinition definition = BeanDefinitionBuilder
-	        .genericBeanDefinition(RoutingCustomerDSConfiguration.class)
-	        .addPropertyValue("targetDataSources", updateUrl)
-	        .getBeanDefinition();
-
-	    listableBeanFactory
-	        .registerBeanDefinition("ipDatabaseRepository", definition);
-
-	    ipDatabaseRepository = listableBeanFactory
-	        .getBean(IpDatabaseRepository.class);
-	    */
+		LOG.info("Customer data source configuration successfully updated.");
 	}
 
 	@Override
