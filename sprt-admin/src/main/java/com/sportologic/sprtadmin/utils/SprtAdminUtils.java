@@ -4,9 +4,9 @@ import java.text.Normalizer;
 import java.util.Locale;
 import java.util.Objects;
 
-public final class StringUtils {
+public final class SprtAdminUtils {
 
-    private StringUtils(){}
+    private SprtAdminUtils(){}
 
     /**
      * Builds customer id from customer name.

@@ -13,6 +13,12 @@ public class ConfigServiceImpl implements ConfigService {
     @Value("${database.script.src.folder}")
     private String dbScriptSrcFolder;
 
+    @Value("${sprt.base.url}")
+    private String sprtBaseUrl;
+
+    @Value("${sprt.base.http.url}")
+    private String sprtBaseHttpUrl;
+
     @Override
     public String getDbBaseUrl() {
         return databaseBaseUrl;
@@ -21,5 +27,15 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public String getDbScriptSrcFolder() {
         return dbScriptSrcFolder;
+    }
+
+    @Override
+    public String getSprtBaseUrl() {
+        return sprtBaseUrl;
+    }
+
+    @Override
+    public String getSprtBaseHttpUrl() {
+        return sprtBaseHttpUrl;
     }
 }
