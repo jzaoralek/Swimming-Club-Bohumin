@@ -10,8 +10,16 @@ public class ConfigServiceImpl implements ConfigService {
     @Value("${database.base.url}")
     private String databaseBaseUrl;
 
+    @Value("${database.script.src.folder}")
+    private String dbScriptSrcFolder;
+
     @Override
     public String getDbBaseUrl() {
         return databaseBaseUrl;
+    }
+
+    @Override
+    public String getDbScriptSrcFolder() {
+        return dbScriptSrcFolder;
     }
 }

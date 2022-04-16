@@ -14,7 +14,9 @@ import com.sportologic.sprtadmin.vo.DBInitData;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.ResourceUtils;
+import org.springframework.web.client.RestTemplate;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.zk.ui.select.annotation.VariableResolver;
@@ -31,13 +33,11 @@ import java.util.concurrent.Executors;
 
 // TODO:
 // - validace - delka nazvu
-// - DB_SCRIPT_FOLDER z konfigurace
 @VariableResolver(org.zkoss.zkplus.spring.DelegatingVariableResolver.class)
 public class CustomerConfigVM {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerConfigVM.class);
 
-    private static final String DB_SCRIPT_SRC_FOLDER = "/Users/jakub.zaoralek/develLab/sources/Swimming-Club-Bohumin/sprt-admin/src/main/resources/db/migration/common/";
     private static final String DB_SCRIPT_CREATE_OBJECTS = "002-init-cust-db-objects.sh";
     private static final String DB_SCRIPT_CREATE_DATA = "003-init-cust-db-data.sh";
 
@@ -47,17 +47,22 @@ public class CustomerConfigVM {
     @WireVariable
     private ConfigService configService;
 
+    @WireVariable
+    private RestTemplate restTemplate;
+
     private UniqueCustomerValidator uniqueCustomerValidator;
 
     private List<CustomerConfig> customerConfigList;
     private String custName;
     private String dbBaseUrl;
+    private String dbScriptSrcFolder;
     private DBInitData dbInitData;
 
     @Init
     public void init() {
         customerConfigList = customerConfigRepository.findAllCustom();
         dbBaseUrl = configService.getDbBaseUrl();
+        dbScriptSrcFolder = configService.getDbScriptSrcFolder();
         uniqueCustomerValidator = new UniqueCustomerValidator(customerConfigRepository);
         initDbInitFakeData();
     }
@@ -92,16 +97,27 @@ public class CustomerConfigVM {
         dbInitData.setConfigWelcomeInfo("Vítejte na stránkách klubu " + custName);
         dbInitData.setConfigBaseUrl("https://localhost:8080/" + customerId);
         createDbData(dbCred, dbInitData);
+
+        // call sportologic app to reload customer DS config to add new instance
+        reloadCustDSConfig();
+    }
+
+    /**
+     * REST call sportologic app to reload customer DS configuration.
+     * Therefore is new instance added on the fly.
+     */
+    private void reloadCustDSConfig() {
+        restTemplate.exchange("http://localhost:7002/api/cust-ds-config-reload.zul", HttpMethod.GET, null, String.class);
     }
 
     private void createDbObjects(DBCredentials dbCred) {
         try {
             logger.info("Creating db objects for customer: {}", custName);
-            ShellScriptVO shScript = new ShellScriptVO(DB_SCRIPT_SRC_FOLDER, DB_SCRIPT_CREATE_OBJECTS);
+            ShellScriptVO shScript = new ShellScriptVO(dbScriptSrcFolder, DB_SCRIPT_CREATE_OBJECTS);
             shScript.addArg(dbCred.getUsername());
             shScript.addArg(dbCred.getPassword());
             shScript.addArg(dbCred.getSchema());
-            shScript.addArg(DB_SCRIPT_SRC_FOLDER);
+            shScript.addArg(dbScriptSrcFolder);
 
             ShellScriptRunner shRunner = new ShellScriptRunner(shScript);
             int exitCode = shRunner.run();
@@ -117,7 +133,7 @@ public class CustomerConfigVM {
         try {
             logger.info("Creating db data for customer: {}, script: {}", custName);
 
-            ShellScriptVO shScript = new ShellScriptVO(DB_SCRIPT_SRC_FOLDER, DB_SCRIPT_CREATE_DATA);
+            ShellScriptVO shScript = new ShellScriptVO(dbScriptSrcFolder, DB_SCRIPT_CREATE_DATA);
             shScript.addArg(dbCred.getUsername());
             shScript.addArg(dbCred.getPassword());
             shScript.addArg(dbCred.getSchema());
