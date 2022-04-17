@@ -97,7 +97,7 @@ public class MailServiceImpl extends BaseAbstractService implements MailService 
     	
        // Get the default Session object.
        Authenticator auth = new SMTPAuthenticator();
-       Session session = Session.getDefaultInstance(properties, auth);
+       Session session = Session.getInstance(properties, auth); // Session.getDefaultInstance(properties, auth); gets auth from previous session
 
        if (LOG.isDebugEnabled()) {
     	   LOG.debug("Mail session created.");
