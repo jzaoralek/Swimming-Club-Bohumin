@@ -19,6 +19,12 @@ public class ConfigServiceImpl implements ConfigService {
     @Value("${sprt.base.http.url}")
     private String sprtBaseHttpUrl;
 
+    @Value("${vpsc.apikey}")
+    private String vpscApiKey;
+
+    @Value("${vpsc.admin}")
+    private String vpscAdmin;
+
     @Override
     public String getDbBaseUrl() {
         return databaseBaseUrl;
@@ -38,4 +44,15 @@ public class ConfigServiceImpl implements ConfigService {
     public String getSprtBaseHttpUrl() {
         return sprtBaseHttpUrl;
     }
+
+    @Override
+    public String getVpscApiKey() {
+        return vpscApiKey;
+    }
+
+    @Override
+    public String getVpscAdmin() {
+        return vpscAdmin;
+    }
+
 }

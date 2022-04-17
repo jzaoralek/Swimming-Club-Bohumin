@@ -6,4 +6,6 @@ public interface ConfigService {
     String getDbScriptSrcFolder();
     String getSprtBaseUrl();
     String getSprtBaseHttpUrl();
+    String getVpscApiKey();
+    String getVpscAdmin();
 }

@@ -10,9 +10,10 @@ import com.sportologic.sprtadmin.utils.SprtAdminUtils;
 import com.sportologic.sprtadmin.validator.UniqueCustomerValidator;
 import com.sportologic.sprtadmin.vo.DBCredentials;
 import com.sportologic.sprtadmin.vo.DBInitData;
+import com.sportologic.sprtadmin.vo.RestEmailAdd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
@@ -20,6 +21,7 @@ import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -108,6 +110,24 @@ public class CustomerConfigVM {
 
         // Calling of sportologic app to reload customer DS config to add new instance.
         reloadCustDSConfig();
+    }
+
+    @Command
+    public void createEmailCmd() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setCacheControl("no-cache");
+        headers.set("x-vpsc-apikey", configService.getVpscApiKey());
+        headers.set("x-vpsc-admin", configService.getVpscAdmin());
+
+        RestEmailAdd emailAdd = new RestEmailAdd("email-add", "sportologic.cz", "TestUser003", "TestUser1234*", "TestUser", "");
+
+        HttpEntity<RestEmailAdd> entity = new HttpEntity<RestEmailAdd>(emailAdd, headers);
+
+        ResponseEntity responseEntity = restTemplate.exchange("https://pio12.vas-server.cz/admin/api/v1/api.php?email-add", HttpMethod.POST, entity, String.class);
+
+        System.out.println(responseEntity.getStatusCode());
+        System.out.println(responseEntity.getStatusCodeValue());
+        System.out.println(responseEntity.getBody());
     }
 
     /**
