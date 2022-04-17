@@ -36,6 +36,7 @@ public class CustomerConfigVM {
     private static final String DB_SCRIPT_CREATE_OBJECTS = "002-init-cust-db-objects.sh";
     private static final String DB_SCRIPT_CREATE_DATA = "003-init-cust-db-data.sh";
     private static final String SPRT_CUST_DS_RELOAD_URI = "api/cust-ds-config-reload.zul";
+    private static final String SPRT_DOMAIN = "sportologic.cz";
 
     @WireVariable
     private CustomerConfigRepository customerConfigRepository;
@@ -97,37 +98,50 @@ public class CustomerConfigVM {
                                                 dbCred.getUsername(),
                                                 dbCred.getPassword());
 
+        // TODO: load real data
+        DBInitData dbInitData = initDbInitFakeData();
+
+        // Creating customer email account
+        // String smtpPwd = "Sportologic1234*"; // Couldn't connect to host, port: pio12.vas-server.cz, 465; timeout -1
+        String smtpPwd =  PasswordGenerator.generate();
+        createEmail(customerId, smtpPwd);
+        String smtpUser = customerId + "@" + SPRT_DOMAIN;
+        dbInitData.setConfigSmtpUser(smtpUser);
+        dbInitData.setConfigSmptPwd(smtpPwd);
+
         // Creating DB objects
         createDbObjects(dbCred);
 
         // Creating Init DB data
-        // TODO: load real data
-        DBInitData dbInitData = initDbInitFakeData();
         dbInitData.setConfigOrgName(custName);
         dbInitData.setConfigWelcomeInfo("Vítejte na stránkách klubu " + custName);
         dbInitData.setConfigBaseUrl(sprtBaseUrl + customerId);
         createDbData(dbCred, dbInitData);
 
-        // Calling of sportologic app to reload customer DS config to add new instance.
+        // Calling sportologic app to reload customer DS config to add new instance.
         reloadCustDSConfig();
     }
 
-    @Command
-    public void createEmailCmd() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setCacheControl("no-cache");
-        headers.set("x-vpsc-apikey", configService.getVpscApiKey());
-        headers.set("x-vpsc-admin", configService.getVpscAdmin());
+    private void createEmail(String username, String password) {
+        try {
+            logger.info("Creating new email: {}", username + "@" + SPRT_DOMAIN);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setCacheControl("no-cache");
+            headers.set("x-vpsc-apikey", configService.getVpscApiKey());
+            headers.set("x-vpsc-admin", configService.getVpscAdmin());
 
-        RestEmailAdd emailAdd = new RestEmailAdd("email-add", "sportologic.cz", "TestUser003", "TestUser1234*", "TestUser", "");
+            RestEmailAdd emailAdd = new RestEmailAdd("email-add", SPRT_DOMAIN, username, password, username, "");
 
-        HttpEntity<RestEmailAdd> entity = new HttpEntity<RestEmailAdd>(emailAdd, headers);
+            HttpEntity<RestEmailAdd> entity = new HttpEntity<RestEmailAdd>(emailAdd, headers);
 
-        ResponseEntity responseEntity = restTemplate.exchange("https://pio12.vas-server.cz/admin/api/v1/api.php?email-add", HttpMethod.POST, entity, String.class);
+            ResponseEntity responseEntity = restTemplate.exchange("https://pio12.vas-server.cz/admin/api/v1/api.php?email-add", HttpMethod.POST, entity, String.class);
 
-        System.out.println(responseEntity.getStatusCode());
-        System.out.println(responseEntity.getStatusCodeValue());
-        System.out.println(responseEntity.getBody());
+            logger.info("Creating new email response status code: {}", responseEntity.getStatusCode());
+            logger.info("New email {} successfully created.", responseEntity.getBody());
+        } catch (Exception e) {
+            logger.error("Exception caught during creating new email: {}", username + "@" + SPRT_DOMAIN, e);
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -217,8 +231,6 @@ public class CustomerConfigVM {
         dbInitData.setConfigOrgEmail("jakub.zaoralek@gmail.com");
         dbInitData.setConfigContactPerson("Adrian");
         dbInitData.setConfigCourseApplicationTitle("Přihláška");
-        dbInitData.setConfigSmtpUser("testuser002@sportologic.cz");
-        dbInitData.setConfigSmptPwd("SprtTestUser001*");
 
         return dbInitData;
     }
