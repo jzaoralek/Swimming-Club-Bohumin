@@ -3,6 +3,7 @@ package com.sportologic.sprtadmin.vm;
 import com.sportologic.common.model.domain.CustomerConfig;
 import com.sportologic.sprtadmin.repository.CustomerConfigRepository;
 import com.sportologic.sprtadmin.service.ConfigService;
+import com.sportologic.sprtadmin.service.CustomerConfigService;
 import com.sportologic.sprtadmin.utils.shell.ShellScriptRunner;
 import com.sportologic.sprtadmin.utils.shell.ShellScriptVO;
 import com.sportologic.sprtadmin.utils.PasswordGenerator;
@@ -33,43 +34,65 @@ public class CustomerConfigVM {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerConfigVM.class);
 
+    /*
     private static final String DB_SCRIPT_CREATE_OBJECTS = "002-init-cust-db-objects.sh";
     private static final String DB_SCRIPT_CREATE_DATA = "003-init-cust-db-data.sh";
     private static final String SPRT_CUST_DS_RELOAD_URI = "api/cust-ds-config-reload.zul";
     private static final String SPRT_DOMAIN = "sportologic.cz";
-
-    @WireVariable
-    private CustomerConfigRepository customerConfigRepository;
+    */
 
     @WireVariable
     private ConfigService configService;
 
     @WireVariable
-    private RestTemplate restTemplate;
+    private CustomerConfigService customerConfigService;
 
     private UniqueCustomerValidator uniqueCustomerValidator;
 
     private List<CustomerConfig> customerConfigList;
     private String custName;
     private String dbBaseUrl;
+    /*
     private String dbScriptSrcFolder;
     private String sprtBaseUrl;
     private String sprtBaseHttpUrl;
+    */
 
     @Init
     public void init() {
-        customerConfigList = customerConfigRepository.findAllCustom();
-
+        customerConfigList = customerConfigService.getCustConfigAll();
         // config consts
         dbBaseUrl = configService.getDbBaseUrl();
+        // validators
+        uniqueCustomerValidator = new UniqueCustomerValidator(customerConfigService);
+
+        /*
         dbScriptSrcFolder = configService.getDbScriptSrcFolder();
         sprtBaseUrl = configService.getSprtBaseUrl();
         sprtBaseHttpUrl = configService.getSprtBaseHttpUrl();
-
-        // validators
-        uniqueCustomerValidator = new UniqueCustomerValidator(customerConfigRepository);
+        */
     }
 
+    @Command
+    public void createCustConfigCmd() {
+        CustomerConfig custConfig = new CustomerConfig();
+        String customerId = SprtAdminUtils.buildCustId(custName);
+        custConfig.setUuid(UUID.randomUUID());
+        custConfig.setCustId(customerId);
+        custConfig.setCustDefault(true);
+        custConfig.setCustName(custName);
+        custConfig.setDbUrl(dbBaseUrl + customerId);
+        custConfig.setDbUser(customerId);
+        custConfig.setDbPassword(PasswordGenerator.generate());
+        custConfig.setModifAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+        custConfig.setModifBy("SYSTEM");
+
+        DBInitData dbInitData = initDbInitFakeData();
+
+        customerConfigService.createCustomerInstance(custConfig, dbInitData);
+    }
+
+    /*
     @Command
     public void createCustConfigCmd() {
         CustomerConfig custConfig = new CustomerConfig();
@@ -144,19 +167,11 @@ public class CustomerConfigVM {
         }
     }
 
-    /**
-     * REST call sportologic app to reload customer DS configuration.
-     * Therefore is new instance added on the fly.
-     */
     private void reloadCustDSConfig() {
         logger.info("Reloading customer DS config via url: {}", sprtBaseHttpUrl + SPRT_CUST_DS_RELOAD_URI);
         restTemplate.exchange(sprtBaseHttpUrl + SPRT_CUST_DS_RELOAD_URI, HttpMethod.GET, null, String.class);
     }
 
-    /**
-     * Create DB objects.
-     * @param dbCred
-     */
     private void createDbObjects(DBCredentials dbCred) {
         try {
             logger.info("Creating db objects for customer: {}", custName);
@@ -176,13 +191,6 @@ public class CustomerConfigVM {
         }
     }
 
-    /**
-     * Create init db data
-     * - admin USER, CONTACT
-     * - CONFIGURATION
-     * @param dbCred
-     * @param dbInitData
-     */
     private void createDbData(DBCredentials dbCred, DBInitData dbInitData) {
         try {
             logger.info("Creating db data for customer: {}, script: {}", custName);
@@ -217,6 +225,7 @@ public class CustomerConfigVM {
             throw new RuntimeException(e);
         }
     }
+    */
 
     private DBInitData initDbInitFakeData() {
         DBInitData dbInitData = new DBInitData();

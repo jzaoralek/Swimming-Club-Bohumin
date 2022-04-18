@@ -26,7 +26,7 @@
             <label id="m2" value="@bind(vmsgs[self.previousSibling])"/>
             <label id="m1" value="@bind(vmsgs[custName])"/>
             <button label="Vytvořit" onClick="@command('createCustConfigCmd')" />
-            <button label="Create email" onClick="@command('createEmailCmd')" />
+
         </vlayout>
     </window>
 </zk>
