@@ -146,4 +146,26 @@ public class DBInitData {
     public void setConfigSmptPwd(String configSmptPwd) {
         this.configSmptPwd = configSmptPwd;
     }
+
+    @Override
+    public String toString() {
+        return "DBInitData{" +
+                "admUsername='" + admUsername + '\'' +
+                ", admPassword='" + admPassword + '\'' +
+                ", admContactFirstname='" + admContactFirstname + '\'' +
+                ", admContactSurname='" + admContactSurname + '\'' +
+                ", admContactEmail='" + admContactEmail + '\'' +
+                ", admContactPhone='" + admContactPhone + '\'' +
+                ", configCaYear='" + configCaYear + '\'' +
+                ", configOrgName='" + configOrgName + '\'' +
+                ", configOrgPhone='" + configOrgPhone + '\'' +
+                ", configOrgEmail='" + configOrgEmail + '\'' +
+                ", configWelcomeInfo='" + configWelcomeInfo + '\'' +
+                ", configBaseUrl='" + configBaseUrl + '\'' +
+                ", configContactPerson='" + configContactPerson + '\'' +
+                ", configCourseApplicationTitle='" + configCourseApplicationTitle + '\'' +
+                ", configSmtpUser='" + configSmtpUser + '\'' +
+                ", configSmptPwd='" + configSmptPwd + '\'' +
+                '}';
+    }
 }

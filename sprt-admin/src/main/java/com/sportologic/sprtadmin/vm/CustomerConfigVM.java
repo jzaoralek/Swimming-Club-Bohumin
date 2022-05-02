@@ -1,28 +1,20 @@
 package com.sportologic.sprtadmin.vm;
 
 import com.sportologic.common.model.domain.CustomerConfig;
-import com.sportologic.sprtadmin.repository.CustomerConfigRepository;
 import com.sportologic.sprtadmin.service.ConfigService;
 import com.sportologic.sprtadmin.service.CustomerConfigService;
-import com.sportologic.sprtadmin.utils.shell.ShellScriptRunner;
-import com.sportologic.sprtadmin.utils.shell.ShellScriptVO;
 import com.sportologic.sprtadmin.utils.PasswordGenerator;
 import com.sportologic.sprtadmin.utils.SprtAdminUtils;
 import com.sportologic.sprtadmin.validator.UniqueCustomerValidator;
-import com.sportologic.sprtadmin.vo.DBCredentials;
 import com.sportologic.sprtadmin.vo.DBInitData;
-import com.sportologic.sprtadmin.vo.RestEmailAdd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -32,6 +24,7 @@ import java.util.*;
 @VariableResolver(org.zkoss.zkplus.spring.DelegatingVariableResolver.class)
 public class CustomerConfigVM {
 
+    private static final String MODIF_BY_SYSTEM = "SYSTEM";
     private static final Logger logger = LoggerFactory.getLogger(CustomerConfigVM.class);
 
     /*
@@ -49,9 +42,9 @@ public class CustomerConfigVM {
 
     private UniqueCustomerValidator uniqueCustomerValidator;
 
-    private List<CustomerConfig> customerConfigList;
-    private String custName;
+    // private List<CustomerConfig> customerConfigList;
     private String dbBaseUrl;
+    private DBInitData custInitData;
     /*
     private String dbScriptSrcFolder;
     private String sprtBaseUrl;
@@ -60,7 +53,8 @@ public class CustomerConfigVM {
 
     @Init
     public void init() {
-        customerConfigList = customerConfigService.getCustConfigAll();
+        // customerConfigList = customerConfigService.getCustConfigAll();
+        custInitData = new DBInitData();
         // config consts
         dbBaseUrl = configService.getDbBaseUrl();
         // validators
@@ -75,8 +69,25 @@ public class CustomerConfigVM {
 
     @Command
     public void createCustConfigCmd() {
+        // build adminUsername
+        String admUsernameFirstname = SprtAdminUtils.normToLowerCaseWithoutCZChars(custInitData.getAdmContactFirstname());
+        String admUsernameSurname = SprtAdminUtils.normToLowerCaseWithoutCZChars(custInitData.getAdmContactSurname());
+        custInitData.setAdmUsername(admUsernameFirstname + "." + admUsernameSurname);
+
+        // generate password of 6 letters, 2 lowercase, 2 upper case, 1 digit and 1 special char
+        custInitData.setAdmPassword(PasswordGenerator.generateSimple());
+
+        // build course application year
+        int yearCurr = LocalDate.now().getYear();
+        int yearNext = yearCurr + 1;
+        custInitData.setConfigCaYear(yearCurr + "/" + yearNext);
+
+        // build contact person
+        custInitData.setConfigContactPerson(custInitData.getAdmContactFirstname() + " " + custInitData.getAdmContactSurname());
+
         CustomerConfig custConfig = new CustomerConfig();
-        String customerId = SprtAdminUtils.buildCustId(custName);
+        String custName = custInitData.getConfigOrgName();
+        String customerId = SprtAdminUtils.normToLowerCaseWithoutCZChars(custName);
         custConfig.setUuid(UUID.randomUUID());
         custConfig.setCustId(customerId);
         custConfig.setCustDefault(true);
@@ -85,11 +96,10 @@ public class CustomerConfigVM {
         custConfig.setDbUser(customerId);
         custConfig.setDbPassword(PasswordGenerator.generate());
         custConfig.setModifAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
-        custConfig.setModifBy("SYSTEM");
+        custConfig.setModifBy(MODIF_BY_SYSTEM);
 
-        DBInitData dbInitData = initDbInitFakeData();
-
-        customerConfigService.createCustomerInstance(custConfig, dbInitData);
+        System.out.println(custInitData);
+        // customerConfigService.createCustomerInstance(custConfig, dbInitData);
     }
 
     /*
@@ -227,36 +237,17 @@ public class CustomerConfigVM {
     }
     */
 
-    private DBInitData initDbInitFakeData() {
-        DBInitData dbInitData = new DBInitData();
-        dbInitData.setAdmUsername("a.kuder");
-        dbInitData.setAdmPassword("popov");
-        dbInitData.setAdmContactFirstname("Adrian");
-        dbInitData.setAdmContactSurname("Kuder");
-        dbInitData.setAdmContactEmail("jakub.zaoralek@gmail.com");
-        dbInitData.setAdmContactPhone("602001002");
-        dbInitData.setConfigCaYear("2022/2023");
-        dbInitData.setConfigOrgPhone("602001002");
-        dbInitData.setConfigOrgEmail("jakub.zaoralek@gmail.com");
-        dbInitData.setConfigContactPerson("Adrian");
-        dbInitData.setConfigCourseApplicationTitle("Přihláška");
-
-        return dbInitData;
-    }
-
+    /*
     public List<CustomerConfig> getCustomerConfigList() {
         return customerConfigList;
     }
-
-    public String getCustName() {
-        return custName;
-    }
-
-    public void setCustName(String custName) {
-        this.custName = custName;
-    }
+    */
 
     public UniqueCustomerValidator getUniqueCustomerValidator() {
         return uniqueCustomerValidator;
+    }
+
+    public DBInitData getCustInitData() {
+        return custInitData;
     }
 }

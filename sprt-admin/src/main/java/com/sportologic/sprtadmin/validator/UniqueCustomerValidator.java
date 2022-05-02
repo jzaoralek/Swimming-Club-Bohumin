@@ -5,6 +5,7 @@ import com.sportologic.sprtadmin.repository.CustomerConfigRepository;
 import com.sportologic.sprtadmin.service.CustomerConfigService;
 import org.zkoss.bind.ValidationContext;
 import org.zkoss.bind.validator.AbstractValidator;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 /**
@@ -23,7 +24,7 @@ public class UniqueCustomerValidator extends AbstractValidator {
         String custName = (String) validationContext.getProperty().getValue();
         CustomerConfig customerConfig = customerConfigRepository.findCustConfigByName(custName);
         if (customerConfig != null) {
-            addInvalidMessage(validationContext, "Instance pro klub " + custName + " již existuje.");
+            addInvalidMessage(validationContext, Labels.getLabel("sprt.web.new-instance.msg.warn.instanceExists", new Object[]{custName}));
         }
     }
 }

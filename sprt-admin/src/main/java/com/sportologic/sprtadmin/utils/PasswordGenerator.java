@@ -54,6 +54,32 @@ public final class PasswordGenerator {
         return password;
     }
 
+    /**
+     * Generate password with size of 6 letters with 2 lowercase, 2 upper case, 1 digit and 1 special char.
+     * @return
+     */
+    public static String generateSimple() {
+        StringBuilder result = new StringBuilder();
+
+        String strLowerCase = generateRandomString(CHAR_LOWERCASE, 2);
+        result.append(strLowerCase);
+
+        String strUppercaseCase = generateRandomString(CHAR_UPPERCASE, 2);
+        result.append(strUppercaseCase);
+
+        String strDigit = generateRandomString(DIGIT, 1);
+        result.append(strDigit);
+
+        String strSpecialChar = generateRandomString(OTHER_SPECIAL, 2);
+        result.append(strSpecialChar);
+
+        String password = result.toString();
+        // shuffle again
+        shuffleString(password);
+
+        return password;
+    }
+
     // generate a random char[], based on `input`
     private static String generateRandomString(String input, int size) {
 

@@ -168,7 +168,6 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
             shScript.addArg(dbInitData.getConfigWelcomeInfo());
             shScript.addArg(dbInitData.getConfigBaseUrl());
             shScript.addArg(dbInitData.getConfigContactPerson());
-            shScript.addArg(dbInitData.getConfigCourseApplicationTitle());
             shScript.addArg(dbInitData.getConfigSmtpUser());
             shScript.addArg(dbInitData.getConfigSmptPwd());
 

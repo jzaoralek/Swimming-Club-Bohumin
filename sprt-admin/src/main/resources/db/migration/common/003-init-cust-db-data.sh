@@ -30,9 +30,8 @@ SET @config_org_email='${13}';
 SET @config_welcome_info='${14}';
 SET @config_base_url='${15}';
 SET @config_contact_person='${16}';
-SET @config_course_application_title='${17}';
-SET @config_smtp_user='${18}';
-SET @config_smpt_pwd='${19}';
+SET @config_smtp_user='${17}';
+SET @config_smpt_pwd='${18}';
 
 -- INSERT
 -- ADMIN USER
@@ -80,7 +79,7 @@ INSERT INTO configuration (uuid, name, description, val, type, category, spec, m
 VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499628', 'ALLOW_CHECK_SUM_BIRTHNUM_VALIDATION', 'Povolení validace rodného čísla na kontrolní součet',  'true', 'BOOLEAN', 'BASIC', '0', now(), 'SYSTEM');
 
 INSERT INTO configuration (uuid, name, description, val, type, category, spec, modif_at, modif_by)
-VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499629', 'COURSE_APPLICATION_TITLE', 'Nadpis na přihlášce',  @config_course_application_title, 'STRING', 'COURSE_APPLICATION', '1',  now(), 'SYSTEM');
+VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499629', 'COURSE_APPLICATION_TITLE', 'Nadpis na přihlášce',  'Přihláška', 'STRING', 'COURSE_APPLICATION', '1',  now(), 'SYSTEM');
 INSERT INTO configuration (uuid, name, description, val, type, category, spec, modif_at, modif_by)
 VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499630', 'COURSE_APPLICATION_PAYMENT_INSTRUCS', 'Odeslání instrukcí k platbě v rámci vytvoření přihlášky',  'true', 'BOOLEAN', 'COURSE_APPLICATION', '0',  now(), 'SYSTEM');
 INSERT INTO configuration (uuid, name, description, val, type, category, spec, modif_at, modif_by)

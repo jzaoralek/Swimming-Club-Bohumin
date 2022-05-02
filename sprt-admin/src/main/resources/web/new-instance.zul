@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+
+<zk>
+    <window apply="org.zkoss.bind.BindComposer"
+            title="${c:l('sprt.web.new-instance.title')}"
+            border="normal"
+            viewModel="@id('vm') @init('com.sportologic.sprtadmin.vm.CustomerConfigVM')"
+            validationMessages="@id('vmsgs')" >
+
+        <vlayout>
+            <!-- Club info -->
+            <label value="${c:l('sprt.web.new-instance.club.org.info')}" />
+            <!-- Name -->
+            <textbox id="custName"
+                     value="@bind(vm.custInitData.configOrgName) @save(vm.custInitData.configOrgName, before='createCustConfigCmd')  @validator(vm.uniqueCustomerValidator)"
+                     constraint="no empty"
+                     placeholder="${c:l('sprt.web.new-instance.club.name')}" />
+            <label id="m1" sclass="hightlight" value="@bind(vmsgs[custName])"/>
+            <!-- Email -->
+            <textbox id="custOrgEmail" value="@bind(vm.custInitData.configOrgEmail)"
+                     constraint="no empty"
+                     placeholder="${c:l('sprt.web.new-instance.club.email')}" />
+            <!-- Phone -->
+            <textbox id="custOrgPhone" value="@bind(vm.custInitData.configOrgPhone)"
+                     constraint="no empty"
+                     placeholder="${c:l('sprt.web.new-instance.club.telefon')}" />
+
+            <!-- Contact person -->
+            <label value="${c:l('sprt.web.new-instance.contactperson')}" />
+            <!-- Firstname-->
+            <textbox id="custContactFirstname" value="@bind(vm.custInitData.admContactFirstname)"
+                     constraint="no empty"
+                     placeholder="${c:l('sprt.web.new-instance.contactperson.firstname')}" />
+            <!-- Surname -->
+            <textbox id="custContactSurname" value="@bind(vm.custInitData.admContactSurname)"
+                     constraint="no empty"
+                     placeholder="${c:l('sprt.web.new-instance.contactperson.surname')}" />
+            <!-- Email -->
+            <textbox id="custContactEmail" value="@bind(vm.custInitData.admContactEmail)"
+                     constraint="no empty"
+                     placeholder="${c:l('sprt.web.new-instance.contactperson.email')}" />
+            <!-- Phone -->
+            <textbox id="custContactPhone" value="@bind(vm.custInitData.admContactPhone)"
+                     constraint="no empty"
+                     placeholder="${c:l('sprt.web.new-instance.contactperson.phone')}" />
+
+            <button label="${c:l('sprt.web.new-instance.btn.create')}"
+                    onClick="@command('createCustConfigCmd')" />
+        </vlayout>
+    </window>
+</zk>

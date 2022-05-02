@@ -9,12 +9,13 @@ public final class SprtAdminUtils {
     private SprtAdminUtils(){}
 
     /**
-     * Builds customer id from customer name.
-     * To lowercase, remove whitespaces and czech caracters.
+     * Normalize input string
+     * - to lowercase
+     * - remove whitespaces and czech characters.
      * @param customerName
      * @return
      */
-    public static String buildCustId(String customerName) {
+    public static String normToLowerCaseWithoutCZChars(String customerName) {
         Objects.requireNonNull(customerName);
 
         String custNameNormalized = Normalizer.normalize(customerName, Normalizer.Form.NFD);
