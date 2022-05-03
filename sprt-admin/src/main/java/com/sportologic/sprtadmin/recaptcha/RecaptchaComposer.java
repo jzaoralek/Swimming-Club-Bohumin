@@ -33,11 +33,6 @@ public class RecaptchaComposer extends SelectorComposer<Component>  {
     
     @Listen("onUserRespond = #recaptcha")
     public void verify(Event event) throws Exception {
-        /*
-            JSONObject result = RecaptchaVerifier.verifyResponse(configService.getRecaptchaSecredKey(),
-                                                            ((JSONObject)event.getData()).get("response").toString());
-         */
-
         JSONObject result = reCaptchaService.verifyResponse(((JSONObject)event.getData()).get("response").toString());
         if (Boolean.parseBoolean(result.get("success").toString())){
         	submitBtn.setDisabled(false);
