@@ -15,6 +15,7 @@
 	<description>Sportologic admin application</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<zk.version>9.6.0.1</zk.version>
 	</properties>
 
 	<repositories>
@@ -59,12 +60,12 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus</artifactId>
-			<version>9.6.0.1</version>
+			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zhtml</artifactId>
-			<version>9.6.0.1</version>
+			<version>${zk.version}</version>
 		</dependency>
 
 		<!-- Sportologic - model -->
