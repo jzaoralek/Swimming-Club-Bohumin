@@ -8,4 +8,6 @@ public interface ConfigService {
     String getSprtBaseHttpUrl();
     String getVpscApiKey();
     String getVpscAdmin();
+    String getRecaptchaSiteKey();
+    String getRecaptchaSecredKey();
 }

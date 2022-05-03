@@ -3,8 +3,9 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 
 <zk>
-    <window apply="org.zkoss.bind.BindComposer"
-            title="${c:l('sprt.web.new-instance.title')}"
+    <script type="text/javascript" src='https://www.google.com/recaptcha/api.js' defer="true" />
+
+    <window title="${c:l('sprt.web.new-instance.title')}"
             border="normal"
             viewModel="@id('vm') @init('com.sportologic.sprtadmin.vm.CustomerConfigVM')"
             validationMessages="@id('vmsgs')" >
@@ -57,8 +58,32 @@
                      placeholder="${c:l('sprt.web.new-instance.contactperson.phone')}" />
             <label value="@bind(vmsgs[custContactPhone])"/>
 
-            <button label="${c:l('sprt.web.new-instance.btn.create')}"
-                    onClick="@command('createCustConfigCmd')" />
+            <!-- Submit button with ReCaptcha -->
+            <vlayout apply="com.sportologic.sprtadmin.recaptcha.RecaptchaComposer">
+
+                <script><![CDATA[
+							function afterValidate(response){
+							    zk.Widget.$('$recaptcha').fire('onUserRespond',{'response':response}, {toServer:true});
+						    }
+                        ]]>
+                </script>
+
+                <!-- test: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI -->
+                <x:div xmlns:x="xhtml"
+                       id="recaptcha" class="g-recaptcha"
+                       data-sitekey="${vm.recaptchaSiteKey}"
+                       data-callback="afterValidate" />
+
+                <!-- Kliknuti vyvolava klik na realSubmitBtn, ktere teprve odesila formular, kvuli validaci adresy, tlacitko musi byt definovani pred elementem s adresou. -->
+                <button id="submitBtn"
+                        label="${c:l('sprt.web.new-instance.btn.create')}"
+                        iconSclass="z-icon-check"
+                        onClick="@command('createCustConfigCmd')"
+                        style="margin-top: 20px;"
+                        sclass="btn-success"
+                        disabled="true" />
+            </vlayout>
+
         </vlayout>
     </window>
 </zk>

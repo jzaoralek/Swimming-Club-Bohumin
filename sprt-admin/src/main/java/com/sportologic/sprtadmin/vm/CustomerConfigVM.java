@@ -22,8 +22,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
-// TODO:
-// - validace - delka nazvu
 @VariableResolver(org.zkoss.zkplus.spring.DelegatingVariableResolver.class)
 public class CustomerConfigVM {
 
@@ -105,7 +103,11 @@ public class CustomerConfigVM {
         custConfig.setModifBy(MODIF_BY_SYSTEM);
 
         System.out.println(custInitData);
-        // customerConfigService.createCustomerInstance(custConfig, dbInitData);
+        // customerConfigService.createCustomerInstance(custConfig, custInitData);
+    }
+
+    public String getRecaptchaSiteKey() {
+        return configService.getRecaptchaSiteKey();
     }
 
     /*

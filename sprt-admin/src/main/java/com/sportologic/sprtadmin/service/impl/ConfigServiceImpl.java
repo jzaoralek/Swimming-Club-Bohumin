@@ -25,6 +25,12 @@ public class ConfigServiceImpl implements ConfigService {
     @Value("${vpsc.admin}")
     private String vpscAdmin;
 
+    @Value("${recaptcha.sitekey}")
+    private String recaptchaSiteKey;
+
+    @Value("${recaptcha.secretkey}")
+    private String recaptchaSecretKey;
+
     @Override
     public String getDbBaseUrl() {
         return databaseBaseUrl;
@@ -55,4 +61,13 @@ public class ConfigServiceImpl implements ConfigService {
         return vpscAdmin;
     }
 
+    @Override
+    public String getRecaptchaSiteKey() {
+        return recaptchaSiteKey;
+    }
+
+    @Override
+    public String getRecaptchaSecredKey() {
+        return recaptchaSecretKey;
+    }
 }
