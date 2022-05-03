@@ -5,12 +5,15 @@ import com.sportologic.sprtadmin.service.ConfigService;
 import com.sportologic.sprtadmin.service.CustomerConfigService;
 import com.sportologic.sprtadmin.utils.PasswordGenerator;
 import com.sportologic.sprtadmin.utils.SprtAdminUtils;
-import com.sportologic.sprtadmin.validator.UniqueCustomerValidator;
+import com.sportologic.sprtadmin.validator.EmailValidator;
+import com.sportologic.sprtadmin.validator.CustomerNameValidator;
+import com.sportologic.sprtadmin.validator.NotEmptyStringValidator;
 import com.sportologic.sprtadmin.vo.DBInitData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
+import org.zkoss.bind.impl.ValidationMessagesImpl;
 import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
@@ -40,7 +43,9 @@ public class CustomerConfigVM {
     @WireVariable
     private CustomerConfigService customerConfigService;
 
-    private UniqueCustomerValidator uniqueCustomerValidator;
+    private CustomerNameValidator customerNameValidator;
+    private NotEmptyStringValidator notEmptyStringValidator;
+    private EmailValidator emailValidator;
 
     // private List<CustomerConfig> customerConfigList;
     private String dbBaseUrl;
@@ -58,8 +63,9 @@ public class CustomerConfigVM {
         // config consts
         dbBaseUrl = configService.getDbBaseUrl();
         // validators
-        uniqueCustomerValidator = new UniqueCustomerValidator(customerConfigService);
-
+        customerNameValidator = new CustomerNameValidator(customerConfigService);
+        notEmptyStringValidator = new NotEmptyStringValidator();
+        emailValidator = new EmailValidator();
         /*
         dbScriptSrcFolder = configService.getDbScriptSrcFolder();
         sprtBaseUrl = configService.getSprtBaseUrl();
@@ -243,11 +249,23 @@ public class CustomerConfigVM {
     }
     */
 
-    public UniqueCustomerValidator getUniqueCustomerValidator() {
-        return uniqueCustomerValidator;
+    public CustomerNameValidator getCustomerNameValidator() {
+        return customerNameValidator;
+    }
+
+    public NotEmptyStringValidator getNotEmptyStringValidator() {
+        return notEmptyStringValidator;
+    }
+
+    public EmailValidator getEmailValidator() {
+        return emailValidator;
     }
 
     public DBInitData getCustInitData() {
         return custInitData;
+    }
+
+    public void setCustInitData(DBInitData custInitData) {
+        this.custInitData = custInitData;
     }
 }
