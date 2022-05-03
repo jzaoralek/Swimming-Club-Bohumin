@@ -55,6 +55,11 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
     }
 
     @Override
+    public CustomerConfig findCustConfigByCustId(String custId) {
+        return customerConfigRepository.findByCustId(custId);
+    }
+
+    @Override
     public void createCustomerInstance(CustomerConfig custConfig, DBInitData dbInitData) {
         String custName = custConfig.getCustName();
         try {

@@ -46,4 +46,11 @@ public interface CustomerConfigService {
      * @return
      */
     public CustomerConfig findCustConfigByName(String name);
+
+    /**
+     * Get CustomerConfig by custId.
+     * @param custId
+     * @return
+     */
+    public CustomerConfig findCustConfigByCustId(String custId);
 }

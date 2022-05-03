@@ -39,6 +39,13 @@ public interface CustomerConfigRepository extends JpaRepository<CustomerConfig, 
     CustomerConfig findByCustName(String custName);
 
     /**
+     * Find customer by custId.
+     * @param custId
+     * @return
+     */
+    CustomerConfig findByCustId(String custId);
+
+    /**
      * Execute input SQL script.
      * @param sql
      */
