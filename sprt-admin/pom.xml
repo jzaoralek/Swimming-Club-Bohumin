@@ -57,8 +57,19 @@
 			<groupId>org.zkoss.zkspringboot</groupId>
 			<artifactId>zkspringboot-starter</artifactId>
 			<type>pom</type>
-			<version>2.5.3</version>
+			<version>2.5.12</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache-extras.beanshell</groupId>
+					<artifactId>bsh</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.zkoss.zkspringboot</groupId>
+					<artifactId>zkspringboot-autoconfig</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus</artifactId>
@@ -69,7 +80,7 @@
 			<artifactId>zhtml</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
-
+		-->
 		<!-- Sportologic - model -->
 		<dependency>
 			<groupId>com.sportologic</groupId>

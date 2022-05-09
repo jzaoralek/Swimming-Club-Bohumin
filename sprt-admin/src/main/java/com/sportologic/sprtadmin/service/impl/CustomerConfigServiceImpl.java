@@ -8,7 +8,6 @@ import com.sportologic.sprtadmin.service.VasServerRestApiClientService;
 import com.sportologic.sprtadmin.utils.PasswordGenerator;
 import com.sportologic.sprtadmin.utils.shell.ShellScriptRunner;
 import com.sportologic.sprtadmin.utils.shell.ShellScriptVO;
-import com.sportologic.sprtadmin.vm.CustomerConfigVM;
 import com.sportologic.sprtadmin.vo.DBCredentials;
 import com.sportologic.sprtadmin.vo.DBInitData;
 import org.slf4j.Logger;
