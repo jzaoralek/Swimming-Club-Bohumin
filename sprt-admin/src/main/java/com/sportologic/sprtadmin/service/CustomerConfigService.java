@@ -17,7 +17,7 @@ public interface CustomerConfigService {
      * - DB schema, user, objects and init data
      * - REST call to reload sportologic customer DS
      */
-    public void createCustomerInstance(CustomerConfig custConfig, DBInitData dbInitData);
+    public DBInitData createCustomerInstance(DBInitData dbInitData);
 
     /**
      * Delete all objects regarding customer schema

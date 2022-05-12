@@ -4,6 +4,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Object for cust-config-create REST action.
+ *
+ * 	{
+ * 		"custName": "",
+ * 	    "custEmail": "",
+ * 	    "custPhone": "",
+ * 	    "admFirstname": "",
+ * 	    "admSurname": "",
+ * 	    "admEmail": "",
+ * 	    "admPhone": "",
+ * }
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,4 +28,5 @@ public class CustConfigDto {
     private String admSurname;
     private String admEmail;
     private String admPhone;
+    private String custInstanceUrl;
 }

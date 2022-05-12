@@ -6,6 +6,7 @@ import com.sportologic.sprtadmin.service.ConfigService;
 import com.sportologic.sprtadmin.service.CustomerConfigService;
 import com.sportologic.sprtadmin.service.VasServerRestApiClientService;
 import com.sportologic.sprtadmin.utils.PasswordGenerator;
+import com.sportologic.sprtadmin.utils.SprtAdminUtils;
 import com.sportologic.sprtadmin.utils.shell.ShellScriptRunner;
 import com.sportologic.sprtadmin.utils.shell.ShellScriptVO;
 import com.sportologic.sprtadmin.vo.DBCredentials;
@@ -17,7 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service("customerConfigService")
 public class CustomerConfigServiceImpl implements CustomerConfigService {
@@ -26,6 +32,7 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
 
     private static final String DB_SCRIPT_CREATE_OBJECTS = "002-init-cust-db-objects.sh";
     private static final String DB_SCRIPT_CREATE_DATA = "003-init-cust-db-data.sh";
+    private static final String MODIF_BY_SYSTEM = "SYSTEM";
 
     @Autowired
     private CustomerConfigRepository customerConfigRepository;
@@ -58,13 +65,42 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
     }
 
     @Override
-    public void createCustomerInstance(CustomerConfig custConfig, DBInitData dbInitData) {
-        String custName = custConfig.getCustName();
+    public DBInitData createCustomerInstance(DBInitData dbInitData) {
+        String custName = dbInitData.getConfigOrgName();
         try {
-            logger.info("Creating new instance for customer: {}", custName);
+            logger.info("Creating new instance for customer: {}", dbInitData.getConfigOrgName());
+
+            // build adminUsername
+            String admUsernameFirstname = SprtAdminUtils.normToLowerCaseWithoutCZChars(dbInitData.getAdmContactFirstname());
+            String admUsernameSurname = SprtAdminUtils.normToLowerCaseWithoutCZChars(dbInitData.getAdmContactSurname());
+            dbInitData.setAdmUsername(admUsernameFirstname + "." + admUsernameSurname);
+
+            // generate password of 6 letters, 2 lowercase, 2 upper case, 1 digit and 1 special char
+            dbInitData.setAdmPassword(PasswordGenerator.generateSimple());
+
+            // build course application year
+            int yearCurr = LocalDate.now().getYear();
+            int yearNext = yearCurr + 1;
+            dbInitData.setConfigCaYear(yearCurr + "/" + yearNext);
+
+            // build contact person
+            dbInitData.setConfigContactPerson(dbInitData.getAdmContactFirstname() + " " + dbInitData.getAdmContactSurname());
+
+            String customerId = SprtAdminUtils.normToLowerCaseWithoutCZChars(custName);
+            CustomerConfig custConfig = new CustomerConfig();
+            custConfig.setUuid(UUID.randomUUID());
+            custConfig.setCustId(customerId);
+            custConfig.setCustDefault(true);
+            custConfig.setCustName(custName);
+            custConfig.setDbUrl(configService.getDbBaseUrl() + customerId);
+            custConfig.setDbUser(customerId);
+            custConfig.setDbPassword(PasswordGenerator.generate());
+            custConfig.setModifAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+            custConfig.setModifBy(MODIF_BY_SYSTEM);
+
+            // Run scripts
             String dbScriptSrcFolder = configService.getDbScriptSrcFolder();
             String sprtBaseUrl = configService.getSprtBaseUrl();
-            String customerId = custConfig.getCustId();
 
             // Creating new customer configuration
             customerConfigRepository.save(custConfig);
@@ -94,6 +130,7 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
             createDbData(dbCred, dbInitData, dbScriptSrcFolder);
 
             logger.info("New instance for customer: {} successfully created.", custName);
+
         } catch (Exception e) {
             logger.error("Unexpected exception caught during creating new instance for customer: {}", custName, e);
             // TODO: revert all actions
@@ -107,6 +144,8 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
             logger.error("Unexpected exception caught reloading customer datasource config on Sportologic for customer: {}", custName, e);
             // probably sportologic.cz is down, changes will be applied after startup, no action is neeced
         }
+
+        return dbInitData;
     }
 
     @Override

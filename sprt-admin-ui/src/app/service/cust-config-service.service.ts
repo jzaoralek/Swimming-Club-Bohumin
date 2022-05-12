@@ -8,7 +8,7 @@ export class CustConfigService {
   private custConfigCreateUrl: string;
 
   constructor(private http: HttpClient) {
-    this.custConfigCreateUrl = 'http://localhost:8080/users';
+    this.custConfigCreateUrl = 'http://localhost:8080/cust-config-create';
   }
 
   public create(user: CustConfig) {
