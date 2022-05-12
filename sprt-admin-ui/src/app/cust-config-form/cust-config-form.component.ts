@@ -20,10 +20,10 @@ export class CustConfigFormComponent {
   }
 
   onSubmit() {
-    this.custConfigService.create(this.custConfig).subscribe(result => this.gotoUserList());
+    this.custConfigService.create(this.custConfig).subscribe(result => this.gotoResult());
   }
 
-  gotoUserList() {
-    this.router.navigate(['/users']);
+  gotoResult() {
+    this.router.navigate(['/cust-config-result']);
   }
 }
