@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 @Service
 public class SprtRestApiClientServiceImpl implements SprtRestApiClientService {

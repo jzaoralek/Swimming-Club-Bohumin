@@ -52,35 +52,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<!-- ZK -->
-		<dependency>
-			<groupId>org.zkoss.zkspringboot</groupId>
-			<artifactId>zkspringboot-starter</artifactId>
-			<type>pom</type>
-			<version>2.5.12</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache-extras.beanshell</groupId>
-					<artifactId>bsh</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.zkoss.zkspringboot</groupId>
-					<artifactId>zkspringboot-autoconfig</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkplus</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zhtml</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		-->
 		<!-- Sportologic - model -->
 		<dependency>
 			<groupId>com.sportologic</groupId>
@@ -99,6 +70,11 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 
 		<!-- MySql DB for tests

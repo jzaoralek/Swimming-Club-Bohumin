@@ -1,5 +1,8 @@
 package com.sportologic.sprtadmin.vo;
 
+import lombok.Getter;
+
+@Getter
 public class DBCredentials {
 
     private final String username;
@@ -10,17 +13,5 @@ public class DBCredentials {
         this.username = username;
         this.password = password;
         this.schema = schema;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getSchema() {
-        return schema;
     }
 }

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import java.io.IOException;
 import java.util.List;

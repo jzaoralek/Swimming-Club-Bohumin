@@ -2,7 +2,7 @@ package com.sportologic.sprtadmin.service.impl;
 
 import com.sportologic.sprtadmin.service.ConfigService;
 import com.sportologic.sprtadmin.service.VasServerRestApiClientService;
-import com.sportologic.sprtadmin.vo.RestEmailAdd;
+import com.sportologic.sprtadmin.dto.RestEmailAdd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
