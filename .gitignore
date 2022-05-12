@@ -8,6 +8,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+**/src/main/resources/application-prod.properties
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
