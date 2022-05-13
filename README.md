@@ -2,19 +2,28 @@
 
 Web Application for Swimming Club Bohumin clients and trainers.
 
-Used technologies
+**Technologies**
+Main application
 - Spring framework, Spring MVC
-- ZK Framework
+- ZK Framework (main application)
 - AspectJ
 - slf4j
 - Jasper Reports
+
+Admin application
+- Spring Boot
+- Spring Data JPA
+- Angular
+- REST API
+- Lombok
+
+Shared
 - Maven
 - MySql
 - JeTTy (dev), Tomcat(prod)
-- Jenkins
 - Git, Gitflow, GitHub
 
-Main functionalities
+**Main functionalities**
 - customer
   - create course application for child
   - overview of child attendance, results, timetable
