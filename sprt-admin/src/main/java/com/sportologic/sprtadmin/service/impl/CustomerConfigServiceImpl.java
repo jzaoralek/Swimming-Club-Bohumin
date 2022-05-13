@@ -1,6 +1,7 @@
 package com.sportologic.sprtadmin.service.impl;
 
 import com.sportologic.common.model.domain.CustomerConfig;
+import com.sportologic.sprtadmin.exception.SprtValidException;
 import com.sportologic.sprtadmin.repository.CustomerConfigRepository;
 import com.sportologic.sprtadmin.service.ConfigService;
 import com.sportologic.sprtadmin.service.CustomerConfigService;
@@ -14,7 +15,9 @@ import com.sportologic.sprtadmin.vo.DBInitData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -23,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service("customerConfigService")
@@ -49,24 +53,53 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @Override
     public List<CustomerConfig> getCustConfigAll() {
         return customerConfigRepository.findAllCustom();
     }
 
     @Override
-    public CustomerConfig findCustConfigByName(String name) {
-        return customerConfigRepository.findByCustName(name);
+    public void validateUniqueCustName(String custName, Locale locale) throws SprtValidException {
+        if (!StringUtils.hasText(custName)) {
+            return;
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Checking unique customer for name: {}", custName);
+        }
+
+        CustomerConfig custConfig = customerConfigRepository.findByCustName(custName);
+        SprtValidException notUniqueCustExc
+                = new SprtValidException(messageSource.getMessage("sprt.adm.msg.warn.NotUniqueCustName", new Object[]{custName}, locale));
+        if (custConfig != null) {
+            // not unique customer name
+            logger.warn("Not unique customer name: {}", custName);
+            throw notUniqueCustExc;
+        }
+
+        String custId = SprtAdminUtils.normToLowerCaseWithoutCZChars(custName);
+        custConfig = customerConfigRepository.findByCustId(custId);
+        if (custConfig != null) {
+            // not unique customer id
+            logger.warn("Not unique customer id: {} for customer name: {}", custId, custName);
+            throw notUniqueCustExc;
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Customer for name: {} is unique.", custName);
+        }
     }
 
     @Override
-    public CustomerConfig findCustConfigByCustId(String custId) {
-        return customerConfigRepository.findByCustId(custId);
-    }
-
-    @Override
-    public DBInitData createCustomerInstance(DBInitData dbInitData) {
+    public DBInitData createCustomerInstance(DBInitData dbInitData, Locale locale) throws SprtValidException {
         String custName = dbInitData.getConfigOrgName();
+
+        // validation unique customer name, throws SprtValidationException
+        validateUniqueCustName(custName, locale);
+
         try {
             logger.info("Creating new instance for customer: {}", dbInitData.getConfigOrgName());
 
