@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CustConfig } from '../model/cust-config';
+import { CustConfigResp } from '../model/cust-config-resp';
+
+
 
 @Injectable()
 export class CustConfigService {
@@ -12,7 +15,7 @@ export class CustConfigService {
   }
 
   public create(user: CustConfig) {
-    return this.http.post<CustConfig>(this.custConfigCreateUrl, user);
+    return this.http.post<CustConfigResp>(this.custConfigCreateUrl, user);
   }
 }
 

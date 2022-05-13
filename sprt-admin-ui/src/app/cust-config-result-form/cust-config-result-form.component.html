@@ -3,3 +3,20 @@
 <div class="alert alert-success text-center" style="margin-top: 40px;" role="alert">
     Instance pro Váš klub byla úspěšně založena!
 </div>
+
+<div *ngIf="data.newCustData">
+    <p>
+        Adresa: <a href="{{ data.newCustData?.custInstanceUrl }}" target="_blank" >{{ data.newCustData?.custInstanceUrl }}</a>
+    </p>
+    <p>
+        Primární uživatel:
+        <br/>
+        <strong>{{ data.newCustData?.admUsername }} </strong>
+        <br/>
+        <strong>{{ data.newCustData?.admPassword }} </strong>
+    </p>
+    <p>
+        Všechny informace odeslány na emailovou adresu
+        <strong>{{ data.newCustData?.custEmail }}</strong>
+    </p>
+</div>
