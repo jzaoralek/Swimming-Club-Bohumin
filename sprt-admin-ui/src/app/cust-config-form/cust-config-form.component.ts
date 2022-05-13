@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CustConfigService } from '../service/cust-config-service.service';
 import { CustConfig } from '../model/cust-config';
 import { CustConfigResp } from '../model/cust-config-resp';
+import {Observable,of, from } from 'rxjs';
+import {HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-cust-config-form',
@@ -12,6 +14,8 @@ import { CustConfigResp } from '../model/cust-config-resp';
 export class CustConfigFormComponent {
 
   custConfig: CustConfig;
+  validMsg!: String;
+  validMsgVisible!: Boolean;
 
   constructor(private route: ActivatedRoute, 
               private router: Router, 
@@ -24,10 +28,16 @@ export class CustConfigFormComponent {
   }
 
   gotoResult(data: CustConfigResp) {
-    this.router.navigate(['/cust-config-result'], {
-      state: {
-        newCustData: JSON.stringify(data)
-      }
-    });
+    if (data.status == 'OK') {
+      // redirect to result
+      this.router.navigate(['/cust-config-result'], {
+        state: {
+          newCustData: JSON.stringify(data)
+        }
+      });
+    } else if (data.status == 'VALIDATION') {
+      this.validMsg = data.description;
+      this.validMsgVisible = true;
+    }
   }
 }

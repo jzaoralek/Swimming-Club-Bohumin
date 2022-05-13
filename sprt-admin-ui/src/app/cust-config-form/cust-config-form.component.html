@@ -1,7 +1,12 @@
 <h2 class="text-center">Založení instance</h2>
-<p class="text-center" style="margin-top: 40px;">
+<p class="text-center" style="margin-top: 25px;margin-bottom: 25px;">
   Níže prosíme o vyplnění základních údajů Vaší organizace, které jsou potřebné pro založení instance aplikace Sportologic.
 </p>
+
+<!-- Validation msg -->
+<div *ngIf="validMsgVisible" class="alert alert-warning" role="alert">
+  {{ validMsg }}
+</div>
 
 <div class="card my-5">
   <form (ngSubmit)="onSubmit()" #custConfigForm="ngForm">

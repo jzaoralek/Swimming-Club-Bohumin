@@ -10,10 +10,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RestResponse<T> {
-    public enum RestResponseState {OK, WARN, ERROR};
+public class RestResponse {
+    public enum ResponseStatus {
+        OK,
+        ERROR,
+        WARN,
+        VALIDATION;
+    }
 
-    private RestResponseState state;
-    private String message;
-    private T object;
+    private RestResponse.ResponseStatus status = RestResponse.ResponseStatus.OK;
+    private String description;
 }

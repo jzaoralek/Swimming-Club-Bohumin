@@ -19,7 +19,10 @@ public class CustomerConfigExceptionHandler {
 	}
 	
 	@ExceptionHandler(value = SprtValidException.class)
-	public ResponseEntity<?> exception(SprtValidException exception) {
-		return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
+	public ResponseEntity<RestResponse> exception(SprtValidException exception) {
+		RestResponse resp = new RestResponse();
+		resp.setStatus(RestResponse.ResponseStatus.VALIDATION);
+		resp.setDescription(exception.getMessage());
+		return new ResponseEntity<RestResponse>(resp, HttpStatus.OK);
 	}
 }

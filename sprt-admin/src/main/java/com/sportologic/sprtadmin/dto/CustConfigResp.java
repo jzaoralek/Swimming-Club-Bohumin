@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CustConfigResp {
+public class CustConfigResp extends RestResponse {
     private String custInstanceUrl;
     private String custEmail;
     private String admUsername;
