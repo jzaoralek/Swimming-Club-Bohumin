@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { CustConfigFormComponent } from './cust-config-form/cust-config-form.component';
 import { CustConfigResultFormComponent } from './cust-config-result-form/cust-config-result-form.component';
 import { CustConfigService } from './service/cust-config-service.service';
+import  {GlobalErrorHandlerService} from './service/global-error-handler-service';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import { CustConfigService } from './service/cust-config-service.service';
     HttpClientModule,
     FormsModule
   ],
-  providers: [CustConfigService],
+  providers: [CustConfigService, GlobalErrorHandlerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
