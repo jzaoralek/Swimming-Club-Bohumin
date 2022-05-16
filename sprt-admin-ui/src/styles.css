@@ -9,3 +9,7 @@
 :root {
 --bs-body-color-rgb: 33,37,41;
 }
+
+.container {
+    max-width: 960px;
+  }

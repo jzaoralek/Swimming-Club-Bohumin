@@ -1,6 +1,6 @@
 <div class="py-5 text-center">
   <h2>Vyzkoušejte zdarma</h2>
-  <p class="lead my-5">Založení vlastního prostředí systému Sportologic. Níže prosíme o základní údaje o organizaci a kontaktní osobě.</p>
+  <p class="lead my-5">Založení vlastní instance systému Sportologic. Níže je potřeba vyplnit základní údaje o organizaci a kontaktní osobě.</p>
 </div>
 
 <!-- Validation msg -->
@@ -8,8 +8,8 @@
   {{ validMsg }}
 </div>
 
-<form (ngSubmit)="onSubmit()" #custConfigForm="ngForm">
-  <h4 class="mb-3">Organizace</h4>
+<form (ngSubmit)="onSubmit()" #custConfigForm="ngForm" >
+  <h3 class="mb-3">Organizace</h3>
   <!-- Organization name -->
   <div class="form-floating mb-3 my-2">
     <input type="text" [(ngModel)]="custConfig.custName"
@@ -18,12 +18,17 @@
       id="custName" 
       name="custName" 
       maxlength="100"
-      equired #custName="ngModel">
+      required #custName="ngModel">
     <label for="custName">Název</label>
-    <div [hidden]="!custName.pristine" class="alert alert-danger">Hodnota je povinná!</div>
+    <div *ngIf="custName.invalid && (custName.dirty || custName.touched)" class="alert alert-danger my-2">
+      <div *ngIf="custName.errors?.['required']">
+        Hodnota je povinná!
+      </div>
+    </div>
   </div>
+
   <!-- Organization email -->
-  <div class="form-floating mb-3 my-4">
+  <div class="form-floating mb-5 my-4">
     <input type="email" [(ngModel)]="custConfig.custEmail" 
       class="form-control" 
       id="custEmail" 
@@ -34,13 +39,18 @@
       required 
       #custEmail="ngModel">
     <label for="custEmail">Emailová adresa</label>
-    <div class="form-text">Zde budou zaslány podrobné informace o nastavení prostředí.</div>
-    <div [hidden]="!custEmail.pristine" class="alert alert-danger">Hodnota je povinná!</div>
-    <div [hidden]="!custEmail.errors?.['email']" class="alert alert-danger">Neplatný formát emailu!</div>
+    <div class="form-text">Kontakt na klub, zde budou zaslány podrobné informace o nastaveném prostředí.</div>
+    <div *ngIf="custEmail.invalid && (custEmail.dirty || custEmail.touched)" class="alert alert-danger my-2">
+      <div *ngIf="custEmail.errors?.['required']">
+        Hodnota je povinná!
+      </div>
+      <div *ngIf="custEmail.errors?.['email']">
+        Neplatný formát emailu!
+      </div>
+    </div>
   </div>
 
-  <h4 class="mb-2 my-5">Kontaktní osoba</h4>
-  <p class="form-text">Primární uživatel, kterému bude vytvořen přístup do aplikace.</p>
+  <h3 class="mb-2 my-5">Kontaktní osoba</h3>
   <div class="row mb-3">
     <div class="col">
       <!-- Admin firstname -->
@@ -53,7 +63,11 @@
               placeholder="Jméno"
               required #admFirstname="ngModel">
         <label for="admFirstname">Jméno</label>
-        <div [hidden]="!admFirstname.pristine" class="alert alert-danger">Hodnota je povinná!</div>
+        <div *ngIf="admFirstname.invalid && (admFirstname.dirty || admFirstname.touched)" class="alert alert-danger my-2">
+          <div *ngIf="admFirstname.errors?.['required']">
+            Hodnota je povinná!
+          </div>
+        </div>
       </div>
     </div>
     <div class="col">
@@ -67,13 +81,17 @@
               placeholder="Příjmení"
               required #admSurname="ngModel">
         <label for="admSurname">Příjmení</label>
-        <div [hidden]="!admSurname.pristine" class="alert alert-danger">Hodnota je povinná!</div>
+        <div *ngIf="admSurname.invalid && (admSurname.dirty || admSurname.touched)" class="alert alert-danger my-2">
+          <div *ngIf="admSurname.errors?.['required']">
+            Hodnota je povinná!
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Admin email -->
-  <div class="form-floating mb-3 my-4">
+  <div class="form-floating mb-5 my-4">
     <input type="text" [(ngModel)]="custConfig.admEmail" 
       class="form-control" 
       id="admEmail" 
@@ -84,13 +102,18 @@
       email 
       #admEmail="ngModel">
     <label for="admEmail">Emailová adresa</label>
-    <div class="form-text" >Slouží pro uživatele, např. pro obnovu hesla apod.</div>
-    <div [hidden]="!admEmail.pristine" class="alert alert-danger">Hodnota je povinná!</div>
-    <div [hidden]="!admEmail.errors?.['email']" class="alert alert-danger">Neplatný formát emailu!</div>
+    <div class="form-text" >Kontakt primárního uživatele, např. pro obnovu hesla apod.</div>
+    <div *ngIf="admEmail.invalid && (admEmail.dirty || admEmail.touched)" class="alert alert-danger my-2">
+      <div *ngIf="admEmail.errors?.['required']">
+        Hodnota je povinná!
+      </div>
+      <div *ngIf="admEmail.errors?.['email']">
+        Neplatný formát emailu!
+      </div>
+    </div>
   </div>
 
   <button type="submit" 
     [disabled]="!custConfigForm.form.valid" 
     class="w-100 btn btn-info btn-lg my-5">Založit</button>
-
 </form>
