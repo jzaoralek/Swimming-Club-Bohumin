@@ -1,12 +1,14 @@
-<h2 class="text-center">Založení instance</h2>
+<div class="py-4 text-center">
+    <h2>Vyzkoušejte zdarma</h2>
+  </div>
 
 <div class="alert alert-success text-center" style="margin-top: 40px;" role="alert">
-    Instance pro Váš klub byla úspěšně založena!
+    Instance systému sportologic pro vaši organizaci byla úspěšně založena!
 </div>
 
 <div *ngIf="data.newCustData">
     <p>
-        Adresa: <a href="{{ data.newCustData?.custInstanceUrl }}" target="_blank" >{{ data.newCustData?.custInstanceUrl }}</a>
+        Běží na adrese: <a href="{{ data.newCustData?.custInstanceUrl }}" target="_blank" >{{ data.newCustData?.custInstanceUrl }}</a>
     </p>
     <p>
         Primární uživatel:
@@ -16,7 +18,10 @@
         <strong>{{ data.newCustData?.admPassword }} </strong>
     </p>
     <p>
-        Všechny informace odeslány na emailovou adresu
+        Po přihlášení doporučujeme dokončit konfiguraci vašeho prostředí na stránce Nastavení.
+    </p>
+    <p>
+        Veškeré potřebné informace včetně přístupových údajů byly odeslány na email 
         <strong>{{ data.newCustData?.custEmail }}</strong>
     </p>
 </div>
