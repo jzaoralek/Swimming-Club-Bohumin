@@ -5,6 +5,9 @@ import { CustConfig } from '../model/cust-config';
 import { CustConfigResp } from '../model/cust-config-resp';
 import {Observable,of, from } from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
+import { NgForm } from '@angular/forms';
+
+declare var grecaptcha: any;
 
 @Component({
   selector: 'app-cust-config-form',
@@ -16,15 +19,25 @@ export class CustConfigFormComponent {
   custConfig: CustConfig;
   validMsg!: String;
   validMsgVisible!: Boolean;
+  token: string;
 
   constructor(private route: ActivatedRoute, 
               private router: Router, 
               private custConfigService: CustConfigService) {
     this.custConfig = new CustConfig();
+    this.token = "";
   }
 
   onSubmit() {
-    this.custConfigService.create(this.custConfig).subscribe(result => this.gotoResult(result));
+
+    console.log(`ReCaptcha token [${this.token}] generated`);
+
+    if (this.token.length === 0) {
+      this.validMsg = 'Neplatné ověření reCaptcha. Prosím vyzkoušejte znova!';
+      return;
+    }
+
+    this.custConfigService.create(this.custConfig, this.token).subscribe(result => this.gotoResult(result));
   }
 
   gotoResult(data: CustConfigResp) {
@@ -39,5 +52,16 @@ export class CustConfigFormComponent {
       this.validMsg = data.description;
       this.validMsgVisible = true;
     }
+  }
+
+  public send(form: NgForm): void {
+    if (form.invalid) {
+      for (const control of Object.keys(form.controls)) {
+        form.controls[control].markAsTouched();
+      }
+      return;
+    }
+
+    
   }
 }

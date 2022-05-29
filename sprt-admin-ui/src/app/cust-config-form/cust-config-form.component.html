@@ -113,7 +113,19 @@
     </div>
   </div>
 
-  <button type="submit" 
-    [disabled]="!custConfigForm.form.valid" 
-    class="w-100 btn btn-info btn-lg my-5">Založit</button>
+  <div class="form-group no-margin">
+    <div class="col-sm-12 mb-2">
+      <re-captcha id="recaptcha" 
+          name="recaptcha" #recaptcha="ngModel" 
+          [(ngModel)]="token" 
+          required [class.is-invalid]="recaptcha.invalid && (recaptcha.dirty || recaptcha.touched)"></re-captcha>
+      <div *ngIf="recaptcha.invalid && (recaptcha.dirty || recaptcha.touched)" class="alert alert-danger my-2">
+        <div *ngIf="recaptcha.errors?.['required']">Ověření je povinné!</div>
+      </div>
+    </div>
+    <button type="submit" 
+        [disabled]="!custConfigForm.form.valid" 
+        class="w-100 btn btn-info btn-lg my-5">Založit</button>
+   </div>
+
 </form>

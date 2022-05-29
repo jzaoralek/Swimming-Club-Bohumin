@@ -7,7 +7,10 @@ import { AppComponent } from './app.component';
 import { CustConfigFormComponent } from './cust-config-form/cust-config-form.component';
 import { CustConfigResultFormComponent } from './cust-config-result-form/cust-config-result-form.component';
 import { CustConfigService } from './service/cust-config-service.service';
-import  {GlobalErrorHandlerService} from './service/global-error-handler-service';
+import {GlobalErrorHandlerService} from './service/global-error-handler-service';
+import { RECAPTCHA_SETTINGS, RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings } from 'ng-recaptcha';
+import { environment } from '../environments/environment';
+
 
 @NgModule({
   declarations: [
@@ -19,9 +22,20 @@ import  {GlobalErrorHandlerService} from './service/global-error-handler-service
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    RecaptchaModule,
+    RecaptchaFormsModule,
   ],
-  providers: [CustConfigService, GlobalErrorHandlerService],
+  providers: [
+    CustConfigService, 
+    GlobalErrorHandlerService,
+    {
+      provide: RECAPTCHA_SETTINGS,
+      useValue: {
+        siteKey: environment.recaptcha.siteKey,
+      } as RecaptchaSettings,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

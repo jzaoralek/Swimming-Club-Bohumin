@@ -6,8 +6,8 @@
           <h2 class="card-title text-center text-white py-2">{{ title }}</h2>
           <p class="card-title text-center text-white">Sportovní klub on-line.</p>
           <!--
-          <ul class="text-center list-inline py-3">
-            <li class="list-inline-item">
+            <ul class="text-center list-inline py-3">
+              <li class="list-inline-item">
               <a routerLink="/create-instance" class="btn btn-info">Založení instance</a>
             </li>
           </ul>
@@ -23,6 +23,9 @@
         <ul class="list-inline">
           <li class="list-inline-item">
             <a target="_blank" rel="noopener noreferrer" href="https://sportologic.cz/web/sportologic-vseobecne-podminky.pdf">Všeobecné podmínky</a>
+          </li>
+          <li>
+            <a href="#" (click)="healthCheck()">HealthCheck</a>
           </li>
         </ul>
       </footer>

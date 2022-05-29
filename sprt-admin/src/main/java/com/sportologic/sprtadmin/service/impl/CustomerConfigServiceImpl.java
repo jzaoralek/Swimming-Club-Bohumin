@@ -24,10 +24,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service("customerConfigService")
 public class CustomerConfigServiceImpl implements CustomerConfigService {
@@ -37,6 +35,8 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
     private static final String DB_SCRIPT_CREATE_OBJECTS = "002-init-cust-db-objects.sh";
     private static final String DB_SCRIPT_CREATE_DATA = "003-init-cust-db-data.sh";
     private static final String MODIF_BY_SYSTEM = "SYSTEM";
+    private static final int DB_ID_PREFIX_LENGTH = 8;
+    private static final DateTimeFormatter DB_ID_POSTFIX_PATTERN = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     @Autowired
     private CustomerConfigRepository customerConfigRepository;
@@ -125,8 +125,9 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
             custConfig.setCustId(customerId);
             custConfig.setCustDefault(true);
             custConfig.setCustName(custName);
-            custConfig.setDbUrl(configService.getDbBaseUrl() + customerId);
-            custConfig.setDbUser(customerId);
+            String dbId = buildDbId(customerId);
+            custConfig.setDbUrl(configService.getDbBaseUrl() + dbId);
+            custConfig.setDbUser(dbId);
             custConfig.setDbPassword(PasswordGenerator.generate());
             custConfig.setModifAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
             custConfig.setModifBy(MODIF_BY_SYSTEM);
@@ -140,7 +141,7 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
 
             DBCredentials dbCred = new DBCredentials(custConfig.getDbUser(),
                     custConfig.getDbPassword(),
-                    custConfig.getCustId());
+                    custConfig.getDbUser());
 
             // Creating new DB schema and user
             customerConfigRepository.create_db_user(dbCred.getSchema(),
@@ -170,6 +171,15 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
             throw new RuntimeException(e);
         }
 
+        // Waiting for upper DB processes finish.
+        /*
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        */
+
         try {
             // Calling sportologic app to reload customer DS config to add new instance.
             sprtRestApiClientService.reloadCustDbConfig();
@@ -179,6 +189,20 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
         }
 
         return dbInitData;
+    }
+
+    /**
+     * Create name used for db schema and db user.
+     * @param custId
+     * @return
+     */
+    private String buildDbId(String custId) {
+        if (custId.length() <= DB_ID_PREFIX_LENGTH) {
+            return custId;
+        }
+        // custId is longer, substring asPrefix and add timestamp postfix
+        return custId.substring(0, DB_ID_PREFIX_LENGTH) +
+                            LocalDateTime.now().format(DB_ID_POSTFIX_PATTERN);
     }
 
     @Override

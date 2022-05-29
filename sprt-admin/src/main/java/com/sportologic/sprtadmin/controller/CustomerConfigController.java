@@ -6,7 +6,9 @@ import com.sportologic.sprtadmin.dto.RestResponse;
 import com.sportologic.sprtadmin.exception.SprtValidException;
 import com.sportologic.sprtadmin.service.ConfigService;
 import com.sportologic.sprtadmin.service.CustomerConfigService;
+import com.sportologic.sprtadmin.service.ReCaptchaService;
 import com.sportologic.sprtadmin.vo.DBInitData;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.util.Locale;
  */
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "https://admin.sportologic.cz")
 public class CustomerConfigController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerConfigController.class);
@@ -32,13 +35,29 @@ public class CustomerConfigController {
     @Autowired
     private ConfigService configService;
 
+    @Autowired
+    private ReCaptchaService reCaptchaService;
+
     /**
      * Create new customer instance.
      * @param custConfigDto
      */
     @PostMapping("/cust-config-create")
-    public ResponseEntity<CustConfigResp> createCustConfig(@RequestBody CustConfigDto custConfigDto) throws SprtValidException {
+    public ResponseEntity<CustConfigResp> createCustConfig(@RequestBody CustConfigDto custConfigDto,
+                                                           @RequestParam(name="g-recaptcha-response") String recaptchaResponse) throws SprtValidException {
         logger.info("Creating new customer instance, customer name: {}", custConfigDto.getCustName());
+
+        // reCaptcha validation
+        JSONObject result = reCaptchaService.verify(recaptchaResponse);
+        if (!Boolean.parseBoolean(result.get("success").toString())){
+            String errorCodes = result.get("error-codes").toString();
+            logger.error("ReCaptcha validation failed error-codes: {}", errorCodes);
+            throw new SprtValidException(String.format("ReCaptcha validation failed error-codes: {}", errorCodes));
+        }
+
+        if (1==1) {
+            return new ResponseEntity<CustConfigResp>(new CustConfigResp(), HttpStatus.OK);
+        }
 
         DBInitData dbInitData = new DBInitData();
         dbInitData.setConfigOrgName(custConfigDto.getCustName());
