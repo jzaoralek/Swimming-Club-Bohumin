@@ -7,6 +7,7 @@ import com.sportologic.sprtadmin.exception.SprtValidException;
 import com.sportologic.sprtadmin.service.ConfigService;
 import com.sportologic.sprtadmin.service.CustomerConfigService;
 import com.sportologic.sprtadmin.service.ReCaptchaService;
+import com.sportologic.sprtadmin.utils.SprtAdminUtils;
 import com.sportologic.sprtadmin.vo.DBInitData;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -16,14 +17,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.Locale;
 
 /**
  * REST API for create customer instance, list instances etc.
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
-//@CrossOrigin(origins = "https://admin.sportologic.cz")
+//@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://admin.sportologic.cz")
 public class CustomerConfigController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerConfigController.class);
@@ -48,15 +50,11 @@ public class CustomerConfigController {
         logger.info("Creating new customer instance, customer name: {}", custConfigDto.getCustName());
 
         // reCaptcha validation
-        JSONObject result = reCaptchaService.verify(recaptchaResponse);
+        LinkedHashMap result = reCaptchaService.verify(recaptchaResponse);
         if (!Boolean.parseBoolean(result.get("success").toString())){
             String errorCodes = result.get("error-codes").toString();
             logger.error("ReCaptcha validation failed error-codes: {}", errorCodes);
             throw new SprtValidException(String.format("ReCaptcha validation failed error-codes: {}", errorCodes));
-        }
-
-        if (1==1) {
-            return new ResponseEntity<CustConfigResp>(new CustConfigResp(), HttpStatus.OK);
         }
 
         DBInitData dbInitData = new DBInitData();
@@ -85,10 +83,17 @@ public class CustomerConfigController {
     /**
      * Validation of customer name.
      */
-    @GetMapping("/cust-name-validate/{custName}")
-    public ResponseEntity<String> validateCustName(@PathVariable("custName") String custName) throws SprtValidException {
-        customerConfigService.validateUniqueCustName(custName, localeCZ);
+    @PostMapping("/cust-url")
+    public ResponseEntity<CustConfigResp> getCustUrl(@RequestBody CustConfigDto custConfigDto) throws SprtValidException {
+        customerConfigService.validateUniqueCustName(custConfigDto.getCustName(), localeCZ);
 
-        return new ResponseEntity<String>("Alles gute", HttpStatus.OK);
+        String sprtBaseUrl = configService.getSprtBaseUrl();
+        String custId = SprtAdminUtils.normToLowerCaseWithoutCZChars(custConfigDto.getCustName());
+
+        // build response object
+        CustConfigResp custConfResp = new CustConfigResp();
+        custConfResp.setCustInstanceUrl(sprtBaseUrl + custId);
+
+        return new ResponseEntity<CustConfigResp>(custConfResp, HttpStatus.OK);
     }
 }

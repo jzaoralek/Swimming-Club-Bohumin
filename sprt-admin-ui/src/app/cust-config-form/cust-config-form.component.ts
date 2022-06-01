@@ -18,14 +18,30 @@ export class CustConfigFormComponent {
 
   custConfig: CustConfig;
   validMsg!: String;
-  validMsgVisible!: Boolean;
   token: string;
+  custTargetUrl: string;
 
   constructor(private route: ActivatedRoute, 
               private router: Router, 
               private custConfigService: CustConfigService) {
     this.custConfig = new CustConfig();
     this.token = "";
+    this.custTargetUrl = "";
+  }
+
+  onCustNameChange(event: any){
+    console.log(event.target.value);
+    this.custConfigService.getCustTargetUrl(this.custConfig).subscribe(result => this.custTargetUrlResult(result));
+  }
+
+  custTargetUrlResult(result: CustConfigResp) {
+    if (result.status == 'OK') {
+      this.custTargetUrl = result.custInstanceUrl;
+      this.showWarnMsg("");
+    } else if (result.status == 'VALIDATION') {
+      this.custTargetUrl = "";
+      this.showWarnMsg(result.description);
+    }
   }
 
   onSubmit() {
@@ -33,7 +49,7 @@ export class CustConfigFormComponent {
     console.log(`ReCaptcha token [${this.token}] generated`);
 
     if (this.token.length === 0) {
-      this.validMsg = 'Neplatné ověření reCaptcha. Prosím vyzkoušejte znova!';
+      this.showWarnMsg('Neplatné ověření reCaptcha. Prosím vyzkoušejte znova!');
       return;
     }
 
@@ -49,8 +65,7 @@ export class CustConfigFormComponent {
         }
       });
     } else if (data.status == 'VALIDATION') {
-      this.validMsg = data.description;
-      this.validMsgVisible = true;
+      this.showWarnMsg(data.description);
     }
   }
 
@@ -60,8 +75,10 @@ export class CustConfigFormComponent {
         form.controls[control].markAsTouched();
       }
       return;
-    }
+    }    
+  }
 
-    
+  private showWarnMsg(msg: string): void {
+    this.validMsg = msg;
   }
 }

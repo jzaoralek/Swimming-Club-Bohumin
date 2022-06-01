@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   healthCheckUrl: 'http://localhost:8080/health-check',
   custConfigCreateUrl: 'http://localhost:8080/cust-config-create',
+  custTargetUrlUrl: 'http://localhost:8080/cust-url',
   recaptcha: {
     siteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
   }

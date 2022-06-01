@@ -2,6 +2,8 @@ package com.sportologic.sprtadmin.service;
 
 import org.json.JSONObject;
 
+import java.util.LinkedHashMap;
+
 public interface ReCaptchaService {
-    JSONObject verify(String recaptchaResponse);
+    LinkedHashMap verify(String recaptchaResponse);
 }

@@ -12,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.LinkedHashMap;
+
 @Service
 public class ReCaptchaServiceImpl implements ReCaptchaService {
 
@@ -26,7 +28,7 @@ public class ReCaptchaServiceImpl implements ReCaptchaService {
     private ConfigService configService;
 
     @Override
-    public JSONObject verify(String recaptchaResponse) {
+    public LinkedHashMap verify(String recaptchaResponse) {
         logger.info("Verifying reCaptcha response: {}", recaptchaResponse);
         String secretKey = configService.getRecaptchaSecredKey();
 
@@ -35,20 +37,11 @@ public class ReCaptchaServiceImpl implements ReCaptchaService {
 
         String urlParameters = "response="+recaptchaResponse+"&secret="+secretKey;
 
-        JSONObject responseEntity = (JSONObject)restTemplate.getForObject (VERIFY_URL + "?" + urlParameters, JSONObject.class);
-        logger.info("Verifying reCaptcha responseEntity: {}", responseEntity);
+        logger.info("Verifying reCaptcha response secretKey: {}", secretKey);
 
-        /*
-        if (Boolean.parseBoolean(result.get("success").toString())){
-            return true;
-        }else{
-            String errorCodes = result.get("error-codes").toString();
-            logger.error("ReCaptcha validation failed error-codes: {}", errorCodes);
-            Clients.alert(result.get("error-codes").toString());
-            submitBtn.setDisabled(true);
-        }
-        */
+        LinkedHashMap responseMap = restTemplate.getForObject(VERIFY_URL + "?" + urlParameters, LinkedHashMap.class);
+        logger.info("Verifying reCaptcha responseMap: {}", responseMap);
 
-        return responseEntity;
+        return responseMap;
     }
 }
