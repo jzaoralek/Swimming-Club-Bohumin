@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Health check REST API.
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${restcontroller.crossorigin.origins}")
 public class HealthCheckController {
 
     /**

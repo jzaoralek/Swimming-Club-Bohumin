@@ -24,8 +24,7 @@ import java.util.Locale;
  * REST API for create customer instance, list instances etc.
  */
 @RestController
-//@CrossOrigin(origins = "http://localhost:4200")
-@CrossOrigin(origins = "https://admin.sportologic.cz")
+@CrossOrigin(origins = "${restcontroller.crossorigin.origins}")
 public class CustomerConfigController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerConfigController.class);
