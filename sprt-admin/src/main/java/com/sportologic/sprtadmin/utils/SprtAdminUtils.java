@@ -20,6 +20,8 @@ public final class SprtAdminUtils {
 
         String custNameNormalized = Normalizer.normalize(customerName, Normalizer.Form.NFD);
         custNameNormalized = custNameNormalized.replaceAll("\\p{M}", "");
+        // Remove all special characters.
+        custNameNormalized = custNameNormalized.replaceAll("[^a-zA-Z0-9]", " ");
         return custNameNormalized.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
     }
 }
