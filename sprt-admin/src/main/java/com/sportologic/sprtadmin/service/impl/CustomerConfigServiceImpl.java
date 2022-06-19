@@ -16,6 +16,7 @@ import com.sportologic.sprtadmin.vo.DBInitData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -33,11 +34,34 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerConfigServiceImpl.class);
 
+    private static Locale localeCZ = new Locale("cs","CZ");
+    /*
+    private static final String COMPANY_NAME = "Sportologic s.r.o.";
+    private static final String COMPANY_NAME_SHORT = "Sportologic";
+    private static final String COMPANY_PHONE = "+420 602 358 814";
+    private static final String COMPANY_EMAIL = "info@sportologic.cz";
+    private static final String COMPANY_ADMIN_EMAIL = "jakub.zaoralek@gmail.com";
+    */
     private static final String DB_SCRIPT_CREATE_OBJECTS = "002-init-cust-db-objects.sh";
     private static final String DB_SCRIPT_CREATE_DATA = "003-init-cust-db-data.sh";
     private static final String MODIF_BY_SYSTEM = "SYSTEM";
     private static final int DB_ID_PREFIX_LENGTH = 8;
     private static final DateTimeFormatter DB_ID_POSTFIX_PATTERN = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+    @Value("${company.name}")
+    private String companyName;
+
+    @Value("${company.name.short}")
+    private String companyNameShort;
+
+    @Value("${company.contact.phone}")
+    private String companyPhone;
+
+    @Value("${company.contact.email}")
+    private String companyEmail;
+
+    @Value("${company.admin.email}")
+    private String companyAdminEmail;
 
     @Autowired
     private CustomerConfigRepository customerConfigRepository;
@@ -199,27 +223,58 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
     public void sendConfEmailToCust(DBInitData dbInitData) {
         logger.info("Sending confirmation email to new customer: {}", dbInitData.getConfigOrgName());
         StringBuilder sb = new StringBuilder();
-        sb.append("Vaše Sportologic doména je připravena na adrese: " + dbInitData.getConfigBaseUrl());
+        sb.append(messageSource.getMessage("sprt.adm.msg.mail.conf.greeting", null, localeCZ));
         sb.append(getLineSeparator());
-        sb.append("Uživatelské jméno: " + dbInitData.getAdmUsername());
         sb.append(getLineSeparator());
-        sb.append("Heslo: " + dbInitData.getAdmPassword());
+        sb.append(messageSource.getMessage("sprt.adm.msg.mail.conf.domainReadyOnUrl", new Object[]{dbInitData.getConfigBaseUrl()}, localeCZ));
+        sb.append(getLineSeparator());
+        sb.append(getLineSeparator());
+        sb.append(messageSource.getMessage("sprt.adm.msg.mail.conf.username", new Object[]{dbInitData.getAdmUsername()}, localeCZ));
+        sb.append(getLineSeparator());
+        sb.append(messageSource.getMessage("sprt.adm.msg.mail.conf.password", new Object[]{dbInitData.getAdmPassword()}, localeCZ));
+        sb.append(getLineSeparator());
+        sb.append(getLineSeparator());
+        sb.append(messageSource.getMessage("sprt.adm.msg.mail.conf.postFirstLoginActions", null, localeCZ));
+        sb.append(getLineSeparator());
+        sb.append(getLineSeparator());
+        sb.append(messageSource.getMessage("sprt.adm.msg.mail.conf.inCaseOfProblemsContactUs", null, localeCZ));
+        sb.append(getLineSeparator());
+        sb.append(getLineSeparator());
+        sb.append(messageSource.getMessage("sprt.adm.msg.mail.conf.regards", null, localeCZ));
+        sb.append(getLineSeparator());
+        sb.append(getLineSeparator());
+        sb.append(buildMailSignature());
 
         emailService.sendMessage(dbInitData.getAdmContactEmail(),
-                                "Sportologic | založena doména pro " + dbInitData.getConfigOrgName(),
+                messageSource.getMessage("sprt.adm.msg.mail.conf.subject", new Object[]{companyNameShort, dbInitData.getConfigOrgName()}, localeCZ) ,
                                 sb.toString());
+    }
+
+    /**
+     * Sestavi podlis do emailu.
+     * @return
+     */
+    protected String buildMailSignature() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(messageSource.getMessage("sprt.adm.msg.mail.sign.company", new Object[]{companyName}, localeCZ));
+        sb.append(getLineSeparator());
+        sb.append(companyPhone);
+        sb.append(getLineSeparator());
+        sb.append(companyEmail);
+
+        return sb.toString();
     }
 
     @Override
     public void sendNotifEmailToSprt(DBInitData dbInitData) {
         logger.info("Sending notification email about creating new customer: {} to Sportologic.", dbInitData.getConfigOrgName());
         StringBuilder sb = new StringBuilder();
-        sb.append("Vytvořena nová doména pro " + dbInitData.getConfigOrgName());
+        sb.append(messageSource.getMessage("sprt.adm.msg.mail.notif.newInstanceCreated", new Object[]{dbInitData.getConfigOrgName()}, localeCZ));
         sb.append(getLineSeparator());
-        sb.append("Adresa " + dbInitData.getConfigBaseUrl());
+        sb.append(dbInitData.getConfigBaseUrl());
 
-        emailService.sendMessage("jakub.zaoralek@gmail.com",
-                "Sportologic | založena doména pro " + dbInitData.getConfigOrgName(),
+        emailService.sendMessage(companyAdminEmail,
+                messageSource.getMessage("sprt.adm.msg.mail.notif.subject", new Object[]{companyNameShort, dbInitData.getConfigOrgName()}, localeCZ),
                 sb.toString());
     }
 
