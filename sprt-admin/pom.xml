@@ -84,6 +84,12 @@
 			<version>20220320</version>
 		</dependency>
 
+		<!-- Mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 		<!-- MySql DB for tests
 		<dependency>
 			<groupId>mysql</groupId>
