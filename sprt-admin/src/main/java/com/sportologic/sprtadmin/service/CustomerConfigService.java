@@ -22,6 +22,17 @@ public interface CustomerConfigService {
     public DBInitData createCustomerInstance(DBInitData dbInitData, Locale locale) throws SprtValidException;
 
     /**
+     * Sending conformation email to new customer.
+     */
+    public void sendConfEmailToCust(DBInitData dbInitData);
+
+    /**
+     * Sending notification email to Sprt management.
+     * @param dbInitData
+     */
+    public void sendNotifEmailToSprt(DBInitData dbInitData);
+
+    /**
      * Delete all objects regarding customer schema
      * - record in CUSTOMER_CONFIGURATION
      * - email account

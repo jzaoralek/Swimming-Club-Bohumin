@@ -69,12 +69,15 @@ public class CustomerConfigController {
 
         logger.info("New customer instance successfully created, customer name: {}", custConfigDto.getCustName());
 
+        // confirmation email to customer
+        customerConfigService.sendConfEmailToCust(dbInitData);
+        // notification email to sportologic
+        customerConfigService.sendNotifEmailToSprt(dbInitData);
+
         // build response object
         CustConfigResp custConfResp = new CustConfigResp();
         custConfResp.setCustInstanceUrl(dbInitData.getConfigBaseUrl());
         custConfResp.setCustEmail(dbInitData.getConfigOrgEmail());
-        custConfResp.setAdmUsername(dbInitData.getAdmUsername());
-        custConfResp.setAdmPassword(dbInitData.getAdmPassword());
 
         return new ResponseEntity<CustConfigResp>(custConfResp, HttpStatus.OK);
     }

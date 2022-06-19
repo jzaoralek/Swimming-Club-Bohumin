@@ -5,6 +5,7 @@ import com.sportologic.sprtadmin.exception.SprtValidException;
 import com.sportologic.sprtadmin.repository.CustomerConfigRepository;
 import com.sportologic.sprtadmin.service.ConfigService;
 import com.sportologic.sprtadmin.service.CustomerConfigService;
+import com.sportologic.sprtadmin.service.EmailService;
 import com.sportologic.sprtadmin.service.VasServerRestApiClientService;
 import com.sportologic.sprtadmin.utils.PasswordGenerator;
 import com.sportologic.sprtadmin.utils.SprtAdminUtils;
@@ -55,6 +56,9 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public List<CustomerConfig> getCustConfigAll() {
@@ -189,6 +193,38 @@ public class CustomerConfigServiceImpl implements CustomerConfigService {
         }
 
         return dbInitData;
+    }
+
+    @Override
+    public void sendConfEmailToCust(DBInitData dbInitData) {
+        logger.info("Sending confirmation email to new customer: {}", dbInitData.getConfigOrgName());
+        StringBuilder sb = new StringBuilder();
+        sb.append("Vaše Sportologic doména je připravena na adrese: " + dbInitData.getConfigBaseUrl());
+        sb.append(getLineSeparator());
+        sb.append("Uživatelské jméno: " + dbInitData.getAdmUsername());
+        sb.append(getLineSeparator());
+        sb.append("Heslo: " + dbInitData.getAdmPassword());
+
+        emailService.sendMessage(dbInitData.getAdmContactEmail(),
+                                "Sportologic | založena doména pro " + dbInitData.getConfigOrgName(),
+                                sb.toString());
+    }
+
+    @Override
+    public void sendNotifEmailToSprt(DBInitData dbInitData) {
+        logger.info("Sending notification email about creating new customer: {} to Sportologic.", dbInitData.getConfigOrgName());
+        StringBuilder sb = new StringBuilder();
+        sb.append("Vytvořena nová doména pro " + dbInitData.getConfigOrgName());
+        sb.append(getLineSeparator());
+        sb.append("Adresa " + dbInitData.getConfigBaseUrl());
+
+        emailService.sendMessage("jakub.zaoralek@gmail.com",
+                "Sportologic | založena doména pro " + dbInitData.getConfigOrgName(),
+                sb.toString());
+    }
+
+    private String getLineSeparator() {
+        return System.getProperty("line.separator");
     }
 
     /**

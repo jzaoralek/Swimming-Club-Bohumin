@@ -13,12 +13,6 @@ export class CustConfigService {
 
 
   constructor(private http: HttpClient) {
-    /*
-    this.custConfigCreateUrl = 'https://admin.sportologic.cz/api/cust-config-create';
-    this.healthCheckUrl = 'https://admin.sportologic.cz/api/health-check';
-    this.custConfigCreateUrl = 'http://localhost:8080/cust-config-create';
-    this.healthCheckUrl = 'http://localhost:8080/health-check';
-    */
     this.custConfigCreateUrl = environment.custConfigCreateUrl;
     this.healthCheckUrl = environment.healthCheckUrl;
     this.custTargetUrlUrl = environment.custTargetUrlUrl;

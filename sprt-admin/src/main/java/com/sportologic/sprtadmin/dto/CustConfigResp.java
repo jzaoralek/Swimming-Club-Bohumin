@@ -13,6 +13,4 @@ import lombok.Setter;
 public class CustConfigResp extends RestResponse {
     private String custInstanceUrl;
     private String custEmail;
-    private String admUsername;
-    private String admPassword;
 }
