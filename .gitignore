@@ -9,7 +9,7 @@ target/
 !**/src/test/**/target/
 
 **/src/main/resources/application-prod.properties
-**/src/main/resources/application.properties
+sprt-admin/src/main/resources/application.properties
 
 ### IntelliJ IDEA ###
 .idea
