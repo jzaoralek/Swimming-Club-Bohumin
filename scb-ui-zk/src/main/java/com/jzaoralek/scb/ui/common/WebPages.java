@@ -2,6 +2,7 @@ package com.jzaoralek.scb.ui.common;
 
 public enum WebPages {
 	APPLICATION_LIST("/pages/secured/ADMIN/seznam-prihlasek.zul"),
+	APPLICATION_DETAIL_PUBLIC("/pages/public/prihlaska.zul"),
 	APPLICATION_DETAIL("/pages/secured/ADMIN/prihlaska.zul"),
 	COURSE_LIST("/pages/secured/TRAINER/seznam-kurzu.zul"),
 	COURSE_DETAIL("/pages/secured/ADMIN/kurz.zul"),

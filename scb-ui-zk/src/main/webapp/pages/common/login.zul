@@ -7,6 +7,10 @@
 <?xel-method prefix="common" name="getOrgNameStatic"
 	class="com.jzaoralek.scb.ui.common.vm.BaseVM"
 	signature="com.jzaoralek.scb.ui.common.vm.BaseVM getOrgNameStatic()"?>
+
+<?xel-method prefix="common" name="custCtxUri"
+     class="com.jzaoralek.scb.ui.common.utils.WebUtils"
+     signature="com.jzaoralek.scb.ui.common.utils.WebUtils buildCustCtxUri(java.lang.String)"?>
 	
 <?link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"?>
 <?link rel="icon" type="image/x-icon" href="/favicon.ico"?>
@@ -75,7 +79,7 @@
 						
 						<input id="btnSubmit" type="submit" value="${c:l('txt.ui.common.ToLogin')}" />
 						
-						<a href="${pageContext.request.contextPath}/pages/public/zapomenute-heslo.zul" class="fp"> 
+						<a href="${pageContext.request.contextPath}${common:custCtxUri('/pages/public/zapomenute-heslo.zul')}" class="fp"> 
 							${c:l('txt.ui.common.forgottenPassword')} 
 						</a>
 						

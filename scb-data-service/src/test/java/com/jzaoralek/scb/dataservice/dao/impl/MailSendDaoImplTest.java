@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +14,7 @@ import com.jzaoralek.scb.dataservice.BaseTestCase;
 import com.jzaoralek.scb.dataservice.dao.MailSendDao;
 import com.jzaoralek.scb.dataservice.domain.MailSend;
 
+@Ignore
 public class MailSendDaoImplTest extends BaseTestCase {
 
 	private static final String MAIL_TO = "mailTo";

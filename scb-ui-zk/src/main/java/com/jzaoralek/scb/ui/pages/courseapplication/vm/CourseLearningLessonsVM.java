@@ -124,7 +124,7 @@ public class CourseLearningLessonsVM extends BaseVM {
 		
 		WebUtils.setSessAtribute(WebConstants.ITEM_PARAM, item);
 		WebUtils.setSessAtribute(WebConstants.FROM_PAGE_URL, WebPages.COURSE_LESSONS.getUrl() + "?" + WebConstants.UUID_PARAM+"="+this.course.getUuid() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
-		Executions.sendRedirect(WebPages.LEARNING_LESSON.getUrl());
+		WebUtils.sendRedirect(WebPages.LEARNING_LESSON.getUrl());
 	}
 
 	

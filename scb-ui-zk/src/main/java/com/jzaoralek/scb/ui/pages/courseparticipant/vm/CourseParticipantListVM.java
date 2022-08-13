@@ -86,7 +86,7 @@ public class CourseParticipantListVM extends BaseVM {
 		}
 		String targetPage = WebPages.USER_PARTICIPANT_DETAIL.getUrl();
 		WebPages fromPage = WebPages.USER_PARTICIPANT_LIST;
-		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
+		WebUtils.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
 	}
 	
 	@Command
@@ -96,7 +96,7 @@ public class CourseParticipantListVM extends BaseVM {
 		}
 		String targetPage = WebPages.USER_LOG_TO_COURSE.getUrl();
 		WebPages fromPage = WebPages.USER_PARTICIPANT_LIST;
-		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
+		WebUtils.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
 	}
 	
 	@NotifyChange("*")
@@ -112,7 +112,7 @@ public class CourseParticipantListVM extends BaseVM {
 	
 	@Command
 	public void newCourseParticipantCmd() {
-		Executions.sendRedirect(WebPages.USER_APPLICATION_DETAIL.getUrl());
+		WebUtils.sendRedirect(WebPages.USER_APPLICATION_DETAIL.getUrl());
 	}
 	
 //	@NotifyChange("*")

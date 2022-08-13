@@ -39,6 +39,7 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radio;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
@@ -214,9 +215,9 @@ public class CourseApplicationListVM extends BaseContextVM {
 		String targetPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_DETAIL.getUrl() : WebPages.PARTICIPANT_DETAIL.getUrl();
 		WebPages fromPage = (this.pageMode == PageMode.COURSE_APPLICATION_LIST) ? WebPages.APPLICATION_LIST : WebPages.PARTICIPANT_LIST;
 		if (newTab != null && newTab) {
-			Executions.getCurrent().sendRedirect(targetPage + "?" + WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid, "_blank");
+			WebUtils.sendRedirect(targetPage + "?" + WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid, "_blank");
 		} else {
-			Executions.getCurrent().sendRedirect(targetPage + "?"+ WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid);
+			WebUtils.sendRedirect(targetPage + "?"+ WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseUuid);
 		}
 	}
 	
@@ -225,7 +226,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		if (item ==  null) {
 			throw new IllegalArgumentException("CourseApplication is null");
 		}
-		Executions.sendRedirect(WebPages.PAYMENT_LIST.getUrl() + "?"+WebConstants.COURSE_PARTIC_UUID_PARAM+"="+item.getCourseParticipant().getUuid().toString() + "&" +WebConstants.COURSE_UUID_PARAM+"="+item.getCourseParticipant().getCourseUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST);
+		WebUtils.sendRedirect(WebPages.PAYMENT_LIST.getUrl() + "?"+WebConstants.COURSE_PARTIC_UUID_PARAM+"="+item.getCourseParticipant().getUuid().toString() + "&" +WebConstants.COURSE_UUID_PARAM+"="+item.getCourseParticipant().getCourseUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST);
 	}
 
 	@Command
@@ -310,6 +311,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 		
 		final String courseYearSelected = getCourseYearSelected();
 		final Object[] msgParams = new Object[] {this.courseApplicationList.size()};
+		final String clientDBCtx = ClientDatabaseContextHolder.getClientDatabase();
 		MessageBoxUtils.showDefaultConfirmDialog(
 			"msg.ui.quest.sendMailToUnregisteredParticipant",
 			"msg.ui.title.sendMail",
@@ -345,7 +347,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 						courseParticUuidSent.add(courseParticUuid);
 					}
 					
-					mailService.sendMailBatch(mailList);
+					mailService.sendMailBatch(mailList, clientDBCtx);
 					WebUtils.showNotificationInfo("Obeslání uživatelů úspěšně dokončeno.");
 				}
 			},
@@ -372,6 +374,8 @@ public class CourseApplicationListVM extends BaseContextVM {
 		
 		final List<CourseApplication> courseApplicationListToSend = this.courseApplicationList;
 		
+		final String clientDBCtx = ClientDatabaseContextHolder.getClientDatabase();
+		
 		// dotaz
 		MessageBoxUtils.showDefaultConfirmDialog(
 			"msg.ui.quest.sendMailCourseApplication",
@@ -396,7 +400,7 @@ public class CourseApplicationListVM extends BaseContextVM {
 					}
 					
 					// odeslani emailu
-					mailService.sendMailBatch(mailToSendList);
+					mailService.sendMailBatch(mailToSendList, clientDBCtx);
 					
 					WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.courseApplicationMailSent"));
 				}

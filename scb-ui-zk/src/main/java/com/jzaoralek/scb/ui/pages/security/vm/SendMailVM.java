@@ -10,6 +10,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationFileConfigService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -45,12 +46,13 @@ public class SendMailVM extends BaseVM {
 				, attachmentList
 				, false
 				, false
-				, null);        
+				, null
+				, ClientDatabaseContextHolder.getClientDatabase());        
 	}
 	
 	@Command
 	public void sendMail2Cmd() {
-		mailService.sendMailBatch(null);
+		mailService.sendMailBatch(null, ClientDatabaseContextHolder.getClientDatabase());
 		WebUtils.showNotificationInfo("Odeslani dokonceno.");
 	}
 	

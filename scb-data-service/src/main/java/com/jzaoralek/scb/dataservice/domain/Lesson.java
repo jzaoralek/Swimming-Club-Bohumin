@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import org.springframework.util.StringUtils;
 
+import com.sportologic.common.model.domain.IdentEntity;
+
 public class Lesson implements IdentEntity {
 
 	public enum DayOfWeek {

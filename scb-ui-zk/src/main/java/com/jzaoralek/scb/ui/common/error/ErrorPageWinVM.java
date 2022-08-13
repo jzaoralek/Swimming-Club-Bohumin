@@ -17,6 +17,7 @@ import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Popup;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.utils.ExcUtil;
@@ -45,7 +46,7 @@ public class ErrorPageWinVM extends BaseVM {
 
 			// mail to administrator
 			if (mailService != null) {
-				mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, Labels.getLabel("txt.ui.internalError"), this.errorReport, null, false, false, null);				
+				mailService.sendMail(DataServiceConstants.ADMIN_EMAIL, null, Labels.getLabel("txt.ui.internalError"), this.errorReport, null, false, false, null, ClientDatabaseContextHolder.getClientDatabase());				
 			}
 		}
 	}

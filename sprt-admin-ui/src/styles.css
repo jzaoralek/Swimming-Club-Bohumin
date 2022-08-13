@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+
+.form-text {
+    margin-top: 0.25rem;
+    font-size: .875em;
+    color: rgba(var(--bs-body-color-rgb),.75);
+}
+
+:root {
+--bs-body-color-rgb: 33,37,41;
+}
+
+.container {
+    max-width: 960px;
+  }

@@ -81,7 +81,7 @@ public class UserRepresentativeVM extends BaseVM {
 	 */
 	@Command
 	public void changeUsernameCmd() {
-		Executions.sendRedirect(WebPages.CHANGE_USERNAME_USER.getUrl() + 
+		WebUtils.sendRedirect(WebPages.CHANGE_USERNAME_USER.getUrl() + 
 				"?" + WebConstants.UUID_PARAM + "=" + this.user.getUuid() + 
 				"&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.USER_REPRESENTATIVE_DETAIL);
 	}

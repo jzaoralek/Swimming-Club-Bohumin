@@ -32,6 +32,9 @@ public interface ConfigurationService {
 	boolean isCheckSumBirthNumAllowed();
 	boolean isCourseApplicationPaymentAllowed();
 	int getCourseApplPaymentDeadline();
+	String getBankAuthToken();
+	String getSmtpUser();
+	String getSmtpPwd();
 	
 	List<Config> getAll();
 	List<Config> getByCategory(ConfigCategory category);

@@ -35,6 +35,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Popup;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
@@ -212,7 +213,7 @@ public class MessageVM extends BaseVM {
 			mailAddrSet.forEach(i -> mailList.add(Mail.ofHtml(i.getValue0(), null,  this.messageSubject, this.messageText, this.attachmentList, true, i.getValue1()))); 		
 		}
 		
-		mailService.sendMailBatch(mailList);
+		mailService.sendMailBatch(mailList, ClientDatabaseContextHolder.getClientDatabase());
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.messageSent"));
 		clearMessage();
 	}

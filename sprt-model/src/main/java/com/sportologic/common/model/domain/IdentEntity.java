@@ -1,4 +1,4 @@
-package com.jzaoralek.scb.dataservice.domain;
+package com.sportologic.common.model.domain;
 
 import java.util.Date;
 import java.util.UUID;

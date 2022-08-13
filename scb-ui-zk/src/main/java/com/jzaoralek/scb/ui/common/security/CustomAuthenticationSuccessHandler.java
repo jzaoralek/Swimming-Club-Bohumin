@@ -20,6 +20,8 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.jzaoralek.scb.ui.common.utils.WebUtils;
+
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -33,7 +35,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     	
         String targetUrl = canUseCachedRequestUrl(request, response)
     			? requestCache.getRequest(request, response).getRedirectUrl()
-    			: determineTargetUrl(authentication);
+    			: determineTargetUrl(authentication, request);
 
         if (response.isCommitted()) {
             return;
@@ -46,12 +48,12 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
      * This method extracts the roles of currently logged-in user and returns
      * appropriate URL according to his/her role.
      */
-    protected String determineTargetUrl(Authentication authentication) {
+    protected String determineTargetUrl(Authentication authentication, HttpServletRequest request) {
         String url = "";
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-        List<String> roles = new ArrayList<String>();
+        List<String> roles = new ArrayList<>();
 
         for (GrantedAuthority a : authorities) {
             roles.add(a.getAuthority());
@@ -69,7 +71,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             url = "/accessDenied";
         }
 
-        return url;
+        return WebUtils.buildCustCtxUri(url, request);
     }
     
     private boolean canUseCachedRequestUrl(HttpServletRequest request, HttpServletResponse response) {

@@ -10,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.sportologic.common.model.domain.IdentEntity;
 
 public class CourseParticipant implements IdentEntity {
 

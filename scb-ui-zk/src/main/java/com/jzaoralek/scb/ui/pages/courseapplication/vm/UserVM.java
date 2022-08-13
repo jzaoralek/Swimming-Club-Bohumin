@@ -86,7 +86,7 @@ public class UserVM extends BaseVM {
 			return;
 		}
 		
-		Executions.sendRedirect(WebPages.CHANGE_USERNAME_ADMIN.getUrl() + 
+		WebUtils.sendRedirect(WebPages.CHANGE_USERNAME_ADMIN.getUrl() + 
 				"?" + WebConstants.UUID_PARAM + "=" + this.user.getUuid() + 
 				"&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.USER_LIST);
 	}

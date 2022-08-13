@@ -11,6 +11,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.ScbUserService;
@@ -54,7 +55,7 @@ public class ChangeUsernameVM extends BaseVM {
 			if (isLoggedUserAdmin()) {
 				// admin - redirect na detail uzivatele
 				WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.usernameChanged", new Object[] {this.user.getUsername()}));
-				Executions.sendRedirect(this.returnToPage);
+				WebUtils.sendRedirect(this.returnToPage);
 			} else {
 				// user as course participant representative - logout
 				logoutCmd();
@@ -101,7 +102,7 @@ public class ChangeUsernameVM extends BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 
-		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.changeUsername"), mailToUser.toString(), null, false, false, null);
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.changeUsername"), mailToUser.toString(), null, false, false, null, ClientDatabaseContextHolder.getClientDatabase());
 	}
 	
 	private void buildPageHeadline() {

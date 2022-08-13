@@ -12,9 +12,9 @@
         <Arg>jdbc.sportlogic</Arg>
         <Arg>
             <New class="com.mysql.jdbc.jdbc2.optional.MysqlDataSource">
-                <Set name = "URL"><SystemProperty name="db.url" default="jdbc:mysql://localhost:3306/scb"/></Set>
-                <Set name = "User"><SystemProperty name="db.user" default="scb"/></Set>
-                <Set name = "Password"><SystemProperty name="db.password" default="scb"/></Set>
+                <Set name = "URL"><SystemProperty name="db.url" default="jdbc:mysql://localhost:3306/sprt_admin"/></Set>
+                <Set name = "User"><SystemProperty name="db.user" default="sprt_admin"/></Set>
+                <Set name = "Password"><SystemProperty name="db.password" default="sprt_admin1234*"/></Set>
             </New>
         </Arg>
     </New>

@@ -1,8 +1,16 @@
 package com.jzaoralek.scb.ui.common.utils;
 
+import java.util.EnumSet;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.domain.Config.ConfigName;
+import com.jzaoralek.scb.dataservice.service.AdmCustConfigService;
 import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 
 /**
@@ -10,6 +18,13 @@ import com.jzaoralek.scb.dataservice.service.ConfigurationService;
  *
  */
 public final class ConfigUtil {
+	
+	/** Config names cached in session. */
+	private static EnumSet<ConfigName> CACHED_CONFIG_NAMES = EnumSet.of(ConfigName.ORGANIZATION_NAME,
+																		ConfigName.ORGANIZATION_EMAIl,
+																		ConfigName.ORGANIZATION_PHONE,
+																		ConfigName.WELCOME_INFO,
+																		ConfigName.PAYMENTS_AVAILABLE);
 
 	private ConfigUtil() {}
 	
@@ -22,6 +37,8 @@ public final class ConfigUtil {
 			addToSessionConfigCache(ConfigName.ORGANIZATION_NAME, value); 
 			return value;
 		}
+		
+//		return configurationService.getOrgName();
 	}
 	
 	public static String getOrgEmail(ConfigurationService configurationService) {
@@ -33,6 +50,8 @@ public final class ConfigUtil {
 			addToSessionConfigCache(ConfigName.ORGANIZATION_EMAIl, value);
 			return value;
 		}
+		
+//		return configurationService.getOrgEmail();
 	}
 	
 	public static String getOrgPhone(ConfigurationService configurationService) {
@@ -44,6 +63,8 @@ public final class ConfigUtil {
 			addToSessionConfigCache(ConfigName.ORGANIZATION_PHONE, value);
 			return value;
 		}
+		
+//		return configurationService.getOrgPhone();
 	}
 	
 	public static String getWelcomeInfo(ConfigurationService configurationService) {
@@ -55,6 +76,8 @@ public final class ConfigUtil {
 			addToSessionConfigCache(ConfigName.WELCOME_INFO, value);
 			return value;
 		}
+		
+//		return configurationService.getWelcomeInfo();
 	}
 	
 	public static boolean isPaymentsAvailable(ConfigurationService configurationService) {
@@ -66,6 +89,29 @@ public final class ConfigUtil {
 			addToSessionConfigCache(ConfigName.PAYMENTS_AVAILABLE, value); 
 			return value;
 		}
+		
+//		return configurationService.isPaymentsAvailable();
+	}
+	
+	/* TODO: OneApp, vycistit po pridani noveho customera, 
+	 * tzn zavolat ConfigUtil.clearSessionConfigCache(ConfigName.ADM_CUST_CONFIG_IDS.name() */
+	public static Set<String> getCustomerConfigIds(AdmCustConfigService admCustConfigService) {
+		Set<String> custConfigIds = (Set<String>)WebUtils.getSessAtribute(ConfigName.ADM_CUST_CONFIG_IDS.name());
+		if (!CollectionUtils.isEmpty(custConfigIds)) {
+			return custConfigIds;
+		} else {
+			Set<String> value = admCustConfigService.getCustCongigIds();
+			addToSessionConfigCache(ConfigName.ADM_CUST_CONFIG_IDS, value);
+			return value;
+		}
+	}
+	
+	/**
+	 * Clearing all configes cached in session.
+	 */
+	public static void clearCachedCfgs(HttpSession session) {
+		Objects.requireNonNull(session, "session is null");
+		CACHED_CONFIG_NAMES.forEach(i -> session.removeAttribute(i.name()));
 	}
 	
 	public static void addToSessionConfigCache(ConfigName configName, Object value) {

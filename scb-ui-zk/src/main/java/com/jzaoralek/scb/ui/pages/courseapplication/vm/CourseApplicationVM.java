@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,6 @@ import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.CourseService;
-import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.WebPages;
@@ -77,9 +75,6 @@ public class CourseApplicationVM extends BaseVM {
 
 	@WireVariable
 	private CourseService courseService;
-	
-	@WireVariable
-	private ScbUserService scbUserService;
 
 	@Init
 	public void init(@QueryParam(WebConstants.UUID_PARAM) String uuid, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
@@ -266,7 +261,7 @@ public class CourseApplicationVM extends BaseVM {
 			if (this.loggedByParticRepr) {
 				// rodicovska zona, redirect na seznam ucastniku
 				WebUtils.showNotificationInfoAfterRedirect(Labels.getLabel("msg.ui.info.applicationSend"));
-				Executions.sendRedirect(WebPages.USER_PARTICIPANT_LIST.getUrl());
+				WebUtils.sendRedirect(WebPages.USER_PARTICIPANT_LIST.getUrl());
 			}
 			
 			BindUtils.postNotifyChange(null, null, this, "*");

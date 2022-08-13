@@ -1,0 +1,6 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver" ?>
+<zk>
+<!-- Reloading customer datasources, using after new instance created.  -->
+<div viewModel="@id('vm') @init('com.jzaoralek.scb.ui.api.CustDsConfigReloadVM')" />
+</zk>

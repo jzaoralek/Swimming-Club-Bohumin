@@ -14,7 +14,7 @@
 			<a	id="HOME"
 				iconSclass="z-icon-home" 
 				visible="@load(!vm.isUserLogged())"
-				href="/pages/index.zul" 
+				href="${common:custCtxUri('/pages/index.zul')}" 
 				tooltiptext="Home">
 				<label value="Home"/>
 			</a>
@@ -23,7 +23,7 @@
 			<a	id="PRIHLASKA"
 				iconSclass="z-icon-file-text" 
 				visible="@load(!vm.isUserLogged())"
-				href="/pages/public/prihlaska.zul" >
+				href="${common:custCtxUri('/pages/public/prihlaska.zul')}" >
 				<label value="${c:l('txt.ui.menu.application')}"/>
 			</a>
 			
@@ -31,7 +31,7 @@
 			<a	id="SEZNAM_PRIHLASEK"
 				iconSclass="z-icon-files-o" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/ADMIN/seznam-prihlasek.zul" >
+				href="${common:custCtxUri('/pages/secured/ADMIN/seznam-prihlasek.zul')}" >
 				<label value="${c:l('txt.ui.menu.applications')}"/>
 			</a>
 			
@@ -39,7 +39,7 @@
 			<a	id="SEZNAM_KURZU" 
 				iconSclass="z-icon-list-alt" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))"
-				href="/pages/secured/TRAINER/seznam-kurzu.zul" >
+				href="${common:custCtxUri('/pages/secured/TRAINER/seznam-kurzu.zul')}" >
 				<label value="${c:l('txt.ui.menu.courses')}"/>
 			</a>
 			
@@ -47,7 +47,7 @@
 			<a	id="SEZNAM_UCASTNIKU_AT" 
 				iconSclass="z-icon-child" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))"
-				href="/pages/secured/TRAINER/seznam-ucastniku.zul" >
+				href="${common:custCtxUri('/pages/secured/TRAINER/seznam-ucastniku.zul')}" >
 				<label value="${c:l('txt.ui.common.participants')}"/>
 			</a>
 			
@@ -55,7 +55,7 @@
 			<a	id="SEZNAM_UCASTNIKU_U" 
 				iconSclass="z-icon-child" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))"
-				href="/pages/secured/USER/seznam-ucastniku.zul" >
+				href="${common:custCtxUri('/pages/secured/USER/seznam-ucastniku.zul')}" >
 				<label value="${c:l('txt.ui.common.participants')}"/>
 			</a>
 			
@@ -63,7 +63,7 @@
 			<a	id="UZIVATEL" 
 				iconSclass="z-icon-user" 
 				visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))"
-				href="/pages/secured/USER/uzivatel.zul" >
+				href="${common:custCtxUri('/pages/secured/USER/uzivatel.zul')}" >
 				<label value="${c:l('txt.ui.menu.user')}"/>
 			</a>
 			
@@ -71,7 +71,7 @@
 			<a 	id="SENAM_UZIVATELU" 
 				iconSclass="z-icon-users" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/ADMIN/seznam-uzivatelu.zul" >
+				href="${common:custCtxUri('/pages/secured/ADMIN/seznam-uzivatelu.zul')}" >
 				<label value="${c:l('txt.ui.menu.users')}"/>
 			</a>
 			
@@ -80,7 +80,7 @@
 				iconSclass="z-icon-credit-card" 
 				tooltiptext="${c:l('txt.ui.menu.bankPayments')}"
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul"
+				href="${common:custCtxUri('/pages/secured/ADMIN/seznam-bankovnich-plateb.zul')}"
 				if="${vm.paymentsAvailable}" >
 				<label value="${c:l('txt.ui.menu.payments')}"/>
 			</a>
@@ -90,7 +90,7 @@
 				iconSclass="z-icon-at" 
 				tooltiptext="${c:l('txt.ui.menu.messages')}"
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/ADMIN/message.zul" >
+				href="${common:custCtxUri('/pages/secured/ADMIN/message.zul')}" >
 				<label value="${c:l('txt.ui.menu.messages')}"/>
 			</a>
 			
@@ -98,7 +98,7 @@
 			<a 	id="NASTAVENI" 
 				iconSclass="z-icon-cog" 
 				visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
-				href="/pages/secured/ADMIN/configuration.zul" >
+				href="${common:custCtxUri('/pages/secured/ADMIN/configuration.zul')}" >
 				<label value="${c:l('txt.ui.menu.configuration')}"/>
 			</a>
 		</vlayout>

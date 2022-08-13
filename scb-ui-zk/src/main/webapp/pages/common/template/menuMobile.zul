@@ -3,41 +3,41 @@
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.common.security.SecurityVM')">
 		<!-- Dashboard -->
 		<menuitem label="Home" 
-			href="/" visible="@load(!vm.isUserLogged())" />
+			href="${common:custCtxUri('/')}" visible="@load(!vm.isUserLogged())" />
 		
 		<!-- Prihlaska -->
 		<menuitem label="${c:l('txt.ui.menu.application')}" 
-			href="/pages/public/prihlaska.zul" 
+			href="${common:custCtxUri('/pages/public/prihlaska.zul')}" 
 			visible="@load(!vm.isUserLogged())" />
 		
 		<!-- Seznam prihlasek -->
 		<menuitem label="${c:l('txt.ui.menu.applications')}" 
-			href="/pages/secured/ADMIN/seznam-prihlasek.zul" 
+			href="${common:custCtxUri('/pages/secured/ADMIN/seznam-prihlasek.zul')}" 
 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
 		
 		<!-- Seznam kurzu -->
 		<menuitem label="${c:l('txt.ui.menu.courses')}" 
-			href="/pages/secured/TRAINER/seznam-kurzu.zul" 
+			href="${common:custCtxUri('/pages/secured/TRAINER/seznam-kurzu.zul')}" 
 			visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))" />
 		
 		<!-- Seznam ucastniku - ADMIN/TRAINER -->
 		<menuitem label="${c:l('txt.ui.common.participants')}" 
-			href="/pages/secured/TRAINER/seznam-ucastniku.zul" 
+			href="${common:custCtxUri('/pages/secured/TRAINER/seznam-ucastniku.zul')}" 
 			visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('ADMIN') or vm.isLoggedUserInRole('TRAINER')))" />
 		
 		<!-- Seznam ucastniku - USER -->
 		<menuitem label="${c:l('txt.ui.common.participants')}" 
-			href="/pages/secured/USER/seznam-ucastniku.zul" 
+			href="${common:custCtxUri('/pages/secured/USER/seznam-ucastniku.zul')}" 
 			visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))" />
 		
 		<!-- Uzivatel - USER -->
 		<menuitem label="${c:l('txt.ui.menu.user')}" 
-			href="/pages/secured/USER/uzivatel.zul" 
+			href="${common:custCtxUri('/pages/secured/USER/uzivatel.zul')}" 
 			visible="@load(vm.isUserLogged() and (vm.isLoggedUserInRole('USER')))" />
 		
 		<!-- Seznam uzivatelu -->
 		<menuitem label="${c:l('txt.ui.menu.users')}" 
-			href="/pages/secured/ADMIN/seznam-uzivatelu.zul" 
+			href="${common:custCtxUri('/pages/secured/ADMIN/seznam-uzivatelu.zul')}" 
 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
 		
 		<!-- Platby -->
@@ -45,12 +45,12 @@
 			tooltiptext="${c:l('txt.ui.menu.bankPayments')}"
 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))"
 			if="${vm.paymentsAvailable}"
-			href="/pages/secured/ADMIN/seznam-bankovnich-plateb.zul" >
+			href="${common:custCtxUri('/pages/secured/ADMIN/seznam-bankovnich-plateb.zul')}" >
 		</menuitem>
 			
 		<!-- Nastaveni -->
 		<menuitem label="${c:l('txt.ui.menu.configuration')}" 
-			href="/pages/secured/ADMIN/configuration.zul" 
+			href="${common:custCtxUri('/pages/secured/ADMIN/configuration.zul')}" 
 			visible="@load(vm.isUserLogged() and vm.isLoggedUserInRole('ADMIN'))" />
 		
 		<menu label="Hardware" visible="false">

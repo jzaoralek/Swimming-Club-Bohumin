@@ -16,9 +16,12 @@ public interface MailService {
 			List<Attachment> attachmentList, 
 			boolean html,
 			boolean audit,
-			String toCompleteName);
-	void sendMail(Mail mail);
-	void sendMailBatch(List<Mail> mailList);
+			String toCompleteName,
+			String clientDBCtx);
+	void sendMail(Mail mail, 
+			String clientDBCtx);
+	void sendMailBatch(List<Mail> mailList, 
+			String clientDBCtx);
 	List<MailSend> getMailSendListByCriteria(Date dateFrom, 
 						Date dateTo, 
 						String mailTo,

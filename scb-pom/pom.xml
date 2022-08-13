@@ -52,6 +52,13 @@
 				<version>${project.version}</version>
 			</dependency>
 			
+			<!-- Sportologic - model -->
+			<dependency>
+				<groupId>com.sportologic</groupId>
+				<artifactId>sprt-model</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
 			<!-- Spring -->
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -163,7 +170,7 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.9.10.7</version>
+				<version>2.9.10.8</version>
 			</dependency>
 			<dependency>
 			    <groupId>com.fasterxml.jackson.core</groupId>

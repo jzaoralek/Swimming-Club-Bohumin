@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,11 +15,14 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -99,6 +103,59 @@ public final class WebUtils {
 		return (HttpServletRequest)Executions.getCurrent().getNativeRequest();
 	}
 	
+	public static HttpServletResponse getResponse() {
+		return (HttpServletResponse)Executions.getCurrent().getNativeResponse();
+	}
+	
+	public static String readCookieValue(String key, HttpServletRequest request) {
+		if (request == null) {
+			return null;
+		}
+		
+		if (request.getCookies() == null) {
+			return null;
+		}
+		
+		Optional<String> cookie = Arrays.stream(request.getCookies())
+	      .filter(c -> key.equals(c.getName()) 
+	    		  			&& ("/".equals(c.getPath()) || c.getPath() == null) 
+	    		  			&& c.getMaxAge() != 0)
+	      .map(Cookie::getValue)
+	      .findAny();
+		
+		if (cookie.isPresent()) {
+			return cookie.get();
+		}
+		
+		return null;
+	}
+	
+	public static void setCookie(String key, 
+								String value, 
+								HttpServletRequest request, 
+								HttpServletResponse response) {
+		Optional<Cookie> cookieOpt = Optional.empty();
+		if (request.getCookies() != null) {
+			// find origin cookie
+			cookieOpt = Arrays.stream(request.getCookies())
+					.filter(c -> key.equals(c.getName()))
+					.findAny();			
+		}
+		
+		// delete origin cookie
+		if (cookieOpt.isPresent()) {
+			cookieOpt.get().setMaxAge(0);
+			cookieOpt.get().setValue(null);
+			response.addCookie(cookieOpt.get());
+		}
+		
+		Cookie cookie = new Cookie(key, value);
+		cookie.setPath("/");
+		// set cookie expiration to one year
+		cookie.setMaxAge(365 * 24 * 60 * 60);
+		response.addCookie(cookie);
+	}
+	
 	public static void setSessAtribute(String atr, Object obj) {
 		Execution exec = Executions.getCurrent();
 		if (exec == null || exec.getSession() == null) {
@@ -113,6 +170,14 @@ public final class WebUtils {
 			return null;
 		}
 		return exec.getSession().getAttribute(atr);
+	}
+	
+	public static void setSessAtribute(String atr, Object obj, HttpServletRequest request) {
+		request.getSession().setAttribute(atr, obj);
+	}
+	
+	public static Object getSessAtribute(String atr, HttpServletRequest request) {
+		return request.getSession().getAttribute(atr);
 	}
 
 	public static void removeSessAtribute(String atr) {
@@ -384,7 +449,79 @@ public final class WebUtils {
 	 * Redirect to new course page.
 	 */
 	public static void redirectToNewCourse() {
-		Executions.sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+		sendRedirect("/pages/secured/ADMIN/kurz.zul?" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.COURSE_LIST);
+	}
+	
+	/**
+	 * Redirect to uri and add customer context.
+	 * @param uri
+	 */
+	public static void sendRedirect(String uri, HttpServletRequest req, String... args) {
+		sendRedirectCore(uri, req, args);
+	}
+	
+	/**
+	 * Redirect to uri and add customer context.
+	 * @param uri
+	 */
+	public static void sendRedirect(String uri, String... args) {
+		sendRedirectCore(uri, getRequest(), args);
+	}
+	
+	public static void sendRedirectCore(String uri, HttpServletRequest req, String... args) {
+		String customerCtx = getCustomerCtx(req);
+		if (!StringUtils.hasText(customerCtx)) {
+			throw new IllegalStateException("Customer context is null");
+		}
+		
+		if (args.length == 0) {
+			Executions.getCurrent().sendRedirect("/" + customerCtx + uri);			
+		} else if (args.length == 1) {
+			Executions.getCurrent().sendRedirect("/" + customerCtx + uri, args[0]);
+		}
+	}
+	
+	/**
+	 * Add customer ctx to uri.
+	 * @param uri
+	 * @return
+	 */
+	public static String buildCustCtxUri(String uri) {
+		return buildCustCtxUriCore(uri, getRequest());
+	}
+	
+	/**
+	 * Add customer ctx to uri.
+	 * @param uri
+	 * @param req
+	 * @return
+	 */
+	public static String buildCustCtxUri(String uri, HttpServletRequest req) {
+		return buildCustCtxUriCore(uri, req);
+		
+	}
+	
+	private static String buildCustCtxUriCore(String uri, HttpServletRequest req) {
+		String customerCtx = getCustomerCtx(req);
+		if (!StringUtils.hasText(customerCtx)) {
+			throw new IllegalStateException("Customer context is null");
+		}
+		return "/" + customerCtx + uri;
+	}
+	
+	/**
+	 * Get customer context from session or cookie.
+	 * @return
+	 */
+	public static String getCustomerCtx(HttpServletRequest req) {
+		if (req == null) {
+			req = getRequest();
+		}
+		String customerCtx = (String)getSessAtribute(WebConstants.CUST_URI_ATTR, req);
+		if (StringUtils.hasText(customerCtx)) {
+			return customerCtx;
+		}
+		return WebUtils.readCookieValue(WebConstants.CUST_URI_COOKIE, req);
 	}
 	
 	/**

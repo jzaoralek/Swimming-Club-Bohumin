@@ -191,4 +191,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public Config getByName(String name) {
 		return configurationDao.getByName(name);
 	}
+
+	@Override
+	public String getBankAuthToken() {
+		return configurationDao.getByName(Config.ConfigName.BANK_AUTH_TOKEN.name()).getValue();
+	}
+
+	@Override
+	public String getSmtpUser() {
+		return configurationDao.getByName(Config.ConfigName.SMTP_USER.name()).getValue();
+	}
+
+	@Override
+	public String getSmtpPwd() {
+		return configurationDao.getByName(Config.ConfigName.SMTP_PWD.name()).getValue();
+	}
 }

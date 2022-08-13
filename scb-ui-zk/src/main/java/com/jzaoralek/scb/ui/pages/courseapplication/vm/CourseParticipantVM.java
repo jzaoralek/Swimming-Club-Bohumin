@@ -209,7 +209,7 @@ public class CourseParticipantVM extends BaseVM {
 
 	@Command
     public void loadLessonStatsByCourseCmd() {
-		Executions.sendRedirect(WebPages.PARTICIPANT_DETAIL.getUrl() + "?"+WebConstants.UUID_PARAM+"="+this.participant.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseListitemSelected.getValue());
+		WebUtils.sendRedirect(WebPages.PARTICIPANT_DETAIL.getUrl() + "?"+WebConstants.UUID_PARAM+"="+this.participant.getUuid().toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST + "&" + WebConstants.COURSE_UUID_PARAM + "=" + courseListitemSelected.getValue());
 	}
 	
 	@Command

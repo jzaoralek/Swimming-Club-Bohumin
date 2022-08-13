@@ -45,6 +45,9 @@
     <listener>
         <listener-class>com.jzaoralek.scb.ui.common.listener.SportologicEventInterceptor</listener-class>
     </listener>
+    <listener>
+        <listener-class>com.jzaoralek.scb.ui.common.listener.SportologicExecutionInit</listener-class>
+    </listener>
     
 	<!-- labels -->
 	<system-config>

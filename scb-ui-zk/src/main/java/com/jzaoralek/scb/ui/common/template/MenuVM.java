@@ -1,12 +1,10 @@
 package com.jzaoralek.scb.ui.common.template;
 
 import org.zkoss.bind.annotation.AfterCompose;
-import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.Selectors;
 
 import com.jzaoralek.scb.ui.common.security.SecurityVM;
@@ -30,16 +28,8 @@ public class MenuVM extends SecurityVM {
     public void menuFoldCmd() {
         EventQueueHelper.publish(ScbEvent.SIDE_MENU_FOLD_EVENT, null);
     }
-
-    @Command
-    public void hrefCmd(@BindingParam("href") String href) {
-        Executions.sendRedirect(href);
-    }
     
     public String getOrgName() {
     	return ConfigUtil.getOrgName(configurationService);
     }
-
-
-
 }

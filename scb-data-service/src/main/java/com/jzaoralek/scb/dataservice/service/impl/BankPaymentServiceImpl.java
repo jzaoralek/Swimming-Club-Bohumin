@@ -24,6 +24,7 @@ import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
+import com.jzaoralek.scb.dataservice.service.ConfigurationService;
 import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 
 import bank.fioclient.dto.AccountStatement;
@@ -37,8 +38,8 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 
 	private final Logger LOG = LoggerFactory.getLogger(getClass());
 	
-	@Value("${auth.token}")
-    private String authToken;
+//	@Value("${auth.token}")
+//    private String authToken;
 	
 	@Autowired
 	private FioService fioService;
@@ -55,10 +56,14 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 	@Autowired
 	private CourseDao courseDao;
 	
+	@Autowired
+	private ConfigurationService configurationService;
+	
 	@Override
 	public AccountStatement transactions(Calendar datumOd, Calendar datumDo) {		
 		try {
 			LOG.info("Getting transactions from internet banking client, dateFrom: {}, dateTo: {}", datumOd, datumDo);
+			String authToken = configurationService.getBankAuthToken();
 			AccountStatement ret = fioService.transactions(new AuthToken(authToken), datumOd, datumDo);
 			LOG.info("Geting transactions from internet banking client finished, transactions: {}, dateFrom: {} dateTo: {}", ret.getTransactions().size(), datumOd, datumDo);
 			return ret;

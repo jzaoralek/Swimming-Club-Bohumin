@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.utils.DateUtils;
+import com.sportologic.common.model.domain.IdentEntity;
 
 public class LearningLesson implements IdentEntity {
 

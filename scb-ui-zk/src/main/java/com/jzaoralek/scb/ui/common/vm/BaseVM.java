@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.Converter;
@@ -26,6 +25,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Listitem;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.AddressValidationStatus;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Contact;
@@ -33,8 +33,8 @@ import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.CourseApplication;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig;
-import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.CourseApplicationFileConfig.CourseApplicationFileType;
+import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
@@ -79,7 +79,7 @@ public class BaseVM {
 	private final List<Listitem> roleList = WebUtils.getMessageItemsFromEnum(EnumSet.allOf(ScbUserRole.class));
 	private final List<Listitem> roleListWithEmptyItem = WebUtils.getMessageItemsFromEnumWithEmptyItem(EnumSet.allOf(ScbUserRole.class));
 	
-	protected static String orgName;
+	protected String orgName;
 	protected String orgEmail;
 	protected String orgPhone;
 	protected String welcomeInfo;
@@ -114,19 +114,15 @@ public class BaseVM {
 		this.existingUsernameValidator = new ExistingUsernameValidator(scbUserService);
 		this.birthNumberValidator = new BirthNumberValidator(configurationService);
 		this.usernameValidator = new UsernameValidator(scbUserService);
-		
-		// naplneni cashovanych hodnot z konfigurace
-		if (configurationService != null) {
-			orgName = ConfigUtil.getOrgName(configurationService);			
-		}
 	}
 
 	public static String getOrgNameStatic() {
-		return orgName;
+		return Labels.getLabel("txt.ui.appName");
 	}
 	
 	@Command
     public void logoutCmd() {
+		//zde neni mozne pouzit WebUtils.sendRedirect
     	Executions.sendRedirect("/logout");
     }
 
@@ -268,14 +264,14 @@ public class BaseVM {
 	@Command
     public void backCmd() {
 		if (StringUtils.hasText(this.returnToUrl)) {
-			Executions.sendRedirect(this.returnToUrl);
+			WebUtils.sendRedirect(this.returnToUrl);
 		} else if (StringUtils.hasText(this.returnToPage)) {
-			Executions.sendRedirect(this.returnToPage);
+			WebUtils.sendRedirect(this.returnToPage);
 		}
 	}
 
 	protected void sendMailToNewUser(ScbUser user) {
-		mailService.sendMail(buildMailToNewUser(user));
+		mailService.sendMail(buildMailToNewUser(user), ClientDatabaseContextHolder.getClientDatabase());
 	}
 	
 	protected Mail buildMailToNewUser(ScbUser user) {
@@ -421,7 +417,7 @@ public class BaseVM {
 		}
 		
 		WebUtils.setSessAtribute(WebConstants.EMAIL_RECIPIENT_LIST_PARAM, recipientList);
-		Executions.getCurrent().sendRedirect(WebPages.MESSAGE.getUrl(), "_blank");
+		WebUtils.sendRedirect(WebPages.MESSAGE.getUrl(), "_blank");
 	}
 	
 	protected CourseApplicationFileConfig getByType(List<CourseApplicationFileConfig> cafcList, CourseApplicationFileType type) {
@@ -471,9 +467,10 @@ public class BaseVM {
 
 	public void sendMail(CourseApplication courseApplication, String headline) {
 		// mail to course participant representative
-		mailService.sendMail(buildMailCourseParticRepresentative(courseApplication, headline));
+		String clientDBCtx = ClientDatabaseContextHolder.getClientDatabase();
+		mailService.sendMail(buildMailCourseParticRepresentative(courseApplication, headline), clientDBCtx);
 		// mail to club
-		mailService.sendMail(buildMailToClub(courseApplication));
+		mailService.sendMail(buildMailToClub(courseApplication), clientDBCtx);
 		// send payment instructions
 		processPaymentInstruction(courseApplication);
 	}
@@ -542,7 +539,8 @@ public class BaseVM {
 				, null
 				, buildMailSignature()
 				, true
-				, course.getCourseType());
+				, course.getCourseType()
+				, ClientDatabaseContextHolder.getClientDatabase());
 		
 	}
 	
@@ -636,7 +634,7 @@ public class BaseVM {
 		mailToUser.append(WebConstants.LINE_SEPARATOR);
 		mailToUser.append(buildMailSignature());
 
-		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false, false, null);
+		mailService.sendMail(user.getContact().getEmail1(), null, Labels.getLabel("msg.ui.mail.subject.resetPassword"), mailToUser.toString(), null, false, false, null, ClientDatabaseContextHolder.getClientDatabase());
 	}
 	
 	@SuppressWarnings("unchecked")

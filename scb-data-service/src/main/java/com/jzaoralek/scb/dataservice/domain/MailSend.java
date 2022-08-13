@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.springframework.util.StringUtils;
 
+import com.sportologic.common.model.domain.IdentEntity;
+
 /**
  * Send email, contains additional attributes for status etc.
  *

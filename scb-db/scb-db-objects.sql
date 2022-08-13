@@ -251,7 +251,7 @@ CREATE TABLE course_application_file_config(
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
-ALTER TABLE course_application_file_config DROP INDEX type;
+-- ALTER TABLE course_application_file_config DROP INDEX type;
 
 CREATE TABLE course_application_dyn_attribute_config(
 	uuid varchar(36),
@@ -261,7 +261,7 @@ CREATE TABLE course_application_dyn_attribute_config(
     type ENUM('TEXT', 'DATE', 'INT', 'DOUBLE',  'BOOLEAN') NOT NULL DEFAULT 'TEXT',
 	created_at TIMESTAMP NOT NULL,
     terminated_at TIMESTAMP NULL,
-    modif_at TIMESTAMP NOT NULL,
+    modif_at TIMESTAMP default CURRENT_TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
@@ -275,7 +275,7 @@ CREATE TABLE course_application_dyn_attribute (
 	int_value BIGINT,
 	double_value DOUBLE,
 	boolean_value ENUM('0','1'),
-	modif_at TIMESTAMP  NOT NULL,
+	modif_at TIMESTAMP  default CURRENT_TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );
@@ -291,7 +291,7 @@ CREATE TABLE mail_message_send (
     description TEXT NULL,
 	attachments ENUM('0','1') NOT NULL DEFAULT '0',
 	html ENUM('0','1') NOT NULL DEFAULT '0',
-	modif_at TIMESTAMP NOT NULL,
+	modif_at TIMESTAMP  default CURRENT_TIMESTAMP NOT NULL,
 	modif_by varchar(36) NOT NULL,
 	PRIMARY KEY (uuid)
 );

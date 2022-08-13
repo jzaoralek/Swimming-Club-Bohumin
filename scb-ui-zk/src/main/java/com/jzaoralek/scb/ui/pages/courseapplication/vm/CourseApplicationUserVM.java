@@ -157,7 +157,7 @@ public class CourseApplicationUserVM extends BaseVM {
 		}
 		String targetPage = WebPages.USER_PARTICIPANT_DETAIL.getUrl();
 		WebPages fromPage = WebPages.USER_PARTICIPANT_LIST;
-		Executions.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
+		WebUtils.sendRedirect(targetPage + "?"+WebConstants.UUID_PARAM+"="+uuid.toString() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + fromPage);
 	}
 	
 	private void createNewCourseApplication(CourseParticipant courseParticipant) {

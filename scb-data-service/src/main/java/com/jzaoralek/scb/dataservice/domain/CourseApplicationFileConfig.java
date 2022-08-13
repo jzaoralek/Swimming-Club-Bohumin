@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.UUID;
 
+import com.sportologic.common.model.domain.IdentEntity;
+
 public class CourseApplicationFileConfig implements IdentEntity {
 
 	public enum CourseApplicationFileType {

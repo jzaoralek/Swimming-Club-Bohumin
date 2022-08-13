@@ -3,6 +3,8 @@ package com.jzaoralek.scb.dataservice.domain;
 import java.util.Date;
 import java.util.UUID;
 
+import com.sportologic.common.model.domain.IdentEntity;
+
 /**
  * Represents configuration record.
  *
@@ -30,7 +32,11 @@ public class Config implements IdentEntity {
 		ALLOW_CHECK_SUM_BIRTHNUM_VALIDATION,
 		COURSE_APPLICATION_TITLE,
 		COURSE_APPLICATION_PAYMENT_INSTRUCS,
-		COURSE_APPLICATION_PAYMENT_DEADLINE;
+		COURSE_APPLICATION_PAYMENT_DEADLINE,
+		ADM_CUST_CONFIG_IDS,
+		BANK_AUTH_TOKEN,
+		SMTP_USER,
+		SMTP_PWD;
 	}
 
 	public enum ConfigType {

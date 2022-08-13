@@ -1,5 +1,5 @@
 <div sclass="login-frame-right">
-	<a label="Sportologic" sclass="brand" href="/"/>
+	<a label="Sportologic" sclass="brand" href="https://sportologic.cz/web" target="_blank"/>
 	<label sclass="txt" value="Pokud ještě nemáte své přihlašovací údaje, zaregistrujte se pomocí vyplnění přihlášky."/>
-	<button label="Přihláška" href="/pages/public/prihlaska.zul" sclass="lpp" width="250px" />
+	<button label="Přihláška" href="${common:custCtxUri('/pages/public/prihlaska.zul')}" sclass="lpp" width="250px" />
 </div>

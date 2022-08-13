@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.service.impl.ConfigurationServiceImpl;
+import com.sportologic.common.model.domain.IdentEntity;
 
 public class Course implements IdentEntity {
 

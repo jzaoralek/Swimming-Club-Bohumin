@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.util.StringUtils;
 
-import com.jzaoralek.scb.dataservice.domain.IdentEntity;
+import com.sportologic.common.model.domain.IdentEntity;
 import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 public abstract class BaseAbstractService {

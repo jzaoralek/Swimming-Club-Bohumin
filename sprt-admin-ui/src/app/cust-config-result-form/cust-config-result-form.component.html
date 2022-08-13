@@ -1,0 +1,14 @@
+<div class="py-4 text-center">
+    <h2>Vyzkoušejte zdarma</h2>
+  </div>
+
+<div class="alert alert-success text-center" style="margin-top: 40px; margin-bottom: 30px;" role="alert">
+    Gratulujeme! Vaše doména systému Sportologic založena a je dostupná zde: <a href="{{ data.newCustData?.custInstanceUrl }}" target="_blank" >{{ data.newCustData?.custInstanceUrl }}</a>
+</div>
+
+<div class="text-center" *ngIf="data.newCustData">
+    <p>
+        Veškeré informace včetně přístupových údajů byly odeslány na email 
+        <strong>{{ data.newCustData?.custEmail }}</strong>
+    </p>
+</div>
