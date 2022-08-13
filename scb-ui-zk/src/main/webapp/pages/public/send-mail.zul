@@ -27,6 +27,9 @@
 			
 			<button id="submit" label="Submit" disabled="true" />
 		</div>
+		
+		
+		<button label="QRCode" onClick="@command('getQRCodeCmd')" />
 	</div>
 	
 </zk>

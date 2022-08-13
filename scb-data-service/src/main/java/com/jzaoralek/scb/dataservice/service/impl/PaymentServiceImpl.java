@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.dao.PaymentDao;
-import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.Payment;
@@ -209,4 +208,5 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			}
 		}
 	}
+
 }
