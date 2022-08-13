@@ -49,7 +49,7 @@ CREATE TABLE course_participant(
   birthdate DATE,
   personal_number varchar(12),
 	health_insurance varchar(240),
-	health_info varchar(524),
+	health_info varchar(524) CHARACTER SET utf8,
 	user_uuid varchar(36) REFERENCES user(uuid),
 	contact_uuid varchar(36) REFERENCES contact(uuid),
     iscus_role ENUM('ACTIVE_SPORTSMAN','ACTIVE_SPORTSMAN_PROFESSIONAL','OTHER') NULL DEFAULT 'ACTIVE_SPORTSMAN',
