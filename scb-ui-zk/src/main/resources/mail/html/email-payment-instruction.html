@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title th:remove="all">Template for HTML email with inline image</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+		body {
+		  font-family: helvetica,arial,sans-serif;
+		  font-size: 14pt;
+		  color: #808080;
+		}
+	</style>
+  </head>
+  <body>
+  	<p th:text="#{msg.ui.mail.paymentInstruction.text0}"/>
+  
+    <p th:if="${courseType} == 'TWO_SEMESTER'" th:text="#{msg.ui.mail.paymentInstruction.text1.twoSemester(${courseName}, ${semester}, ${year}, ${particiName})}"/>
+    
+    <p th:if="${courseType} == 'STANDARD'" th:text="#{msg.ui.mail.paymentInstruction.text1.standard(${courseName}, ${year}, ${particiName})}"/>
+    
+    <table>
+    	<tr>
+    		<td th:text="#{txt.ui.common.Amount}" ></td>
+    		<td th:text="#{txt.ui.common.amount.CZK(${amount})}"></td>
+    	</tr>
+    	<tr>
+    		<td th:text="#{txt.ui.common.AccountNo}" ></td>
+    		<td th:text="${accountNo}"></td>
+    	</tr>
+    	<tr>
+    		<td th:text="#{txt.ui.common.VarSymbol}" ></td>
+    		<td th:text="${varSymbol}"></td>
+    	</tr>
+    	<tr th:if="${dueDate != null}">
+    		<td th:text="#{txt.ui.common.DueDate}" ></td>
+    		<td th:text="${dueDate}"></td>
+    	</tr>
+    	<tr>
+    		<td th:text="#{txt.ui.common.MessageToReceipent}" ></td>
+    		<td th:text="${messageToRecipient}"></td>
+    	</tr>
+    </table>
+    
+    <p>
+	  <img th:src="${QRCode}" />
+    </p>
+    
+    <p th:text="#{msg.ui.mail.paymentInstruction.text5}" />
+    
+    <p th:if="${optionalText != null and optionalText.length() > 0}" th:text="${optionalText}"/>
+    
+    <p th:text="#{msg.ui.mail.paymentInstruction.text4}" />
+    
+    <p>
+      <em th:text="#{msg.ui.mail.Regards}"></em>,
+      <br />
+      <em th:text="${signature}"></em>
+    </p>
+  </body>
+</html>

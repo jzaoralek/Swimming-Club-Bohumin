@@ -65,25 +65,60 @@ public class SendMailVM extends BaseVM {
 		ctx.setVariable("name", "recipent name");
 		ctx.setVariable("subscriptionDate", new Date());
 		ctx.setVariable("hobbies", Arrays.asList("Cinema", "Sports", "Music"));
-		
-		// String imageResourceName = Base64.getEncoder().encodeToString(getPaymentQRCore());
-		
-		// "data:image/png;base64," + 
 		ctx.setVariable("imageResourceName", qrCodeService.getPaymentQRCodeUrl(buildPaymentInstruction(), buildDueDate()));
 		
-		if (emailTemplateEngine != null) {
-			final String htmlContent = this.emailTemplateEngine.process("html/email-inlineimage.html", ctx);
-			
-			mailService.sendMail("jakub.zaoralek@gmail.com"
-					, null
-					, Labels.getLabel("txt.ui.menu.application")
-					, htmlContent
-					, attachmentList
-					, true
-					, false
-					, null
-					, ClientDatabaseContextHolder.getClientDatabase());        			
-		}
+		final String htmlContent = this.emailTemplateEngine.process("html/email-inlineimage.html", ctx);
+		
+		mailService.sendMail("jakub.zaoralek@gmail.com"
+				, null
+				, Labels.getLabel("txt.ui.menu.application")
+				, htmlContent
+				, attachmentList
+				, true
+				, false
+				, null
+				, ClientDatabaseContextHolder.getClientDatabase());
+	}
+	
+	@Command
+	public void sendPaymentInstructCmd() {
+		PaymentInstruction instruct = buildPaymentInstruction();
+		Date dueDate = buildDueDate();
+		CourseType courseType = CourseType.TWO_SEMESTER;
+		String yearFromTo = "2022/2023";
+		String optionalText = "Volitelný text instrukce k platbě.";
+		String signature = "Adrian Kuder";
+		
+		final Context ctx = new Context(new Locale("cs","CZ"));
+		ctx.setVariable("courseType", courseType.name());
+		ctx.setVariable("courseName", instruct.getCourseName());		
+		ctx.setVariable("semester", instruct.getSemester());
+		ctx.setVariable("year", yearFromTo);
+		ctx.setVariable("particiName", instruct.getCourseParticName());
+		
+		ctx.setVariable("amount", instruct.getPriceSemester());
+		ctx.setVariable("currency", instruct.getPriceSemester());
+		ctx.setVariable("accountNo", instruct.getBankAccountNumber());
+		ctx.setVariable("varSymbol", instruct.getVarsymbol());
+		ctx.setVariable("dueDate", dueDate);
+		ctx.setVariable("messageToRecipient", instruct.getCourseParticName());
+		
+		ctx.setVariable("QRCode", qrCodeService.getPaymentQRCodeUrl(instruct, dueDate));
+		ctx.setVariable("optionalText", optionalText);
+		ctx.setVariable("signature", signature);
+		
+		
+		final String htmlContent = this.emailTemplateEngine.process("html/email-payment-instruction.html", ctx);
+		
+		mailService.sendMail("jakub.zaoralek@gmail.com"
+				, null
+				, "Instrukce k platbě"
+				, htmlContent
+				, null
+				, true
+				, false
+				, null
+				, ClientDatabaseContextHolder.getClientDatabase());
 	}
 	
 	@Command

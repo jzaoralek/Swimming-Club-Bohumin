@@ -30,6 +30,7 @@
 		
 		
 		<button label="QRCode" onClick="@command('getQRCodeCmd')" />
+		<button label="Send payment instruction" onClick="@command('sendPaymentInstructCmd')" />
 	</div>
 	
 </zk>

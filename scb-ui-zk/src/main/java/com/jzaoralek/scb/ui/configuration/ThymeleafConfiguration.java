@@ -68,6 +68,7 @@ public class ThymeleafConfiguration {
     public ResourceBundleMessageSource emailMessageSource() {
         final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("mail/MailMessages");
+        messageSource.setDefaultEncoding(EMAIL_TEMPLATE_ENCODING);
         return messageSource;
     }
 }
