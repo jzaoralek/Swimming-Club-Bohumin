@@ -17,4 +17,12 @@ public interface QRCodeService {
 	 * @return
 	 */
 	byte[] getPaymentQRCode(PaymentInstruction paymentInstruction, Date dueDate);
+	
+	/**
+	 * Generate QR Code URL for payment instruction.
+	 * @param paymentInstruction
+	 * @param dueDate
+	 * @return
+	 */
+	String getPaymentQRCodeUrl(PaymentInstruction paymentInstruction, Date dueDate);
 }

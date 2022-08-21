@@ -24,6 +24,7 @@ public class QRCodeServiceImpl implements QRCodeService {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	private static final String QR_CODE_GEN_DOMAIN = "https://api.paylibo.com";
+	private static final String QR_CODE_GEN_IMG = "/paylibo/generator/czech/image";
 	private static final String ACCOUNT_PREFIX_DELIM = "-";
 	
 	private RestExecutor restExecutor;
@@ -37,39 +38,12 @@ public class QRCodeServiceImpl implements QRCodeService {
 	public byte[] getPaymentQRCode(PaymentInstruction paymentInstruction, Date dueDate) {
 		LOG.debug("Generating QRCode for payment: {}, dueDate: {}", paymentInstruction, dueDate);
 		try {
-			StringBuilder params = new StringBuilder();
 			
-			String[] accountInfo = paymentInstruction.getBankAccountNumber().split("/");
-			String accountNo = accountInfo[0];
-			String bankCode = accountInfo[1];
-			
-			String accountPrefix = null;
-			if (accountNo.contains(ACCOUNT_PREFIX_DELIM)) {
-				// account has prefix
-				String[] accountWithPrefix = accountNo.split(ACCOUNT_PREFIX_DELIM);
-				accountPrefix = accountWithPrefix[0];
-				accountNo = accountWithPrefix[1];
-			}
-			
-			params.append("?accountNumber=" + accountNo);
-			if (StringUtils.hasText(accountPrefix)) {
-				params.append("&accountPrefix=" + accountPrefix);
-			}
-			params.append("&bankCode=" + bankCode);
-			params.append("&amount=" + paymentInstruction.getPriceSemester());
-			params.append("&currency=" + "CZK");
-			params.append("&vs=" + paymentInstruction.getVarsymbol());
-			params.append("&message=" + paymentInstruction.getCourseParticName());
-			
-			if (dueDate != null) {
-				// termin splatnosti, format yyyy-MM-dd
-				params.append("&date=" + DATE_FORMAT.format(dueDate));
-			}
-			
+			String params = getPaymentQRCodeUrlParams(paymentInstruction, dueDate);
 			LOG.debug("Generating QRCode for params: {}", params);
 			
 			// call REST to generate QR Code
-			return restExecutor.execute("/paylibo/generator/czech/image" + params.toString(),
+			return restExecutor.execute(QR_CODE_GEN_IMG + params,
 					HttpMethod.GET, 
 					null, 
 					byte[].class);
@@ -78,5 +52,48 @@ public class QRCodeServiceImpl implements QRCodeService {
 			LOG.error("RestException caught during processing paymentInstruction: {}, dueDate: {}", paymentInstruction, dueDate, e);
 			throw new RuntimeException(e);
 		}
+	}
+	
+	@Override
+	public String getPaymentQRCodeUrl(PaymentInstruction paymentInstruction, Date dueDate) {
+		LOG.debug("Generating QRCode URL for payment: {}, dueDate: {}", paymentInstruction, dueDate);
+		String params = getPaymentQRCodeUrlParams(paymentInstruction, dueDate);
+		
+		LOG.debug("Generating QRCode URL for params: {}", params);
+		
+		return QR_CODE_GEN_DOMAIN + QR_CODE_GEN_IMG + params;
+	}
+	
+	public String getPaymentQRCodeUrlParams(PaymentInstruction paymentInstruction, Date dueDate) {
+		StringBuilder params = new StringBuilder();
+		
+		String[] accountInfo = paymentInstruction.getBankAccountNumber().split("/");
+		String accountNo = accountInfo[0];
+		String bankCode = accountInfo[1];
+		
+		String accountPrefix = null;
+		if (accountNo.contains(ACCOUNT_PREFIX_DELIM)) {
+			// account has prefix
+			String[] accountWithPrefix = accountNo.split(ACCOUNT_PREFIX_DELIM);
+			accountPrefix = accountWithPrefix[0];
+			accountNo = accountWithPrefix[1];
+		}
+		
+		params.append("?accountNumber=" + accountNo);
+		if (StringUtils.hasText(accountPrefix)) {
+			params.append("&accountPrefix=" + accountPrefix);
+		}
+		params.append("&bankCode=" + bankCode);
+		params.append("&amount=" + paymentInstruction.getPriceSemester());
+		params.append("&currency=" + "CZK");
+		params.append("&vs=" + paymentInstruction.getVarsymbol());
+		params.append("&message=" + paymentInstruction.getCourseParticName());
+		
+		if (dueDate != null) {
+			// termin splatnosti, format yyyy-MM-dd
+			params.append("&date=" + DATE_FORMAT.format(dueDate));
+		}
+		
+		return params.toString();
 	}
 }
