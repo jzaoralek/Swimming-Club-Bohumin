@@ -1,10 +1,14 @@
 package com.jzaoralek.scb.ui.pages.security.vm;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
@@ -13,6 +17,7 @@ import org.zkoss.zul.Filedownload;
 import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.QRCodeService;
 import com.jzaoralek.scb.ui.common.WebConstants;
@@ -24,14 +29,17 @@ public class SendMailVM extends BaseVM {
 	@WireVariable
 	private QRCodeService qrCodeService;
 	
+	@WireVariable
+	private TemplateEngine emailTemplateEngine;
+	
 	@Command
 	public void sendPaymentInstructCmd() {
+		PaymentInstruction instruct = buildPaymentInstruction();
 		Date dueDate = buildDueDate();
 		CourseType courseType = CourseType.TWO_SEMESTER;
 		String yearFromTo = "2022/2023";
 		String optionalText = "Volitelný text instrukce k platbě.";
 		
-		/*
 		final Context ctx = new Context(new Locale("cs","CZ"));
 		ctx.setVariable("courseType", courseType.name());
 		ctx.setVariable("courseName", instruct.getCourseName());		
@@ -43,14 +51,14 @@ public class SendMailVM extends BaseVM {
 		ctx.setVariable("currency", instruct.getPriceSemester());
 		ctx.setVariable("accountNo", instruct.getBankAccountNumber());
 		ctx.setVariable("varSymbol", instruct.getVarsymbol());
-		ctx.setVariable("dueDate", dueDate);
+		ctx.setVariable("dueDate", new SimpleDateFormat("dd.MM.yyyy").format(dueDate));
 		ctx.setVariable("messageToRecipient", instruct.getCourseParticName());
 		
 		ctx.setVariable("QRCode", qrCodeService.getPaymentQRCodeUrl(instruct, dueDate));
 		ctx.setVariable("optionalText", optionalText);
-		ctx.setVariable("signature", signature);
-		*/
+		ctx.setVariable("signature", "S pozdravem");
 		
+		/*
 		paymentService.processPaymentInstruction(Arrays.asList(buildPaymentInstruction()), 
 											yearFromTo, 
 											dueDate, 
@@ -58,12 +66,11 @@ public class SendMailVM extends BaseVM {
 											true, 
 											courseType, 
 											ClientDatabaseContextHolder.getClientDatabase());
+		*/
 		
-		/*
 		final String htmlContent = this.emailTemplateEngine.process("html/email-payment-instruction.html", ctx);
 		Mail mail = Mail.ofHtml("jakub.zaoralek@gmail.com", null, "Instrukce k platbě", htmlContent, null, false, null);
 		mailService.sendMail(mail, ClientDatabaseContextHolder.getClientDatabase());
-		*/
 		
 		/*
 		mailService.sendMail("jakub.zaoralek@gmail.com"
