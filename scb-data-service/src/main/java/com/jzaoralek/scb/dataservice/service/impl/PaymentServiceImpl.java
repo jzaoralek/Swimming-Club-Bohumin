@@ -25,6 +25,7 @@ import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
+import com.jzaoralek.scb.dataservice.service.MailUtilService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.dataservice.service.QRCodeService;
 import com.jzaoralek.scb.dataservice.utils.DateUtils;
@@ -48,6 +49,9 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 	
 	@Autowired
 	private QRCodeService qrCodeService;
+	
+	@Autowired
+	private MailUtilService mailUtilService;
 	
 	@Override
 	public List<Payment> getByCourseCourseParticipantUuid(UUID courseParticipantUuid, UUID courseUuid, Date from, Date to) {
@@ -111,7 +115,6 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			, String yearFromTo
 			, Date dueDate
 			, String optionalText
-			, String mailSignature
 			, boolean firstSemester
 			, CourseType courseType
 			, String clientDBCtx) { 
@@ -124,6 +127,9 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 		Context ctx = null;
 		String htmlContent = null;
 		Mail mailHtml = null;
+		
+		String signHtml = mailUtilService.buildSignatureHtml();
+		
 		for (PaymentInstruction paymentInstruction : paymentInstructionList) {
 			if (!StringUtils.hasText(paymentInstruction.getCourseParticReprEmail())) {
 				LOG.warn("submitCmd():: No course participant representative email for courseParticipant: " + paymentInstruction.getCourseParticName());
@@ -146,7 +152,7 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 			
 			ctx.setVariable("QRCode", qrCodeService.getPaymentQRCodeUrl(paymentInstruction, dueDate));
 			ctx.setVariable("optionalText", optionalText);
-			ctx.setVariable("signature", mailSignature);
+			ctx.setVariable("signature", signHtml);
 			
 			htmlContent = this.emailTemplateEngine.process("html/email-payment-instruction.html", ctx);
 			

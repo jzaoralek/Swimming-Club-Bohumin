@@ -51,10 +51,9 @@
     
     <p th:text="#{msg.ui.mail.paymentInstruction.text4}" />
     
-    <p>
-      <em th:text="#{msg.ui.mail.Regards}"></em>,
-      <br />
-      <em th:text="${signature}"></em>
-    </p>
+    <p th:text="#{msg.ui.mail.Regards}" />
+    <div th:utext="${signature}" >
+    </div>
+    
   </body>
 </html>

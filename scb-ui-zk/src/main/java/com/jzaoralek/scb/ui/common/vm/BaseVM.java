@@ -536,7 +536,6 @@ public class BaseVM {
 				, yearFromTo
 				, paymentDeadline.getTime()
 				, null
-				, buildMailSignature()
 				, true
 				, course.getCourseType()
 				, ClientDatabaseContextHolder.getClientDatabase());

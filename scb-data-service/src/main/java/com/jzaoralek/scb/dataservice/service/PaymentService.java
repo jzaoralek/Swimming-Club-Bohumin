@@ -20,7 +20,6 @@ public interface PaymentService {
 			, String yearFromTo
 			, Date dueDate
 			, String optionalText
-			, String mailSignature
 			, boolean firstSemester
 			, CourseType courseType
 			, String clientDBCtx);

@@ -30,7 +30,6 @@ public class SendMailVM extends BaseVM {
 		CourseType courseType = CourseType.TWO_SEMESTER;
 		String yearFromTo = "2022/2023";
 		String optionalText = "Volitelný text instrukce k platbě.";
-		String signature = "Adrian Kuder";
 		
 		/*
 		final Context ctx = new Context(new Locale("cs","CZ"));
@@ -55,8 +54,7 @@ public class SendMailVM extends BaseVM {
 		paymentService.processPaymentInstruction(Arrays.asList(buildPaymentInstruction()), 
 											yearFromTo, 
 											dueDate, 
-											optionalText, 
-											signature, 
+											optionalText,
 											true, 
 											courseType, 
 											ClientDatabaseContextHolder.getClientDatabase());

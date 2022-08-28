@@ -67,7 +67,6 @@ public class PaymentInstructionWinVM extends BaseVM {
 				, this.yearFromTo
 				, this.paymentDeadline
 				, this.optionalText
-				, buildMailSignature()
 				, this.firstSemester
 				, this.courseType
 				, ClientDatabaseContextHolder.getClientDatabase());
