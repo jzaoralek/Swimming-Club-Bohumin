@@ -71,18 +71,6 @@ public class SendMailVM extends BaseVM {
 		final String htmlContent = this.emailTemplateEngine.process("html/email-payment-instruction.html", ctx);
 		Mail mail = Mail.ofHtml("jakub.zaoralek@gmail.com", null, "Instrukce k platbě", htmlContent, null, false, null);
 		mailService.sendMail(mail, ClientDatabaseContextHolder.getClientDatabase());
-		
-		/*
-		mailService.sendMail("jakub.zaoralek@gmail.com"
-				, null
-				, "Instrukce k platbě"
-				, htmlContent
-				, null
-				, true
-				, false
-				, null
-				, ClientDatabaseContextHolder.getClientDatabase());
-		*/
 	}
 	
 	@Command
