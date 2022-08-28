@@ -13,6 +13,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.dao.PaymentDao;
@@ -24,11 +26,13 @@ import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
+import com.jzaoralek.scb.dataservice.service.QRCodeService;
+import com.jzaoralek.scb.dataservice.utils.DateUtils;
 
 @Service("paymentService")
 public class PaymentServiceImpl extends BaseAbstractService implements PaymentService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CourseServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
 	@Autowired
 	private PaymentDao paymentDao;
@@ -38,6 +42,12 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 	
 	@Autowired
 	private CourseApplicationService courseApplicationService;
+	
+	@Autowired
+	private TemplateEngine emailTemplateEngine;
+	
+	@Autowired
+	private QRCodeService qrCodeService;
 	
 	@Override
 	public List<Payment> getByCourseCourseParticipantUuid(UUID courseParticipantUuid, UUID courseUuid, Date from, Date to) {
@@ -99,8 +109,7 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 	@Override
 	public void processPaymentInstruction(List<PaymentInstruction> paymentInstructionList
 			, String yearFromTo
-			, String lineSeparator
-			, String paymentDeadline
+			, Date dueDate
 			, String optionalText
 			, String mailSignature
 			, boolean firstSemester
@@ -109,79 +118,37 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 		if (CollectionUtils.isEmpty(paymentInstructionList)) {
 			return;
 		}
-		StringBuilder mailToUser = null;
+		// StringBuilder mailToUser = null;
 		int semester = firstSemester ? 1 :2;
 		int counter = 0;
+		Context ctx = null;
+		String htmlContent = null;
+		Mail mailHtml = null;
 		for (PaymentInstruction paymentInstruction : paymentInstructionList) {
 			if (!StringUtils.hasText(paymentInstruction.getCourseParticReprEmail())) {
 				LOG.warn("submitCmd():: No course participant representative email for courseParticipant: " + paymentInstruction.getCourseParticName());
 				continue;
 			}
-			mailToUser = new StringBuilder();
-			mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text0", null, Locale.getDefault()));
-			mailToUser.append(lineSeparator);
-			mailToUser.append(lineSeparator);
-			if (courseType == CourseType.STANDARD) {
-				mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text1.standard", new Object[] {paymentInstruction.getCourseName(), yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()));
-			} else {
-				mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text1.twoSemester", new Object[] {paymentInstruction.getCourseName(), paymentInstruction.getSemester(), yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()));				
-			}
-			mailToUser.append(lineSeparator);
-			mailToUser.append(lineSeparator);
-
-			// cislo uctu
-			mailToUser.append(messageSource.getMessage("txt.ui.common.AccountNo", null, Locale.getDefault()));
-			mailToUser.append(": ");
-			mailToUser.append(paymentInstruction.getBankAccountNumber());
-			mailToUser.append(lineSeparator);
 			
-			// castka
-			mailToUser.append(messageSource.getMessage("txt.ui.common.Amount", null, Locale.getDefault()));
-			mailToUser.append(": ");
-			mailToUser.append(paymentInstruction.getPriceSemester());
-			mailToUser.append(" ");
-			mailToUser.append(messageSource.getMessage("txt.ui.common.CZK", null, Locale.getDefault()));
-			mailToUser.append(lineSeparator);
+			ctx = new Context(Locale.getDefault());
+			ctx.setVariable("courseType", courseType.name());
+			ctx.setVariable("courseName", paymentInstruction.getCourseName());		
+			ctx.setVariable("semester", paymentInstruction.getSemester());
+			ctx.setVariable("year", yearFromTo);
+			ctx.setVariable("particiName", paymentInstruction.getCourseParticName());
 			
-			// variabilni symbol
-			mailToUser.append(messageSource.getMessage("txt.ui.common.VarSymbol", null, Locale.getDefault()));
-			mailToUser.append(": ");
-			mailToUser.append(paymentInstruction.getVarsymbol());
-			mailToUser.append(lineSeparator);
+			ctx.setVariable("amount", paymentInstruction.getPriceSemester());
+			ctx.setVariable("currency", paymentInstruction.getPriceSemester());
+			ctx.setVariable("accountNo", paymentInstruction.getBankAccountNumber());
+			ctx.setVariable("varSymbol", paymentInstruction.getVarsymbol());
+			ctx.setVariable("dueDate", DateUtils.dateAsString(dueDate));
+			ctx.setVariable("messageToRecipient", paymentInstruction.getCourseParticName());
 			
-			// zprava pro prijemce
-			mailToUser.append(messageSource.getMessage("txt.ui.common.MessageToReceipent", new Object[] {paymentDeadline}, Locale.getDefault()));
-			mailToUser.append(": ");
-			mailToUser.append(paymentInstruction.getCourseParticName());
-			mailToUser.append(lineSeparator);
-			mailToUser.append(lineSeparator);
+			ctx.setVariable("QRCode", qrCodeService.getPaymentQRCodeUrl(paymentInstruction, dueDate));
+			ctx.setVariable("optionalText", optionalText);
+			ctx.setVariable("signature", mailSignature);
 			
-			// termin uhrazeni
-			if (StringUtils.hasText(paymentDeadline)) {
-				mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text2", new Object[] {paymentDeadline}, Locale.getDefault()));
-				mailToUser.append(lineSeparator);
-				mailToUser.append(lineSeparator);
-			}
-			
-			// instrukce pro spravne zadani variabilniho symbolu
-			mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text5", null, Locale.getDefault()));
-			mailToUser.append(lineSeparator);
-			mailToUser.append(lineSeparator);
-			
-			// volitelny text
-			if (StringUtils.hasText(optionalText)) {
-				mailToUser.append(optionalText);
-				mailToUser.append(lineSeparator);
-				mailToUser.append(lineSeparator);
-			}
-			
-			// pokud jiz bylo uhrazeno, berte jako bezpredmetne
-			mailToUser.append(messageSource.getMessage("msg.ui.mail.paymentInstruction.text4", new Object[] {paymentDeadline}, Locale.getDefault()));
-			mailToUser.append(lineSeparator);
-			mailToUser.append(lineSeparator);
-			
-			// podpis
-			mailToUser.append(mailSignature);
+			htmlContent = this.emailTemplateEngine.process("html/email-payment-instruction.html", ctx);
 			
 			String subject = null;
 			if (courseType == CourseType.STANDARD) {
@@ -190,9 +157,11 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 				subject = messageSource.getMessage("msg.ui.mail.paymentInstruction.subject.twoSemester", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault());
 			}
 			
-			mailService.sendMail(new Mail(paymentInstruction.getCourseParticReprEmail(), null, subject, mailToUser.toString(), null, false), clientDBCtx);
+			mailHtml = Mail.ofHtml(paymentInstruction.getCourseParticReprEmail(), null, subject, htmlContent, null, false, null);
+			
+			mailService.sendMail(mailHtml, clientDBCtx);
 			// odeslani na platby@sportologic.cz
-			mailService.sendMail(new Mail(DataServiceConstants.PLATBY_EMAIL, null, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), mailToUser.toString(), null, false), clientDBCtx);			
+			mailService.sendMail(new Mail(DataServiceConstants.PLATBY_EMAIL, null, messageSource.getMessage("msg.ui.mail.paymentInstruction.subject", new Object[] {paymentInstruction.getCourseName(), semester, yearFromTo, paymentInstruction.getCourseParticName()}, Locale.getDefault()), htmlContent, null, false), clientDBCtx);			
 			// aktualizace odeslani notifikace v course_course_participant
 			courseApplicationService.updateNotifiedPayment(Arrays.asList(paymentInstruction.getCourseParticipantUuid()), firstSemester);
 			

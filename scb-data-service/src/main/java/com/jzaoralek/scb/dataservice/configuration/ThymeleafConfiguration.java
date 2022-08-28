@@ -1,4 +1,4 @@
-package com.jzaoralek.scb.ui.configuration;
+package com.jzaoralek.scb.dataservice.configuration;
 
 import java.util.Collections;
 

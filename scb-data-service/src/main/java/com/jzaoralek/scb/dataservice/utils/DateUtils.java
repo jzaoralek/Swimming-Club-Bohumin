@@ -1,12 +1,15 @@
 package com.jzaoralek.scb.dataservice.utils;
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 public final class DateUtils {
 
+	private static final String DATE_PATTERN = "dd.MM.yyyy";
+	
 	private DateUtils(){}
 
 	/**
@@ -56,5 +59,16 @@ public final class DateUtils {
 		cal.set(Calendar.MILLISECOND, 0);            // set millis in second
 
 		return cal.getTime();
+	}
+	
+	public static String dateAsString(Date date) {
+		return formatDate(date, DATE_PATTERN);
+	}
+
+	private static String formatDate(Date date, String pattern) {
+		if (date == null) {
+			return null;
+		}
+		return new SimpleDateFormat(pattern).format(date);
 	}
 }

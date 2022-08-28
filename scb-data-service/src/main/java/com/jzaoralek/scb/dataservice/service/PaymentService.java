@@ -18,8 +18,7 @@ public interface PaymentService {
 	void processPayments();
 	void processPaymentInstruction(List<PaymentInstruction> paymentInstructionList
 			, String yearFromTo
-			, String lineSeparator
-			, String paymentDeadline
+			, Date dueDate
 			, String optionalText
 			, String mailSignature
 			, boolean firstSemester

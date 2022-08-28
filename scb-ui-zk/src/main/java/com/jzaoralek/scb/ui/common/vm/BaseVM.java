@@ -534,8 +534,7 @@ public class BaseVM {
 		
 		paymentService.processPaymentInstruction(paymentInstructionList
 				, yearFromTo
-				, WebConstants.LINE_SEPARATOR
-				, getDateConverter().coerceToUi(paymentDeadline.getTime(), null, null)
+				, paymentDeadline.getTime()
 				, null
 				, buildMailSignature()
 				, true

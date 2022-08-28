@@ -28,14 +28,15 @@
 		<property name="basename" value="scb-data-service-message" />
 	</bean>
 
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
 				<value>classpath:${user.name}.properties</value>
 				<value>classpath:smtp.properties</value>
 			</list> 
 		</property> 
-	</bean> 
+	</bean>
+
 
 	<bean id="adminDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">

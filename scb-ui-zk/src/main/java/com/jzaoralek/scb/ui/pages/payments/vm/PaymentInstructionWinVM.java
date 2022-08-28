@@ -65,8 +65,7 @@ public class PaymentInstructionWinVM extends BaseVM {
 		
 		paymentService.processPaymentInstruction(this.paymentInstructionList
 				, this.yearFromTo
-				, WebConstants.LINE_SEPARATOR
-				, getDateConverter().coerceToUi(this.paymentDeadline, null, null)
+				, this.paymentDeadline
 				, this.optionalText
 				, buildMailSignature()
 				, this.firstSemester

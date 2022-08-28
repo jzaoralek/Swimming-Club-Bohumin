@@ -165,6 +165,18 @@
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+		
+		<!-- Thymeleaf dependencies -->
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>${org.thymeleaf-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring4</artifactId>
+            <version>${org.thymeleaf-version}</version>
+        </dependency>
 	
 	</dependencies>
 

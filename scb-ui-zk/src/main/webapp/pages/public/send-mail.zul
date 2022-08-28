@@ -10,7 +10,6 @@
 	<div self="@{define(mainContent)}" hflex="1"
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.security.vm.SendMailVM')" >
 		<div apply="com.jzaoralek.scb.ui.common.recaptcha.RecaptchaComposer">
-			<button label="Send mail" onClick="@command('sendMailCmd')" />
 			<button label="Send mail - async" onClick="@command('sendMail2Cmd')" />
 			<button label="Download" onClick="@command('downloadCmd')" />
 			

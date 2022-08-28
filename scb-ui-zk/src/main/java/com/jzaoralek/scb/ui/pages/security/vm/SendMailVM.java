@@ -1,19 +1,11 @@
 package com.jzaoralek.scb.ui.pages.security.vm;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 import org.zkoss.bind.annotation.Command;
-import org.zkoss.bind.annotation.Init;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Filedownload;
@@ -22,73 +14,25 @@ import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
-import com.jzaoralek.scb.dataservice.service.CourseApplicationFileConfigService;
 import com.jzaoralek.scb.dataservice.service.QRCodeService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
 
-import webtools.rest.RestExecutor;
-
 public class SendMailVM extends BaseVM {
 
 	@WireVariable
-	private CourseApplicationFileConfigService courseApplicationFileConfigService;
-	
-	@WireVariable
 	private QRCodeService qrCodeService;
-	
-	@WireVariable
-	private TemplateEngine emailTemplateEngine;
-	
-	private RestExecutor restExecutor;
-	
-	@Init
-	public void init() {
-		super.init();
-		restExecutor = new RestExecutor("https://api.paylibo.com", null);
-	}
-	
-	@Command
-	public void sendMailCmd() {
-		List<com.jzaoralek.scb.dataservice.domain.Attachment> attachmentList = new ArrayList<>();
-		byte[] gdprByteArray = WebUtils.getFileAsByteArray("/resources/docs/gdpr.docx");
-		byte[] lekarskaProhlidkaByteArray = WebUtils.getFileAsByteArray("/resources/docs/lekarska_prohlidka.docx");
-		if (gdprByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(gdprByteArray,"gdpr-souhlas.docx"));
-		}
-		if (lekarskaProhlidkaByteArray != null) {
-			attachmentList.add(new com.jzaoralek.scb.dataservice.domain.Attachment(lekarskaProhlidkaByteArray,"lekarska-prohlidka.docx"));
-		}
-		
-		final Context ctx = new Context(new Locale("cs","CZ"));
-		ctx.setVariable("name", "recipent name");
-		ctx.setVariable("subscriptionDate", new Date());
-		ctx.setVariable("hobbies", Arrays.asList("Cinema", "Sports", "Music"));
-		ctx.setVariable("imageResourceName", qrCodeService.getPaymentQRCodeUrl(buildPaymentInstruction(), buildDueDate()));
-		
-		final String htmlContent = this.emailTemplateEngine.process("html/email-inlineimage.html", ctx);
-		
-		mailService.sendMail("jakub.zaoralek@gmail.com"
-				, null
-				, Labels.getLabel("txt.ui.menu.application")
-				, htmlContent
-				, attachmentList
-				, true
-				, false
-				, null
-				, ClientDatabaseContextHolder.getClientDatabase());
-	}
 	
 	@Command
 	public void sendPaymentInstructCmd() {
-		PaymentInstruction instruct = buildPaymentInstruction();
 		Date dueDate = buildDueDate();
 		CourseType courseType = CourseType.TWO_SEMESTER;
 		String yearFromTo = "2022/2023";
 		String optionalText = "Volitelný text instrukce k platbě.";
 		String signature = "Adrian Kuder";
 		
+		/*
 		final Context ctx = new Context(new Locale("cs","CZ"));
 		ctx.setVariable("courseType", courseType.name());
 		ctx.setVariable("courseName", instruct.getCourseName());		
@@ -106,10 +50,24 @@ public class SendMailVM extends BaseVM {
 		ctx.setVariable("QRCode", qrCodeService.getPaymentQRCodeUrl(instruct, dueDate));
 		ctx.setVariable("optionalText", optionalText);
 		ctx.setVariable("signature", signature);
+		*/
 		
+		paymentService.processPaymentInstruction(Arrays.asList(buildPaymentInstruction()), 
+											yearFromTo, 
+											dueDate, 
+											optionalText, 
+											signature, 
+											true, 
+											courseType, 
+											ClientDatabaseContextHolder.getClientDatabase());
 		
+		/*
 		final String htmlContent = this.emailTemplateEngine.process("html/email-payment-instruction.html", ctx);
+		Mail mail = Mail.ofHtml("jakub.zaoralek@gmail.com", null, "Instrukce k platbě", htmlContent, null, false, null);
+		mailService.sendMail(mail, ClientDatabaseContextHolder.getClientDatabase());
+		*/
 		
+		/*
 		mailService.sendMail("jakub.zaoralek@gmail.com"
 				, null
 				, "Instrukce k platbě"
@@ -119,6 +77,7 @@ public class SendMailVM extends BaseVM {
 				, false
 				, null
 				, ClientDatabaseContextHolder.getClientDatabase());
+		*/
 	}
 	
 	@Command
