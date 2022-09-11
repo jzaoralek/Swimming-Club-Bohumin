@@ -12,7 +12,39 @@
 		viewModel="@id('vm') @init('com.jzaoralek.scb.ui.pages.courseparticipant.vm.PaymentListVM')">
 		
 		<vlayout>
+			<!--
 			<page-toolbar width="100%" self="@{define(pageToolbar)}" visible="@load(vm.isBackButtonVisible())"/>
+			-->
+			<hlayout sclass="scb-page-toolbar" width="100%" self="@{define(pageToolbar)}">
+				<button onClick="@command('backCmd')" 
+						label="${c:l('txt.ui.common.Back')}" 
+						iconSclass="z-icon-arrow-left" 
+						sclass="btn-light fix-btn-icon"/>
+				
+				<!-- Payment confirmation -->
+				<button label="${c:l('txt.ui.common.PaymentConfirm')}" 
+	              	popup="paymentConfirm_${each.uuid}, position=after_end" 
+					if="${vm.isLoggedUserInRole('ADMIN')}"
+	              	style="margin-left: 10px;" />
+	            <menupopup id="paymentConfirm_${each.uuid}" >
+	               	<!-- Send -->
+					<menuitem label="${c:l('txt.ui.common.Odeslat')}" 
+						onClick="@command('changeStateCmd', uuid=each.uuid, active=!each.active, name=each.name)"
+						tooltiptext="${vm.sendToCourseParticReprMailAddressDesc}"
+						iconSclass="z-icon-at"
+						if="${vm.isLoggedUserInRole('ADMIN')}" >
+					</menuitem>
+	               	<!-- Download -->
+					<menuitem label="${c:l('txt.ui.common.Stahnout')}" 
+						onClick="@command('paymentConfirmDownload')"
+						iconSclass="z-icon-download"
+						if="${vm.isLoggedUserInRole('ADMIN')}" >
+					</menuitem>
+					
+		       	</menupopup>
+			</hlayout>
+			
+			
             <label value="${vm.pageHeadline}" sclass="scb-headline-big"/>
         </vlayout>
 		

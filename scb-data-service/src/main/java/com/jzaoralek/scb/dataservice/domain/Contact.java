@@ -102,6 +102,9 @@ public class Contact implements IdentEntity {
 	public String getCompleteName() {
 		return this.surname + " " + this.firstname;
 	}
+	public String getCompleteAddress() {
+		return this.street + " " + this.landRegistryNumber + ", " + this.zipCode + " " + this.city;
+	}
 	public String getStreet() {
 		return street;
 	}

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="prihlaska_report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a55adce4-c6f6-4eb2-9966-8c944668fcb1">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="214"/>
+	<parameter name="reportTitle" class="java.lang.String"/>
+	<parameter name="organizationNameTitle" class="java.lang.String"/>
+	<parameter name="contactPhone" class="java.lang.String"/>
+	<parameter name="contactEmail" class="java.lang.String"/>
+	<parameter name="courseParticCompleteName" class="java.lang.String"/>
+	<parameter name="courseParticAddress" class="java.lang.String"/>
+	<parameter name="courseInfo" class="java.lang.String"/>
+	<parameter name="representativeCompleteName" class="java.lang.String"/>
+	<parameter name="organizationIdentNo" class="java.lang.String"/>
+	<parameter name="organizationAddress" class="java.lang.String"/>
+	<parameter name="invoiceDate" class="java.lang.String"/>
+	<parameter name="paymentDate" class="java.lang.String"/>
+	<parameter name="courseParticBirthdate" class="java.lang.String"/>
+	<parameter name="paymentSum" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="80" splitType="Stretch">
+			<textField>
+				<reportElement x="19" y="24" width="260" height="33" uuid="42c8225c-1943-423f-bf8d-62c70ee17220"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="20" isBold="true" pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="9" width="255" height="12" uuid="d516e05f-202a-47cd-a719-a9c07bf60aca"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{organizationNameTitle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="35" width="255" height="14" uuid="7c96577f-ef74-4087-835f-e27f16d30e6e"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{contactPhone}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="47" width="255" height="11" uuid="6a5aea12-5d24-47a7-90e4-69aa5411e65a"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{contactEmail}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="60" width="255" height="11" uuid="400f4fd7-440c-4e97-b593-bb4e45bfd369"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{organizationIdentNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="23" width="255" height="14" uuid="5676c567-3999-4990-a884-aa855b54db82"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{organizationAddress}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="178" splitType="Stretch">
+			<textField>
+				<reportElement x="18" y="47" width="280" height="20" uuid="f88813cd-2437-468a-8544-0f729fdde4b2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseParticCompleteName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="18" y="61" width="280" height="20" uuid="983083af-f595-4c6c-9d21-295784995ecd"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseParticAddress}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="340" y="30" width="120" height="20" uuid="539af50e-ed42-40fd-9771-2196ec8c28d7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Datum vystavení]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="30" width="280" height="20" uuid="67c65775-59ef-4925-87df-84d66e33761c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Vystaveno pro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="116" width="280" height="20" uuid="11fa50ec-2822-4740-a39a-0dafab7034ad">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Zákonný zástupce]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="18" y="133" width="280" height="20" uuid="692d328f-51a3-4f45-8571-ac94b76120e3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{representativeCompleteName}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="18" y="0" width="518" height="1" uuid="e4f35daf-df7e-434a-8322-c060cab2fe5d"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineColor="#BFBABA"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="340" y="47" width="120" height="20" uuid="87b4222c-b7e6-4e21-bb03-35ebe15837c9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Datum uhrazení]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="460" y="30" width="76" height="20" uuid="a7a88b8f-389a-47af-8867-c43ff9765eb7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{invoiceDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="47" width="76" height="20" uuid="e724e531-99f8-43b3-a77e-96a04b5e64ec"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{paymentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="18" y="76" width="280" height="20" uuid="abc5400b-eb07-4e12-9149-570b3e6de85a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" pdfEncoding="Cp1250"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseParticBirthdate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="133" splitType="Stretch">
+			<textField>
+				<reportElement x="20" y="15" width="280" height="29" uuid="89d2b9ed-3c42-4f33-abe3-134c0d71d970"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" pdfEncoding="Cp1250"/>
+					<paragraph lineSpacingSize="0.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{courseInfo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="1" width="280" height="20" uuid="30619997-ba2f-464d-b81c-caeffee5265d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#BFBABA"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBABA"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBABA"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Účel platby]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="298" y="1" width="238" height="20" uuid="f4897466-e099-4a7a-817f-7091f0782548">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#BFBABA"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBABA"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBABA"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1250"/>
+				</textElement>
+				<text><![CDATA[Uhrazeno]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="300" y="15" width="236" height="29" uuid="bc1888d4-d904-431d-b42b-ecd81c44a837"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" pdfEncoding="Cp1250"/>
+					<paragraph lineSpacingSize="0.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{paymentSum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="37" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

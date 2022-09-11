@@ -21,12 +21,14 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 
+import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.Payment;
+import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.service.CourseService;
-import com.jzaoralek.scb.dataservice.service.PaymentService;
+import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
@@ -34,6 +36,7 @@ import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEventQueues;
 import com.jzaoralek.scb.ui.common.utils.ExcelUtil;
+import com.jzaoralek.scb.ui.common.utils.JasperUtil;
 import com.jzaoralek.scb.ui.common.utils.MessageBoxUtils;
 import com.jzaoralek.scb.ui.common.utils.WebUtils;
 import com.jzaoralek.scb.ui.common.vm.BaseVM;
@@ -51,6 +54,9 @@ public class PaymentListVM extends BaseVM {
 	@WireVariable
 	private CourseService courseService;
 	
+	@WireVariable
+	private ScbUserService scbUserService;
+	
 	private List<Payment> paymentList;
 	private UUID courseParticUuid;
 	private UUID courseUuid;
@@ -58,6 +64,7 @@ public class PaymentListVM extends BaseVM {
 	private CourseParticipant coursePartic;
 	private long paymentSum;
 	private CoursePaymentVO coursePaymentVO;
+	private ScbUser courseParticRepresentative;
 
 	@SuppressWarnings({ "unchecked" })
 	@Init
@@ -96,6 +103,7 @@ public class PaymentListVM extends BaseVM {
 		this.courseParticUuid = UUID.fromString(courseParticUuid);
 		this.courseUuid = UUID.fromString(courseUuid);
 		this.coursePartic = courseService.getCourseParticipantByUuid(this.courseParticUuid);
+		this.courseParticRepresentative = scbUserService.getByUuid(this.coursePartic.getRepresentativeUuid());
 		this.course = courseService.getPlainByUuid(this.courseUuid);
 		this.pageHeadline = buildPageHeadline(this.coursePartic, this.course);
 		loadData();
@@ -175,10 +183,42 @@ public class PaymentListVM extends BaseVM {
 		loadData();
 	}
 	
+	@Command
+	public void paymentConfirmDownload() {
+		String title = Labels.getLabel("txt.ui.paymentConfirmReport.title");
+		byte[] byteArray = JasperUtil.getPaymentConfirmation(this.course, 
+															this.coursePartic, 
+															this.courseParticRepresentative.getContact().getCompleteName(),
+															this.coursePaymentVO.getPaymentSum(), 
+															title, 
+															configurationService);
+		
+		StringBuilder fileName = new StringBuilder();
+		fileName.append("potvrzeni-o-platbe");
+		fileName.append("_" + this.coursePartic.getContact().getCompleteName());
+		fileName.append(".pdf");
+		
+		Attachment attachment = new Attachment();
+		attachment.setByteArray(byteArray);
+		attachment.setContentType("application/pdf");
+		attachment.setName(fileName.toString());
+		
+		WebUtils.downloadAttachment(attachment);
+	}
+	
 	public void loadData() {
 		this.paymentList = paymentService.getByCourseCourseParticipantUuid(this.courseParticUuid, this.courseUuid, null, null);
 		buildPaymentsState();
 		BindUtils.postNotifyChange(null, null, this, "paymentList");
+	}
+	
+	public String getSendToCourseParticReprMailAddressDesc() {
+		if (this.courseParticRepresentative != null 
+				&& this.courseParticRepresentative.getContact() != null
+				&& StringUtils.hasText(this.courseParticRepresentative.getContact().getEmail1())) {
+			return Labels.getLabel("txt.ui.common.PaymentConfirmSendToReprDesc", new Object[] {this.courseParticRepresentative.getContact().getEmail1()});
+		}
+		return null;
 	}
 	
 	private String buildPageHeadline(CourseParticipant coursePartic, Course course) {
