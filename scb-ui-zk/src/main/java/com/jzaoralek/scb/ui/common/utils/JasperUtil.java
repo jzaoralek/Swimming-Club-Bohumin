@@ -102,6 +102,7 @@ public class JasperUtil {
     									CourseParticipant courseParticipan,
     									String representCompleteName,
     									long coursePaymentSum,
+    									Date paymentDate,
     									String title, 
     									ConfigurationService configurationService) {
         InputStream reportStream = null;
@@ -114,7 +115,7 @@ public class JasperUtil {
             reportStream = JasperUtil.class.getClassLoader().getResourceAsStream(inputFile);
             JasperReport rp = JasperCompileManager.compileReport(reportStream);
 
-            Map<String, Object> paramsMap = new HashMap<String, Object>();
+            Map<String, Object> paramsMap = new HashMap<>();
             paramsMap.put("reportTitle", title);
             paramsMap.put("organizationNameTitle", ConfigUtil.getOrgName(configurationService));
             paramsMap.put("contactPhone", ConfigUtil.getOrgPhone(configurationService));
@@ -126,15 +127,16 @@ public class JasperUtil {
             paramsMap.put("courseParticAddress", getNotNullValue(courseParticipan.getContact().getCompleteAddress()));
             paramsMap.put("representativeCompleteName", getNotNullValue(representCompleteName));
             paramsMap.put("courseParticBirthdate", Labels.getLabel("txt.ui.paymentConfirmReport.Birthdate", new Object[] {DateUtil.dateAsString(courseParticipan.getBirthdate())}));
+            paramsMap.put("orgRepresentative", ConfigUtil.getOrgContactPerson(configurationService));
+            paramsMap.put("orgName", ConfigUtil.getOrgName(configurationService));            
+            paramsMap.put("invoiceDate", DateUtil.dateAsString(Calendar.getInstance().getTime()));
+            paramsMap.put("paymentDate", DateUtil.dateAsString(paymentDate));
+            paramsMap.put("courseInfo", Labels.getLabel("txt.ui.paymentConfirmReport.CoursePaymentInfo", new Object[] {course.getName(), course.getYear()}));
+            paramsMap.put("paymentSum", coursePaymentSum + " " + Labels.getLabel("txt.ui.common.CZK"));
             
             // TODO: (JZ), nahradit hodnotami z konfigurace
             paramsMap.put("organizationAddress", getNotNullValue("Na Koutě 400, Bohumín, 735 81"));
             paramsMap.put("organizationIdentNo", Labels.getLabel("txt.ui.paymentConfirmReport.IdentificationNo", new Object[] {"26993660"}));
-            paramsMap.put("invoiceDate", DateUtil.dateAsString(Calendar.getInstance().getTime()));
-            // TODO: (JZ), datum posledni platby
-            paramsMap.put("paymentDate", DateUtil.dateAsString(new Date()));
-            paramsMap.put("courseInfo", Labels.getLabel("txt.ui.paymentConfirmReport.CoursePaymentInfo", new Object[] {course.getName(), course.getYear()}));
-            paramsMap.put("paymentSum", coursePaymentSum + " " + Labels.getLabel("txt.ui.common.CZK"));
 
             paramsMap.put(JRParameter.REPORT_LOCALE, new Locale("cs_CZ"));
 

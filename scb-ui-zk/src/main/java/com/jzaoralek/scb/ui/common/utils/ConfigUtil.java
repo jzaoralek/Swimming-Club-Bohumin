@@ -67,6 +67,19 @@ public final class ConfigUtil {
 //		return configurationService.getOrgPhone();
 	}
 	
+	public static String getOrgContactPerson(ConfigurationService configurationService) {
+		String orgContactPerson = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_CONTACT_PERSON.name());
+		if (StringUtils.hasText(orgContactPerson)) {
+			return orgContactPerson;
+		} else {
+			String value = configurationService.getOrgContactPerson();
+			addToSessionConfigCache(ConfigName.ORGANIZATION_CONTACT_PERSON, value);
+			return value;
+		}
+		
+//		return configurationService.getOrgPhone();
+	}
+	
 	public static String getWelcomeInfo(ConfigurationService configurationService) {
 		String welcomeInfoSession = (String)WebUtils.getSessAtribute(ConfigName.WELCOME_INFO.name());
 		if (StringUtils.hasText(welcomeInfoSession)) {

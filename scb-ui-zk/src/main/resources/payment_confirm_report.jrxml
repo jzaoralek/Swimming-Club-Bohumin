@@ -18,6 +18,8 @@
 	<parameter name="paymentDate" class="java.lang.String"/>
 	<parameter name="courseParticBirthdate" class="java.lang.String"/>
 	<parameter name="paymentSum" class="java.lang.String"/>
+	<parameter name="orgRepresentative" class="java.lang.String"/>
+	<parameter name="orgName" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -33,35 +35,35 @@
 			<textField>
 				<reportElement x="281" y="9" width="255" height="12" uuid="d516e05f-202a-47cd-a719-a9c07bf60aca"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true" pdfEncoding="Cp1250"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{organizationNameTitle}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="281" y="35" width="255" height="14" uuid="7c96577f-ef74-4087-835f-e27f16d30e6e"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font fontName="Arial" size="9"/>
+					<font fontName="Arial" size="9" pdfEncoding="Cp1250"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contactPhone}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="281" y="47" width="255" height="11" uuid="6a5aea12-5d24-47a7-90e4-69aa5411e65a"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font fontName="Arial" size="9"/>
+					<font fontName="Arial" size="9" pdfEncoding="Cp1250"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contactEmail}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="281" y="60" width="255" height="11" uuid="400f4fd7-440c-4e97-b593-bb4e45bfd369"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font fontName="Arial" size="9"/>
+					<font fontName="Arial" size="9" pdfEncoding="Cp1250"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{organizationIdentNo}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="281" y="23" width="255" height="14" uuid="5676c567-3999-4990-a884-aa855b54db82"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font fontName="Arial" size="9"/>
+					<font fontName="Arial" size="9" pdfEncoding="Cp1250"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{organizationAddress}]]></textFieldExpression>
 			</textField>
@@ -152,7 +154,7 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="133" splitType="Stretch">
+		<band height="297" splitType="Stretch">
 			<textField>
 				<reportElement x="20" y="15" width="280" height="29" uuid="89d2b9ed-3c42-4f33-abe3-134c0d71d970"/>
 				<textElement verticalAlignment="Middle">
@@ -204,7 +206,24 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="37" splitType="Stretch"/>
+		<band height="69" splitType="Stretch">
+			<textField>
+				<reportElement x="310" y="-69" width="236" height="16" uuid="0598c9ce-1ee7-4483-81f7-72fc23f17a97"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" pdfEncoding="Cp1250"/>
+					<paragraph lineSpacingSize="0.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{orgRepresentative}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="310" y="-52" width="236" height="16" uuid="1937e7b7-05a6-48b0-8aca-a0323b624bb8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" pdfEncoding="Cp1250"/>
+					<paragraph lineSpacingSize="0.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{orgName}]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>

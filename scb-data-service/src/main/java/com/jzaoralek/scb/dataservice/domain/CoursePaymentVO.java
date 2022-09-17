@@ -72,7 +72,8 @@ public class CoursePaymentVO {
 			this.stateSecondSemester = CoursePaymentState.PAYED;
 			this.payedSecondSemester = priceSecondSemester;
 			this.stateTotal = CoursePaymentState.PAYED;
-		} 
+		}
+		
 		if (paymentSum > totalPrice) {
 			this.overpayed = paymentSum - totalPrice;
 		}
@@ -122,4 +123,15 @@ public class CoursePaymentVO {
 		return (getTotalPrice() - this.paymentSum);
 	}
 	
+	public boolean isFirstSemesterPayed() {
+		return this.stateFirstSemester == CoursePaymentState.PAYED;
+	}
+	
+	public boolean isSecondSemesterPayed() {
+		return this.stateSecondSemester == CoursePaymentState.PAYED;
+	}
+	
+	public boolean isPayed() {
+		return this.stateTotal == CoursePaymentState.PAYED;
+	}
 }

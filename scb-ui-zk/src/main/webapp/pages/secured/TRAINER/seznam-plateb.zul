@@ -25,7 +25,9 @@
 				<button label="${c:l('txt.ui.common.PaymentConfirm')}" 
 	              	popup="paymentConfirm_${each.uuid}, position=after_end" 
 					if="${vm.isLoggedUserInRole('ADMIN')}"
-	              	style="margin-left: 10px;" />
+	              	style="margin-left: 10px;"
+	              	disabled="@load(!vm.payedTotal)"
+	              	tooltiptext="${c:l('txt.ui.paymentConfirmReport.allowedCoursePayed')}" />
 	            <menupopup id="paymentConfirm_${each.uuid}" >
 	               	<!-- Send -->
 					<menuitem label="${c:l('txt.ui.common.Odeslat')}" 

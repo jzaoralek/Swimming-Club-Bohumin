@@ -1,12 +1,16 @@
 package com.jzaoralek.scb.ui.pages.courseparticipant.vm;
 
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.javatuples.Pair;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -28,7 +32,6 @@ import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.service.CourseService;
-import com.jzaoralek.scb.dataservice.service.ScbUserService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
@@ -53,9 +56,6 @@ public class PaymentListVM extends BaseVM {
 	
 	@WireVariable
 	private CourseService courseService;
-	
-	@WireVariable
-	private ScbUserService scbUserService;
 	
 	private List<Payment> paymentList;
 	private UUID courseParticUuid;
@@ -185,11 +185,16 @@ public class PaymentListVM extends BaseVM {
 	
 	@Command
 	public void paymentConfirmDownload() {
+		// check if course has been payed
+		if (!isPayedTotal()) {
+			return;
+		}
 		String title = Labels.getLabel("txt.ui.paymentConfirmReport.title");
 		byte[] byteArray = JasperUtil.getPaymentConfirmation(this.course, 
 															this.coursePartic, 
 															this.courseParticRepresentative.getContact().getCompleteName(),
-															this.coursePaymentVO.getPaymentSum(), 
+															this.coursePaymentVO.getPaymentSum(),
+															getLastPaymentDate(),
 															title, 
 															configurationService);
 		
@@ -273,6 +278,26 @@ public class PaymentListVM extends BaseVM {
 		return data;
 	}
 	
+	/**
+	 * Vraci posledni platbu.
+	 * @return
+	 */
+	private Date getLastPaymentDate() {
+		if (CollectionUtils.isEmpty(paymentList)) {
+			return null;
+		}
+		
+		Optional<Payment> lastPayment = paymentList.stream()
+				.sorted(Comparator.comparing(Payment::getPaymentDate))
+				.reduce((first, second) -> second);
+		
+		if (!lastPayment.isPresent()) {
+			return null;
+		}
+		
+		return lastPayment.get().getPaymentDate();
+	}
+	
 	public List<Payment> getPaymentList() {
 		return paymentList;
 	}
@@ -287,5 +312,17 @@ public class PaymentListVM extends BaseVM {
 	
 	public CoursePaymentVO getCoursePaymentVO() {
 		return coursePaymentVO;
+	}
+	
+	public boolean isPayedTotal() {
+		return coursePaymentVO.isPayed();
+	}
+	
+	public boolean isFirstSemesterPayed() {
+		return coursePaymentVO.isFirstSemesterPayed();
+	}
+	
+	public boolean isSecondSemesterPayed() {
+		return coursePaymentVO.isSecondSemesterPayed();
 	}
 }
