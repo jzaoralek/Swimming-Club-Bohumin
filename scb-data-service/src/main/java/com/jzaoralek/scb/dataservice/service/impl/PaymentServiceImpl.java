@@ -20,6 +20,8 @@ import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.dao.PaymentDao;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
+import com.jzaoralek.scb.dataservice.domain.Course;
+import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
@@ -182,9 +184,26 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 	
 	@Async
 	@Override
-	public void sendPaymentConfirmation(String mailTo, Attachment attachment, String clientDBCtx) {
-		String subject = "Potvrzení o zaplacení kurzu";
-		String htmlContent = "";
+	public void sendPaymentConfirmation(String mailTo, 
+										Course course, 
+										CourseParticipant coursePartic, 
+										Attachment attachment, 
+										String clientDBCtx) {
+		String subject = messageSource.getMessage("msg.ui.mail.paymentConfirmation.subject", null, Locale.getDefault());
+		
+		Context ctx = new Context(Locale.getDefault());
+		ctx.setVariable("courseType", course.getCourseType().name());
+		ctx.setVariable("courseName", course.getName());
+		// TODO: natvrdo prvni pololeti, potreba domyslet pro celorocni kurz.
+		ctx.setVariable("semester", "1");
+		ctx.setVariable("year", course.getYear());
+		ctx.setVariable("particiName", coursePartic.getContact().getCompleteName());
+		
+		String signHtml = mailUtilService.buildSignatureHtml();
+		ctx.setVariable("signature", signHtml);
+		
+		String htmlContent = this.emailTemplateEngine.process("html/email-payment-confirmation.html", ctx);
+		
 		Mail mailHtml = Mail.ofHtml(mailTo, null, subject, htmlContent, Arrays.asList(attachment), false, null);
 		
 		mailService.sendMail(mailHtml, clientDBCtx);

@@ -22,11 +22,12 @@
 						sclass="btn-light fix-btn-icon"/>
 				
 				<!-- Payment confirmation -->
+<!-- 				disabled="@load(!vm.payedTotal)" -->
 				<button label="${c:l('txt.ui.common.PaymentConfirm')}" 
 	              	popup="paymentConfirm_${each.uuid}, position=after_end" 
 					if="${vm.isLoggedUserInRole('ADMIN')}"
 	              	style="margin-left: 10px;"
-	              	disabled="@load(!vm.payedTotal)"
+	              	disabled="true"
 	              	tooltiptext="${c:l('txt.ui.paymentConfirmReport.allowedCoursePayed')}" />
 	            <menupopup id="paymentConfirm_${each.uuid}" >
 	               	<!-- Send -->

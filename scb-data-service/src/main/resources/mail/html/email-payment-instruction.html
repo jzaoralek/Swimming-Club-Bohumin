@@ -12,7 +12,7 @@
 	</style>
   </head>
   <body>
-  	<p th:text="#{msg.ui.mail.paymentInstruction.text0}"/>
+  	<p th:text="#{msg.ui.mail.paymentInstruction.greeting}"/>
   
     <p th:if="${courseType} == 'TWO_SEMESTER'" th:text="#{msg.ui.mail.paymentInstruction.text1.twoSemester(${courseName}, ${semester}, ${year}, ${particiName})}"/>
     

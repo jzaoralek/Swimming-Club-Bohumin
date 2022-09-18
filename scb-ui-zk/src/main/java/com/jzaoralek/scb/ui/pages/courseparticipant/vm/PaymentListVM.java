@@ -210,10 +210,14 @@ public class PaymentListVM extends BaseVM {
 		if (!isPayedTotal()) {
 			return;
 		}
-		
-		paymentService.sendPaymentConfirmation(this.courseParticRepresentative.getContact().getEmail1(),
+		String mailTo = this.courseParticRepresentative.getContact().getEmail1();
+		paymentService.sendPaymentConfirmation(mailTo,
+											this.course,
+											this.coursePartic,
 											buildPaymentConfirmAttachment(), 
 											ClientDatabaseContextHolder.getClientDatabase());
+		
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentConfirmSent", new String[] {mailTo}));
 	}
 	
 	private Attachment buildPaymentConfirmAttachment() {
