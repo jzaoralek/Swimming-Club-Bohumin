@@ -31,14 +31,14 @@
 	            <menupopup id="paymentConfirm_${each.uuid}" >
 	               	<!-- Send -->
 					<menuitem label="${c:l('txt.ui.common.Odeslat')}" 
-						onClick="@command('changeStateCmd', uuid=each.uuid, active=!each.active, name=each.name)"
+						onClick="@command('paymentConfirmSendCmd')"
 						tooltiptext="${vm.sendToCourseParticReprMailAddressDesc}"
 						iconSclass="z-icon-at"
 						if="${vm.isLoggedUserInRole('ADMIN')}" >
 					</menuitem>
 	               	<!-- Download -->
 					<menuitem label="${c:l('txt.ui.common.Stahnout')}" 
-						onClick="@command('paymentConfirmDownload')"
+						onClick="@command('paymentConfirmDownloadCmd')"
 						iconSclass="z-icon-download"
 						if="${vm.isLoggedUserInRole('ADMIN')}" >
 					</menuitem>

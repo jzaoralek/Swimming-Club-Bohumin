@@ -25,6 +25,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 
+import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Course;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
@@ -32,6 +33,7 @@ import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.service.CourseService;
+import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
@@ -56,6 +58,9 @@ public class PaymentListVM extends BaseVM {
 	
 	@WireVariable
 	private CourseService courseService;
+	
+	@WireVariable
+	private PaymentService paymentService;
 	
 	private List<Payment> paymentList;
 	private UUID courseParticUuid;
@@ -183,12 +188,35 @@ public class PaymentListVM extends BaseVM {
 		loadData();
 	}
 	
+	/**
+	 * Download payment confirmation.
+	 */
 	@Command
-	public void paymentConfirmDownload() {
+	public void paymentConfirmDownloadCmd() {
 		// check if course has been payed
 		if (!isPayedTotal()) {
 			return;
 		}
+		
+		WebUtils.downloadAttachment(buildPaymentConfirmAttachment());
+	}
+	
+	/**
+	 * Send payment confirmation email.
+	 */
+	@Command
+	public void paymentConfirmSendCmd() {
+		// check if course has been payed
+		if (!isPayedTotal()) {
+			return;
+		}
+		
+		paymentService.sendPaymentConfirmation(this.courseParticRepresentative.getContact().getEmail1(),
+											buildPaymentConfirmAttachment(), 
+											ClientDatabaseContextHolder.getClientDatabase());
+	}
+	
+	private Attachment buildPaymentConfirmAttachment() {
 		String title = Labels.getLabel("txt.ui.paymentConfirmReport.title");
 		byte[] byteArray = JasperUtil.getPaymentConfirmation(this.course, 
 															this.coursePartic, 
@@ -208,7 +236,7 @@ public class PaymentListVM extends BaseVM {
 		attachment.setContentType("application/pdf");
 		attachment.setName(fileName.toString());
 		
-		WebUtils.downloadAttachment(attachment);
+		return attachment;
 	}
 	
 	public void loadData() {

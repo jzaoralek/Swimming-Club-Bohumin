@@ -19,6 +19,7 @@ import org.thymeleaf.context.Context;
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.dao.PaymentDao;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
@@ -104,11 +105,6 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 		paymentDao.deleteByCourseAndParticipant(courseUuid, courseParticipantUuid);
 	}
 
-	@Override
-	public void processPayments() {
-		System.out.println("Method executed at every 5 seconds. Current time is :: "+ new Date());	
-	}
-
 	@Async
 	@Override
 	public void processPaymentInstruction(List<PaymentInstruction> paymentInstructionList
@@ -182,6 +178,16 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 				}				
 			}
 		}
+	}
+	
+	@Async
+	@Override
+	public void sendPaymentConfirmation(String mailTo, Attachment attachment, String clientDBCtx) {
+		String subject = "Potvrzení o zaplacení kurzu";
+		String htmlContent = "";
+		Mail mailHtml = Mail.ofHtml(mailTo, null, subject, htmlContent, Arrays.asList(attachment), false, null);
+		
+		mailService.sendMail(mailHtml, clientDBCtx);
 	}
 
 }

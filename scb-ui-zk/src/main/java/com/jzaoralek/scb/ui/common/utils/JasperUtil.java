@@ -2,10 +2,8 @@ package com.jzaoralek.scb.ui.common.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,11 +32,12 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 
-public class JasperUtil {
+public final class JasperUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(CourseApplicationController.class);
     public static String REPORT_MIME = "application/pdf";
     public static String XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
+    private JasperUtil() {}
 
     public static byte[] getReport(CourseApplication courseApplication, String title, ConfigurationService configurationService) {
         InputStream reportStream = null;
@@ -139,7 +138,6 @@ public class JasperUtil {
             // TODO: (JZ), nahradit hodnotami z konfigurace
             paramsMap.put("organizationAddress", getNotNullValue("Na Koutě 400, Bohumín, 735 81"));
             paramsMap.put("organizationIdentNo", Labels.getLabel("txt.ui.paymentConfirmReport.IdentificationNo", new Object[] {"26993660"}));
-            
             // podpis
             String orgReprSignature = "pkbohumin_repr_sign.png";
             /*

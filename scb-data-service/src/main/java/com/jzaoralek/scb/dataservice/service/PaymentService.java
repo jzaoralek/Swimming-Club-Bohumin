@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
+import com.jzaoralek.scb.dataservice.domain.Attachment;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 
@@ -15,7 +16,6 @@ public interface PaymentService {
 	Payment store(Payment payment);
 	void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid);
 	void delete(Payment payment);
-	void processPayments();
 	void processPaymentInstruction(List<PaymentInstruction> paymentInstructionList
 			, String yearFromTo
 			, Date dueDate
@@ -23,4 +23,5 @@ public interface PaymentService {
 			, boolean firstSemester
 			, CourseType courseType
 			, String clientDBCtx);
+	void sendPaymentConfirmation(String mailTo, Attachment attachment, String clientDBCtx);
 }
