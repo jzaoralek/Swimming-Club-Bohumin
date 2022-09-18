@@ -20,8 +20,9 @@
 	<parameter name="paymentSum" class="java.lang.String"/>
 	<parameter name="orgRepresentative" class="java.lang.String"/>
 	<parameter name="orgName" class="java.lang.String"/>
+	<parameter name="orgReprSignature" class="java.lang.String"/>
 	<background>
-		<band splitType="Stretch"/>
+		<band height="57" splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="80" splitType="Stretch">
@@ -203,12 +204,15 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{paymentSum}]]></textFieldExpression>
 			</textField>
-		</band>
-	</detail>
-	<pageFooter>
-		<band height="69" splitType="Stretch">
+			<image>
+				<reportElement x="365" y="130" width="127" height="71" uuid="4e101f20-4057-47b9-b873-3e63d0519421"/>
+				<imageExpression><![CDATA[$P{orgReprSignature}]]></imageExpression>
+			</image>
 			<textField>
-				<reportElement x="310" y="-69" width="236" height="16" uuid="0598c9ce-1ee7-4483-81f7-72fc23f17a97"/>
+				<reportElement x="310" y="191" width="236" height="16" uuid="0598c9ce-1ee7-4483-81f7-72fc23f17a97">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" pdfEncoding="Cp1250"/>
 					<paragraph lineSpacingSize="0.0"/>
@@ -216,7 +220,7 @@
 				<textFieldExpression><![CDATA[$P{orgRepresentative}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="310" y="-52" width="236" height="16" uuid="1937e7b7-05a6-48b0-8aca-a0323b624bb8"/>
+				<reportElement x="310" y="206" width="236" height="16" uuid="1937e7b7-05a6-48b0-8aca-a0323b624bb8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" pdfEncoding="Cp1250"/>
 					<paragraph lineSpacingSize="0.0"/>
@@ -224,6 +228,9 @@
 				<textFieldExpression><![CDATA[$P{orgName}]]></textFieldExpression>
 			</textField>
 		</band>
+	</detail>
+	<pageFooter>
+		<band height="69" splitType="Stretch"/>
 	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>

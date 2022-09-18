@@ -2,8 +2,10 @@ package com.jzaoralek.scb.ui.common.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -137,6 +139,14 @@ public class JasperUtil {
             // TODO: (JZ), nahradit hodnotami z konfigurace
             paramsMap.put("organizationAddress", getNotNullValue("Na Koutě 400, Bohumín, 735 81"));
             paramsMap.put("organizationIdentNo", Labels.getLabel("txt.ui.paymentConfirmReport.IdentificationNo", new Object[] {"26993660"}));
+            
+            // podpis
+            String orgReprSignature = "pkbohumin_repr_sign.png";
+            /*
+            URI uri = new URI(JasperUtil.class.getResource("payment_confirm_report.jrxml").getPath());
+            new File(uri.getPath());
+             */
+            paramsMap.put("orgReprSignature", orgReprSignature);
 
             paramsMap.put(JRParameter.REPORT_LOCALE, new Locale("cs_CZ"));
 
