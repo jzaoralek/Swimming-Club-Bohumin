@@ -23,6 +23,7 @@ import com.jzaoralek.scb.dataservice.dao.PaymentDao;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentType;
+import com.sportologic.common.model.domain.IdentEntity;
 
 @Repository
 public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
@@ -32,6 +33,7 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 	
 	private static final String COURSE_PARTIC_UUID_PARAM = "COURSE_PARTIC_UUID_PARAM";
 	private static final String COURSE_UUID_PARAM = "COURSE_UUID_PARAM";
+	private static final String COURSE_NEW_UUID_PARAM = "COURSE_NEW_UUID_PARAM";
 	private static final String BANK_TRANSACTION_ID_POHYBU = "bank_transaction_id_pohybu";
 	
 	private static final String PAYMENT_DATE_PARAM = "payment_date";
@@ -44,7 +46,10 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 			+ "course_uuid = :"+COURSE_UUID_PARAM+", payment_date = :"+PAYMENT_DATE_PARAM+", process_type = :"+PROCESS_TYPE_PARAM+", bank_transaction_id_pohybu = :"+BANK_TRANSACTION_ID_POHYBU+" WHERE uuid=:"+UUID_PARAM;
 	private static final String DELETE = "DELETE FROM payment where uuid = :" + UUID_PARAM;
 	
-	private static final String DELETE_BY_COURSE_COURSEPARTICIPANT = "DELETE FROM payment where course_uuid = :" + COURSE_UUID_PARAM + " AND course_participant_uuid = :" + COURSE_PARTIC_UUID_PARAM;
+	private static final String DELETE_BY_COURSE_COURSEPARTICIPANT = "DELETE FROM payment where course_uuid = :" + COURSE_UUID_PARAM + " AND course_participant_uuid = :" + COURSE_PARTIC_UUID_PARAM + " AND process_type = :"+PROCESS_TYPE_PARAM;
+	
+	private static final String UPDATE_COURSE_BY_COURSE_COURSEPARTICIPANT = "UPDATE payment SET course_uuid = :"+COURSE_NEW_UUID_PARAM+", modif_at = :"+MODIF_AT_PARAM+", modif_by = :"+MODIF_BY_PARAM+" "
+			+ " WHERE course_participant_uuid = :"+COURSE_PARTIC_UUID_PARAM+ " AND course_uuid=:" + COURSE_UUID_PARAM + " AND process_type = :"+PROCESS_TYPE_PARAM;
 	
 	private static final String SELECT_BY_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type, bank_transaction_id_pohybu FROM payment WHERE uuid=:" + UUID_PARAM;
 	private static final String SELECT_BY_COURSE_COURSE_PARTICIPANT_UUID = "SELECT uuid, amount, type, description, modif_at, modif_by, course_participant_uuid, course_uuid, payment_date, process_type, bank_transaction_id_pohybu "
@@ -132,10 +137,24 @@ public class PaymentDaoImpl extends BaseJdbcDao implements PaymentDao {
 	}
 	
 	@Override
-	public void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid) {
+	public void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid, PaymentProcessType processType) {
 		namedJdbcTemplate.update(DELETE_BY_COURSE_COURSEPARTICIPANT, new MapSqlParameterSource().
 				addValue(COURSE_UUID_PARAM, courseUuid.toString()).
-				addValue(COURSE_PARTIC_UUID_PARAM, courseParticipantUuid.toString()));
+				addValue(COURSE_PARTIC_UUID_PARAM, courseParticipantUuid.toString()).
+				addValue(PROCESS_TYPE_PARAM, processType.name()));
+	}
+	
+	@Override
+	public void updateCourseByCourseAndParticipant(UUID courseUuidOrig, UUID courseUuidDest, UUID courseParticipantUuid,
+			PaymentProcessType processType, Date modifAt, String modifBy) {
+		namedJdbcTemplate.update(UPDATE_COURSE_BY_COURSE_COURSEPARTICIPANT, new MapSqlParameterSource().
+				addValue(COURSE_UUID_PARAM, courseUuidOrig.toString()).
+				addValue(COURSE_NEW_UUID_PARAM, courseUuidDest.toString()).
+				addValue(COURSE_PARTIC_UUID_PARAM, courseParticipantUuid.toString()).
+				addValue(PROCESS_TYPE_PARAM, processType.name()).
+				addValue(MODIF_AT_PARAM, modifAt).
+				addValue(MODIF_BY_PARAM, modifBy));
+		
 	}
 	
 	@Override

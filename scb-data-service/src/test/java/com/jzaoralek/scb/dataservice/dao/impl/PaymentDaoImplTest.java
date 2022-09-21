@@ -111,8 +111,18 @@ public class PaymentDaoImplTest extends BaseTestCase {
 	
 	@Test
 	public void testDeleteByCourseAndParticipant() {
-		paymentDao.deleteByCourseAndParticipant(COURSE_UUID, COURSE_PARTICIPANT_UUID);
+		paymentDao.deleteByCourseAndParticipant(COURSE_UUID, COURSE_PARTICIPANT_UUID, PaymentProcessType.MANUAL);
 		Assert.assertNull(paymentDao.getByUuid(ITEM_UUID));
+	}
+	
+	@Test
+	public void testUpdateCourseByCourseAndParticipant() {
+		UUID newCourseUuid = UUID.randomUUID();
+		paymentDao.updateCourseByCourseAndParticipant(COURSE_UUID, newCourseUuid, COURSE_PARTICIPANT_UUID, PaymentProcessType.AUTOMATIC, MODIF_AT, MODIF_BY);
+		
+		Payment payment = paymentDao.getByUuid(ITEM_UUID);
+		Assert.assertNotNull(payment);
+		// TODO: porovnat newCourseUuid a payment.courseUuid
 	}
 	
 	@Test

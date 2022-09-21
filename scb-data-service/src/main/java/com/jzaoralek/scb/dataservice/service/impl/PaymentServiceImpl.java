@@ -1,6 +1,7 @@
 package com.jzaoralek.scb.dataservice.service.impl;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -16,15 +17,16 @@ import org.springframework.util.StringUtils;
 
 import com.jzaoralek.scb.dataservice.common.DataServiceConstants;
 import com.jzaoralek.scb.dataservice.dao.PaymentDao;
-import com.jzaoralek.scb.dataservice.datasource.ClientDatabaseContextHolder;
 import com.jzaoralek.scb.dataservice.domain.Course.CourseType;
 import com.jzaoralek.scb.dataservice.domain.Mail;
 import com.jzaoralek.scb.dataservice.domain.Payment;
+import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.domain.PaymentInstruction;
 import com.jzaoralek.scb.dataservice.service.BaseAbstractService;
 import com.jzaoralek.scb.dataservice.service.CourseApplicationService;
 import com.jzaoralek.scb.dataservice.service.MailService;
 import com.jzaoralek.scb.dataservice.service.PaymentService;
+import com.jzaoralek.scb.dataservice.utils.SecurityUtils;
 
 @Service("paymentService")
 public class PaymentServiceImpl extends BaseAbstractService implements PaymentService {
@@ -87,8 +89,15 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 	}
 	
 	@Override
-	public void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid) {
-		paymentDao.deleteByCourseAndParticipant(courseUuid, courseParticipantUuid);
+	public void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid, PaymentProcessType processType) {
+		paymentDao.deleteByCourseAndParticipant(courseUuid, courseParticipantUuid, processType);
+	}
+	
+	@Override
+	public void updateCourseByCourseAndParticipant(UUID courseUuidOrig, UUID courseUuidDest, UUID courseParticipantUuid,
+			PaymentProcessType processType) {
+		paymentDao.updateCourseByCourseAndParticipant(courseUuidOrig, courseUuidDest, courseParticipantUuid, processType, Calendar.getInstance().getTime(), SecurityUtils.getLoggedUserUsername());
+		
 	}
 
 	@Override

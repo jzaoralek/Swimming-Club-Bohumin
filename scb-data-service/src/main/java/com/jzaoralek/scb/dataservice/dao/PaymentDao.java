@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.jzaoralek.scb.dataservice.domain.Payment;
+import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
+import com.sportologic.common.model.domain.IdentEntity;
 
 public interface PaymentDao {
 	
@@ -14,7 +16,13 @@ public interface PaymentDao {
 	void insert(Payment course);
 	void update(Payment course);
 	void delete(Payment course);
-	void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid);
+	void deleteByCourseAndParticipant(UUID courseUuid, UUID courseParticipantUuid, PaymentProcessType processType);
+	void updateCourseByCourseAndParticipant(UUID courseUuidOrig, 
+											UUID courseUuidDest, 
+											UUID courseParticipantUuid, 
+											PaymentProcessType processType, 
+											Date modifAt,
+											String modifBy);
 	Set<String> getAllBankTransIdPohybu();
 	List<Payment> getBankPaymentByDateInterval(Date from, Date to);
 }

@@ -29,6 +29,7 @@ import com.jzaoralek.scb.dataservice.domain.CourseCourseParticipantVO;
 import com.jzaoralek.scb.dataservice.domain.CourseLocation;
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Lesson;
+import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
 import com.jzaoralek.scb.dataservice.exception.ScbValidationException;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
@@ -445,11 +446,16 @@ public class CourseServiceImpl extends BaseAbstractService implements CourseServ
 			}
 		}
 		
-		// Odstraneni sparovanych plateb ucastnika v puvodnim kurzu
-		courseParticipantList.forEach(i -> paymentService.deleteByCourseAndParticipant(courseUuidOrig, i.getUuid()));
+		// Odstraneni sparovanych plateb ucastnika v puvodnim kurzu.
+		// Smazani jen PROCESS_TYPE=AUTOMATIC a PAIRED.
+		courseParticipantList.forEach(i -> paymentService.deleteByCourseAndParticipant(courseUuidOrig, i.getUuid(), PaymentProcessType.AUTOMATIC));
+		courseParticipantList.forEach(i -> paymentService.deleteByCourseAndParticipant(courseUuidOrig, i.getUuid(), PaymentProcessType.PAIRED));
 		// Znovu spusteni sparovani, platba pote evidovana pod novym kurzem
 		bankPaymentService.processPaymentPairing(from, to);
 
+		// Pro PROCESS_TYPE=MANUAL jen zmenit course_uuid na novy kurz, update set course_uuid='courseUuidDest' where course_uuid='courseUuidOrig'
+		courseParticipantList.forEach(i -> paymentService.updateCourseByCourseAndParticipant(courseUuidOrig, courseUuidDest, i.getUuid(), PaymentProcessType.MANUAL));
+		
 		/*
 		 * Nastaveni ukonceni v kurzu pro penechani dochazky
 		 * Problem:
