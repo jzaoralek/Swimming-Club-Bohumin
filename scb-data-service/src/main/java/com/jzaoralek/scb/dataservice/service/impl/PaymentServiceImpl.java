@@ -196,7 +196,8 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 	@Async
 	@Override
 	public void sendPaymentConfirmation(String mailTo, 
-										Course course, 
+										Course course,
+										Boolean firstSemester,
 										CourseParticipant coursePartic, 
 										Attachment attachment, 
 										String clientDBCtx) {
@@ -205,8 +206,7 @@ public class PaymentServiceImpl extends BaseAbstractService implements PaymentSe
 		Context ctx = new Context(Locale.getDefault());
 		ctx.setVariable("courseType", course.getCourseType().name());
 		ctx.setVariable("courseName", course.getName());
-		// TODO: natvrdo prvni pololeti, potreba domyslet pro celorocni kurz.
-		ctx.setVariable("semester", "1");
+		ctx.setVariable("semester", firstSemester ? "1" : "2");
 		ctx.setVariable("year", course.getYear());
 		ctx.setVariable("particiName", coursePartic.getContact().getCompleteName());
 		

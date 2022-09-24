@@ -21,29 +21,64 @@
 						iconSclass="z-icon-arrow-left" 
 						sclass="btn-light fix-btn-icon"/>
 				
-				<!-- Payment confirmation -->
-<!-- 				disabled="@load(!vm.payedTotal)" -->
+				<!-- Payment confirmation - course standard -->
 				<button label="${c:l('txt.ui.common.PaymentConfirm')}" 
-	              	popup="paymentConfirm_${each.uuid}, position=after_end" 
-					if="${vm.isLoggedUserInRole('ADMIN')}"
+	              	popup="paymentConfirmStandard_${each.uuid}, position=after_end" 
+					if="${vm.isLoggedUserInRole('ADMIN') and vm.courseStandard}"
 	              	style="margin-left: 10px;"
-	              	visible="false"
+	              	disabled="@load(!vm.payedTotal)"
 	              	tooltiptext="${c:l('txt.ui.paymentConfirmReport.allowedCoursePayed')}" />
-	            <menupopup id="paymentConfirm_${each.uuid}" >
+	            <menupopup id="paymentConfirmStandard_${each.uuid}" >
 	               	<!-- Send -->
 					<menuitem label="${c:l('txt.ui.common.Odeslat')}" 
-						onClick="@command('paymentConfirmSendCmd')"
+						onClick="@command('paymentConfirmStandardSendCmd')"
 						tooltiptext="${vm.sendToCourseParticReprMailAddressDesc}"
 						iconSclass="z-icon-at"
 						if="${vm.isLoggedUserInRole('ADMIN')}" >
 					</menuitem>
 	               	<!-- Download -->
 					<menuitem label="${c:l('txt.ui.common.Stahnout')}" 
-						onClick="@command('paymentConfirmDownloadCmd')"
+						onClick="@command('paymentConfirmStandardDownloadCmd')"
 						iconSclass="z-icon-download"
 						if="${vm.isLoggedUserInRole('ADMIN')}" >
 					</menuitem>
-					
+		       	</menupopup>
+		       	
+		       	<!-- Payment confirmation - course two semester -->
+				<button label="${c:l('txt.ui.common.PaymentConfirm')}" 
+	              	popup="paymentConfirmTwoSemester_${each.uuid}, position=after_end" 
+					if="${vm.isLoggedUserInRole('ADMIN') and vm.courseTwoSemester}"
+	              	style="margin-left: 10px;"
+	              	tooltiptext="${c:l('txt.ui.paymentConfirmReport.allowedCoursePayed')}" />
+	            <menupopup id="paymentConfirmTwoSemester_${each.uuid}" >
+	               	<!-- Send -->
+            		<menuitem label="${c:l('txt.ui.common.Odeslat')} ${c:l('txt.ui.common.firstSemester')}" 
+						onClick="@command('paymentConfirmTwoSemesterSendCmd', firstSemester=true)"
+						tooltiptext="${vm.sendToCourseParticReprMailAddressDesc}"
+						iconSclass="z-icon-at"
+						disabled="@load(!vm.firstSemesterPayed)"
+						if="${vm.isLoggedUserInRole('ADMIN')}" >
+					</menuitem>
+					<menuitem label="${c:l('txt.ui.common.Odeslat')} ${c:l('txt.ui.common.secondSemester')}" 
+						onClick="@command('paymentConfirmTwoSemesterSendCmd', firstSemester=false)"
+						tooltiptext="${vm.sendToCourseParticReprMailAddressDesc}"
+						iconSclass="z-icon-at"
+						disabled="@load(!vm.secondSemesterPayed)"
+						if="${vm.isLoggedUserInRole('ADMIN')}" >
+					</menuitem>
+	               	<!-- Download -->
+           			<menuitem label="${c:l('txt.ui.common.Stahnout')} ${c:l('txt.ui.common.firstSemester')}" 
+						onClick="@command('paymentConfirmTwoSemesterDownloadCmd', firstSemester=true)"
+						iconSclass="z-icon-download"
+						disabled="@load(!vm.firstSemesterPayed)"
+						if="${vm.isLoggedUserInRole('ADMIN')}" >
+					</menuitem>
+					<menuitem label="${c:l('txt.ui.common.Stahnout')} ${c:l('txt.ui.common.secondSemester')}" 
+						onClick="@command('paymentConfirmTwoSemesterDownloadCmd', firstSemester=false)"
+						iconSclass="z-icon-download"
+						disabled="@load(!vm.secondSemesterPayed)"
+						if="${vm.isLoggedUserInRole('ADMIN')}" >
+					</menuitem>
 		       	</menupopup>
 			</hlayout>
 			

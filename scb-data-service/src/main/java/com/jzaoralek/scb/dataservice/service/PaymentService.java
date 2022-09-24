@@ -32,6 +32,7 @@ public interface PaymentService {
 							, String clientDBCtx);
 	void sendPaymentConfirmation(String mailTo
 							, Course course
+							, Boolean firstSemester
 							, CourseParticipant coursePartic
 							, Attachment attachment
 							, String clientDBCtx);

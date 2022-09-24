@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.javatuples.Pair;
 import org.springframework.util.CollectionUtils;
@@ -15,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.DependsOn;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.bind.annotation.QueryParam;
@@ -189,23 +191,23 @@ public class PaymentListVM extends BaseVM {
 	}
 	
 	/**
-	 * Download payment confirmation.
+	 * Download payment confirmation for standard course.
 	 */
 	@Command
-	public void paymentConfirmDownloadCmd() {
+	public void paymentConfirmStandardDownloadCmd() {
 		// check if course has been payed
 		if (!isPayedTotal()) {
 			return;
 		}
-		
-		WebUtils.downloadAttachment(buildPaymentConfirmAttachment());
+		WebUtils.downloadAttachment(buildPaymentConfirmAttachment(this.coursePaymentVO.getPaymentSum(), 
+																getLastPaymentDate()));
 	}
 	
 	/**
-	 * Send payment confirmation email.
+	 * Send payment confirmation email for standard course.
 	 */
 	@Command
-	public void paymentConfirmSendCmd() {
+	public void paymentConfirmStandardSendCmd() {
 		// check if course has been payed
 		if (!isPayedTotal()) {
 			return;
@@ -213,20 +215,80 @@ public class PaymentListVM extends BaseVM {
 		String mailTo = this.courseParticRepresentative.getContact().getEmail1();
 		paymentService.sendPaymentConfirmation(mailTo,
 											this.course,
+											true,
 											this.coursePartic,
-											buildPaymentConfirmAttachment(), 
+											buildPaymentConfirmAttachment(this.coursePaymentVO.getPaymentSum(), 
+																		getLastPaymentDate()), 
 											ClientDatabaseContextHolder.getClientDatabase());
 		
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentConfirmSent", new String[] {mailTo}));
 	}
 	
-	private Attachment buildPaymentConfirmAttachment() {
+	/**
+	 * Download payment confirmation for two semester course.
+	 */
+	@Command
+	public void paymentConfirmTwoSemesterDownloadCmd(@BindingParam("firstSemester")Boolean firstSemester) {
+		Attachment attachment = buildPaymentConfirmTwoSemesterAttachment(firstSemester);
+		if (attachment != null) {
+			WebUtils.downloadAttachment(attachment);			
+		}
+	}
+	
+	/**
+	 * Send payment confirmation email for two semester course.
+	 */
+	@Command
+	public void paymentConfirmTwoSemesterSendCmd(@BindingParam("firstSemester")Boolean firstSemester) {
+		// check if course has been payed
+		if (!isPayedTotal()) {
+			return;
+		}
+		String mailTo = this.courseParticRepresentative.getContact().getEmail1();
+		paymentService.sendPaymentConfirmation(mailTo,
+											this.course,
+											firstSemester,
+											this.coursePartic,
+											buildPaymentConfirmTwoSemesterAttachment(firstSemester), 
+											ClientDatabaseContextHolder.getClientDatabase());
+		
+		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.paymentConfirmSent", new String[] {mailTo}));
+	}
+	
+	/**
+	 * Build paymemnt attachment for semester.
+	 * @param firstSemester
+	 * @return
+	 */
+	private Attachment buildPaymentConfirmTwoSemesterAttachment(boolean firstSemester) {
+		long payment = 0;
+		Date paymentDate = null;
+		if (firstSemester && isFirstSemesterPayed()) {
+			// first semester price
+			payment = course.getPriceSemester1();
+			// date of last payment for the first semester
+			paymentDate = getAmountPaymentDate(course.getPriceSemester1());
+		} else if (!firstSemester && isSecondSemesterPayed()) {
+			// total payment sum minus first semester price
+			payment = this.coursePaymentVO.getPaymentSum() - course.getPriceSemester1();
+			// last payment date for sum of first and second semester
+			paymentDate = getAmountPaymentDate(course.getPriceSemester1() + course.getPriceSemester2());
+		}
+		
+		if (payment == 0 || paymentDate == null) {
+			return null;
+		}
+		
+		return buildPaymentConfirmAttachment(payment, paymentDate);
+	}
+	
+	private Attachment buildPaymentConfirmAttachment(long paymentSum, Date paymentDate) {
 		String title = Labels.getLabel("txt.ui.paymentConfirmReport.title");
 		byte[] byteArray = JasperUtil.getPaymentConfirmation(this.course, 
 															this.coursePartic, 
 															this.courseParticRepresentative.getContact().getCompleteName(),
-															this.coursePaymentVO.getPaymentSum(),
-															getLastPaymentDate(),
+															paymentSum,
+															paymentDate,
 															title, 
 															configurationService);
 		
@@ -311,7 +373,7 @@ public class PaymentListVM extends BaseVM {
 	}
 	
 	/**
-	 * Vraci posledni platbu.
+	 * Vraci datum posledni platby.
 	 * @return
 	 */
 	private Date getLastPaymentDate() {
@@ -328,6 +390,30 @@ public class PaymentListVM extends BaseVM {
 		}
 		
 		return lastPayment.get().getPaymentDate();
+	}
+	
+	/**
+	 * Vraci datum platby kdy byla dosazena castka.
+	 * @return
+	 */
+	private Date getAmountPaymentDate(long amount) {
+		if (CollectionUtils.isEmpty(paymentList)) {
+			return null;
+		}
+		
+		List<Payment> paymentSortedList = paymentList.stream()
+				.sorted(Comparator.comparing(Payment::getPaymentDate))
+				.collect(Collectors.toList());
+		
+		long paymentSum = 0;
+		for (Payment payment : paymentSortedList) {
+			paymentSum = paymentSum + payment.getAmount();
+			if (paymentSum >= amount) {
+				return payment.getPaymentDate();
+			}
+		}
+		
+		return null;
 	}
 	
 	public List<Payment> getPaymentList() {
@@ -350,10 +436,20 @@ public class PaymentListVM extends BaseVM {
 		return coursePaymentVO.isPayed();
 	}
 	
+	public boolean isCourseStandard() {
+		return this.course.isCourseStandard();
+	}
+	
+	public boolean isCourseTwoSemester() {
+		return this.course.isCourseTwoSemester();
+	}
+	
+	@DependsOn("paymentList")
 	public boolean isFirstSemesterPayed() {
 		return coursePaymentVO.isFirstSemesterPayed();
 	}
 	
+	@DependsOn("paymentList")
 	public boolean isSecondSemesterPayed() {
 		return coursePaymentVO.isSecondSemesterPayed();
 	}

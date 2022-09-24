@@ -152,6 +152,10 @@ public class Course implements IdentEntity {
 		return this.courseType == CourseType.STANDARD;
 	}
 	
+	public boolean isCourseTwoSemester() {
+		return this.courseType == CourseType.TWO_SEMESTER;
+	}
+	
 	public CourseLocation getCourseLocation() {
 		return courseLocation;
 	}
