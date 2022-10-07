@@ -240,10 +240,6 @@ public class PaymentListVM extends BaseVM {
 	 */
 	@Command
 	public void paymentConfirmTwoSemesterSendCmd(@BindingParam("firstSemester")Boolean firstSemester) {
-		// check if course has been payed
-		if (!isPayedTotal()) {
-			return;
-		}
 		String mailTo = this.courseParticRepresentative.getContact().getEmail1();
 		paymentService.sendPaymentConfirmation(mailTo,
 											this.course,
