@@ -91,6 +91,10 @@ INSERT INTO configuration (uuid, name, description, val, type, category, spec, m
 VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499633', 'SMTP_USER', 'Emailovy ucet - uzivatel',  @config_smtp_user, 'STRING', 'BASIC', '1',  now(), 'SYSTEM');
 INSERT INTO configuration (uuid, name, description, val, type, category, spec, modif_at, modif_by)
 VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499634', 'SMTP_PWD', 'Emailovy ucet - heslo',  @config_smpt_pwd, 'STRING', 'BASIC', '1',  now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, category, spec, modif_at, modif_by)
+VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499635', 'ORGANIZATION_ADDRESS', 'Adresa klubu (ulice, město, PSČ), použití na potvrzení o platbě',  '', 'STRING', 'BASIC', '0',  now(), 'SYSTEM');
+INSERT INTO configuration (uuid, name, description, val, type, category, spec, modif_at, modif_by)
+VALUES ('fd33a4d4-7e99-22e6-ae22-56b6b6499636', 'ORGANIZATION_IDENT_NO', 'IČO klubu, použití na potvrzení o platbě',  '', 'STRING', 'BASIC', '0',  now(), 'SYSTEM');
 
 -- CODELIST_ITEM
 /*

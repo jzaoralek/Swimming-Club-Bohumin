@@ -263,6 +263,7 @@ public class BaseVM {
 
 	@Command
     public void backCmd() {
+		// do not change order
 		if (StringUtils.hasText(this.returnToUrl)) {
 			WebUtils.sendRedirect(this.returnToUrl);
 		} else if (StringUtils.hasText(this.returnToPage)) {
@@ -797,5 +798,16 @@ public class BaseVM {
 	
 	public String getOrgName2() {
 		return ConfigUtil.getOrgName(configurationService);
+	}
+	
+	/**
+	 * Check if fromPageUrl is in session, if true, set to returnToUrl and remove from session.
+	 */
+	protected void setReturnToUrl() {
+		String returnToUrlSession = (String)WebUtils.getSessAtribute(WebConstants.FROM_PAGE_URL);
+        if (StringUtils.hasText(returnToUrlSession)) {
+        	this.returnToUrl = returnToUrlSession;
+        	WebUtils.removeSessAtribute(WebConstants.FROM_PAGE_URL);
+        }
 	}
 }

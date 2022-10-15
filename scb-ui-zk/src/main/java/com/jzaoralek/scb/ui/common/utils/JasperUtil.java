@@ -134,18 +134,11 @@ public final class JasperUtil {
             paramsMap.put("paymentDate", DateUtil.dateAsString(paymentDate));
             paramsMap.put("courseInfo", Labels.getLabel("txt.ui.paymentConfirmReport.CoursePaymentInfo", new Object[] {course.getName(), course.getYear()}));
             paramsMap.put("paymentSum", coursePaymentSum + " " + Labels.getLabel("txt.ui.common.CZK"));
-            
-            // TODO: (JZ), nahradit hodnotami z konfigurace
-            paramsMap.put("organizationAddress", getNotNullValue("Na Koutě 400, Bohumín, 735 81"));
-            paramsMap.put("organizationIdentNo", Labels.getLabel("txt.ui.paymentConfirmReport.IdentificationNo", new Object[] {"26993660"}));
-            // podpis
-            String orgReprSignature = "pkbohumin_repr_sign.png";
-            /*
-            URI uri = new URI(JasperUtil.class.getResource("payment_confirm_report.jrxml").getPath());
-            new File(uri.getPath());
-             */
+            paramsMap.put("organizationAddress", getNotNullValue(ConfigUtil.getOrgAddress(configurationService)));
+            paramsMap.put("organizationIdentNo", Labels.getLabel("txt.ui.paymentConfirmReport.IdentificationNo", new Object[] {ConfigUtil.getOrgIdentNo(configurationService)}));
+            // podpis, prozatim nepouzito, bylo by potreba aby kazdy klub uploadoval podpis zastupce
+            String orgReprSignature = ""; //"pkbohumin_repr_sign.png";
             paramsMap.put("orgReprSignature", orgReprSignature);
-
             paramsMap.put(JRParameter.REPORT_LOCALE, new Locale("cs_CZ"));
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(rp, paramsMap, new JREmptyDataSource());

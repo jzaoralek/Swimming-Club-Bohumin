@@ -35,6 +35,7 @@ import com.jzaoralek.scb.dataservice.service.CourseService;
 import com.jzaoralek.scb.dataservice.service.LearningLessonService;
 import com.jzaoralek.scb.dataservice.utils.PaymentUtils;
 import com.jzaoralek.scb.ui.common.WebConstants;
+import com.jzaoralek.scb.ui.common.WebPages;
 import com.jzaoralek.scb.ui.common.component.address.AddressUtils;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
 import com.jzaoralek.scb.ui.common.utils.JasperUtil;
@@ -227,6 +228,26 @@ public class CourseParticipantDetailVM extends BaseContextVM {
 		if (success) {
 			BindUtils.postNotifyChange(null, null, this, "courseParticipant");			
 		}
+	}
+	
+	/**
+	 * Redirect to payments.
+	 * @param item
+	 */
+	@Command
+    public void paymentsCmd(@BindingParam("course") final Course course) {
+		if (course ==  null) {
+			throw new IllegalArgumentException("Course is null");
+		}
+		
+		// set fromPageUrl to session
+		WebUtils.setSessAtribute(WebConstants.FROM_PAGE_URL, 
+					WebPages.USER_PARTICIPANT_DETAIL.getUrl() + "?" + WebConstants.UUID_PARAM+"="+this.courseParticipant.getUuid() + "&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.USER_PARTICIPANT_LIST);
+				
+		WebUtils.sendRedirect(WebPages.PAYMENT_LIST_USER.getUrl() + 
+				"?"+WebConstants.COURSE_PARTIC_UUID_PARAM+"="+this.courseParticipant.getUuid().toString() + 
+				"&" +WebConstants.COURSE_UUID_PARAM+"="+course.getUuid().toString() + 
+				"&" + WebConstants.FROM_PAGE_PARAM + "=" + WebPages.PARTICIPANT_LIST);
 	}
 	
 	public boolean isAttendanceForParentsVisible() {

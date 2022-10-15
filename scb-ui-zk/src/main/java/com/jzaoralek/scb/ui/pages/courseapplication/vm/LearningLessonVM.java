@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 
 import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
@@ -38,13 +36,7 @@ public class LearningLessonVM extends BaseVM {
 	@Init
 	public void init() {
         setMenuSelected(ScbMenuItem.SEZNAM_KURZU);
-        
-        String returnToUrl = (String)WebUtils.getSessAtribute(WebConstants.FROM_PAGE_URL);
-        if (StringUtils.hasText(returnToUrl)) {
-        	this.returnToUrl = returnToUrl;
-        	WebUtils.removeSessAtribute(WebConstants.FROM_PAGE_URL);
-        }
-        
+        setReturnToUrl();
         if (this.learningLesson == null) {
         	LearningLesson item = (LearningLesson)WebUtils.getSessAtribute(WebConstants.ITEM_PARAM);
         	if (item != null) {

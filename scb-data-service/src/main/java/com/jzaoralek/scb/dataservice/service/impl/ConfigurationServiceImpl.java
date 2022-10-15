@@ -85,6 +85,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public String getOrgEmail() {
 		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_EMAIl.name()).getValue();
 	}
+	
+	@Override
+	public String getOrgAddress() {
+		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_ADDRESS.name()).getValue();
+	}
+	
+	@Override
+	public String getOrgIdentNo() {
+		return configurationDao.getByName(Config.ConfigName.ORGANIZATION_IDENT_NO.name()).getValue();
+	}
 
 	@Override
 	public String getWelcomeInfo() {

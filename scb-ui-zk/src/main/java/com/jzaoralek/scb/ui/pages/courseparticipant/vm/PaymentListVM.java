@@ -34,8 +34,8 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.CoursePaymentVO;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.ScbUser;
+import com.jzaoralek.scb.dataservice.domain.ScbUserRole;
 import com.jzaoralek.scb.dataservice.service.CourseService;
-import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.events.SzpEventListener;
 import com.jzaoralek.scb.ui.common.template.SideMenuComposer.ScbMenuItem;
@@ -61,9 +61,6 @@ public class PaymentListVM extends BaseVM {
 	@WireVariable
 	private CourseService courseService;
 	
-	@WireVariable
-	private PaymentService paymentService;
-	
 	private List<Payment> paymentList;
 	private UUID courseParticUuid;
 	private UUID courseUuid;
@@ -78,11 +75,13 @@ public class PaymentListVM extends BaseVM {
 	public void init(@QueryParam(WebConstants.COURSE_PARTIC_UUID_PARAM) String courseParticUuid
 			, @QueryParam(WebConstants.COURSE_UUID_PARAM) String courseUuid
 			, @QueryParam(WebConstants.FROM_PAGE_PARAM) String fromPage) {
+		
+		setReturnToUrl();
         
 		// single page mode
 		if (StringUtils.hasText(courseParticUuid) 
 				&& StringUtils.hasText(courseUuid) 
-				&& StringUtils.hasText(fromPage)) {
+				&& (StringUtils.hasText(fromPage) || StringUtils.hasText(returnToUrl))) {
 			initSinglePageMode(courseParticUuid, courseUuid, fromPage);			
 		}
 		
@@ -106,7 +105,13 @@ public class PaymentListVM extends BaseVM {
 	private void initSinglePageMode(String courseParticUuid, 
 			String courseUuid, 
 			String fromPage) {
-		setMenuSelected(ScbMenuItem.PLATBY);
+		// highlight side menu item by user role
+		if (isLoggedUserInRole(ScbUserRole.USER.name())) {
+			setMenuSelected(ScbMenuItem.SEZNAM_UCASTNIKU_U);			
+		} else {
+			setMenuSelected(ScbMenuItem.PLATBY);			
+		}
+		
 		this.courseParticUuid = UUID.fromString(courseParticUuid);
 		this.courseUuid = UUID.fromString(courseUuid);
 		this.coursePartic = courseService.getCourseParticipantByUuid(this.courseParticUuid);

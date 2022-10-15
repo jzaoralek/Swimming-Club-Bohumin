@@ -204,7 +204,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{paymentSum}]]></textFieldExpression>
 			</textField>
-			<image>
+			<image onErrorType="Blank">
 				<reportElement x="365" y="130" width="127" height="71" uuid="4e101f20-4057-47b9-b873-3e63d0519421"/>
 				<imageExpression><![CDATA[$P{orgReprSignature}]]></imageExpression>
 			</image>

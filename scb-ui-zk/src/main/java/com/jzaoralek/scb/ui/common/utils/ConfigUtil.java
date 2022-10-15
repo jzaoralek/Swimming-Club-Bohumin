@@ -22,6 +22,8 @@ public final class ConfigUtil {
 	/** Config names cached in session. */
 	private static EnumSet<ConfigName> CACHED_CONFIG_NAMES = EnumSet.of(ConfigName.ORGANIZATION_NAME,
 																		ConfigName.ORGANIZATION_EMAIl,
+																		ConfigName.ORGANIZATION_ADDRESS,
+																		ConfigName.ORGANIZATION_IDENT_NO,
 																		ConfigName.ORGANIZATION_PHONE,
 																		ConfigName.WELCOME_INFO,
 																		ConfigName.PAYMENTS_AVAILABLE);
@@ -53,6 +55,29 @@ public final class ConfigUtil {
 		
 //		return configurationService.getOrgEmail();
 	}
+	
+	public static String getOrgAddress(ConfigurationService configurationService) {
+		String orgAddrSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_ADDRESS.name());
+		if (StringUtils.hasText(orgAddrSession)) {
+			return orgAddrSession;
+		} else {
+			String value = configurationService.getOrgAddress();
+			addToSessionConfigCache(ConfigName.ORGANIZATION_ADDRESS, value); 
+			return value;
+		}
+	}
+	
+	public static String getOrgIdentNo(ConfigurationService configurationService) {
+		String orgIdentNoSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_IDENT_NO.name());
+		if (StringUtils.hasText(orgIdentNoSession)) {
+			return orgIdentNoSession;
+		} else {
+			String value = configurationService.getOrgIdentNo();
+			addToSessionConfigCache(ConfigName.ORGANIZATION_IDENT_NO, value); 
+			return value;
+		}
+	}
+	
 	
 	public static String getOrgPhone(ConfigurationService configurationService) {
 		String orgPhoneSession = (String)WebUtils.getSessAtribute(ConfigName.ORGANIZATION_PHONE.name());

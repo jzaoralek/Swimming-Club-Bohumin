@@ -18,6 +18,8 @@ public interface ConfigurationService {
 	String getOrgName();
 	String getOrgPhone();
 	String getOrgEmail();
+	String getOrgAddress();
+	String getOrgIdentNo();
 	String getWelcomeInfo();
 	String getBaseURL();
 	String getHealthAgreement();

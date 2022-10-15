@@ -108,8 +108,15 @@
 														    </popup>
 								                		</vbox>
 									                </listcell>
-									                <listcell if="${vm.isAttendanceForParentsVisible()}" >
-										                	<button label="${c:l('txt.ui.common.attendance')}" onClick="@command('showAttendanceCmd', course=item)" />
+									                <listcell>
+									                	<hlayout style="white-space: nowrap;">
+										                	<button label="${c:l('txt.ui.common.Payments')}" 
+										                		onClick="@command('paymentsCmd', course=item)" />
+											                <button label="${c:l('txt.ui.common.attendance')}" 
+											                	onClick="@command('showAttendanceCmd', course=item)"
+											                	if="${vm.isAttendanceForParentsVisible()}"
+											                	style="margin-left: 5px;" />
+									                	</hlayout>
 									                </listcell>
 									            </listitem>
 									        </template>
