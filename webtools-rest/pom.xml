@@ -13,7 +13,7 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		
-		<jackson.version>2.12.1</jackson.version>
+		<jackson.version>2.13.4.1</jackson.version>
 	</properties>
 
 	<dependencies>
