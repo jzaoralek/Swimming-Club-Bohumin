@@ -70,7 +70,7 @@
 									            <listheader label="${c:l('txt.ui.common.trainers')}" align="left" hflex="2" />
 <!-- 									            <listheader width="35px" /> -->
 									            <listheader width="60px" />
-									            <listheader hflex="min" if="${vm.isAttendanceForParentsVisible()}" />
+									            <listheader hflex="min"/>
 									        </listhead>
 									         
 									        <template name="model" var="item">
