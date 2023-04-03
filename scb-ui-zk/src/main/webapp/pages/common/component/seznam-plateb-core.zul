@@ -1,5 +1,5 @@
 <!-- 
-	Spolecna komponenta pro seznam  plateb zobrazovany na samostatne strance a na tabu v  detailu ucatnika.
+	Spolecna komponenta pro seznam plateb zobrazovany na samostatne strance a na tabu v detailu ucatnika.
  -->
 <zk>
 	<vlayout>

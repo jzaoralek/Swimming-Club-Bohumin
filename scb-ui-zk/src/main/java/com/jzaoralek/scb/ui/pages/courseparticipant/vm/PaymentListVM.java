@@ -149,6 +149,10 @@ public class PaymentListVM extends BaseVM {
 	
 	@Command
 	public void detailCmd(@BindingParam(WebConstants.UUID_PARAM) UUID uuid) {
+		// Zobrazeni detailu k editaci povoleno muze pouze administrator.
+		if (!isLoggedUserAdmin()) {
+			return;
+		}
 		Map<String, Object> args = new HashMap<>();
 		args.put(WebConstants.UUID_PARAM, uuid);
 		WebUtils.openModal(PAYMENT_DETAIL_WINDOW, Labels.getLabel("txt.ui.common.PaymentDetail"), args);
