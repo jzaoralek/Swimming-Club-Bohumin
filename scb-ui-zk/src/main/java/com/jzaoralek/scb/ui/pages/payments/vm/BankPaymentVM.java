@@ -29,7 +29,6 @@ import com.jzaoralek.scb.dataservice.domain.CourseParticipant;
 import com.jzaoralek.scb.dataservice.domain.Payment;
 import com.jzaoralek.scb.dataservice.domain.Payment.PaymentProcessType;
 import com.jzaoralek.scb.dataservice.service.BankPaymentService;
-import com.jzaoralek.scb.dataservice.service.PaymentService;
 import com.jzaoralek.scb.ui.common.WebConstants;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper;
 import com.jzaoralek.scb.ui.common.utils.EventQueueHelper.ScbEvent;
@@ -62,7 +61,7 @@ public class BankPaymentVM extends BaseContextVM {
 	@NotifyChange("*")
 	@Command
 	public void reloadPaymentsCmd() {
-		int newPaymentCount = bankPaymentService.updateBankPayments(this.dateFrom, this.dateTo);
+		int newPaymentCount = bankPaymentService.updateBankPayments();
 		WebUtils.showNotificationInfo(Labels.getLabel("msg.ui.info.bankPaymentProcessed.arg", new Object[] {newPaymentCount}));
 		loadData();
 	}

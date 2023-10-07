@@ -38,6 +38,8 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 
 	private final Logger LOG = LoggerFactory.getLogger(getClass());
 	
+	private static final int FIO_MAX_DOWNLOAD_PAYMENT_INTERVAL = 60;
+	
 //	@Value("${auth.token}")
 //    private String authToken;
 	
@@ -87,7 +89,12 @@ public class BankPaymentServiceImpl extends BaseAbstractService implements BankP
 	}
 	
 	@Override
-	public int updateBankPayments(Calendar dateFrom, Calendar dateTo) {
+	public int updateBankPayments() {
+		// DateFrom is sysdate minus 60 (FIO API LIMIT), dateTo is sysdate)
+		Calendar dateFrom = Calendar.getInstance();
+		dateFrom.add(Calendar.DAY_OF_YEAR, -FIO_MAX_DOWNLOAD_PAYMENT_INTERVAL);
+		Calendar dateTo = Calendar.getInstance();
+		
 		LOG.info("Updating bank payments, dateFrom: {}, dateTo: {}", dateFrom, dateTo);
 		// nacteni bankovnich transakci z FIO
 		AccountStatement accountStatement = transactions(dateFrom, dateTo);

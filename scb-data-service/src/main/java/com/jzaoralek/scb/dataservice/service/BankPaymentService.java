@@ -33,12 +33,10 @@ public interface BankPaymentService {
 	List<Transaction> getNotInPaymentByInterval(Calendar dateFrom, Calendar dateTo);
 	
 	/**
-	 * Load bank payments from internet banking client and store to local database.
-	 * @param dateFrom
-	 * @param dateTo
+	 * Load bank payments from internet banking client for prev 60 days and store to local database.
 	 * @return count of processed bank payments
 	 */
-	int updateBankPayments(Calendar dateFrom, Calendar dateTo);
+	int updateBankPayments();
 	
 	/**
 	 * Pairing of bank payments from local database to course participant in current year by personal number as variable symbol.

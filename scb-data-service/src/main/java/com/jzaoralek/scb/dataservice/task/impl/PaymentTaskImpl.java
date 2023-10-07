@@ -56,8 +56,7 @@ public class PaymentTaskImpl implements PaymentTask {
 					LOG.info("Customer: {} hasn't payments available.", customerDBCtx);
 					continue;
 				}
-				Pair<GregorianCalendar, GregorianCalendar> dateFromTo = PaymentUtils.getDefaultDateFromTo(configurationService);
-				int newPaymentCount = bankPaymentService.updateBankPayments(dateFromTo.getValue0(), dateFromTo.getValue1());
+				int newPaymentCount = bankPaymentService.updateBankPayments();
 				// notification email about success processing
 				mailService.sendMail(DataServiceConstants.PLATBY_EMAIL, null, PROCESS_PAYMENT_SUCCESS_MAIL_SUBJECT, "Zpracovano " + newPaymentCount + " novych plateb.", null, false, false, null, customerDBCtx);
 			} catch (Exception e) {
