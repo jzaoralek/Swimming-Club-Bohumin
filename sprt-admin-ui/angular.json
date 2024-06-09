@@ -102,5 +102,8 @@
       }
     }
   },
-  "defaultProject": "sprt-admin-ui"
+  "defaultProject": "sprt-admin-ui",
+  "cli": {
+    "analytics": false
+  }
 }
