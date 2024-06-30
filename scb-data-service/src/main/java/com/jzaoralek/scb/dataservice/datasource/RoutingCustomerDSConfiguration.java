@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.util.CollectionUtils;
 
 import com.jzaoralek.scb.dataservice.dao.AdmCustConfigDao;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import com.mysql.cj.jdbc.MysqlDataSource;
 import com.sportologic.common.model.domain.CustomerConfig;
 
 @Configuration
@@ -77,8 +77,8 @@ public class RoutingCustomerDSConfiguration {
 		mySqlRootSource.setUrl(custConfig.getDbUrl());
 	    mySqlRootSource.setUser(custConfig.getDbUser());
 	    mySqlRootSource.setPassword(custConfig.getDbPassword());
-	    mySqlRootSource.setCharacterEncoding("utf8");
-	    mySqlRootSource.setUseUnicode(true);
+	    //mySqlRootSource.setCharacterEncoding("utf8");
+	    //mySqlRootSource.setUseUnicode(true);
 	    return mySqlRootSource;
 	}
 	
