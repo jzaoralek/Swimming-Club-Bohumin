@@ -5,11 +5,13 @@ import java.util.UUID;
 public class CourseExternalFilter {
 
 	private Boolean myCourses;
+	private Boolean activeCourses;
 	private UUID courseLocationUuid;
 
-	public CourseExternalFilter(Boolean myCourses, UUID courseLocationUuid) {
+	public CourseExternalFilter(Boolean myCourses, Boolean activeCourses, UUID courseLocationUuid) {
 		super();
 		this.myCourses = myCourses;
+		this.activeCourses = activeCourses;
 		this.courseLocationUuid = courseLocationUuid;
 	}
 	
@@ -18,6 +20,12 @@ public class CourseExternalFilter {
 	}
 	public void setMyCourses(Boolean myCourses) {
 		this.myCourses = myCourses;
+	}
+	public Boolean getActiveCourses() {
+		return activeCourses;
+	}
+	public void setActiveCourses(Boolean activeCourses) {
+		this.activeCourses = activeCourses;
 	}
 	public UUID getCourseLocationUuid() {
 		return courseLocationUuid;
@@ -28,6 +36,7 @@ public class CourseExternalFilter {
 
 	@Override
 	public String toString() {
-		return "CourseExternalFilter [myCourses=" + myCourses + ", courseLocationUuid=" + courseLocationUuid + "]";
-	}
+		return "CourseExternalFilter [myCourses=" + myCourses + ", activeCourses=" + activeCourses
+				+ ", courseLocationUuid=" + courseLocationUuid + "]";
+	}	
 }

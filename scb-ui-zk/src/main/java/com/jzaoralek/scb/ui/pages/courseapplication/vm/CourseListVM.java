@@ -27,7 +27,6 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
@@ -71,6 +70,7 @@ public class CourseListVM extends CourseAbstractVM {
 	private CourseLocation courseLocationSelected;
 	private final CourseFilter filter = new CourseFilter();
 	private Boolean myCourses;
+	private Boolean active;
 	/** Cache object for external filter */
 	private CourseExternalFilter externalFilter;
 	private List<Course> selectedItems;
@@ -84,9 +84,6 @@ public class CourseListVM extends CourseAbstractVM {
 		initYearContext();
 		// nacteni seznamu mist konani kurzu
 		initCourseLocations();
-		
-		// default zobrazeni moje kurzy jen pokud se nejadna o admina
-		this.myCourses = isLoggedUserAdmin() ? Boolean.FALSE : Boolean.TRUE;
 		
 		// nacteni externiho filtru ze session
 		initExternalFilterCache();
@@ -118,9 +115,10 @@ public class CourseListVM extends CourseAbstractVM {
 		}
 		
 		if (this.externalFilter == null) {
-			this.externalFilter = new CourseExternalFilter(this.myCourses, courseLocSelUuid);
+			this.externalFilter = new CourseExternalFilter(this.myCourses, this.active, courseLocSelUuid);
 		} else {
 			this.externalFilter.setMyCourses(this.myCourses);
+			this.externalFilter.setActiveCourses(this.getActive());
 			this.externalFilter.setCourseLocationUuid(courseLocSelUuid);
 		}
 		
@@ -131,6 +129,7 @@ public class CourseListVM extends CourseAbstractVM {
 		this.externalFilter = (CourseExternalFilter)WebUtils.getSessAtribute(WebConstants.COURSE_LIST_EXT_FILTER_PARAM);
 		if (this.externalFilter != null) {
 			this.myCourses = this.externalFilter.getMyCourses();
+			this.active = this.externalFilter.getActiveCourses();
 			
 			if (this.showCourseFilter && this.externalFilter.getCourseLocationUuid() != null) {
 				List<CourseLocation> courseLocFilterred = this.courseLocationList.
@@ -139,6 +138,11 @@ public class CourseListVM extends CourseAbstractVM {
 							collect(Collectors.toList());
 				this.courseLocationSelected = courseLocFilterred.stream().findFirst().orElse(null);
 			}
+		} else {
+			// default zobrazeni moje kurzy jen pokud se nejadna o admina
+			this.myCourses = isLoggedUserAdmin() ? Boolean.FALSE : Boolean.TRUE;
+			// default zobrazeni pouze aktivnich kurzu
+			this.active = true;
 		}
 	}
 
@@ -182,6 +186,13 @@ public class CourseListVM extends CourseAbstractVM {
 	@NotifyChange("*")
 	@Command
 	public void filterByMyCoursesCmd() {
+		loadData();
+		updateExternalFilterCache();
+	}
+	
+	@NotifyChange("*")
+	@Command
+	public void filterActiveCoursesCmd() {
 		loadData();
 		updateExternalFilterCache();
 	}
@@ -406,6 +417,10 @@ public class CourseListVM extends CourseAbstractVM {
 		
 		// nacteni vsech nebo pouze prirazenych kurzu
 		this.courseList = this.myCourses ? courseService.getByTrainer(SecurityUtils.getLoggedUser().getUuid(), yearFrom, yearTo, false) : courseService.getAll(yearFrom, yearTo, false);
+		if (!CollectionUtils.isEmpty(this.courseList) && this.active) {
+			// vyfiltrovani pouze aktivich kurzu
+			this.courseList = this.courseList.stream().filter(Course::isActive).collect(Collectors.toList());
+		}
 		if (!isLoggedUserAdmin()) {
 			// filter active active courses for trainers
 			this.courseList = this.courseList.stream().filter(i -> i.isActive()).collect(Collectors.toList());
@@ -599,5 +614,11 @@ public class CourseListVM extends CourseAbstractVM {
 	}
 	public boolean isMultipleMode() {
 		return multipleMode;
+	}
+	public Boolean getActive() {
+		return active;
+	}
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }

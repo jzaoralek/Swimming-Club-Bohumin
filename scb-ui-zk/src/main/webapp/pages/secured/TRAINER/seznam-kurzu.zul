@@ -68,6 +68,12 @@
 								<label value="${c:l('txt.ui.common.myCourses')}" />
             					<checkbox checked="@bind(vm.myCourses)" onCheck="@command('filterByMyCoursesCmd')" />
 							</hlayout>
+							
+							<!-- Aktivni kurzy -->
+			            	<hlayout hflex="min" style="margin-right: 2px;">
+								<label value="${c:l('txt.ui.common.active')}" />
+            					<checkbox checked="@bind(vm.active)" onCheck="@command('filterActiveCoursesCmd')" />
+							</hlayout>
 		            	</hlayout>
 		            	
 		            	<hlayout sclass="pull-right">
