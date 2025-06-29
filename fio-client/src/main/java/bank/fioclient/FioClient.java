@@ -50,7 +50,7 @@ public class FioClient {
             FioClientException {
         try {
             fioLoggingHandler.setAuthToken(token);
-            Response response = restExecutor.execute("/ib_api/rest/periods/{token}/{datum_od}/{datum_do}/transactions.json",
+            Response response = restExecutor.execute("/periods/{token}/{datum_od}/{datum_do}/transactions.json",
                     HttpMethod.GET, null, Response.class, token.getValue(), DateUtils.toString(datumOd), DateUtils.toString(datumDo));
             return mapper.map(response);
         } catch (RestException e) {
@@ -76,7 +76,7 @@ public class FioClient {
     public AccountStatement lastTransactions(AuthToken token) throws EarlyAccessException, AuthTokenException, FioClientException {
         try {
             fioLoggingHandler.setAuthToken(token);
-            Response response = restExecutor.execute("/ib_api/rest/last/{token}/transactions.json", HttpMethod.GET, null, Response.class, token.getValue());
+            Response response = restExecutor.execute("/last/{token}/transactions.json", HttpMethod.GET, null, Response.class, token.getValue());
             return mapper.map(response);
         } catch (RestException e) {
             handleException(e);

@@ -25,7 +25,7 @@ public class FioService {
 
     @PostConstruct
     public void init() {
-        restClient = new FioClient("https://www.fio.cz");
+        restClient = new FioClient("https://fioapi.fio.cz/v1/rest");
     }
 
     /**
